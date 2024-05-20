@@ -1,0 +1,17 @@
+.main {
+  font-size: var(--mantine-font-size-md);
+  height: 100vh;
+}
+
+.chat-container {
+  width: calc(51.25rem * var(--mantine-scale));
+  height: 100%;
+}
+
+.chat {
+  height: 100%;
+}
+
+.chat-messages {
+  overflow: auto;
+}

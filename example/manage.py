@@ -3,10 +3,16 @@
 import os
 import sys
 
+from dotenv import load_dotenv
+
+
+# Insert root dir in PYTHONPATH to get django_ai_assistant package:
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_ai_assistant.settings')
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "example.settings")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -18,5 +24,6 @@ def main():
     execute_from_command_line(sys.argv)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    load_dotenv()
     main()
