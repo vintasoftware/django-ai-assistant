@@ -11,7 +11,3 @@
 .chat {
   height: 100%;
 }
-
-.chat-messages {
-  overflow: auto;
-}

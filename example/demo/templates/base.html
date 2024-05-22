@@ -15,6 +15,7 @@
     {% render_bundle 'main' 'css' %}
   </head>
   <body>
+    {% csrf_token %}
     {% block content %}{% endblock %}
   </body>
 </html>
