@@ -25,30 +25,20 @@
   }
 }
 
-.searchCode {
-  font-weight: 700;
-  font-size: rem(10px);
-  background-color: light-dark(
-    var(--mantine-color-gray-0),
-    var(--mantine-color-dark-7)
-  );
-  border: rem(1px) solid
-    light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-7));
-}
-
 .threads {
   padding-left: calc(var(--mantine-spacing-md) - rem(6px));
   padding-right: calc(var(--mantine-spacing-md) - rem(6px));
   padding-bottom: var(--mantine-spacing-md);
 }
 
-.threadsHeader {
+.threads-header {
   padding-left: calc(var(--mantine-spacing-md) + rem(2px));
   padding-right: var(--mantine-spacing-md);
+  margin-top: 1rem;
   margin-bottom: rem(5px);
 }
 
-.threadLink {
+.thread-link {
   display: block;
   padding: rem(8px) var(--mantine-spacing-xs);
   text-decoration: none;
@@ -65,4 +55,9 @@
     );
     color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
   }
+}
+
+.thread-link-info {
+  padding: rem(8px) var(--mantine-spacing-xs);
+  font-size: var(--mantine-font-size-sm);
 }

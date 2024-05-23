@@ -4,10 +4,11 @@ from . import views
 
 
 urlpatterns = [
-    path("threads/", views.AssistantThreadListCreateView.as_view(), name="threads-list-create"),
+    path("assistants/", views.AssistantListView.as_view(), name="assistants-list"),
+    path("threads/", views.ThreadListCreateView.as_view(), name="threads-list-create"),
     path(
         "threads/<str:thread_id>/messages/",
-        views.AssistantThreadMessageListCreateView.as_view(),
+        views.ThreadMessageListCreateView.as_view(),
         name="messages-list-create",
     ),
 ]

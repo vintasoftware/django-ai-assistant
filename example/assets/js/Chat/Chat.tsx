@@ -3,38 +3,27 @@ import {
   Text,
   Stack,
   Title,
-  TextInput,
   Textarea,
-  Group,
   Box,
-  Flex,
-  ActionIcon,
   Button,
-  Code,
   LoadingOverlay,
   ScrollArea,
 } from "@mantine/core";
 import { ThreadsNav } from "./ThreadsNav";
 import OpenAI from "openai";
-import cookie from "cookie";
 
 import classes from "./Chat.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { IconSend2 } from "@tabler/icons-react";
 import { getHotkeyHandler } from "@mantine/hooks";
-
-function csrfFetch(url: string, options: RequestInit = {}) {
-  const { csrftoken } = cookie.parse(document.cookie);
-
-  return fetch(url, {
-    ...options,
-    headers: {
-      ...options.headers,
-      "X-CSRFToken": csrftoken,
-    },
-    credentials: "include",
-  });
-}
+import {
+  DjangoThread,
+  createMessage,
+  createThread,
+  fetchAssistantID,
+  fetchDjangoThreads,
+  fetchMessages,
+} from "@/api";
 
 function ChatMessage({ message }: { message: OpenAI.Beta.Threads.Message }) {
   return (
@@ -69,35 +58,14 @@ function ChatMessageList({
   );
 }
 
-async function fetchMessages({ threadId }: { threadId: string }) {
-  const response = await csrfFetch(
-    `/ai-assistant/threads/${threadId}/messages/`
-  );
-  return response.json();
-}
-
-async function createMessage({
-  threadId,
-  content,
-}: {
-  threadId: string;
-  content: string;
-}) {
-  await csrfFetch(`/ai-assistant/threads/${threadId}/messages/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ content }),
-  });
-}
-
 export function Chat() {
-  const threadId = "thread_95qH0BqgjbvBYUTiBttGLEum";
-
+  const [assistantId, setAssistantId] = useState<string>("");
+  const [threads, setThreads] = useState<DjangoThread[] | null>(null);
+  const [threadId, setThreadId] = useState<string>("");
   const [inputValue, setInputValue] = useState<string>("");
   const [messages, setMessages] = useState<OpenAI.Beta.Threads.Message[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const isChatActive = assistantId && threadId && !isLoading;
 
   const scrollViewport = useRef<HTMLDivElement>(null);
   const scrollToBottom = useCallback(
@@ -109,17 +77,37 @@ export function Chat() {
     [scrollViewport]
   );
 
+  const loadThreads = useCallback(async () => {
+    try {
+      setThreads(null);
+      const threads = await fetchDjangoThreads();
+      setThreads(threads);
+    } catch (error) {
+      console.error(error);
+      // alert("Error while loading threads");
+    }
+  }, []);
+
+  const createAndSetThread = useCallback(async () => {
+    try {
+      const thread = await createThread();
+      await loadThreads();
+      setThreadId(thread.id);
+    } catch (error) {
+      console.error(error);
+      // alert("Error while creating thread");
+    }
+  }, []);
+
   const loadMessages = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetchMessages({ threadId });
-      const messages = response.data as OpenAI.Beta.Threads.Message[];
-      messages.reverse();
-      setMessages(messages);
+      console.log(threadId);
+      setMessages(await fetchMessages({ threadId }));
       scrollToBottom();
     } catch (error) {
       console.error(error);
-      alert("Error while loading messages");
+      // alert("Error while loading messages");
     }
     setIsLoading(false);
   }, [threadId]);
@@ -128,22 +116,47 @@ export function Chat() {
     setIsLoading(true);
     try {
       setInputValue("");
-      await createMessage({ threadId, content: inputValue });
+      await createMessage({ threadId, assistantId, content: inputValue });
       await loadMessages();
     } catch (error) {
       console.error(error);
-      alert("Error while sending message");
+      // alert("Error while sending message");
     }
     setIsLoading(false);
   }, [threadId, inputValue]);
 
+  // Load assistantId when component mounts:
   useEffect(() => {
+    async function init() {
+      try {
+        setAssistantId(await fetchAssistantID());
+      } catch (error) {
+        console.error(error);
+        // alert("Error while fetching assistant");
+      }
+    }
+    init();
+  }, []);
+
+  // Load threads when component mounts:
+  useEffect(() => {
+    loadThreads();
+  }, [loadThreads]);
+
+  // Load messages when threadId changes:
+  useEffect(() => {
+    if (!assistantId) return;
+    if (!threadId) return;
     loadMessages();
   }, [loadMessages]);
 
   return (
     <>
-      <ThreadsNav />
+      <ThreadsNav
+        threads={threads}
+        selectThread={setThreadId}
+        createThread={createAndSetThread}
+      />
       <main className={classes.main}>
         <Container className={classes.chatContainer}>
           <Stack className={classes.chat}>
@@ -162,14 +175,19 @@ export function Chat() {
                 zIndex={1000}
                 overlayProps={{ blur: 2 }}
               />
-              <ChatMessageList messages={messages} />
+              {isChatActive && <ChatMessageList messages={messages} />}
             </ScrollArea>
             <Textarea
               mt="auto"
               mb="3rem"
-              placeholder="Enter user message… (Ctrl↵ to send)"
+              placeholder={
+                isChatActive
+                  ? "Enter user message… (Ctrl↵ to send)"
+                  : "Please create or select a thread on the sidebar"
+              }
               autosize
               minRows={2}
+              disabled={!isChatActive}
               onChange={(e) => setInputValue(e.currentTarget.value)}
               value={inputValue}
               onKeyDown={getHotkeyHandler([["mod+Enter", sendMessage]])}
@@ -185,7 +203,11 @@ export function Chat() {
                       style={{ width: "70%", height: "70%" }}
                     />
                   }
-                  onClick={sendMessage}
+                  disabled={!isChatActive}
+                  onClick={(e) => {
+                    sendMessage();
+                    e.preventDefault();
+                  }}
                 >
                   Send
                 </Button>
