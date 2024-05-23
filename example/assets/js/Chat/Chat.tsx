@@ -175,7 +175,7 @@ export function Chat() {
                 zIndex={1000}
                 overlayProps={{ blur: 2 }}
               />
-              {isChatActive && <ChatMessageList messages={messages} />}
+              <ChatMessageList messages={messages} />
             </ScrollArea>
             <Textarea
               mt="auto"
