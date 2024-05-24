@@ -53,6 +53,7 @@ function ChatMessageList({
     return <Text c="dimmed">No messages.</Text>;
   }
 
+  // TODO: check why horizontal scroll appears
   return (
     <div>
       {messages.map((message, index) => (

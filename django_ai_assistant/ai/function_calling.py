@@ -43,6 +43,8 @@ class EventHandler(AssistantEventHandler):
                     f"Failed to parse tool arguments: {tool_call.function.arguments}"
                 ) from e
 
+            # TODO: Check if the EventHandler is eating exceptions:
+            print(tool_call.function.name, tool_kwargs)
             output = call_tool(tool, tool_kwargs)
             output_str_list.append({"tool_call_id": tool_call.id, "output": str(output)})
 

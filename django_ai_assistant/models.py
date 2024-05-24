@@ -4,6 +4,7 @@ from django.db.models import F, Index
 
 
 class Assistant(models.Model):
+    slug = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255, blank=True)
     openai_id = models.CharField(max_length=255, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
