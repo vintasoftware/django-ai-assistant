@@ -5,26 +5,35 @@ import { DjangoThread } from "@/api";
 
 export function ThreadsNav({
   threads,
+  selectedThreadId,
   selectThread,
   createThread,
 }: {
   threads: DjangoThread[] | null;
+  selectedThreadId: string | null;
   selectThread: (openai_id: string) => void;
   createThread: () => void;
 }) {
-  const threadLinks = threads?.map((thread) => (
-    <a
-      href="#"
-      onClick={(event) => {
-        selectThread(thread.openai_id);
-        event.preventDefault();
-      }}
-      key={thread.openai_id}
-      className={classes.threadLink}
-    >
-      {thread.name}
-    </a>
-  ));
+  const threadLinks = threads?.map((thread) => {
+    const isThreadSelected =
+      selectedThreadId && selectedThreadId === thread.openai_id;
+    return (
+      <a
+        href="#"
+        onClick={(event) => {
+          selectThread(thread.openai_id);
+          event.preventDefault();
+        }}
+        key={thread.openai_id}
+        className={
+          classes.threadLink +
+          ` ${isThreadSelected ? classes.threadLinkSelected : ""}`
+        }
+      >
+        {thread.name}
+      </a>
+    );
+  });
 
   return (
     <nav className={classes.navbar}>

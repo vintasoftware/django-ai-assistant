@@ -49,6 +49,10 @@ function ChatMessageList({
 }: {
   messages: OpenAI.Beta.Threads.Message[];
 }) {
+  if (messages.length === 0) {
+    return <Text c="dimmed">No messages.</Text>;
+  }
+
   return (
     <div>
       {messages.map((message, index) => (
@@ -65,6 +69,7 @@ export function Chat() {
   const [inputValue, setInputValue] = useState<string>("");
   const [messages, setMessages] = useState<OpenAI.Beta.Threads.Message[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const isThreadSelected = assistantId && threadId;
   const isChatActive = assistantId && threadId && !isLoading;
 
   const scrollViewport = useRef<HTMLDivElement>(null);
@@ -154,6 +159,7 @@ export function Chat() {
     <>
       <ThreadsNav
         threads={threads}
+        selectedThreadId={threadId}
         selectThread={setThreadId}
         createThread={createAndSetThread}
       />
@@ -175,7 +181,13 @@ export function Chat() {
                 zIndex={1000}
                 overlayProps={{ blur: 2 }}
               />
-              <ChatMessageList messages={messages} />
+              {isThreadSelected ? (
+                <ChatMessageList messages={messages} />
+              ) : (
+                <Text c="dimmed">
+                  Select or create a thread to start chatting.
+                </Text>
+              )}
             </ScrollArea>
             <Textarea
               mt="auto"

@@ -31,14 +31,14 @@
   padding-bottom: var(--mantine-spacing-md);
 }
 
-.threads-header {
+.threadsHeader {
   padding-left: calc(var(--mantine-spacing-md) + rem(2px));
   padding-right: var(--mantine-spacing-md);
   margin-top: 1rem;
   margin-bottom: rem(5px);
 }
 
-.thread-link {
+.threadLink {
   display: block;
   padding: rem(8px) var(--mantine-spacing-xs);
   text-decoration: none;
@@ -57,7 +57,14 @@
   }
 }
 
-.thread-link-info {
+.threadLinkSelected {
+  background-color: light-dark(
+    var(--mantine-color-gray-0),
+    var(--mantine-color-dark-4)
+  );
+}
+
+.threadLinkInfo {
   padding: rem(8px) var(--mantine-spacing-xs);
   font-size: var(--mantine-font-size-sm);
 }
