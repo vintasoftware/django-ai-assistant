@@ -7,10 +7,7 @@ from django.views import View
 
 from openai import AsyncOpenAI
 
-from django_ai_assistant.ai.assistant import add, multiply
-from django_ai_assistant.ai.function_tool import FunctionTool
-
-from .ai.function_calling import EventHandler
+from .ai.assistant import run_assistant
 from .conf import settings
 from .models import Assistant, Thread
 
@@ -136,22 +133,13 @@ class ThreadMessageListCreateView(BaseAssistantView):
         )
 
     def create_run(self, assistant_id: str):
-        # TODO: Decide how to import fns and fns_tools.
         # TODO: Decide how to deal with fn changes (migrations) and how to sync with OpenAI.
-        #       A possible solution is to NOT define Assistants dynamically, but with classes:
-        # class AICalculator(AIAssistant):  # save in BD what spec string this generates and diffs after changes, like Django models
-        #     name = "Calculator",
-        #     instructions = "You are a calculator bot. Use the provided functions to answer questions.",
-        #     fns = [add, multiply]
         client = self.get_ai_client()
         thread_id = self.kwargs["thread_id"]
-        fns = [add, multiply]
-        fns_tools = [FunctionTool.from_defaults(fn=fn) for fn in fns]
-        event_handler = EventHandler(client, fns_tools)
-        with client.beta.threads.runs.stream(
-            thread_id=thread_id, assistant_id=assistant_id, event_handler=event_handler
-        ) as stream:
-            stream.until_done()
+        # TODO: handle exceptions properly
+        event_handler = run_assistant(
+            client, openai_thread_id=thread_id, openai_assistant_id=assistant_id
+        )
         return event_handler.current_run.id
 
     # Set django_thread attribute:
