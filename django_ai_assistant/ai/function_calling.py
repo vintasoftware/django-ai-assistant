@@ -13,7 +13,7 @@ class EventHandler(AssistantEventHandler):
 
     def __init__(self, client: OpenAI, tools: list[FunctionTool]) -> None:
         self.client = client
-        self.tools_by_name = {tool.metadata.name: tool for tool in tools}
+        self.tools_by_name = {tool.metadata.name: tool for tool in tools}  # pyright: ignore[reportAttributeAccessIssue]
         super().__init__()
 
     @override
@@ -24,10 +24,10 @@ class EventHandler(AssistantEventHandler):
             run_id = event.data.id  # Retrieve the run ID from the event data
             self.handle_requires_action(event.data, run_id)
 
-    def handle_requires_action(self, data: Run, run_id: str):
-        output_str_list: list[str] = []
+    def handle_requires_action(self, run: Run, run_id: str):
+        output_str_list = []
 
-        for tool_call in data.required_action.submit_tool_outputs.tool_calls:
+        for tool_call in run.required_action.submit_tool_outputs.tool_calls:  # type: ignore[reportOptionalMemberAccess]
             if tool_call.type != "function":
                 raise Exception(f"Unexpected tool_call.type={tool_call.type}")
             tool = self.tools_by_name[tool_call.function.name]
@@ -49,15 +49,15 @@ class EventHandler(AssistantEventHandler):
             output_str_list.append({"tool_call_id": tool_call.id, "output": str(output)})
 
         # Submit all tool_outputs at the same time
-        self.submit_tool_outputs(output_str_list, run_id)
+        self.submit_tool_outputs(output_str_list, run)
 
-    def submit_tool_outputs(self, tool_outputs, run_id):
+    def submit_tool_outputs(self, tool_outputs, run):
         # Use the submit_tool_outputs_stream helper
         with self.client.beta.threads.runs.submit_tool_outputs_stream(
-            thread_id=self.current_run.thread_id,
-            run_id=self.current_run.id,
+            thread_id=run.thread_id,
+            run_id=run.id,
             tool_outputs=tool_outputs,
-            event_handler=EventHandler(client=self.client, tools=self.tools_by_name.values()),
+            event_handler=EventHandler(client=self.client, tools=list(self.tools_by_name.values())),
         ) as stream:
             # TODO: handle streaming
             for _text in stream.text_deltas:

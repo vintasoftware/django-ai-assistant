@@ -132,3 +132,9 @@ lines-after-imports = 2
 branch = true
 source = ["backend"]
 omit = ["**/venv/*", "**/env/*", "**/virtualenvs/*", "**/node_modules/*", "**/migrations/*", "**/settings/*", "**/tests/*"]
+
+[tool.pyright]
+pythonVersion = "3.12"
+include = ["django_ai_assistant"]
+typeCheckingMode = "basic"
+useLibraryCodeForTypes = true

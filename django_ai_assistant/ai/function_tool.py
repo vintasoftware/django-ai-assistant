@@ -3,7 +3,7 @@ import json
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from inspect import signature
-from typing import Any, cast
+from typing import Any
 
 from pydantic import BaseModel, create_model
 from pydantic.fields import FieldInfo
@@ -49,12 +49,10 @@ def create_schema_from_function(
     additional_fields = additional_fields or []
     for field_info in additional_fields:
         if len(field_info) == 3:
-            field_info = cast(tuple[str, type, Any], field_info)
             field_name, field_type, field_default = field_info
             fields[field_name] = (field_type, FieldInfo(default=field_default))
         elif len(field_info) == 2:
             # Required field has no default value
-            field_info = cast(tuple[str, type], field_info)
             field_name, field_type = field_info
             fields[field_name] = (field_type, FieldInfo())
         else:
@@ -62,7 +60,7 @@ def create_schema_from_function(
                 f"Invalid additional field info: {field_info}. " "Must be a tuple of length 2 or 3."
             )
 
-    return create_model(name, **fields)  # type: ignore
+    return create_model(name, **fields)
 
 
 class DefaultToolFnSchema(BaseModel):
@@ -143,7 +141,7 @@ class FunctionTool:
 
     """
 
-    def __init__(
+    def __init__(  # pyright: ignore[reportMissingSuperCall]
         self,
         fn: Callable[..., Any],
         metadata: ToolMetadata,
@@ -204,7 +202,7 @@ class FunctionTool:
         tool_output = self._fn(*args, **kwargs)
         return ToolOutput(
             content=str(tool_output),
-            tool_name=self.metadata.name,
+            tool_name=self.metadata.name,  # pyright: ignore[reportArgumentType]
             raw_input={"args": args, "kwargs": kwargs},
             raw_output=tool_output,
         )
@@ -214,7 +212,7 @@ class FunctionTool:
         tool_output = await self._async_fn(*args, **kwargs)
         return ToolOutput(
             content=str(tool_output),
-            tool_name=self.metadata.name,
+            tool_name=self.metadata.name,  # pyright: ignore[reportArgumentType]
             raw_input={"args": args, "kwargs": kwargs},
             raw_output=tool_output,
         )
@@ -235,7 +233,7 @@ def call_tool(tool: FunctionTool, arguments: dict) -> ToolOutput:
     except Exception as e:
         return ToolOutput(
             content="Encountered error: " + str(e),
-            tool_name=tool.metadata.name,
+            tool_name=tool.metadata.name,  # pyright: ignore[reportArgumentType]
             raw_input=arguments,
             raw_output=str(e),
             is_error=True,
