@@ -1,4 +1,4 @@
-from collections.abc import Callable, Iterable
+from collections.abc import Callable
 from typing import Any, Protocol
 
 from openai import OpenAI
@@ -12,11 +12,11 @@ from .function_tool import FunctionTool
 class AIAssistant(Protocol):
     name: str
     instructions: str
-    fns: Iterable[Callable[..., Any]]
+    fns: tuple[Callable[..., Any], ...]
     model: str = "gpt-4o"
 
 
-assistant_cls_registry: dict[str, AIAssistant] = {}
+assistant_cls_registry: dict[str, type[AIAssistant]] = {}
 
 
 def register_assistant(cls: type[AIAssistant]):
