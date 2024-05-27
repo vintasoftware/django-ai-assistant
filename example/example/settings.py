@@ -117,6 +117,25 @@ STATICFILES_DIRS = (BASE_DIR / "assets",)
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Logging
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "standard": {"format": "%(levelname)-8s [%(asctime)s] %(name)s: %(message)s"},
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "standard",
+        },
+    },
+    "root": {"handlers": ["console"], "level": "WARNING"},
+    "loggers": {
+        "django_ai_assistant": {"handlers": ["console"], "level": "DEBUG", "propagate": False},
+    },
+}
 
 # django-webpack-loader
 
@@ -132,6 +151,7 @@ WEBPACK_LOADER = {
 
 
 # django-ai-assistant
+
 AI_ASSISTANT_CLIENT_INIT_FN = (
     "django_ai_assistant.ai.client.init_openai"  # by default, gets OPENAI_API_KEY from env
 )
