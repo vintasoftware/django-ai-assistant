@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import override
 
 from openai import AssistantEventHandler, OpenAI
@@ -6,6 +7,9 @@ from openai.types.beta.assistant_stream_event import ThreadRunRequiresAction
 from openai.types.beta.threads.run import Run
 
 from .function_tool import FunctionTool, call_tool
+
+
+logger = logging.getLogger(__name__)
 
 
 class EventHandler(AssistantEventHandler):
@@ -29,6 +33,7 @@ class EventHandler(AssistantEventHandler):
 
         for tool_call in run.required_action.submit_tool_outputs.tool_calls:  # type: ignore[reportOptionalMemberAccess]
             if tool_call.type != "function":
+                # TODO: raise custom exception
                 raise Exception(f"Unexpected tool_call.type={tool_call.type}")
             tool = self.tools_by_name[tool_call.function.name]
             try:
@@ -44,8 +49,22 @@ class EventHandler(AssistantEventHandler):
                 ) from e
 
             # TODO: Check if the EventHandler is eating exceptions:
-            print(tool_call.function.name, tool_kwargs)
+            logger.info(
+                "Calling tool '%(tool_name)s' with arguments: %(tool_kwargs)s",
+                {
+                    "tool_name": tool.metadata.name,
+                    "tool_kwargs": tool_kwargs,
+                },
+            )
             output = call_tool(tool, tool_kwargs)
+            logger.debug(
+                "Tool output of '%(tool_name)s' with arguments: %(tool_kwargs)s : %(output)s",
+                {
+                    "tool_name": tool.metadata.name,
+                    "tool_kwargs": tool_kwargs,
+                    "output": output,
+                },
+            )
             output_str_list.append({"tool_call_id": tool_call.id, "output": str(output)})
 
         # Submit all tool_outputs at the same time
