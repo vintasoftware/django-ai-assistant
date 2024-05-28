@@ -1,10 +1,9 @@
 from datetime import datetime
-from typing import Any, List, Literal
+from typing import List
 
 from django.shortcuts import render
-from django.utils import timezone
 
-from ninja import Field, ModelSchema, NinjaAPI, Schema
+from ninja import NinjaAPI
 
 from .exceptions import AIUserNotAllowedError
 from .helpers.assistants import (
@@ -18,6 +17,13 @@ from .helpers.assistants import (
     create_thread as ai_create_thread,
 )
 from .models import Assistant, Thread
+from .schemas import (
+    AssistantSchema,
+    ThreadMessagesSchemaIn,
+    ThreadMessagesSchemaOut,
+    ThreadSchema,
+    ThreadSchemaIn,
+)
 
 
 api = NinjaAPI()
@@ -36,38 +42,12 @@ def ai_user_not_allowed_handler(request, exc):
     )
 
 
-class AssistantSchema(ModelSchema):
-    class Meta:
-        model = Assistant
-        fields = (
-            "openai_id",
-            "name",
-            "created_at",
-            "updated_at",
-        )
-
-
 @api.get("assistants/", response=List[AssistantSchema])
 def list_assistants(request):
     data = list(assistants_generator(user=request.user, request=request, view=None))
     if is_htmx_request(request):
         return render(request, "assistants/list.html", {"assistants": data})
     return data
-
-
-class ThreadSchema(ModelSchema):
-    class Meta:
-        model = Thread
-        fields = (
-            "openai_id",
-            "name",
-            "created_at",
-            "updated_at",
-        )
-
-
-class ThreadSchemaIn(Schema):
-    name: str = Field(default_factory=lambda: timezone.now().strftime("%Y-%m-%d %H:%M"))
 
 
 @api.get("threads/", response=List[ThreadSchema])
@@ -86,30 +66,6 @@ def create_thread(request, payload: ThreadSchemaIn):
         threads = list(threads_generator(user=request.user, request=request, view=None))
         return render(request, "threads/list.html", {"threads": threads})
     return thread
-
-
-class TextSchema(Schema):
-    # TODO: Improve annotations type. It will be used for RAG.
-    annotations: List[Any]
-    value: str
-
-
-class ThreadMessageContentSchema(Schema):
-    text: TextSchema
-    type: Literal["text"]  # noqa: A003
-
-
-class ThreadMessagesSchemaOut(Schema):
-    openai_id: str
-    openai_thread_id: str
-    content: List[ThreadMessageContentSchema]
-    role: Literal["user", "assistant"]
-    created_at: str
-
-
-class ThreadMessagesSchemaIn(Schema):
-    assistant_id: str
-    content: str
 
 
 @api.get("threads/{openai_thread_id}/messages/", response=List[ThreadMessagesSchemaOut])
