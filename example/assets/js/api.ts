@@ -17,12 +17,12 @@ function csrfFetch(url: string, options: RequestInit = {}) {
 export async function fetchAssistantID(): Promise<string> {
   const response = await csrfFetch("/ai-assistant/assistants/");
   const responseData = await response.json();
-  if (!responseData?.data?.length) {
+  if (!responseData?.length) {
     throw new Error(
       "No assistants found. Please create an assistant on Django side."
     );
   }
-  return responseData.data[0].openai_id;
+  return responseData[0].openai_id;
 }
 
 // TODO: Get typing from Django API
@@ -33,10 +33,10 @@ export interface DjangoThread {
   updated_at: string;
 }
 
-export async function fetchDjangoThreads() {
+export async function fetchDjangoThreads(): Promise<DjangoThread[]> {
   const response = await csrfFetch("/ai-assistant/threads/");
   const responseData = await response.json();
-  return responseData.data as DjangoThread[];
+  return responseData;
 }
 
 export async function createThread(): Promise<DjangoThread> {
@@ -59,7 +59,7 @@ export async function fetchMessages({
     `/ai-assistant/threads/${threadId}/messages/`
   );
   const responseData = await response.json();
-  const messages = responseData.data;
+  const messages = responseData;
   messages.reverse();
   return messages;
 }
