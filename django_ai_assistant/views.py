@@ -5,10 +5,19 @@ from django.http.response import HttpResponse as HttpResponse
 from django.utils import timezone
 from django.views import View
 
-from openai import AsyncOpenAI
+from openai import OpenAI
 
-from .ai.assistant import run_assistant
+from django_ai_assistant.exceptions import AIUserNotAllowedError
+
 from .conf import settings
+from .helpers.assistants import (
+    assistants_generator,
+    create_thread,
+    create_thread_message_as_user,
+    run_assistant_as_user,
+    thread_messages_generator,
+    threads_generator,
+)
 from .models import Assistant, Thread
 
 
@@ -19,7 +28,7 @@ def _parse_json(request: HttpRequest) -> dict:
         else:
             return {}
     except json.JSONDecodeError:
-        return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        return {"error": "Invalid JSON data"}
 
 
 class BaseAssistantView(View):
@@ -27,33 +36,13 @@ class BaseAssistantView(View):
         return {
             "request": self.request,
             "user": self.request.user,
-            "view_kwargs": self.kwargs,
+            "view": self,
         }
 
-    def get_ai_client(self) -> AsyncOpenAI:
+    def get_ai_client(self) -> OpenAI:
         return settings.call_fn(
             "CLIENT_INIT_FN",
             **self._get_default_kwargs(),
-        )
-
-    def can_create_thread(self) -> bool:
-        return settings.call_fn(
-            "CAN_CREATE_THREAD_FN",
-            **self._get_default_kwargs(),
-        )
-
-    def can_create_message(self, thread) -> bool:
-        return settings.call_fn(
-            "CAN_CREATE_MESSAGE_FN",
-            **self._get_default_kwargs(),
-            thread=thread,
-        )
-
-    def can_use_assistant(self, assistant) -> bool:
-        return settings.call_fn(
-            "CAN_USE_ASSISTANT",
-            **self._get_default_kwargs(),
-            assistant=assistant,
         )
 
     # Validate if user is authenticated:
@@ -64,119 +53,97 @@ class BaseAssistantView(View):
 
 
 class AssistantListView(BaseAssistantView):
-    def list_assistants(self) -> list[dict]:
-        client = self.get_ai_client()
-        openai_assistant_dict = {}
-
-        for assistant in client.beta.assistants.list(order="desc"):
-            openai_assistant_dict[assistant.id] = assistant.to_dict()
-
-        django_assistants = Assistant.objects.filter(openai_id__in=openai_assistant_dict.keys())
-        for django_assistant in django_assistants:
-            if not self.can_use_assistant(django_assistant):
-                del openai_assistant_dict[django_assistant.openai_id]
-
-        return list(openai_assistant_dict.values())
-
     def get(self, request: HttpRequest, *args, **kwargs):
-        assistants = self.list_assistants()
-        return JsonResponse({"object": "list", "data": assistants})
+        assistants_data = [
+            {
+                "openai_id": a.openai_id,
+                "name": a.name,
+                "created_at": a.created_at.isoformat(),
+                "updated_at": a.updated_at.isoformat(),
+            }
+            for a in assistants_generator(user=self.request.user, request=self.request, view=self)
+        ]
+        return JsonResponse({"object": "list", "data": assistants_data})
 
 
 class ThreadListCreateView(BaseAssistantView):
     def get_default_thread_name(self, data: dict) -> str:
         return timezone.now().strftime("%Y-%m-%d %H:%M")
 
-    def create_thread(self, name: str):
-        client = self.get_ai_client()
-        thread = client.beta.threads.create(metadata={"name": name})
-        Thread.objects.create(name=name, created_by=self.request.user, openai_id=thread.id)
-        return thread
-
-    def list_threads(self) -> list[dict]:
-        threads = []
-        for thread in Thread.objects.filter(created_by=self.request.user):
-            threads.append(
-                {
-                    "openai_id": thread.openai_id,
-                    "name": thread.name,
-                    "created_at": thread.created_at.isoformat(),
-                    "updated_at": thread.updated_at.isoformat(),
-                }
-            )
-        return threads
-
     def get(self, request: HttpRequest, *args, **kwargs):
-        threads = self.list_threads()
-        return JsonResponse({"object": "list", "data": threads})
+        threads_data = [
+            {
+                "openai_id": t.openai_id,
+                "name": t.name,
+                "created_at": t.created_at.isoformat(),
+                "updated_at": t.updated_at.isoformat(),
+            }
+            for t in threads_generator(user=self.request.user, request=self.request, view=self)
+        ]
+        return JsonResponse({"object": "list", "data": threads_data})
 
     def post(self, request: HttpRequest, *args, **kwargs):
-        if not self.can_create_thread():
-            return JsonResponse({"error": "User is not allowed to create threads"}, status=403)
         data = _parse_json(request)
+        if "error" in data:
+            return JsonResponse(data, status=400)
 
-        thread = self.create_thread(name=data.get("name", self.get_default_thread_name(data)))
-        return JsonResponse(thread.to_dict())
+        name = data.get("name", self.get_default_thread_name(data))
+        try:
+            openai_thread = create_thread(
+                name=name, user=self.request.user, request=self.request, view=self
+            )
+        except AIUserNotAllowedError as e:
+            return JsonResponse({"error": str(e)}, status=403)
+        return JsonResponse(openai_thread.to_dict())
 
 
 class ThreadMessageListCreateView(BaseAssistantView):
-    django_thread: Thread
-
-    def list_thread_messages(self):
-        client = self.get_ai_client()
-        yield from client.beta.threads.messages.list(thread_id=self.kwargs["thread_id"])
-
-    def create_thread_message(self, content: str):
-        client = self.get_ai_client()
-        return client.beta.threads.messages.create(
-            thread_id=self.kwargs["thread_id"], role="user", content=content
-        )
-
-    def create_run(self, assistant_id: str):
-        # TODO: Decide how to deal with fn changes (migrations) and how to sync with OpenAI.
-        client = self.get_ai_client()
-        thread_id = self.kwargs["thread_id"]
-        # TODO: handle exceptions properly
-        event_handler = run_assistant(
-            client, openai_thread_id=thread_id, openai_assistant_id=assistant_id
-        )
-        return event_handler.current_run.id
-
-    # Set django_thread attribute:
     def dispatch(self, request, *args, **kwargs):
-        if request.method.lower() in self.http_method_names and hasattr(
-            self, request.method.lower()
-        ):
-            try:
-                self.django_thread = Thread.objects.get(openai_id=kwargs["thread_id"])
-            except Thread.DoesNotExist:
-                return JsonResponse({"error": "Thread not found"}, status=404)
-        return super().dispatch(request, *args, **kwargs)
+        try:
+            return super().dispatch(request, *args, **kwargs)
+        except Thread.DoesNotExist:
+            return JsonResponse({"error": "Thread not found"}, status=404)
+        except Assistant.DoesNotExist:
+            return JsonResponse({"error": "Assistant not found"}, status=404)
 
     # List messages in a thread:
     def get(self, request: HttpRequest, *args, **kwargs):
-        messages = []
-        for message in self.list_thread_messages():
-            messages.append(message.to_dict())
+        messages_data = []
+        for message in thread_messages_generator(
+            openai_thread_id=self.kwargs["openai_thread_id"],
+            user=self.request.user,
+            request=self.request,
+            view=self,
+        ):
+            messages_data.append(message.to_dict())
 
-        return JsonResponse({"object": "list", "data": messages})
+        return JsonResponse({"object": "list", "data": messages_data})
 
     # Create a message in a thread:
     def post(self, request: HttpRequest, *args, **kwargs):
-        if not self.can_create_message(thread=self.django_thread):
-            return JsonResponse({"error": "User is not allowed to create messages"}, status=403)
         data = _parse_json(request)
+        if "error" in data:
+            return JsonResponse(data, status=400)
         if not data.get("content"):
             return JsonResponse({"error": "Message content is required"}, status=400)
         if not data.get("assistant_id"):
-            return JsonResponse({"error": "OpenAI Assistant ID content is required"}, status=400)
+            return JsonResponse({"error": "OpenAI Assistant ID is required"}, status=400)
 
-        message = self.create_thread_message(content=data["content"])
-        run_id = self.create_run(assistant_id=data["assistant_id"])
-
-        return JsonResponse(
-            {
-                "message": message.to_dict(),
-                "run_id": run_id,
-            }
+        assistant = Assistant.objects.get(openai_id=data["assistant_id"])
+        thread = Thread.objects.get(openai_id=self.kwargs["openai_thread_id"])
+        message = create_thread_message_as_user(
+            openai_thread_id=self.kwargs["openai_thread_id"],
+            content=data["content"],
+            user=self.request.user,
+            request=self.request,
+            view=self,
         )
+        run_assistant_as_user(
+            assistant=assistant,
+            thread=thread,
+            user=self.request.user,
+            request=self.request,
+            view=self,
+        )
+
+        return JsonResponse({"message": message.to_dict()})
