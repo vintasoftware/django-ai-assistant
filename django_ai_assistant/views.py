@@ -63,8 +63,7 @@ def create_thread(request, payload: ThreadSchemaIn):
     name = payload.name
     thread, _ = ai_create_thread(name=name, user=request.user, request=request, view=None)
     if is_htmx_request(request):
-        threads = list(threads_generator(user=request.user, request=request, view=None))
-        return render(request, "threads/list.html", {"threads": threads})
+        return render(request, "threads/item.html", {"thread": thread})
     return thread
 
 
