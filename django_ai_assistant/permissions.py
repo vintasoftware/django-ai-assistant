@@ -42,7 +42,7 @@ def can_create_message(
     )
 
 
-def can_use_assistant(
+def can_run_assistant(
     assistant,
     user: Any,
     request: HttpRequest | None = None,
@@ -50,7 +50,7 @@ def can_use_assistant(
     **kwargs,
 ) -> bool:
     return settings.call_fn(
-        "CAN_USE_ASSISTANT",
+        "CAN_RUN_ASSISTANT",
         **_get_default_kwargs(user, request, view),
         assistant=assistant,
     )
