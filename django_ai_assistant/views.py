@@ -87,6 +87,7 @@ def list_thread_messages(request, openai_thread_id: str):
     return data
 
 
+# TODO: Support content streaming
 @api.post("threads/{openai_thread_id}/messages/", response=ThreadMessagesSchemaOut)
 def create_thread_message(request, openai_thread_id: str, payload: ThreadMessagesSchemaIn):
     assistant = Assistant.objects.get(openai_id=payload.assistant_id)
