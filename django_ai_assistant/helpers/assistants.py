@@ -11,7 +11,7 @@ from django_ai_assistant.ai.function_tool import FunctionTool
 from django_ai_assistant.conf import settings
 from django_ai_assistant.exceptions import AIUserNotAllowedError
 from django_ai_assistant.models import Assistant, Thread
-from django_ai_assistant.permissions import can_create_thread, can_use_assistant
+from django_ai_assistant.permissions import can_create_thread, can_run_assistant
 
 
 class AIAssistant(Protocol):
@@ -89,7 +89,7 @@ def run_assistant_as_user(
     request: HttpRequest | None = None,
     view: View | None = None,
 ):
-    if not can_use_assistant(assistant=assistant, user=user, request=request, view=view):
+    if not can_run_assistant(assistant=assistant, user=user, request=request, view=view):
         raise AIUserNotAllowedError("User is not allowed to use this assistant")
     if not client:
         client = cast(OpenAI, settings.call_fn("CLIENT_INIT_FN"))
@@ -104,7 +104,7 @@ def assistants_generator(
     view: View | None = None,
 ):
     for assistant in Assistant.objects.all():
-        if can_use_assistant(assistant=assistant, user=user, request=request, view=view):
+        if can_run_assistant(assistant=assistant, user=user, request=request, view=view):
             yield assistant
 
 
