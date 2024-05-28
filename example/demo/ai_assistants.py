@@ -1,4 +1,4 @@
-from django_ai_assistant.ai.assistant import register_assistant
+from django_ai_assistant.helpers.assistants import register_assistant
 
 from .weather import fetch_current_weather, fetch_forecast_weather
 
