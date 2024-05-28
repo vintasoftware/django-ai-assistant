@@ -11,6 +11,7 @@ python = "^3.12"
 Django = "^5.0"
 openai = "^1.30.1"
 pydantic = "^2.7.1"
+django-ninja = "^1.1.0"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.2.7"
@@ -100,6 +101,11 @@ ignore = [
   "BLE001",
   # Disable unused `noqa` directive
   "RUF100",
+  # Disable UP rules that conflict with django-ninja
+  "UP006",
+  "UP035",
+  "UP037",
+  "UP040",
 ]
 line-length = 100
 indent-width = 4
