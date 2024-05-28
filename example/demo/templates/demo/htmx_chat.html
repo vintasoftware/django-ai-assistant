@@ -4,81 +4,80 @@
     <title>HTMX Chat</title>
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@mantine/core@latest/dist/index.css"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     />
     <link rel="stylesheet" href="/static/css/Chat.module.css" />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://unpkg.com/htmx.org@1.5.0/dist/htmx.min.js"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    <style>
+      .selected-thread {
+        background-color: #007bff;
+        color: white;
+      }
+    </style>
   </head>
   <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    <div id="chat-container">
-      <aside>
+    <div id="chat-container" class="d-flex vh-100">
+      <aside class="col-3 border-right p-3 bg-light">
+        <h3>Threads</h3>
         <div
+          id="threads-nav"
+          class="list-group"
           hx-get="/ai-assistant/threads/"
           hx-trigger="load"
           hx-target="#threads-nav"
+        ></div>
+        <button
+          class="btn btn-primary mt-3"
+          hx-post="/ai-assistant/threads/"
+          hx-trigger="click"
+          hx-target="#threads-nav"
+          hx-swap="beforebegin"
+          hx-ext="json-enc"
         >
-          <div id="threads-nav"></div>
-          <button
-            class="button"
-            hx-post="/ai-assistant/threads/"
-            hx-trigger="click"
-            hx-target="#threads-nav"
-            hx-ext="json-enc"
-          >
-            Create Thread
-          </button>
-        </div>
+          Create Thread
+        </button>
       </aside>
-      <main>
-        <div class="container">
-          <div class="stack">
-            <h2 class="title">Chat</h2>
-            <div
-              id="scroll-area"
-              class="scroll-area"
-              hx-trigger="load, new-thread from:body"
-            >
-              <div class="loading-overlay" id="loading-overlay"></div>
-              <div
-                id="chat-message-list"
-                class="chat-message-list"
-                hx-get="/ai-assistant/threads/thread_C0ZXbipIklfH1PHu04sonVaB/messages/"
-                hx-trigger="load, new-message from:body"
-              >
-                <div class="no-messages">
+      <main class="col-9 d-flex flex-column p-3">
+        <div class="container-fluid d-flex flex-column h-100">
+          <div class="d-flex flex-column flex-grow-1">
+            <h2 class="mb-4">Chat</h2>
+            <div id="scroll-area" class="flex-grow-1 overflow-auto">
+              <div id="chat-message-list" class="list-group">
+                <div class="no-messages text-center text-muted my-3">
                   Select or create a thread to start chatting.
                 </div>
               </div>
             </div>
             <textarea
               id="input-area"
-              class="textarea"
+              class="form-control mt-3"
               placeholder="Please create or select a thread on the sidebar"
               hx-trigger="keydown[mod+Enter]"
               hx-include="#input-area"
               hx-target="#chat-message-list"
               name="content"
+              disabled
             ></textarea>
-            <input
-              type="hidden"
-              name="thread"
-              value="thread_JKEXjsfajaFMFKF0exBO4Wru"
-            />
+            <input type="hidden" id="thread-id" name="thread_id" value="" />
             <input
               id="assistant-id"
               type="hidden"
               name="assistant_id"
               value="asst_C5IPeKfVtvnHA9WRQvJfyLhh"
             />
-
             <button
               id="send-button"
-              class="button"
+              class="btn btn-primary mt-3"
               hx-trigger="click"
-              hx-include="#input-area,#assistant-id"
+              hx-include="#input-area,#assistant-id,#thread-id"
               hx-target="#chat-message-list"
+              hx-swap="beforeend"
               hx-ext="json-enc"
+              disabled
             >
               Send
             </button>
@@ -88,44 +87,64 @@
     </div>
 
     <script>
-      let threadId = "thread_C0ZXbipIklfH1PHu04sonVaB";
-      {% comment %} document
-        .querySelector("chat-message-list")
-        .setAttribute("hx-get", `/ai-assistant/threads/${threadId}/messages/`); {% endcomment %}
-      {% comment %} document.querySelector("chat-message-list").setAttribute('hx-get', `/ai-assistant/threads/${threadId}/messages/`); {% endcomment %}
-      document
-        .querySelector("#input-area")
-        .setAttribute("hx-post", `/ai-assistant/threads/${threadId}/messages/`);
-      document
-        .querySelector("#send-button")
-        .setAttribute("hx-post", `/ai-assistant/threads/${threadId}/messages/`);
+      function setThreadId(threadId, element) {
+        document.querySelector("#thread-id").value = threadId;
+        document.querySelector("#input-area").placeholder =
+          "Type your message...";
+        document.querySelector("#input-area").removeAttribute("disabled");
+        document.querySelector("#send-button").removeAttribute("disabled");
+
+        document
+          .querySelector("#input-area")
+          .setAttribute(
+            "hx-post",
+            `/ai-assistant/threads/${threadId}/messages/`
+          );
+        document
+          .querySelector("#send-button")
+          .setAttribute(
+            "hx-post",
+            `/ai-assistant/threads/${threadId}/messages/`
+          );
+
+        htmx.trigger("#chat-message-list", "new-thread");
+
+        document
+          .querySelectorAll("#threads-nav .list-group-item")
+          .forEach((thread) => {
+            thread.classList.remove("selected-thread");
+          });
+        element.classList.add("selected-thread");
+      }
 
       document.addEventListener("htmx:afterRequest", function (evt) {
-        if (evt.detail.path === "/ai-assistant/send_message/") {
+        if (evt.detail.path.includes("/messages/")) {
           document.getElementById("input-area").value = "";
           htmx.trigger("#chat-message-list", "new-message");
         }
       });
 
       document.addEventListener("htmx:load", function (evt) {
-        if (
-          evt.detail.target.id === "threads-nav" &&
-          !evt.detail.xhr.response
-        ) {
-          document.getElementById("threads-nav").innerText =
-            "No threads available.";
+        if (evt.detail.target.id === "threads-nav" && evt.detail.xhr.response) {
+          document
+            .querySelectorAll("#threads-nav .list-group-item")
+            .forEach((thread) => {
+              thread.addEventListener("click", function () {
+                setThreadId(this.dataset.threadId, this);
+              });
+            });
         }
       });
 
       document.addEventListener("htmx:beforeRequest", function (evt) {
-        if (evt.detail.path === "/ai-assistant/send_message/") {
-          document.getElementById("loading-overlay").style.display = "block";
+        if (evt.detail.path.includes("/messages/")) {
+          document.getElementById("loading-overlay").classList.remove("d-none");
         }
       });
 
       document.addEventListener("htmx:afterSwap", function (evt) {
         if (evt.detail.target.id === "chat-message-list") {
-          document.getElementById("loading-overlay").style.display = "none";
+          document.getElementById("loading-overlay").classList.add("d-none");
         }
       });
     </script>

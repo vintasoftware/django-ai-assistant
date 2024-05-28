@@ -1,0 +1,9 @@
+<a
+  class="list-group-item list-group-item-action"
+  data-thread-id="{{ thread.openai_id }}"
+  hx-get="/ai-assistant/threads/{{ thread.openai_id }}/messages/"
+  hx-target="#chat-message-list"
+  onclick="setThreadId('{{ thread.openai_id }}', this)"
+>
+  {{ thread.name }}
+</a>

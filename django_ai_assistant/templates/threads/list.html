@@ -1,7 +1,1 @@
-<!-- threads.html -->
-<h1>Threads</h1>
-<ul>
-  {% for thread in threads %}
-  <li>{{ thread.name }}</li>
-  {% endfor %}
-</ul>
+{% for thread in threads %} {% include 'threads/item.html' %} {% endfor %}
