@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HTMX Chat</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@mantine/core@latest/dist/index.css"
+    />
+    <link rel="stylesheet" href="/static/css/Chat.module.css" />
+    <script src="https://unpkg.com/htmx.org@1.5.0/dist/htmx.min.js"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+  </head>
+  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <div id="chat-container">
+      <aside>
+        <div
+          hx-get="/ai-assistant/threads/"
+          hx-trigger="load"
+          hx-target="#threads-nav"
+        >
+          <div id="threads-nav"></div>
+          <button
+            class="button"
+            hx-post="/ai-assistant/threads/"
+            hx-trigger="click"
+            hx-target="#threads-nav"
+          >
+            Create Thread
+          </button>
+        </div>
+      </aside>
+      <main>
+        <div class="container">
+          <div class="stack">
+            <h2 class="title">Chat</h2>
+            <div
+              id="scroll-area"
+              class="scroll-area"
+              hx-trigger="load, new-thread from:body"
+            >
+              <div class="loading-overlay" id="loading-overlay"></div>
+              <div
+                id="chat-message-list"
+                class="chat-message-list"
+                hx-get="/ai-assistant/threads/thread_C0ZXbipIklfH1PHu04sonVaB/messages/"
+                hx-trigger="load, new-message from:body"
+              >
+                <div class="no-messages">
+                  Select or create a thread to start chatting.
+                </div>
+              </div>
+            </div>
+            <textarea
+              id="input-area"
+              class="textarea"
+              placeholder="Please create or select a thread on the sidebar"
+              hx-trigger="keydown[mod+Enter]"
+              hx-include="#input-area"
+              hx-target="#chat-message-list"
+              name="content"
+            ></textarea>
+            <input
+              type="hidden"
+              name="thread"
+              value="thread_JKEXjsfajaFMFKF0exBO4Wru"
+            />
+            <input
+              id="assistant-id"
+              type="hidden"
+              name="assistant_id"
+              value="asst_C5IPeKfVtvnHA9WRQvJfyLhh"
+            />
+
+            <button
+              id="send-button"
+              class="button"
+              hx-trigger="click"
+              hx-include="#input-area,#assistant-id"
+              hx-target="#chat-message-list"
+              hx-ext="json-enc"
+            >
+              Send
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      let threadId = "thread_C0ZXbipIklfH1PHu04sonVaB";
+      {% comment %} document
+        .querySelector("chat-message-list")
+        .setAttribute("hx-get", `/ai-assistant/threads/${threadId}/messages/`); {% endcomment %}
+      {% comment %} document.querySelector("chat-message-list").setAttribute('hx-get', `/ai-assistant/threads/${threadId}/messages/`); {% endcomment %}
+      document
+        .querySelector("#input-area")
+        .setAttribute("hx-post", `/ai-assistant/threads/${threadId}/messages/`);
+      document
+        .querySelector("#send-button")
+        .setAttribute("hx-post", `/ai-assistant/threads/${threadId}/messages/`);
+      document.addEventListener("htmx:configRequest", (evt) => {
+        evt.detail.headers["Accept"] = "text/html;hx=1";
+      });
+
+      document.addEventListener("htmx:afterRequest", function (evt) {
+        if (evt.detail.path === "/ai-assistant/send_message/") {
+          document.getElementById("input-area").value = "";
+          htmx.trigger("#chat-message-list", "new-message");
+        }
+      });
+
+      document.addEventListener("htmx:load", function (evt) {
+        if (
+          evt.detail.target.id === "threads-nav" &&
+          !evt.detail.xhr.response
+        ) {
+          document.getElementById("threads-nav").innerText =
+            "No threads available.";
+        }
+      });
+
+      document.addEventListener("htmx:beforeRequest", function (evt) {
+        if (evt.detail.path === "/ai-assistant/send_message/") {
+          document.getElementById("loading-overlay").style.display = "block";
+        }
+      });
+
+      document.addEventListener("htmx:afterSwap", function (evt) {
+        if (evt.detail.target.id === "chat-message-list") {
+          document.getElementById("loading-overlay").style.display = "none";
+        }
+      });
+    </script>
+  </body>
+</html>

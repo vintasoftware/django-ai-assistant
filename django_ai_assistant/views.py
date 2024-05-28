@@ -2,6 +2,7 @@ import json
 
 from django.http import HttpRequest, JsonResponse
 from django.http.response import HttpResponse as HttpResponse
+from django.shortcuts import render
 from django.utils import timezone
 from django.views import View
 
@@ -108,14 +109,24 @@ class ThreadListCreateView(BaseAssistantView):
 
     def get(self, request: HttpRequest, *args, **kwargs):
         threads = self.list_threads()
+
+        accept = request.headers.get("Accept", "")
+        if "text/html" in accept:
+            return render(request, "threads/list.html", {"threads": threads})
+
         return JsonResponse({"object": "list", "data": threads})
 
     def post(self, request: HttpRequest, *args, **kwargs):
         if not self.can_create_thread():
             return JsonResponse({"error": "User is not allowed to create threads"}, status=403)
+
         data = _parse_json(request)
 
         thread = self.create_thread(name=data.get("name", self.get_default_thread_name(data)))
+        accept = request.headers.get("Accept", "")
+        if "text/html" in accept:
+            return render(request, "threads/list.html", {"threads": self.list_threads()})
+
         return JsonResponse(thread.to_dict())
 
 
@@ -159,6 +170,9 @@ class ThreadMessageListCreateView(BaseAssistantView):
         for message in self.list_thread_messages():
             messages.append(message.to_dict())
 
+        accept = request.headers.get("Accept", "")
+        if "text/html" in accept:
+            return render(request, "messages/list.html", {"messages": messages})
         return JsonResponse({"object": "list", "data": messages})
 
     # Create a message in a thread:
@@ -173,6 +187,14 @@ class ThreadMessageListCreateView(BaseAssistantView):
 
         message = self.create_thread_message(content=data["content"])
         run_id = self.create_run(assistant_id=data["assistant_id"])
+
+        accept = request.headers.get("Accept", "")
+        if "text/html" in accept:
+            return render(
+                request,
+                "messages/list.html",
+                {"messages": list(self.list_thread_messages())},
+            )
 
         return JsonResponse(
             {

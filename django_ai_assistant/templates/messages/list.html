@@ -1,0 +1,7 @@
+<ul>
+  {% for message in messages reversed %}
+  <li>
+    <strong>{{ message.role}}:</strong> {{ message.content.0.text.value }}
+  </li>
+  {% endfor %}
+</ul>
