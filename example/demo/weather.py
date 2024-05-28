@@ -24,7 +24,7 @@ def fetch_current_weather(location: str) -> dict:
 
 def fetch_forecast_weather(
     location: str, dt_str: str = Field(description="Date in the format 'YYYY-MM-DD'")
-):
+) -> dict:
     """Fetch the forecast weather data for a location"""
 
     response = requests.get(
