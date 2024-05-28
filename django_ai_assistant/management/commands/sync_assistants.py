@@ -2,7 +2,7 @@ import traceback
 
 from django.core.management.base import BaseCommand, CommandError
 
-from django_ai_assistant.ai.assistant import sync_assistants
+from django_ai_assistant.helpers.assistants import sync_assistants
 
 
 class Command(BaseCommand):
