@@ -95,7 +95,7 @@ class ThreadListCreateView(BaseAssistantView):
 
         name = data.get("name", self.get_default_thread_name(data))
         try:
-            openai_thread = create_thread(
+            _, openai_thread = create_thread(
                 name=name, user=self.request.user, request=self.request, view=self
             )
         except AIUserNotAllowedError as e:

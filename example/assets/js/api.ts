@@ -1,7 +1,6 @@
 import cookie from "cookie";
 import OpenAI from "openai";
 
-
 function csrfFetch(url: string, options: RequestInit = {}) {
   const { csrftoken } = cookie.parse(document.cookie);
 
@@ -15,15 +14,18 @@ function csrfFetch(url: string, options: RequestInit = {}) {
   });
 }
 
-export async function fetchAssistantID() {
+export async function fetchAssistantID(): Promise<string> {
   const response = await csrfFetch("/ai-assistant/assistants/");
   const responseData = await response.json();
   if (!responseData?.data?.length) {
-    throw new Error("No assistants found. Please create an assistant on Django side.");
+    throw new Error(
+      "No assistants found. Please create an assistant on Django side."
+    );
   }
-  return responseData.data[0].openai_id as string;
+  return responseData.data[0].openai_id;
 }
 
+// TODO: Get typing from Django API
 export interface DjangoThread {
   openai_id: string;
   name: string;
@@ -37,7 +39,7 @@ export async function fetchDjangoThreads() {
   return responseData.data as DjangoThread[];
 }
 
-export async function createThread() {
+export async function createThread(): Promise<DjangoThread> {
   const response = await csrfFetch("/ai-assistant/threads/", {
     method: "POST",
     headers: {
@@ -45,15 +47,19 @@ export async function createThread() {
     },
   });
   const responseData = await response.json();
-  return responseData as OpenAI.Beta.Threads.Thread;
+  return responseData;
 }
 
-export async function fetchMessages({ threadId }: { threadId: string }) {
+export async function fetchMessages({
+  threadId,
+}: {
+  threadId: string;
+}): Promise<OpenAI.Beta.Threads.Message[]> {
   const response = await csrfFetch(
     `/ai-assistant/threads/${threadId}/messages/`
   );
   const responseData = await response.json();
-  const messages = responseData.data as OpenAI.Beta.Threads.Message[];
+  const messages = responseData.data;
   messages.reverse();
   return messages;
 }
@@ -66,12 +72,17 @@ export async function createMessage({
   threadId: string;
   assistantId: string;
   content: string;
-}) {
-  await csrfFetch(`/ai-assistant/threads/${threadId}/messages/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ content, assistant_id: assistantId }),
-  });
+}): Promise<OpenAI.Beta.Threads.Message> {
+  const response = await csrfFetch(
+    `/ai-assistant/threads/${threadId}/messages/`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ content, assistant_id: assistantId }),
+    }
+  );
+  const responseData = await response.json();
+  return responseData;
 }
