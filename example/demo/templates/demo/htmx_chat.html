@@ -24,6 +24,7 @@
             hx-post="/ai-assistant/threads/"
             hx-trigger="click"
             hx-target="#threads-nav"
+            hx-ext="json-enc"
           >
             Create Thread
           </button>
@@ -98,9 +99,6 @@
       document
         .querySelector("#send-button")
         .setAttribute("hx-post", `/ai-assistant/threads/${threadId}/messages/`);
-      document.addEventListener("htmx:configRequest", (evt) => {
-        evt.detail.headers["Accept"] = "text/html;hx=1";
-      });
 
       document.addEventListener("htmx:afterRequest", function (evt) {
         if (evt.detail.path === "/ai-assistant/send_message/") {
