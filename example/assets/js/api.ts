@@ -21,7 +21,7 @@ export async function fetchAssistantID() {
   if (!responseData?.data?.length) {
     throw new Error("No assistants found. Please create an assistant on Django side.");
   }
-  return responseData.data[0].id as string;
+  return responseData.data[0].openai_id as string;
 }
 
 export interface DjangoThread {

@@ -1,0 +1,2 @@
+class AIUserNotAllowedError(Exception):
+    pass
