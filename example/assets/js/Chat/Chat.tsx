@@ -98,7 +98,7 @@ export function Chat() {
     try {
       const thread = await createThread();
       await loadThreads();
-      setThreadId(thread.id);
+      setThreadId(thread.openai_id);
     } catch (error) {
       console.error(error);
       // alert("Error while creating thread");

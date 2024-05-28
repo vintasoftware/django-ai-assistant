@@ -121,8 +121,8 @@ def create_thread(
         client = cast(OpenAI, settings.call_fn("CLIENT_INIT_FN"))
 
     openai_thread = client.beta.threads.create(metadata={"name": name})
-    Thread.objects.create(name=name, created_by=user, openai_id=openai_thread.id)
-    return openai_thread
+    thread = Thread.objects.create(name=name, created_by=user, openai_id=openai_thread.id)
+    return thread, openai_thread
 
 
 def threads_generator(
