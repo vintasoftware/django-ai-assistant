@@ -2,14 +2,16 @@ from collections.abc import Callable
 from typing import Any, Protocol, cast
 
 from django.http import HttpRequest
+from django.utils import timezone
 from django.views import View
 
 from openai import OpenAI
+from openai.types.beta import FunctionToolParam
 
 from django_ai_assistant.ai.function_calling import EventHandler
 from django_ai_assistant.ai.function_tool import FunctionTool
 from django_ai_assistant.conf import settings
-from django_ai_assistant.exceptions import AIUserNotAllowedError
+from django_ai_assistant.exceptions import AIAssistantClsNotDefinedError, AIUserNotAllowedError
 from django_ai_assistant.models import Assistant, Thread
 from django_ai_assistant.permissions import can_create_thread, can_run_assistant
 
@@ -21,58 +23,102 @@ class AIAssistant(Protocol):
     model: str = "gpt-4o"
 
 
-assistant_cls_registry: dict[str, type[AIAssistant]] = {}
+ASSISTANT_DEF_CLS_REGISTRY: dict[str, type[AIAssistant]] = {}
 
 
 def register_assistant(cls: type[AIAssistant]):
-    assistant_cls_registry[cls.__name__] = cls
+    ASSISTANT_DEF_CLS_REGISTRY[cls.__name__] = cls
     return cls
 
 
-def get_tools(assistant_cls: type[AIAssistant]):
-    fns_tools = [FunctionTool.from_defaults(fn=fn) for fn in assistant_cls.fns]
+def get_tools(assistant_def_cls: type[AIAssistant]):
+    fns_tools = [FunctionTool.from_defaults(fn=fn) for fn in assistant_def_cls.fns]
     tools = [t.metadata.to_openai_tool() for t in fns_tools]
     return fns_tools, tools
 
 
-def sync_assistants(model: str = "gpt-4o"):
-    # TODO: fix to really sync: update what exists, create what doesn't
-
-    client = settings.call_fn("CLIENT_INIT_FN")
-    openai_ids = []
-
-    for slug, assistant_cls in assistant_cls_registry.items():
-        __, tools = get_tools(assistant_cls)
-        openai_assistant = client.beta.assistants.create(
-            instructions=assistant_cls.instructions,
-            name=assistant_cls.name,
-            tools=tools,
-            model=model,
-        )
-        Assistant.objects.create(
-            slug=slug,
-            name=assistant_cls.name,
-            openai_id=openai_assistant.id,
-        )
-        openai_ids.append(openai_assistant.id)
-
-    return openai_ids
+def get_assistant_def_cls(assistant: Assistant):
+    return ASSISTANT_DEF_CLS_REGISTRY.get(assistant.slug)
 
 
-def get_class_from_slug(django_assistant: Assistant):
-    return assistant_cls_registry.get(django_assistant.slug)
+def assistant_def_cls_to_model_attrs(cls: type[AIAssistant]) -> dict[str, Any]:
+    return {
+        "slug": cls.__name__,
+        "name": cls.name,
+    }
+
+
+def sync_assistant_def_cls_with_django_assistant(assistant_def_cls: type[AIAssistant]):
+    defaults = assistant_def_cls_to_model_attrs(assistant_def_cls)
+    del defaults["slug"]  # already on the kwargs of the update_or_create call
+    defaults["cls_synced_at"] = timezone.now()
+    return Assistant.objects.update_or_create(
+        slug=assistant_def_cls.__name__,
+        defaults=defaults,
+    )
+
+
+def assistant_def_cls_to_openai_attrs(cls):
+    """
+    Convert an assistant class to a dictionary of keyword arguments for OpenAI API calls.
+    """
+    __, tools = get_tools(cls)
+    return {
+        "instructions": cls.instructions,
+        "name": cls.name,
+        "tools": cast(list[FunctionToolParam], tools),
+        "model": cls.model,
+    }
+
+
+def create_assistant_in_openai(assistant: Assistant, client: OpenAI | None = None):
+    if not client:
+        client = cast(OpenAI, settings.call_fn("CLIENT_INIT_FN"))
+
+    assistant_def_cls = get_assistant_def_cls(assistant)
+    if not assistant_def_cls:
+        raise AIAssistantClsNotDefinedError(f"Assistant class not found: {assistant.slug}")
+
+    openai_assistant = client.beta.assistants.create(
+        **assistant_def_cls_to_openai_attrs(assistant_def_cls),
+    )
+    assistant.openai_id = openai_assistant.id
+    assistant.openai_synced_at = timezone.now()
+    assistant.save()
+
+
+def update_assistant_in_openai(assistant: Assistant, client: OpenAI | None = None):
+    if not client:
+        client = cast(OpenAI, settings.call_fn("CLIENT_INIT_FN"))
+
+    assistant_def_cls = get_assistant_def_cls(assistant)
+    if not assistant_def_cls:
+        raise AIAssistantClsNotDefinedError(f"Assistant class not found: {assistant.slug}")
+
+    client.beta.assistants.update(
+        assistant_id=assistant.openai_id,
+        **assistant_def_cls_to_openai_attrs(assistant_def_cls),
+    )
+    assistant.openai_synced_at = timezone.now()
+    assistant.save()
+
+
+def sync_assistant_in_openai(assistant: Assistant, client: OpenAI | None = None):
+    if not assistant.openai_id:
+        create_assistant_in_openai(assistant, client)
+    else:
+        update_assistant_in_openai(assistant, client)
 
 
 def run_assistant(assistant: Assistant, thread: Thread, client: OpenAI | None = None):
     if not client:
         client = cast(OpenAI, settings.call_fn("CLIENT_INIT_FN"))
 
-    assistant_cls = get_class_from_slug(assistant)
-    if not assistant_cls:
-        # TODO: make custom exception in .exceptions.py
-        raise Exception(f"Assistant class not found: {assistant.slug}")
+    assistant_def_cls = get_assistant_def_cls(assistant)
+    if not assistant_def_cls:
+        raise AIAssistantClsNotDefinedError(f"Assistant class not found: {assistant.slug}")
 
-    fns_tools, __ = get_tools(assistant_cls)
+    fns_tools, __ = get_tools(assistant_def_cls)
     event_handler = EventHandler(client, fns_tools)
     with client.beta.threads.runs.stream(
         thread_id=thread.openai_id, assistant_id=assistant.openai_id, event_handler=event_handler
