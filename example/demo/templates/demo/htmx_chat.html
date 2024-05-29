@@ -25,13 +25,13 @@
         <div
           id="threads-nav"
           class="list-group"
-          hx-get='{% url "django-ai-assistant:threads-list-create" %}'
+          hx-get='{% url "django_ai_assistant:threads_list_create" %}'
           hx-trigger="load"
           hx-target="#threads-nav"
         ></div>
         <button
           class="btn btn-primary mt-3"
-          hx-post='{% url "django-ai-assistant:threads-list-create" %}'
+          hx-post='{% url "django_ai_assistant:threads_list_create" %}'
           hx-trigger="click"
           hx-target="#threads-nav"
           hx-swap="beforebegin"
