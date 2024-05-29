@@ -1,0 +1,8 @@
+<div
+  class="message-item"
+  data-message-role="{{ message.role }}"
+  data-message-text="{{ message.content.0.text.value }}"
+>
+  <span><strong>{{ message.role | capfirst}}</strong></span>
+  <span>{{ message.content.0.text.value }}</span>
+</div>

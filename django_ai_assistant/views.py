@@ -115,12 +115,7 @@ def create_thread_message(request, openai_thread_id: str, payload: ThreadMessage
         view=None,
     )
     if is_htmx_request(request):
-        messages = list(
-            thread_messages_generator(
-                openai_thread_id=openai_thread_id, user=request.user, request=request, view=None
-            )
-        )
-        return render(request, "messages/list.html", {"messages": messages})
+        return render(request, "messages/item.html", {"message": message})
 
     return {
         "openai_id": message.id,
