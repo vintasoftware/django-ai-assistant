@@ -4,7 +4,7 @@ from django_ai_assistant.ai.sync import sync_assistants
 
 
 class Command(BaseCommand):
-    help = "Sync Django AI Assistant classes with OpenAI Assistants"  # noqa: A003
+    help = "Sync Django AI Assistant classes with model instances and OpenAI Assistants"  # noqa: A003
 
     def add_arguments(self, parser):
         pass
