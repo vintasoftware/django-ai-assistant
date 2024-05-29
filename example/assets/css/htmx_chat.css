@@ -1,0 +1,15 @@
+.main-wrapper {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.selected-thread {
+  background-color: #007bff;
+  color: white;
+}
+
+.message-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+}
