@@ -122,10 +122,12 @@
       function setThreadItemsHXAttributes() {
         document.querySelectorAll(".thread-item").forEach((item) => {
           const threadId = item.getAttribute("data-thread-id");
-          item.setAttribute(
-            "hx-get",
-            `/ai-assistant/threads/${threadId}/messages/`
-          );
+          const getUrl =
+            `{% url "django_ai_assistant:messages_list_create" "openai_thread_id" %}`.replace(
+              "openai_thread_id",
+              threadId
+            );
+          item.setAttribute("hx-get", getUrl);
           item.setAttribute("hx-target", "#chat-message-list");
           item.setAttribute("onclick", `setThreadId('${threadId}', this)`);
         });
