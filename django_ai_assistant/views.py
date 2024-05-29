@@ -42,7 +42,7 @@ def ai_user_not_allowed_handler(request, exc):
     )
 
 
-@api.get("assistants/", response=List[AssistantSchema])
+@api.get("assistants/", response=List[AssistantSchema], url_name="assistants_list")
 def list_assistants(request):
     data = list(assistants_generator(user=request.user, request=request, view=None))
     if is_htmx_request(request):
@@ -67,7 +67,11 @@ def create_thread(request, payload: ThreadSchemaIn):
     return thread
 
 
-@api.get("threads/{openai_thread_id}/messages/", response=List[ThreadMessagesSchemaOut])
+@api.get(
+    "threads/{openai_thread_id}/messages/",
+    response=List[ThreadMessagesSchemaOut],
+    url_name="messages_list_create",
+)
 def list_thread_messages(request, openai_thread_id: str):
     data = [
         {
@@ -87,7 +91,11 @@ def list_thread_messages(request, openai_thread_id: str):
 
 
 # TODO: Support content streaming
-@api.post("threads/{openai_thread_id}/messages/", response=ThreadMessagesSchemaOut)
+@api.post(
+    "threads/{openai_thread_id}/messages/",
+    response=ThreadMessagesSchemaOut,
+    url_name="messages_list_create",
+)
 def create_thread_message(request, openai_thread_id: str, payload: ThreadMessagesSchemaIn):
     assistant = Assistant.objects.get(openai_id=payload.assistant_id)
     thread = Thread.objects.get(openai_id=openai_thread_id)
