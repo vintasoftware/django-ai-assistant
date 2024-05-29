@@ -6,7 +6,6 @@
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     />
-    <link rel="stylesheet" href="/static/css/Chat.module.css" />
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -26,13 +25,13 @@
         <div
           id="threads-nav"
           class="list-group"
-          hx-get="/ai-assistant/threads/"
+          hx-get='{% url "django-ai-assistant:threads-list-create" %}'
           hx-trigger="load"
           hx-target="#threads-nav"
         ></div>
         <button
           class="btn btn-primary mt-3"
-          hx-post="/ai-assistant/threads/"
+          hx-post='{% url "django-ai-assistant:threads-list-create" %}'
           hx-trigger="click"
           hx-target="#threads-nav"
           hx-swap="beforebegin"
@@ -90,24 +89,9 @@
       function setThreadId(threadId, element) {
         document.querySelector("#thread-id").value = threadId;
         document.querySelector("#input-area").placeholder =
-          "Type your message...";
+          "Enter user message… (Ctrl↵ to send)";
         document.querySelector("#input-area").removeAttribute("disabled");
         document.querySelector("#send-button").removeAttribute("disabled");
-
-        document
-          .querySelector("#input-area")
-          .setAttribute(
-            "hx-post",
-            `/ai-assistant/threads/${threadId}/messages/`
-          );
-        document
-          .querySelector("#send-button")
-          .setAttribute(
-            "hx-post",
-            `/ai-assistant/threads/${threadId}/messages/`
-          );
-
-        htmx.trigger("#chat-message-list", "new-thread");
 
         document
           .querySelectorAll("#threads-nav .list-group-item")
@@ -117,34 +101,10 @@
         element.classList.add("selected-thread");
       }
 
-      document.addEventListener("htmx:afterRequest", function (evt) {
-        if (evt.detail.path.includes("/messages/")) {
-          document.getElementById("input-area").value = "";
-          htmx.trigger("#chat-message-list", "new-message");
-        }
-      });
-
-      document.addEventListener("htmx:load", function (evt) {
-        if (evt.detail.target.id === "threads-nav" && evt.detail.xhr.response) {
-          document
-            .querySelectorAll("#threads-nav .list-group-item")
-            .forEach((thread) => {
-              thread.addEventListener("click", function () {
-                setThreadId(this.dataset.threadId, this);
-              });
-            });
-        }
-      });
-
-      document.addEventListener("htmx:beforeRequest", function (evt) {
-        if (evt.detail.path.includes("/messages/")) {
-          document.getElementById("loading-overlay").classList.remove("d-none");
-        }
-      });
-
-      document.addEventListener("htmx:afterSwap", function (evt) {
-        if (evt.detail.target.id === "chat-message-list") {
-          document.getElementById("loading-overlay").classList.add("d-none");
+      // Send message on Ctrl+Enter
+      document.addEventListener("keydown", function (event) {
+        if (event.ctrlKey && event.key === "Enter") {
+          document.getElementById("send-button").click();
         }
       });
     </script>
