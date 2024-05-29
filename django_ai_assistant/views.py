@@ -26,7 +26,7 @@ from .schemas import (
 )
 
 
-api = NinjaAPI()
+api = NinjaAPI(urls_namespace="django-ai-assistant")
 
 
 def is_htmx_request(request):
@@ -50,7 +50,7 @@ def list_assistants(request):
     return data
 
 
-@api.get("threads/", response=List[ThreadSchema])
+@api.get("threads/", response=List[ThreadSchema], url_name="threads-list-create")
 def list_threads(request):
     data = list(threads_generator(user=request.user, request=request, view=None))
     if is_htmx_request(request):
@@ -58,7 +58,7 @@ def list_threads(request):
     return data
 
 
-@api.post("threads/", response=ThreadSchema)
+@api.post("threads/", response=ThreadSchema, url_name="threads-list-create")
 def create_thread(request, payload: ThreadSchemaIn):
     name = payload.name
     thread, _ = ai_create_thread(name=name, user=request.user, request=request, view=None)
