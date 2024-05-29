@@ -9,6 +9,8 @@ class Assistant(models.Model):
     openai_id = models.CharField(max_length=255, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    cls_synced_at = models.DateTimeField(null=True, blank=True)
+    openai_synced_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         verbose_name = "Assistant"
