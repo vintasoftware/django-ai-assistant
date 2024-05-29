@@ -19,6 +19,8 @@ ruff = "^0.1.8"
 python-dotenv = "^1.0.1"
 django-webpack-loader = "^3.1.0"
 requests = "^2.32.2"
+pytest-django = "^4.8.0"
+openai-responses = "^0.5.0"
 
 [build-system]
 requires = ["poetry-core>=1.2.0"]
@@ -138,3 +140,7 @@ pythonVersion = "3.12"
 include = ["django_ai_assistant"]
 typeCheckingMode = "basic"
 useLibraryCodeForTypes = true
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "tests.settings"
+python_files = ["test_*.py"]
