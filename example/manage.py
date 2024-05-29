@@ -2,12 +2,13 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from pathlib import Path
 
 from dotenv import load_dotenv
 
 
 # Insert root dir in PYTHONPATH to get django_ai_assistant package:
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+sys.path.insert(0, str(Path(__file__).parent.parent.resolve()))
 
 
 def main():
