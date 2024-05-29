@@ -39,12 +39,17 @@ export async function fetchDjangoThreads(): Promise<DjangoThread[]> {
   return responseData;
 }
 
-export async function createThread(): Promise<DjangoThread> {
+export async function createThread({
+  name,
+}: {
+  name?: string;
+} = {}): Promise<DjangoThread> {
   const response = await csrfFetch("/ai-assistant/threads/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
+    body: JSON.stringify({ name }),
   });
   const responseData = await response.json();
   return responseData;
