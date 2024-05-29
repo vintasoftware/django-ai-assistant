@@ -114,8 +114,8 @@
         element.classList.add("selected-thread");
       }
 
-      // Fetch the assistant on page load
-      document.addEventListener("DOMContentLoaded", (event) => {
+      document.addEventListener("htmx:afterOnLoad", (event) => {
+        // Fetch the assistant
         fetch('{% url "django_ai_assistant:assistants_list" %}')
           .then((response) => response.json())
           .then((data) => {
@@ -124,6 +124,22 @@
             }
           })
           .catch((error) => console.error("Error:", error));
+
+        // Style and set attributes to thread items
+        if (event.detail.elt.id === "threads-nav") {
+          document.querySelectorAll(".thread-item").forEach((item) => {
+            item.classList.add("list-group-item", "list-group-item-action");
+            const threadId = item.getAttribute("data-thread-id");
+            const threadName = item.getAttribute("data-thread-name");
+            item.setAttribute("data-thread-id", threadId);
+            item.setAttribute(
+              "hx-get",
+              `/ai-assistant/threads/${threadId}/messages/`
+            );
+            item.setAttribute("hx-target", "#chat-message-list");
+            item.setAttribute("onclick", `setThreadId('${threadId}', this)`);
+          });
+        }
       });
 
       // Send message on Ctrl+Enter
