@@ -43,7 +43,7 @@ def can_create_message(
 
 
 def can_run_assistant(
-    assistant,
+    assistant_cls,
     user: Any,
     request: HttpRequest | None = None,
     view: View | None = None,
@@ -52,7 +52,7 @@ def can_run_assistant(
     return settings.call_fn(
         "CAN_RUN_ASSISTANT",
         **_get_default_kwargs(user, request, view),
-        assistant=assistant,
+        assistant_cls=assistant_cls,
     )
 
 

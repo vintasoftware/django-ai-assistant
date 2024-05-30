@@ -11,20 +11,19 @@ export function ThreadsNav({
 }: {
   threads: DjangoThread[] | null;
   selectedThreadId: string | null;
-  selectThread: (openai_id: string) => void;
+  selectThread: (id: string) => void;
   createThread: () => void;
 }) {
   const threadLinks = threads?.map((thread) => {
-    const isThreadSelected =
-      selectedThreadId && selectedThreadId === thread.openai_id;
+    const isThreadSelected = selectedThreadId && selectedThreadId === thread.id;
     return (
       <a
         href="#"
         onClick={(event) => {
-          selectThread(thread.openai_id);
+          selectThread(thread.id);
           event.preventDefault();
         }}
-        key={thread.openai_id}
+        key={thread.id}
         className={
           classes.threadLink +
           ` ${isThreadSelected ? classes.threadLinkSelected : ""}`
