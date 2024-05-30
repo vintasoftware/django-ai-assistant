@@ -4,6 +4,7 @@ from django.db.models import F, Index
 
 
 class Assistant(models.Model):
+    id: int  # noqa: A003
     slug = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255, blank=True)
     openai_id = models.CharField(max_length=255, unique=True)
@@ -26,6 +27,7 @@ class Assistant(models.Model):
 
 
 class Thread(models.Model):
+    id: int  # noqa: A003
     name = models.CharField(max_length=255, blank=True)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -48,3 +50,22 @@ class Thread(models.Model):
 
     def __repr__(self) -> str:
         return f"<Thread {self.name}>"
+
+
+class Message(models.Model):
+    id: int  # noqa: A003
+    thread_id = models.ForeignKey(Thread, on_delete=models.CASCADE, related_name="messages")
+    message = models.JSONField()  # langchain BaseMessage
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Message"
+        verbose_name_plural = "Messages"
+        ordering = ("-created_at",)
+        indexes = (Index(F("created_at").desc(), name="message_created_at_desc"),)
+
+    def __str__(self):
+        return self.message
+
+    def __repr__(self) -> str:
+        return f"<Message {self.id} at {self.thread_id}>"

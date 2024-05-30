@@ -1,5 +1,6 @@
+import abc
 from collections.abc import Callable
-from typing import Any, Protocol, cast
+from typing import Any, cast
 
 from django.http import HttpRequest
 from django.utils import timezone
@@ -16,7 +17,7 @@ from django_ai_assistant.models import Assistant, Thread
 from django_ai_assistant.permissions import can_create_thread, can_run_assistant
 
 
-class AIAssistant(Protocol):
+class AIAssistant(abc.ABC):  # noqa: F821
     name: str
     instructions: str
     fns: tuple[Callable[..., Any], ...]
