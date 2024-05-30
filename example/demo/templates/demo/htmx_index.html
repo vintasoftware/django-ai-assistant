@@ -83,6 +83,13 @@
       }
     }
 
+    // Send message on Ctrl+Enter
+    document.addEventListener("keydown", function (event) {
+      if (event.ctrlKey && event.key === "Enter") {
+        document.getElementById("send-message-button").click();
+      }
+    });
+
     document.body.addEventListener("htmx:afterRequest", function (event) {
       // Could not add this to the template because the new element is added to the DOM after the click/request
       if (event.detail.elt.id === "create-thread-button") {
