@@ -43,7 +43,6 @@
     "@mantine/hooks": "^7.9.2",
     "@tabler/icons-react": "^3.4.0",
     "cookie": "^0.6.0",
-    "modern-normalize": "^2.0.0",
-    "openai": "^4.47.1"
+    "modern-normalize": "^2.0.0"
   }
 }

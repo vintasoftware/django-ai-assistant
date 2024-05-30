@@ -7,7 +7,7 @@ Based on langchain-postgres
 from __future__ import annotations
 
 import logging
-from typing import List, Sequence, cast
+from typing import Any, List, Sequence, cast
 
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.messages import BaseMessage, message_to_dict, messages_from_dict
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 class DjangoChatMessageHistory(BaseChatMessageHistory):
     def __init__(
         self,
-        thread_id: str,
+        thread_id: Any,
     ) -> None:
         """Client for persisting chat message history in a Django database.
 

@@ -1,5 +1,4 @@
 import cookie from "cookie";
-import OpenAI from "openai";
 
 function csrfFetch(url: string, options: RequestInit = {}) {
   const { csrftoken } = cookie.parse(document.cookie);
@@ -22,15 +21,29 @@ export async function fetchAssistantID(): Promise<string> {
       "No assistants found. Please create an assistant on Django side."
     );
   }
-  return responseData[0].openai_id;
+  return responseData[0].id;  // get the first assistant
 }
 
 // TODO: Get typing from Django API
 export interface DjangoThread {
-  openai_id: string;
+  id: string;
   name: string;
   created_at: string;
   updated_at: string;
+}
+
+export type DjangoMessageType =
+  | "human"
+  | "ai"
+  | "generic"
+  | "system"
+  | "function"
+  | "tool";
+
+// TODO: Get typing from Django API
+export interface DjangoMessage {
+  type: DjangoMessageType,
+  content: string;
 }
 
 export async function fetchDjangoThreads(): Promise<DjangoThread[]> {
@@ -59,7 +72,7 @@ export async function fetchMessages({
   threadId,
 }: {
   threadId: string;
-}): Promise<OpenAI.Beta.Threads.Message[]> {
+}): Promise<LangchainMessage[]> {
   const response = await csrfFetch(
     `/ai-assistant/threads/${threadId}/messages/`
   );
@@ -77,8 +90,8 @@ export async function createMessage({
   threadId: string;
   assistantId: string;
   content: string;
-}): Promise<OpenAI.Beta.Threads.Message> {
-  const response = await csrfFetch(
+}) {
+  await csrfFetch(
     `/ai-assistant/threads/${threadId}/messages/`,
     {
       method: "POST",
@@ -88,6 +101,4 @@ export async function createMessage({
       body: JSON.stringify({ content, assistant_id: assistantId }),
     }
   );
-  const responseData = await response.json();
-  return responseData;
 }
