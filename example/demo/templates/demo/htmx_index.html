@@ -18,9 +18,13 @@
     />
     <script src="https://unpkg.com/htmx.org@1.5.0/dist/htmx.min.js"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/loading-states.js"></script>
   </head>
 
-  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+  <body
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    hx-ext="loading-states"
+  >
     <div class="d-flex vh-100">
       <aside class="col-3 border-right p-3 bg-light">
         <!-- This will be replaced by responses from django_ai_assistant:threads_list_create -->
@@ -35,9 +39,23 @@
       <main class="col-9 d-flex flex-column p-3 main-container">
         <h2 class="mb-4">Chat</h2>
 
+        <h5 class="text-center text-muted my-3" data-loading>
+          <svg class="spinner" viewBox="0 0 50 50">
+            <circle
+              class="path"
+              cx="25"
+              cy="25"
+              r="20"
+              fill="none"
+              stroke-width="5"
+            ></circle>
+          </svg>
+          Loading...
+        </h5>
+
         <!-- This will be replaced by reponses from django_ai_assistant:messages_list_create-->
-        <div id="messages-wrapper">
-          <div class="no-messages text-center text-muted my-3">
+        <div id="messages-wrapper" hx-indicator="#indicator">
+          <div class="text-center text-muted my-3">
             Select or create a thread to start chatting.
           </div>
         </div>
