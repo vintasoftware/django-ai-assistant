@@ -67,13 +67,8 @@ def create_thread(request, payload: ThreadSchemaIn):
     return thread
 
 
-@api.get(
-    "threads/{openai_thread_id}/messages/",
-    response=List[ThreadMessagesSchemaOut],
-    url_name="messages_list_create",
-)
-def list_thread_messages(request, openai_thread_id: str):
-    data = [
+def get_thread_message_context(thread_messages_generator):
+    return [
         {
             "openai_id": message.id,
             "openai_thread_id": message.thread_id,
@@ -81,12 +76,35 @@ def list_thread_messages(request, openai_thread_id: str):
             "role": message.role,
             "created_at": datetime.utcfromtimestamp(message.created_at).isoformat(),
         }
-        for message in thread_messages_generator(
+        for message in thread_messages_generator
+    ]
+
+
+@api.get(
+    "threads/{openai_thread_id}/messages/",
+    response=List[ThreadMessagesSchemaOut],
+    url_name="messages_list_create",
+)
+def list_thread_messages(request, openai_thread_id: str):
+    data = get_thread_message_context(
+        thread_messages_generator(
             openai_thread_id=openai_thread_id, user=request.user, request=request, view=None
         )
-    ]
+    )
+
     if is_htmx_request(request):
-        return render(request, "messages/list.html", {"messages": data})
+        # TODO: Refactor to avoid duplicated code
+        assistants = list(assistants_generator(user=request.user, request=request, view=None))
+        openai_assistant_id = assistants[0].openai_id if assistants else None
+        return render(
+            request,
+            "messages/list.html",
+            {
+                "openai_assistant_id": openai_assistant_id,
+                "openai_thread_id": openai_thread_id,
+                "messages": data,
+            },
+        )
     return data
 
 
@@ -114,8 +132,25 @@ def create_thread_message(request, openai_thread_id: str, payload: ThreadMessage
         request=request,
         view=None,
     )
+
     if is_htmx_request(request):
-        return render(request, "messages/item.html", {"message": message})
+        # TODO: Refactor to avoid duplicated code
+        assistants = list(assistants_generator(user=request.user, request=request, view=None))
+        openai_assistant_id = assistants[0].openai_id if assistants else None
+        messages_context = get_thread_message_context(
+            thread_messages_generator(
+                openai_thread_id=openai_thread_id, user=request.user, request=request, view=None
+            )
+        )
+        return render(
+            request,
+            "messages/list.html",
+            {
+                "openai_assistant_id": openai_assistant_id,
+                "openai_thread_id": openai_thread_id,
+                "messages": messages_context,
+            },
+        )
 
     return {
         "openai_id": message.id,
