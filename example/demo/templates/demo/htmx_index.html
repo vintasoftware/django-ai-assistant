@@ -72,13 +72,16 @@
       element.classList.add("active-thread");
     }
 
-    function onClickCreateThreadButton(element) {
+    function onClickCreateThreadButton() {
       const firstThreadItem = document.querySelector(
-        "#threads-list .thread-item"
+        "#threads-wrapper .thread-item"
       );
       if (firstThreadItem) {
-        // This will trigger onClickThreadItem
         firstThreadItem.click();
+        // .click does not trigger htmx request, so we need to manually do so
+        htmx.ajax("GET", firstThreadItem.getAttribute("hx-get"), {
+          target: firstThreadItem.getAttribute("hx-target"),
+        });
       }
     }
 
