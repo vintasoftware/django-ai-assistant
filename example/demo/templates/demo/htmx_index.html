@@ -8,7 +8,7 @@
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     />
-    <link rel="stylesheet" href="{% static 'css/htmx_chat.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/htmx_index.css' %}" />
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
@@ -19,195 +19,29 @@
     <script src="https://unpkg.com/htmx.org@1.5.0/dist/htmx.min.js"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
   </head>
+
   <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     <div class="d-flex vh-100">
       <aside class="col-3 border-right p-3 bg-light">
-        <h3>Threads</h3>
+        <!-- This will be replaced by responses from django_ai_assistant:threads_list_create -->
         <div
-          id="threads-nav"
-          class="list-group"
+          id="threads-wrapper"
           hx-get='{% url "django_ai_assistant:threads_list_create" %}'
           hx-trigger="load"
-          hx-target="#threads-nav"
+          hx-target="#threads-wrapper"
         ></div>
-        <button
-          id="create-thread-button"
-          class="btn btn-primary mt-3"
-          hx-post='{% url "django_ai_assistant:threads_list_create" %}'
-          hx-trigger="click"
-          hx-target="#threads-nav"
-          hx-swap="afterbegin"
-          hx-ext="json-enc"
-        >
-          Create Thread
-        </button>
       </aside>
 
-      <main class="col-9 d-flex flex-column p-3 main-wrapper">
+      <main class="col-9 d-flex flex-column p-3 main-container">
         <h2 class="mb-4">Chat</h2>
-        <div id="scroll-area" class="flex-grow-1 overflow-auto">
-          <div id="loading-indicator" class="list-group" style="display: none">
-            <div class="text-center text-muted my-3">Loading...</div>
+
+        <!-- This will be replaced by reponses from django_ai_assistant:messages_list_create-->
+        <div id="messages-wrapper">
+          <div class="no-messages text-center text-muted my-3">
+            Select or create a thread to start chatting.
           </div>
-          <div id="messages-list" class="list-group">
-            <div class="no-messages text-center text-muted my-3">
-              Select or create a thread to start chatting.
-            </div>
-          </div>
-        </div>
-        <div class="d-flex align-items-center mt-3">
-          <input type="hidden" id="thread-id" name="thread_id" value="" />
-          <input id="assistant-id" type="hidden" name="assistant_id" value="" />
-          <textarea
-            id="input-area"
-            class="form-control"
-            placeholder="Please create or select a thread on the sidebar"
-            name="content"
-            disabled
-          ></textarea>
-          <!-- TODO: Investigate why hx-post did not work -->
-          <button
-            id="send-message-button"
-            class="btn btn-primary ml-2 d-inline-flex align-items-center"
-            hx-trigger="click"
-            hx-include="#input-area,#assistant-id"
-            hx-ext="json-enc"
-            disabled
-          >
-            Send <i class="bi bi-send ml-2"></i>
-          </button>
         </div>
       </main>
     </div>
-
-    <script>
-      function fetchAssistant() {
-        fetch('{% url "django_ai_assistant:assistants_list" %}')
-          .then((response) => response.json())
-          .then((data) => {
-            if (data && data.length > 0) {
-              document.querySelector("#assistant-id").value = data[0].openai_id;
-            }
-          })
-          .catch((error) => console.error("Error:", error));
-      }
-
-      function highlightThread(element) {
-        document
-          .querySelectorAll("#threads-nav .list-group-item")
-          .forEach((thread) => {
-            thread.classList.remove("selected-thread");
-          });
-        element.classList.add("selected-thread");
-      }
-
-      function highlightFirstThread() {
-        const firstChild =
-          document.querySelector("#threads-nav").firstElementChild;
-        if (firstChild) {
-          highlightThread(firstChild);
-        }
-      }
-
-      function handleThreadOnClick(threadId, element) {
-        highlightThread(element);
-
-        // Update chat main component
-        document.querySelector("#thread-id").value = threadId;
-        document.querySelector("#input-area").placeholder =
-          "Enter user message… (Ctrl↵ to send)";
-        document.querySelector("#input-area").removeAttribute("disabled");
-
-        const sendMessageButton = document.querySelector(
-          "#send-message-button"
-        );
-        sendMessageButton.removeAttribute("disabled");
-        const postUrl =
-          `{% url "django_ai_assistant:messages_list_create" "openai_thread_id" %}`.replace(
-            "openai_thread_id",
-            threadId
-          );
-        sendMessageButton.setAttribute("hx-post", postUrl);
-        htmx.process(sendMessageButton);
-      }
-
-      document.body.addEventListener("htmx:afterOnLoad", function (event) {
-        fetchAssistant();
-
-        // After creating a new thread, click on it
-        if (event.detail.elt.id === "create-thread-button") {
-          const firstChild =
-            document.querySelector("#threads-nav").firstElementChild;
-          if (firstChild) {
-            handleThreadOnClick(
-              firstChild.getAttribute("data-thread-id"),
-              firstChild
-            );
-          }
-        }
-      });
-
-      // Send message on Ctrl+Enter
-      document.addEventListener("keydown", function (event) {
-        if (event.ctrlKey && event.key === "Enter") {
-          document.getElementById("send-message-button").click();
-        }
-      });
-
-      document.body.addEventListener("htmx:beforeRequest", function (event) {
-        // Show the loading indicator and disable the chat and all buttons
-        if (
-          event.detail.elt.id === "send-message-button" ||
-          event.detail.elt.id === "create-thread-button"
-        ) {
-          document.querySelector("#input-area").setAttribute("disabled", "");
-          document
-            .querySelectorAll("button")
-            .forEach((button) => button.setAttribute("disabled", ""));
-          document.querySelector("#messages-list").innerHTML = "";
-          document.querySelector("#loading-indicator").style.display = "block";
-        }
-      });
-
-      document.body.addEventListener("htmx:afterRequest", function (event) {
-        // Hide the loading indicator and enable the chat and all buttons
-        if (
-          event.detail.elt.id === "send-message-button" ||
-          event.detail.elt.id === "create-thread-button"
-        ) {
-          document.querySelector("#input-area").removeAttribute("disabled");
-          document
-            .querySelectorAll("button")
-            .forEach((button) => button.removeAttribute("disabled"));
-          document.querySelector("#loading-indicator").style.display = "none";
-        }
-
-        // Click the topmost thread item after creating a new thread
-        if (event.detail.elt.id === "create-thread-button") {
-          var topmostItem = document.querySelector("#threads-nav .thread-item");
-          if (topmostItem) {
-            topmostItem.click();
-          }
-        }
-
-        // After sending the message:
-        if (event.detail.elt.id === "send-message-button") {
-          // 1. Clear the input area
-          document.getElementById("input-area").value = "";
-
-          // 2. Refetch messages for the thread. This is necessary because the POST only returns
-          // one message, the user message, and we need to fetch the assistant's response as well.
-          const threadId = document.getElementById("thread-id").value;
-          const url =
-            `{% url "django_ai_assistant:messages_list_create" "openai_thread_id" %}`.replace(
-              "openai_thread_id",
-              threadId
-            );
-          htmx.ajax("GET", url, {
-            target: "#messages-list",
-          });
-        }
-      });
-    </script>
   </body>
 </html>
