@@ -39,7 +39,7 @@
       <main class="col-9 d-flex flex-column p-3 main-container">
         <h2 class="mb-4">Chat</h2>
 
-        <h5 class="text-center text-muted my-3" data-loading>
+        <div class="text-center my-3" data-loading>
           <svg class="spinner" viewBox="0 0 50 50">
             <circle
               class="path"
@@ -50,8 +50,7 @@
               stroke-width="5"
             ></circle>
           </svg>
-          Loading...
-        </h5>
+        </div>
 
         <!-- This will be replaced by reponses from django_ai_assistant:messages_list_create-->
         <div id="messages-wrapper" class="h-100" hx-indicator="#indicator">
