@@ -3,6 +3,7 @@
   hx-get="{% url 'django_ai_assistant:messages_list_create' thread.openai_id %}"
   hx-target="#messages-wrapper"
   hx-trigger="click"
+  onclick="onClickThreadItem(this)"
 >
   {{ thread.name }}
 </div>
