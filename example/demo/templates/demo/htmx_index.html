@@ -49,25 +49,23 @@
           <div id="loading-indicator" class="list-group" style="display: none">
             <div class="text-center text-muted my-3">Loading...</div>
           </div>
-          <div id="chat-message-list" class="list-group">
+          <div id="messages-list" class="list-group">
             <div class="no-messages text-center text-muted my-3">
               Select or create a thread to start chatting.
             </div>
           </div>
         </div>
-        <div class="d-flex align-items-center mt-3" id="inputs-wrapper">
+        <div class="d-flex align-items-center mt-3">
           <input type="hidden" id="thread-id" name="thread_id" value="" />
           <input id="assistant-id" type="hidden" name="assistant_id" value="" />
           <textarea
             id="input-area"
             class="form-control"
             placeholder="Please create or select a thread on the sidebar"
-            hx-trigger="keydown[mod+Enter]"
-            hx-include="#input-area"
-            hx-target="#chat-message-list"
             name="content"
             disabled
           ></textarea>
+          <!-- TODO: Investigate why hx-post did not work -->
           <button
             id="send-message-button"
             class="btn btn-primary ml-2 d-inline-flex align-items-center"
@@ -83,31 +81,6 @@
     </div>
 
     <script>
-      function setThreadId(threadId, element) {
-        document.querySelector("#thread-id").value = threadId;
-        document.querySelector("#input-area").placeholder =
-          "Enter user message… (Ctrl↵ to send)";
-
-        document.querySelector("#input-area").removeAttribute("disabled");
-
-        const sendButton = document.querySelector("#send-message-button");
-        sendButton.removeAttribute("disabled");
-        const postUrl =
-          `{% url "django_ai_assistant:messages_list_create" "openai_thread_id" %}`.replace(
-            "openai_thread_id",
-            threadId
-          );
-        sendButton.setAttribute("hx-post", postUrl);
-        htmx.process(sendButton);
-
-        document
-          .querySelectorAll("#threads-nav .list-group-item")
-          .forEach((thread) => {
-            thread.classList.remove("selected-thread");
-          });
-        element.classList.add("selected-thread");
-      }
-
       function fetchAssistant() {
         fetch('{% url "django_ai_assistant:assistants_list" %}')
           .then((response) => response.json())
@@ -119,35 +92,57 @@
           .catch((error) => console.error("Error:", error));
       }
 
-      function setThreadItemsHXAttributes() {
-        document.querySelectorAll(".thread-item").forEach((item) => {
-          const threadId = item.getAttribute("data-thread-id");
-          const getUrl =
-            `{% url "django_ai_assistant:messages_list_create" "openai_thread_id" %}`.replace(
-              "openai_thread_id",
-              threadId
-            );
-          item.setAttribute("hx-get", getUrl);
-          item.setAttribute("hx-target", "#chat-message-list");
-          item.setAttribute("onclick", `setThreadId('${threadId}', this)`);
-        });
+      function highlightThread(element) {
+        document
+          .querySelectorAll("#threads-nav .list-group-item")
+          .forEach((thread) => {
+            thread.classList.remove("selected-thread");
+          });
+        element.classList.add("selected-thread");
       }
 
-      document.addEventListener("htmx:afterOnLoad", (event) => {
-        fetchAssistant();
-        setThreadItemsHXAttributes();
+      function highlightFirstThread() {
+        const firstChild =
+          document.querySelector("#threads-nav").firstElementChild;
+        if (firstChild) {
+          highlightThread(firstChild);
+        }
+      }
 
-        // Add the 'selected-thread' class to the first child
+      function handleThreadOnClick(threadId, element) {
+        highlightThread(element);
+
+        // Update chat main component
+        document.querySelector("#thread-id").value = threadId;
+        document.querySelector("#input-area").placeholder =
+          "Enter user message… (Ctrl↵ to send)";
+        document.querySelector("#input-area").removeAttribute("disabled");
+
+        const sendMessageButton = document.querySelector(
+          "#send-message-button"
+        );
+        sendMessageButton.removeAttribute("disabled");
+        const postUrl =
+          `{% url "django_ai_assistant:messages_list_create" "openai_thread_id" %}`.replace(
+            "openai_thread_id",
+            threadId
+          );
+        sendMessageButton.setAttribute("hx-post", postUrl);
+        htmx.process(sendMessageButton);
+      }
+
+      document.body.addEventListener("htmx:afterOnLoad", function (event) {
+        fetchAssistant();
+
+        // After creating a new thread, click on it
         if (event.detail.elt.id === "create-thread-button") {
-          document
-            .querySelectorAll("#threads-nav .list-group-item")
-            .forEach((thread) => {
-              thread.classList.remove("selected-thread");
-            });
           const firstChild =
             document.querySelector("#threads-nav").firstElementChild;
           if (firstChild) {
-            firstChild.classList.add("selected-thread");
+            handleThreadOnClick(
+              firstChild.getAttribute("data-thread-id"),
+              firstChild
+            );
           }
         }
       });
@@ -169,7 +164,7 @@
           document
             .querySelectorAll("button")
             .forEach((button) => button.setAttribute("disabled", ""));
-          document.querySelector("#chat-message-list").innerHTML = "";
+          document.querySelector("#messages-list").innerHTML = "";
           document.querySelector("#loading-indicator").style.display = "block";
         }
       });
@@ -209,7 +204,7 @@
               threadId
             );
           htmx.ajax("GET", url, {
-            target: "#chat-message-list",
+            target: "#messages-list",
           });
         }
       });

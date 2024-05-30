@@ -2,6 +2,9 @@
   class="thread-item list-group-item list-group-item-action"
   data-thread-id="{{ thread.openai_id }}"
   data-thread-name="{{ thread.name }}"
+  hx-get="{% url 'django_ai_assistant:messages_list_create' thread.openai_id %}"
+  hx-target="#messages-list"
+  onclick="handleThreadOnClick('{{ thread.openai_id }}', this)"
 >
   {{ thread.name }}
 </a>
