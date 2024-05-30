@@ -13,3 +13,40 @@
   flex-direction: column;
   padding: 0.5rem;
 }
+
+[data-loading] {
+  display: none;
+}
+
+.spinner {
+  animation: rotate 2s linear infinite;
+  width: 28px;
+  height: 28px;
+
+  & .path {
+    stroke: #007bff;
+    stroke-linecap: round;
+    animation: dash 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}

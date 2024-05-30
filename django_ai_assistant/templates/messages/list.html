@@ -1,19 +1,24 @@
 <div id="threads-container" class="d-flex flex-column">
   <div id="scroll-area" class="flex-grow-1 overflow-auto">
     <div id="messages-list" class="list-group">
-      {% for message in messages reversed %}
-      {% include 'messages/item.html' %}
+      {% for message in messages reversed %} {% include 'messages/item.html' %}
       {% endfor %}
     </div>
   </div>
 
   <div class="d-flex align-items-center mt-3">
-    <input id="assistant-id" type="hidden" name="assistant_id" value="{{ openai_assistant_id }}" />
+    <input
+      id="assistant-id"
+      type="hidden"
+      name="assistant_id"
+      value="{{ openai_assistant_id }}"
+    />
     <textarea
       id="input-area"
       class="form-control"
       placeholder="Enter user message… (Ctrl↵ to send)"
       name="content"
+      data-loading-disable
     ></textarea>
     <button
       id="send-message-button"
@@ -22,6 +27,7 @@
       hx-include="#input-area,#assistant-id"
       hx-target="#messages-wrapper"
       hx-ext="json-enc"
+      data-loading-disable
     >
       Send <i class="bi bi-send ml-2"></i>
     </button>
