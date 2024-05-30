@@ -62,4 +62,32 @@
       </main>
     </div>
   </body>
+  <script>
+    function onClickThreadItem(element) {
+      // Remove active-thread class from all thread items, and add it to the clicked thread item
+      const threads = document.querySelectorAll(".thread-item");
+      threads.forEach((thread) => {
+        thread.classList.remove("active-thread");
+      });
+
+      element.classList.add("active-thread");
+    }
+
+    function onClickCreateThreadButton(element) {
+      const firstThreadItem = document.querySelector(
+        "#threads-list .thread-item"
+      );
+      if (firstThreadItem) {
+        // This will trigger onClickThreadItem
+        firstThreadItem.click();
+      }
+    }
+
+    document.body.addEventListener("htmx:afterRequest", function (event) {
+      // Could not add this to the template because the new element is added to the DOM after the click/request
+      if (event.detail.elt.id === "create-thread-button") {
+        onClickCreateThreadButton();
+      }
+    });
+  </script>
 </html>

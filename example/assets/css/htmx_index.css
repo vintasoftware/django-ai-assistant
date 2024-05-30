@@ -3,7 +3,7 @@
   margin: 0 auto;
 }
 
-.selected-thread {
+.active-thread {
   background-color: #007bff;
   color: white;
 }
