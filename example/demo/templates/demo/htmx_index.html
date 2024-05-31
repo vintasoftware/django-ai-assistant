@@ -1,0 +1,38 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Django AI Assistant - HTMX Demo</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/htmx_index.css' %}" />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/htmx.org@1.5.0/dist/htmx.min.js"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/loading-states.js"></script>
+  </head>
+
+  <body
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    hx-ext="loading-states"
+  >
+    {% block body %}{% endblock %}
+  </body>
+  <script>
+    // Send message on Ctrl+Enter
+    document.addEventListener("keydown", function (event) {
+      if (event.ctrlKey && event.key === "Enter") {
+        document.getElementById("send-message-button").click();
+      }
+    });
+  </script>
+</html>
