@@ -1,19 +1,17 @@
 from typing import List
 
-from django.shortcuts import render
-
 from langchain_core.messages import message_to_dict
 from ninja import NinjaAPI
 
 from .exceptions import AIUserNotAllowedError
 from .helpers.assistants import (
-    create_thread as ai_create_thread,
-)
-from .helpers.assistants import (
+    create_message,
     get_assistants_info,
     get_thread_messages,
     get_threads,
-    run_assistant_as_user,
+)
+from .helpers.assistants import (
+    create_thread as ai_create_thread,
 )
 from .models import Thread
 from .schemas import (
@@ -28,10 +26,6 @@ from .schemas import (
 api = NinjaAPI(urls_namespace="django_ai_assistant")
 
 
-def is_htmx_request(request):
-    return request.headers.get("HX-Request") == "true"
-
-
 @api.exception_handler(AIUserNotAllowedError)
 def ai_user_not_allowed_handler(request, exc):
     return api.create_response(
@@ -43,27 +37,18 @@ def ai_user_not_allowed_handler(request, exc):
 
 @api.get("assistants/", response=List[AssistantSchema], url_name="assistants_list")
 def list_assistants(request):
-    data = list(get_assistants_info(user=request.user, request=request, view=None))
-    if is_htmx_request(request):
-        return render(request, "assistants/list.html", {"assistants": data})
-    return data
+    return list(get_assistants_info(user=request.user, request=request, view=None))
 
 
 @api.get("threads/", response=List[ThreadSchema], url_name="threads_list_create")
 def list_threads(request):
-    data = list(get_threads(user=request.user, request=request, view=None))
-    if is_htmx_request(request):
-        return render(request, "threads/list.html", {"threads": data})
-    return data
+    return list(get_threads(user=request.user, request=request, view=None))
 
 
 @api.post("threads/", response=ThreadSchema, url_name="threads_list_create")
 def create_thread(request, payload: ThreadSchemaIn):
     name = payload.name
-    thread = ai_create_thread(name=name, user=request.user, request=request, view=None)
-    if is_htmx_request(request):
-        return render(request, "threads/item.html", {"thread": thread})
-    return thread
+    return ai_create_thread(name=name, user=request.user, request=request, view=None)
 
 
 @api.get(
@@ -75,19 +60,6 @@ def list_thread_messages(request, thread_id: str):
     messages = get_thread_messages(
         thread_id=thread_id, user=request.user, request=request, view=None
     )
-    if is_htmx_request(request):
-        assistants = list(get_assistants_info(user=request.user, request=request, view=None))
-        assistant_id = assistants[0]["id"] if assistants else None
-        print(messages)
-        return render(
-            request,
-            "messages/list.html",
-            {
-                "assistant_id": assistant_id,
-                "thread_id": thread_id,
-                "messages": messages,
-            },
-        )
     return [message_to_dict(m)["data"] for m in messages]
 
 
@@ -100,7 +72,7 @@ def list_thread_messages(request, thread_id: str):
 def create_thread_message(request, thread_id: str, payload: ThreadMessagesSchemaIn):
     thread = Thread.objects.get(id=thread_id)
 
-    run_assistant_as_user(
+    create_message(
         assistant_id=payload.assistant_id,
         thread=thread,
         user=request.user,
@@ -108,22 +80,5 @@ def create_thread_message(request, thread_id: str, payload: ThreadMessagesSchema
         request=request,
         view=None,
     )
-
-    if is_htmx_request(request):
-        # TODO: Refactor to avoid duplicated code
-        assistants = list(get_assistants_info(user=request.user, request=request, view=None))
-        assistant_id = assistants[0]["id"] if assistants else None
-        messages = get_thread_messages(
-            thread_id=thread_id, user=request.user, request=request, view=None
-        )
-        return render(
-            request,
-            "messages/list.html",
-            {
-                "assistant_id": assistant_id,
-                "thread_id": thread_id,
-                "messages": messages,
-            },
-        )
 
     return 201, None

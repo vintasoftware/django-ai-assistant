@@ -18,7 +18,7 @@ from django_ai_assistant.ai.chat_message_histories import DjangoChatMessageHisto
 from django_ai_assistant.conf import settings
 from django_ai_assistant.exceptions import AIAssistantNotDefinedError, AIUserNotAllowedError
 from django_ai_assistant.models import Thread
-from django_ai_assistant.permissions import can_create_thread, can_run_assistant
+from django_ai_assistant.permissions import can_create_message, can_create_thread, can_run_assistant
 
 
 class AIAssistant(abc.ABC):  # noqa: F821
@@ -124,7 +124,7 @@ def get_assistants_info(
     ]
 
 
-def run_assistant_as_user(
+def create_message(
     assistant_id: str,
     thread: Thread,
     user: Any,
@@ -133,6 +133,8 @@ def run_assistant_as_user(
     request: HttpRequest | None = None,
     view: View | None = None,
 ):
+    if not can_create_message(thread=thread, user=user, request=request, view=view):
+        raise AIUserNotAllowedError("User is not allowed to create messages in this thread")
     if assistant_id not in ASSISTANT_CLS_REGISTRY:
         raise AIAssistantNotDefinedError(f"Assistant with id={assistant_id} not found")
     assistant_cls = ASSISTANT_CLS_REGISTRY[assistant_id]
@@ -146,6 +148,7 @@ def run_assistant_as_user(
     if not client:
         client = cast(OpenAI, settings.call_fn("CLIENT_INIT_FN"))
 
+    # TODO: Check if we can separate the message creation from the chain invoke
     assistant = assistant_cls(user=user, request=request, view=view)
     assistant_message = assistant.invoke(
         {"input": content},

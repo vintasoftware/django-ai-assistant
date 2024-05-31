@@ -28,9 +28,7 @@ import {
 function ChatMessage({ message }: { message: DjangoMessage }) {
   return (
     <Box mb="md">
-      <Text fw={700} style={{ textTransform: "capitalize" }}>
-        {message.type}
-      </Text>
+      <Text fw={700}>{message.type === "ai" ? "AI" : "User"}</Text>
       <Text>{message.content}</Text>
     </Box>
   );
