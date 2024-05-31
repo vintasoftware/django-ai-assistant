@@ -1,9 +1,0 @@
-<a
-  class="thread-item list-group-item list-group-item-action"
-  href="{% url 'htmx_thread_detail' thread.id %}"
-  hx-get="{% url 'django_ai_assistant:messages_list_create' thread.id %}"
-  hx-target="#messages-wrapper"
-  hx-trigger="click"
->
-  {{ thread.name }}
-</a>

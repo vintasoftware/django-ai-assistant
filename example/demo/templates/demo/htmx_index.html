@@ -25,77 +25,13 @@
     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
     hx-ext="loading-states"
   >
-    <div class="d-flex vh-100">
-      <aside class="col-3 border-right p-3 bg-light">
-        <!-- This will be replaced by responses from django_ai_assistant:threads_list_create -->
-        <div
-          id="threads-wrapper"
-          hx-get='{% url "django_ai_assistant:threads_list_create" %}'
-          hx-trigger="load"
-          hx-target="#threads-wrapper"
-        ></div>
-      </aside>
-
-      <main class="col-9 d-flex flex-column p-3 main-container">
-        <h2 class="mb-4">Chat</h2>
-
-        <div class="text-center my-3" data-loading>
-          <svg class="spinner" viewBox="0 0 50 50">
-            <circle
-              class="path"
-              cx="25"
-              cy="25"
-              r="20"
-              fill="none"
-              stroke-width="5"
-            ></circle>
-          </svg>
-        </div>
-
-        <!-- This will be replaced by reponses from django_ai_assistant:messages_list_create-->
-        <div id="messages-wrapper" class="h-100" hx-indicator="#indicator">
-          <div class="text-center text-muted my-3">
-            Select or create a thread to start chatting.
-          </div>
-        </div>
-      </main>
-    </div>
+    {% block body %}{% endblock %}
   </body>
   <script>
-    function onClickThreadItem(element) {
-      // Remove active-thread class from all thread items, and add it to the clicked thread item
-      const threads = document.querySelectorAll(".thread-item");
-      threads.forEach((thread) => {
-        thread.classList.remove("active-thread");
-      });
-
-      element.classList.add("active-thread");
-    }
-
-    function onClickCreateThreadButton() {
-      const firstThreadItem = document.querySelector(
-        "#threads-wrapper .thread-item"
-      );
-      if (firstThreadItem) {
-        firstThreadItem.click();
-        // .click does not trigger htmx request, so we need to manually do so
-        htmx.ajax("GET", firstThreadItem.getAttribute("hx-get"), {
-          target: firstThreadItem.getAttribute("hx-target"),
-        });
-      }
-    }
-
     // Send message on Ctrl+Enter
     document.addEventListener("keydown", function (event) {
       if (event.ctrlKey && event.key === "Enter") {
         document.getElementById("send-message-button").click();
-      }
-    });
-
-    document.body.addEventListener("htmx:afterRequest", function (event) {
-      // Could not add this to the template because the new element is added to the DOM after the click/request
-      if (event.detail.elt.id === "create-thread-button") {
-        onClickCreateThreadButton();
       }
     });
   </script>
