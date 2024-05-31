@@ -10,13 +10,13 @@ import {
   ScrollArea,
 } from "@mantine/core";
 import { ThreadsNav } from "./ThreadsNav";
-import OpenAI from "openai";
 
 import classes from "./Chat.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { IconSend2 } from "@tabler/icons-react";
 import { getHotkeyHandler } from "@mantine/hooks";
 import {
+  DjangoMessage,
   DjangoThread,
   createMessage,
   createThread,
@@ -25,30 +25,18 @@ import {
   fetchMessages,
 } from "@/api";
 
-function ChatMessage({ message }: { message: OpenAI.Beta.Threads.Message }) {
+function ChatMessage({ message }: { message: DjangoMessage }) {
   return (
     <Box mb="md">
       <Text fw={700} style={{ textTransform: "capitalize" }}>
-        {message.role}
+        {message.type}
       </Text>
-      {message.content.map((content, index) => {
-        let text;
-        if (content.type !== "text") {
-          text = "Unsupported content type: {content.type}";
-        } else {
-          text = content.text.value;
-        }
-        return <Text key={index}>{text}</Text>;
-      })}
+      <Text>{message.content}</Text>
     </Box>
   );
 }
 
-function ChatMessageList({
-  messages,
-}: {
-  messages: OpenAI.Beta.Threads.Message[];
-}) {
+function ChatMessageList({ messages }: { messages: DjangoMessage[] }) {
   if (messages.length === 0) {
     return <Text c="dimmed">No messages.</Text>;
   }
@@ -68,7 +56,7 @@ export function Chat() {
   const [threads, setThreads] = useState<DjangoThread[] | null>(null);
   const [threadId, setThreadId] = useState<string>("");
   const [inputValue, setInputValue] = useState<string>("");
-  const [messages, setMessages] = useState<OpenAI.Beta.Threads.Message[]>([]);
+  const [messages, setMessages] = useState<DjangoMessage[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const isThreadSelected = assistantId && threadId;
   const isChatActive = assistantId && threadId && !isLoading;
@@ -98,7 +86,7 @@ export function Chat() {
     try {
       const thread = await createThread();
       await loadThreads();
-      setThreadId(thread.openai_id);
+      setThreadId(thread.id);
     } catch (error) {
       console.error(error);
       // alert("Error while creating thread");
