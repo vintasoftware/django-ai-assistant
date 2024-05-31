@@ -103,7 +103,7 @@ ignore = [
   "BLE001",
   # Disable unused `noqa` directive
   "RUF100",
-  # Disable UP rules that conflict with django-ninja
+  # Disable pyupgrade UP rules that conflict with django-ninja
   "UP006",
   "UP035",
   "UP037",
