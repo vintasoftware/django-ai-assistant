@@ -1,4 +1,4 @@
-class AIAssistantClsNotDefinedError(Exception):
+class AIAssistantNotDefinedError(Exception):
     pass
 
 
