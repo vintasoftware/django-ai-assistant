@@ -1,13 +1,15 @@
 from django.conf import settings
 
 import requests
-from pydantic import Field
+
+from django_ai_assistant.tools import BaseModel, Field, tool
 
 
 BASE_URL = "https://api.weatherapi.com/v1/"
 TIMEOUT = 10
 
 
+@tool
 def fetch_current_weather(location: str) -> dict:
     """Fetch the current weather data for a location"""
 
@@ -22,9 +24,13 @@ def fetch_current_weather(location: str) -> dict:
     return response.json()
 
 
-def fetch_forecast_weather(
-    location: str, dt_str: str = Field(description="Date in the format 'YYYY-MM-DD'")
-) -> dict:
+class FetchForecastWeatherInput(BaseModel):
+    location: str
+    dt_str: str = Field(description="Date in the format 'YYYY-MM-DD'")
+
+
+@tool(args_schema=FetchForecastWeatherInput)
+def fetch_forecast_weather(location: str, dt_str: str) -> dict:
     """Fetch the forecast weather data for a location"""
 
     response = requests.get(

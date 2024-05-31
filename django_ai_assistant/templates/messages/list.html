@@ -11,7 +11,7 @@
       id="assistant-id"
       type="hidden"
       name="assistant_id"
-      value="{{ openai_assistant_id }}"
+      value="{{ assistant_id }}"
     />
     <textarea
       id="input-area"
@@ -23,7 +23,7 @@
     <button
       id="send-message-button"
       class="btn btn-primary ml-2 d-inline-flex align-items-center"
-      hx-post="{% url 'django_ai_assistant:messages_list_create' openai_thread_id %}"
+      hx-post="{% url 'django_ai_assistant:messages_list_create' thread_id %}"
       hx-include="#input-area,#assistant-id"
       hx-target="#messages-wrapper"
       hx-ext="json-enc"
