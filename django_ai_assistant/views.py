@@ -1,149 +1,84 @@
-import json
+from typing import List
 
-from django.http import HttpRequest, JsonResponse
-from django.http.response import HttpResponse as HttpResponse
-from django.utils import timezone
-from django.views import View
+from langchain_core.messages import message_to_dict
+from ninja import NinjaAPI
 
-from openai import OpenAI
-
-from django_ai_assistant.exceptions import AIUserNotAllowedError
-
-from .conf import settings
+from .exceptions import AIUserNotAllowedError
 from .helpers.assistants import (
-    assistants_generator,
-    create_thread,
-    create_thread_message_as_user,
-    run_assistant_as_user,
-    thread_messages_generator,
-    threads_generator,
+    create_message,
+    get_assistants_info,
+    get_thread_messages,
+    get_threads,
 )
-from .models import Assistant, Thread
+from .helpers.assistants import (
+    create_thread as ai_create_thread,
+)
+from .models import Thread
+from .schemas import (
+    AssistantSchema,
+    ThreadMessagesSchemaIn,
+    ThreadMessagesSchemaOut,
+    ThreadSchema,
+    ThreadSchemaIn,
+)
 
 
-def _parse_json(request: HttpRequest) -> dict:
-    try:
-        if request.body:
-            return json.loads(request.body)
-        else:
-            return {}
-    except json.JSONDecodeError:
-        return {"error": "Invalid JSON data"}
+api = NinjaAPI(urls_namespace="django_ai_assistant")
 
 
-class BaseAssistantView(View):
-    def _get_default_kwargs(self):
-        return {
-            "request": self.request,
-            "user": self.request.user,
-            "view": self,
-        }
-
-    def get_ai_client(self) -> OpenAI:
-        return settings.call_fn(
-            "CLIENT_INIT_FN",
-            **self._get_default_kwargs(),
-        )
-
-    # Validate if user is authenticated:
-    def dispatch(self, request: HttpRequest, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return JsonResponse({"error": "User is not authenticated"}, status=403)
-        return super().dispatch(request, *args, **kwargs)
+@api.exception_handler(AIUserNotAllowedError)
+def ai_user_not_allowed_handler(request, exc):
+    return api.create_response(
+        request,
+        {"message": str(exc)},
+        status=403,
+    )
 
 
-class AssistantListView(BaseAssistantView):
-    def get(self, request: HttpRequest, *args, **kwargs):
-        assistants_data = [
-            {
-                "openai_id": a.openai_id,
-                "name": a.name,
-                "created_at": a.created_at.isoformat(),
-                "updated_at": a.updated_at.isoformat(),
-            }
-            for a in assistants_generator(user=self.request.user, request=self.request, view=self)
-        ]
-        return JsonResponse({"object": "list", "data": assistants_data})
+@api.get("assistants/", response=List[AssistantSchema], url_name="assistants_list")
+def list_assistants(request):
+    return list(get_assistants_info(user=request.user, request=request, view=None))
 
 
-class ThreadListCreateView(BaseAssistantView):
-    def get_default_thread_name(self, data: dict) -> str:
-        return timezone.now().strftime("%Y-%m-%d %H:%M")
-
-    def get(self, request: HttpRequest, *args, **kwargs):
-        threads_data = [
-            {
-                "openai_id": t.openai_id,
-                "name": t.name,
-                "created_at": t.created_at.isoformat(),
-                "updated_at": t.updated_at.isoformat(),
-            }
-            for t in threads_generator(user=self.request.user, request=self.request, view=self)
-        ]
-        return JsonResponse({"object": "list", "data": threads_data})
-
-    def post(self, request: HttpRequest, *args, **kwargs):
-        data = _parse_json(request)
-        if "error" in data:
-            return JsonResponse(data, status=400)
-
-        name = data.get("name", self.get_default_thread_name(data))
-        try:
-            openai_thread = create_thread(
-                name=name, user=self.request.user, request=self.request, view=self
-            )
-        except AIUserNotAllowedError as e:
-            return JsonResponse({"error": str(e)}, status=403)
-        return JsonResponse(openai_thread.to_dict())
+@api.get("threads/", response=List[ThreadSchema], url_name="threads_list_create")
+def list_threads(request):
+    return list(get_threads(user=request.user, request=request, view=None))
 
 
-class ThreadMessageListCreateView(BaseAssistantView):
-    def dispatch(self, request, *args, **kwargs):
-        try:
-            return super().dispatch(request, *args, **kwargs)
-        except Thread.DoesNotExist:
-            return JsonResponse({"error": "Thread not found"}, status=404)
-        except Assistant.DoesNotExist:
-            return JsonResponse({"error": "Assistant not found"}, status=404)
+@api.post("threads/", response=ThreadSchema, url_name="threads_list_create")
+def create_thread(request, payload: ThreadSchemaIn):
+    name = payload.name
+    return ai_create_thread(name=name, user=request.user, request=request, view=None)
 
-    # List messages in a thread:
-    def get(self, request: HttpRequest, *args, **kwargs):
-        messages_data = []
-        for message in thread_messages_generator(
-            openai_thread_id=self.kwargs["openai_thread_id"],
-            user=self.request.user,
-            request=self.request,
-            view=self,
-        ):
-            messages_data.append(message.to_dict())
 
-        return JsonResponse({"object": "list", "data": messages_data})
+@api.get(
+    "threads/{thread_id}/messages/",
+    response=List[ThreadMessagesSchemaOut],
+    url_name="messages_list_create",
+)
+def list_thread_messages(request, thread_id: str):
+    messages = get_thread_messages(
+        thread_id=thread_id, user=request.user, request=request, view=None
+    )
+    return [message_to_dict(m)["data"] for m in messages]
 
-    # Create a message in a thread:
-    def post(self, request: HttpRequest, *args, **kwargs):
-        data = _parse_json(request)
-        if "error" in data:
-            return JsonResponse(data, status=400)
-        if not data.get("content"):
-            return JsonResponse({"error": "Message content is required"}, status=400)
-        if not data.get("assistant_id"):
-            return JsonResponse({"error": "OpenAI Assistant ID is required"}, status=400)
 
-        assistant = Assistant.objects.get(openai_id=data["assistant_id"])
-        thread = Thread.objects.get(openai_id=self.kwargs["openai_thread_id"])
-        message = create_thread_message_as_user(
-            openai_thread_id=self.kwargs["openai_thread_id"],
-            content=data["content"],
-            user=self.request.user,
-            request=self.request,
-            view=self,
-        )
-        run_assistant_as_user(
-            assistant=assistant,
-            thread=thread,
-            user=self.request.user,
-            request=self.request,
-            view=self,
-        )
+# TODO: Support content streaming
+@api.post(
+    "threads/{thread_id}/messages/",
+    response={201: None},
+    url_name="messages_list_create",
+)
+def create_thread_message(request, thread_id: str, payload: ThreadMessagesSchemaIn):
+    thread = Thread.objects.get(id=thread_id)
 
-        return JsonResponse({"message": message.to_dict()})
+    create_message(
+        assistant_id=payload.assistant_id,
+        thread=thread,
+        user=request.user,
+        content=payload.content,
+        request=request,
+        view=None,
+    )
+
+    return 201, None

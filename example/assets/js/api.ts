@@ -1,6 +1,4 @@
 import cookie from "cookie";
-import OpenAI from "openai";
-
 
 function csrfFetch(url: string, options: RequestInit = {}) {
   const { csrftoken } = cookie.parse(document.cookie);
@@ -15,45 +13,71 @@ function csrfFetch(url: string, options: RequestInit = {}) {
   });
 }
 
-export async function fetchAssistantID() {
+export async function fetchAssistantID(): Promise<string> {
   const response = await csrfFetch("/ai-assistant/assistants/");
   const responseData = await response.json();
-  if (!responseData?.data?.length) {
-    throw new Error("No assistants found. Please create an assistant on Django side.");
+  if (!responseData?.length) {
+    throw new Error(
+      "No assistants found. Please create an assistant on Django side."
+    );
   }
-  return responseData.data[0].openai_id as string;
+  return responseData[0].id;  // get the first assistant
 }
 
+// TODO: Get typing from Django API
 export interface DjangoThread {
-  openai_id: string;
+  id: string;
   name: string;
   created_at: string;
   updated_at: string;
 }
 
-export async function fetchDjangoThreads() {
-  const response = await csrfFetch("/ai-assistant/threads/");
-  const responseData = await response.json();
-  return responseData.data as DjangoThread[];
+export type DjangoMessageType =
+  | "human"
+  | "ai"
+  | "generic"
+  | "system"
+  | "function"
+  | "tool";
+
+// TODO: Get typing from Django API
+export interface DjangoMessage {
+  type: DjangoMessageType,
+  content: string;
 }
 
-export async function createThread() {
+export async function fetchDjangoThreads(): Promise<DjangoThread[]> {
+  const response = await csrfFetch("/ai-assistant/threads/");
+  const responseData = await response.json();
+  return responseData;
+}
+
+export async function createThread({
+  name,
+}: {
+  name?: string;
+} = {}): Promise<DjangoThread> {
   const response = await csrfFetch("/ai-assistant/threads/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
+    body: JSON.stringify({ name }),
   });
   const responseData = await response.json();
-  return responseData as OpenAI.Beta.Threads.Thread;
+  return responseData;
 }
 
-export async function fetchMessages({ threadId }: { threadId: string }) {
+export async function fetchMessages({
+  threadId,
+}: {
+  threadId: string;
+}): Promise<LangchainMessage[]> {
   const response = await csrfFetch(
     `/ai-assistant/threads/${threadId}/messages/`
   );
   const responseData = await response.json();
-  const messages = responseData.data as OpenAI.Beta.Threads.Message[];
+  const messages = responseData;
   messages.reverse();
   return messages;
 }
@@ -67,11 +91,14 @@ export async function createMessage({
   assistantId: string;
   content: string;
 }) {
-  await csrfFetch(`/ai-assistant/threads/${threadId}/messages/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ content, assistant_id: assistantId }),
-  });
+  await csrfFetch(
+    `/ai-assistant/threads/${threadId}/messages/`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ content, assistant_id: assistantId }),
+    }
+  );
 }
