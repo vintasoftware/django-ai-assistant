@@ -42,7 +42,7 @@ class Message(models.Model):
         verbose_name = "Message"
         verbose_name_plural = "Messages"
         ordering = ("-created_at",)
-        indexes = (Index(F("created_at").desc(), name="message_created_at_desc"),)
+        indexes = (Index(F("created_at"), name="message_created_at"),)
 
     def __str__(self):
         return json.dumps(self.message)

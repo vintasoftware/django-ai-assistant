@@ -26,7 +26,8 @@ class AIAssistant(abc.ABC):  # noqa: F821
     name: str
     instructions: str
     fns: Sequence[Callable]
-    model: str = "gpt-4o"
+    model: str
+    temperature: float
 
     _user: Any | None
     _request: Any | None
@@ -39,11 +40,23 @@ class AIAssistant(abc.ABC):  # noqa: F821
         self._view = view
         self._init_kwargs = kwargs
 
-    def build_instructions(self):
+        self.model = "gpt-4o"
+        self.temperature = 1.0  # default OpenAI temperature for Assistant
+
+    def get_instructions(self):
         return self.instructions
 
-    def build_prompt(self):
-        instructions = self.build_instructions()
+    def get_model(self):
+        return self.model
+
+    def get_temperature(self):
+        return self.temperature
+
+    def get_model_kwargs(self):
+        return {}
+
+    def get_prompt_template(self):
+        instructions = self.get_instructions()
         return ChatPromptTemplate.from_messages(
             [
                 ("system", instructions),
@@ -53,23 +66,26 @@ class AIAssistant(abc.ABC):  # noqa: F821
             ]
         )
 
-    def build_thread_history(self, thread_id: int):
+    def get_message_history(self, thread_id: int):
         return DjangoChatMessageHistory(thread_id)
 
-    def build_llm(self):
-        return ChatOpenAI(model=self.model)
+    def get_llm(self):
+        model = self.get_model()
+        temperature = self.get_temperature()
+        model_kwargs = self.get_model_kwargs()
+        return ChatOpenAI(model=model, temperature=temperature, model_kwargs=model_kwargs)
 
-    def build_tools(self):
+    def get_tools(self):
         return self.fns
 
     def as_chain(self, thread_id):
         # Based on:
         # - https://python.langchain.com/v0.2/docs/how_to/qa_chat_history_how_to/
         # - https://python.langchain.com/v0.2/docs/how_to/migrate_agent/#memory
-        # TODO: consider langgraph instead?
-        llm = self.build_llm()
-        tools = self.build_tools()
-        prompt = self.build_prompt()
+        # TODO: use langgraph instead?
+        llm = self.get_llm()
+        tools = self.get_tools()
+        prompt = self.get_prompt_template()
         tools = cast(Sequence[BaseTool], tools)
         agent = create_tool_calling_agent(llm=llm, tools=tools, prompt=prompt)
         agent_executor = AgentExecutor(
@@ -80,12 +96,12 @@ class AIAssistant(abc.ABC):  # noqa: F821
             agent_executor,  # type: ignore[call-arg]
             # This is needed because in most real world scenarios, a session id is needed
             # It isn't really used here because we are using a simple in memory ChatMessageHistory
-            self.build_thread_history,
+            self.get_message_history,
             input_messages_key="input",
             history_messages_key="history",
             history_factory_config=[
                 ConfigurableFieldSpec(
-                    id="thread_id",  # must match build_thread_history kwarg
+                    id="thread_id",  # must match get_message_history kwarg
                     annotation=int,
                     name="Thread ID",
                     description="Unique identifier for the chat thread / conversation / session.",

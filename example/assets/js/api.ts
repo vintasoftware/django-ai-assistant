@@ -48,8 +48,7 @@ export interface DjangoMessage {
 
 export async function fetchDjangoThreads(): Promise<DjangoThread[]> {
   const response = await csrfFetch("/ai-assistant/threads/");
-  const responseData = await response.json();
-  return responseData;
+  return await response.json();
 }
 
 export async function createThread({
@@ -64,8 +63,7 @@ export async function createThread({
     },
     body: JSON.stringify({ name }),
   });
-  const responseData = await response.json();
-  return responseData;
+  return await response.json();
 }
 
 export async function fetchMessages({
@@ -76,10 +74,7 @@ export async function fetchMessages({
   const response = await csrfFetch(
     `/ai-assistant/threads/${threadId}/messages/`
   );
-  const responseData = await response.json();
-  const messages = responseData;
-  messages.reverse();
-  return messages;
+  return await response.json();
 }
 
 export async function createMessage({
