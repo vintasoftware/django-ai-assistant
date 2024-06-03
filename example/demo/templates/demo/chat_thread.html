@@ -1,7 +1,7 @@
 {% extends "demo/chat_home.html" %}
 
 {% block message_list %}
-  <div id="messages-container" class="d-flex flex-column h-100">
+  <div id="messages-container" class="d-flex flex-column">
     <!-- Django alert messages from django.contrib.messages: -->
     {% if messages %}
     <div class="alert-messages">
@@ -11,22 +11,20 @@
     </div>
     {% endif %}
 
-    <div id="scroll-area" class="flex-grow-1 overflow-auto">
-      <div id="messages-list" class="list-group">
-        {% for message in thread_messages reversed %}
-          <div class="message-item">
-            <span>
-              <strong>
-                {% if message.type == "ai" %}AI{% else %}User{% endif %}
-              </strong>
-            </span>
-            <span>{{ message.content }}</span>
-          </div>
-        {% endfor %}
-      </div>
+    <div id="messages-list" class="overflow-auto">
+      {% for message in thread_messages reversed %}
+        <div class="d-flex flex-column p-2">
+          <span>
+            <strong>
+              {% if message.type == "ai" %}AI{% else %}User{% endif %}
+            </strong>
+          </span>
+          <span>{{ message.content }}</span>
+        </div>
+      {% endfor %}
     </div>
 
-    <div class="d-flex align-items-center mt-3">
+    <div class="d-flex align-items-center mt-auto">
       <textarea
         id="input-area"
         class="form-control"
@@ -36,7 +34,7 @@
       ></textarea>
       <button
         id="send-message-button"
-        class="btn btn-primary ml-2 d-inline-flex align-items-center"
+        class="btn btn-primary ms-3 d-inline-flex align-items-center"
         hx-post="{% url 'chat_thread' thread_id %}"
         hx-include="#input-area"
         hx-target="#messages-container"
@@ -44,7 +42,7 @@
         hx-select="#messages-container"
         data-loading-disable
       >
-        Send <i class="bi bi-send ml-2"></i>
+        Send <i class="bi bi-send ms-2"></i>
       </button>
     </div>
   </div>
