@@ -12,7 +12,7 @@ class WeatherAIAssistant(AIAssistant):
     fns = (fetch_current_weather, fetch_forecast_weather)
     model = "gpt-4o"
 
-    def build_instructions(self):
+    def get_instructions(self):
         # Warning: this will use the server's timezone
         # See: https://docs.djangoproject.com/en/5.0/topics/i18n/timezones/#default-time-zone-and-current-time-zone
         # In a real application, you should use the user's timezone
