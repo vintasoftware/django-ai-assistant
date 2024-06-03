@@ -45,10 +45,6 @@
     <main class="h-100 col-9 d-flex flex-column p-3 mx-auto main-container">
       <h2 class="mb-4">Chat</h2>
 
-      <div class="text-center my-3" data-loading>
-        <div class="spinner-border text-primary" role="status"></div>
-      </div>
-
       <!-- This will be replaced by responses from django_ai_assistant:messages_list_create-->
       <div id="messages-wrapper">
         {% block message_list %}
