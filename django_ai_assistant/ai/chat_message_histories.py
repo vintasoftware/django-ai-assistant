@@ -88,24 +88,25 @@ class DjangoChatMessageHistory(BaseChatMessageHistory):
             ]
         )
 
+    def _get_messages_qs(self):
+        return Message.objects.filter(thread_id=self._thread_id).order_by("created_at")
+
     def get_messages(self) -> List[BaseMessage]:
         """Retrieve messages from the chat thread."""
         items = cast(
             Sequence[dict],
-            Message.objects.filter(thread_id=self._thread_id).values_list("message", flat=True),
+            self._get_messages_qs().values_list("message", flat=True),
         )
         messages = messages_from_dict(items)
         return messages
 
-    async def _async_messages_gen(self):
-        async for m in Message.objects.filter(thread_id=self._thread_id).values_list(
-            "message", flat=True
-        ):
-            yield m
-
     async def aget_messages(self) -> List[BaseMessage]:
         """Retrieve messages from the thread."""
-        items = cast(Sequence[dict], self._async_messages_gen())
+        items = []
+        async for m in self._get_messages_qs().values_list("message", flat=True):
+            items.append(m)
+
+        items = cast(Sequence[dict], items)
         messages = messages_from_dict(items)
         return messages
 
