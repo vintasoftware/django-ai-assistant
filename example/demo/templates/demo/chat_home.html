@@ -14,9 +14,9 @@
                   class="thread-item list-group-item list-group-item-action {% if thread.id == thread_id %}active{% endif %}"
                   href="{% url 'chat_thread' thread.id %}"
                   hx-get="{% url 'chat_thread' thread.id %}"
-                  hx-target="#messages-container"
+                  hx-target="#messages-wrapper"
                   hx-swap="outerHTML"
-                  hx-select="#messages-container"
+                  hx-select="#messages-wrapper"
                   hx-select-oob="#threads-container"
                   hx-push-url="true"
                 >
