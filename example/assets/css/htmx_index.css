@@ -1,37 +1,10 @@
-html,
-body {
-  height: 100%;
-  margin: 0;
-}
-
-aside,
-main {
-  height: 100%;
-  overflow-y: auto;
+#threads-container,
+#messages-container {
+  max-height: calc(100vh - 100px);
 }
 
 .main-container {
   max-width: 920px;
-  margin: 0 auto;
-}
-
-#threads-list {
-  max-height: 85vh;
-}
-
-#messages-list {
-  max-height: 70vh;
-}
-
-.active-thread {
-  background-color: #007bff;
-  color: white;
-}
-
-.message-item {
-  display: flex;
-  flex-direction: column;
-  padding: 0.5rem;
 }
 
 [data-loading] {

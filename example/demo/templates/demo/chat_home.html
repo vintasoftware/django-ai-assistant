@@ -2,23 +2,21 @@
 
 {% block body %}
   <div class="d-flex vh-100">
-    <aside class="col-3 border-right p-3 bg-light">
-      <div
-        id="threads-wrapper"
-      >
-        {% block threads_list %}
-          <div id="threads-container" hx-swap-oob="true">
-            <h3>Threads</h3>
+    <aside class="h-100 col-3 border-right p-3 bg-light">
+      <h3>Threads</h3>
 
+        <div id="threads-wrapper">
+        {% block threads_list %}
+          <div id="threads-container" class="d-flex flex-column" hx-swap-oob="true">
             <div id="threads-list" class="list-group flex-grow-1 overflow-auto">
               {% for thread in threads %}
                 <a
-                  class="thread-item list-group-item list-group-item-action {% if thread.id == thread_id %}active-thread{% endif %}"
+                  class="thread-item list-group-item list-group-item-action {% if thread.id == thread_id %}active{% endif %}"
                   href="{% url 'chat_thread' thread.id %}"
                   hx-get="{% url 'chat_thread' thread.id %}"
-                  hx-target="#messages-wrapper"
+                  hx-target="#messages-container"
                   hx-swap="outerHTML"
-                  hx-select="#messages-wrapper"
+                  hx-select="#messages-container"
                   hx-select-oob="#threads-container"
                   hx-push-url="true"
                 >
@@ -44,15 +42,15 @@
       </div>
     </aside>
 
-    <main class="col-9 d-flex flex-column p-3 main-container">
+    <main class="h-100 col-9 d-flex flex-column p-3 mx-auto main-container">
       <h2 class="mb-4">Chat</h2>
 
       <div class="text-center my-3" data-loading>
         <div class="spinner-border text-primary" role="status"></div>
       </div>
 
-      <!-- This will be replaced by reponses from django_ai_assistant:messages_list_create-->
-      <div id="messages-wrapper" class="h-100" hx-indicator="#indicator">
+      <!-- This will be replaced by responses from django_ai_assistant:messages_list_create-->
+      <div id="messages-wrapper">
         {% block message_list %}
           <div class="text-center text-muted my-3">
             Select or create a thread to start chatting.
