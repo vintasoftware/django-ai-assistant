@@ -3,7 +3,7 @@ from typing import Any
 from django.http import HttpRequest
 from django.views import View
 
-from django_ai_assistant.conf import settings
+from django_ai_assistant.conf import app_settings
 
 
 def _get_default_kwargs(user: Any, request: HttpRequest | None, view: View | None):
@@ -22,7 +22,7 @@ def can_create_thread(
     view: View | None = None,
     **kwargs,
 ) -> bool:
-    return settings.call_fn(
+    return app_settings.call_fn(
         "CAN_CREATE_THREAD_FN",
         **_get_default_kwargs(user, request, view),
     )
@@ -35,7 +35,7 @@ def can_create_message(
     view: View | None = None,
     **kwargs,
 ) -> bool:
-    return settings.call_fn(
+    return app_settings.call_fn(
         "CAN_CREATE_MESSAGE_FN",
         **_get_default_kwargs(user, request, view),
         thread=thread,
@@ -49,7 +49,7 @@ def can_run_assistant(
     view: View | None = None,
     **kwargs,
 ) -> bool:
-    return settings.call_fn(
+    return app_settings.call_fn(
         "CAN_RUN_ASSISTANT",
         **_get_default_kwargs(user, request, view),
         assistant_cls=assistant_cls,

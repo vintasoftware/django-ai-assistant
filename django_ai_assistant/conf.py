@@ -1,6 +1,6 @@
 from typing import Any
 
-from django.conf import settings as dj_settings
+from django.conf import settings
 from django.core.signals import setting_changed
 from django.utils.module_loading import import_string
 
@@ -9,7 +9,6 @@ PREFIX = "AI_ASSISTANT_"
 
 
 DEFAULTS = {
-    "CLIENT_INIT_FN": "django_ai_assistant.ai.client.init_openai",
     "CAN_CREATE_THREAD_FN": "django_ai_assistant.permissions.allow_all",
     "CAN_VIEW_THREAD_FN": "django_ai_assistant.permissions.allow_all",
     "CAN_CREATE_MESSAGE_FN": "django_ai_assistant.permissions.allow_all",
@@ -32,7 +31,7 @@ class Settings:
     def get_setting(self, setting: str):
         django_setting = f"{PREFIX}{setting}"
 
-        return getattr(dj_settings, django_setting, DEFAULTS[setting])
+        return getattr(settings, django_setting, DEFAULTS[setting])
 
     def change_setting(self, setting: str, value: Any, enter: bool, **kwargs):
         if not setting.startswith(PREFIX):
@@ -55,5 +54,5 @@ class Settings:
         return fn(**kwargs)
 
 
-settings = Settings()
-setting_changed.connect(settings.change_setting)
+app_settings = Settings()
+setting_changed.connect(app_settings.change_setting)
