@@ -1,7 +1,8 @@
 import abc
-from collections.abc import Callable
+import inspect
 from typing import Any, ClassVar, Sequence, cast
 
+from django.conf import settings
 from django.http import HttpRequest
 from django.views import View
 
@@ -12,20 +13,18 @@ from langchain_core.runnables import ConfigurableFieldSpec
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.tools import BaseTool
 from langchain_openai import ChatOpenAI
-from openai import OpenAI
 
 from django_ai_assistant.ai.chat_message_histories import DjangoChatMessageHistory
-from django_ai_assistant.conf import settings
 from django_ai_assistant.exceptions import AIAssistantNotDefinedError, AIUserNotAllowedError
 from django_ai_assistant.models import Thread
 from django_ai_assistant.permissions import can_create_message, can_create_thread, can_run_assistant
+from django_ai_assistant.tools import StructuredTool, Tool, wrapped_partial
 
 
 class AIAssistant(abc.ABC):  # noqa: F821
     id: ClassVar[str]  # noqa: A003
     name: str
     instructions: str
-    fns: Sequence[Callable]
     model: str
     temperature: float
 
@@ -73,10 +72,33 @@ class AIAssistant(abc.ABC):  # noqa: F821
         model = self.get_model()
         temperature = self.get_temperature()
         model_kwargs = self.get_model_kwargs()
-        return ChatOpenAI(model=model, temperature=temperature, model_kwargs=model_kwargs)
+        return ChatOpenAI(
+            model=model,
+            temperature=temperature,
+            model_kwargs=model_kwargs,
+            api_key=settings.OPENAI_API_KEY,
+        )
 
-    def get_tools(self):
-        return self.fns
+    def _fix_method_tools(self, tools: Sequence[Tool | StructuredTool]):
+        # Remove self from each tool args_schema:
+        for tool in tools:
+            if tool.args_schema:
+                if isinstance(tool.args_schema.__fields_set__, set):
+                    tool.args_schema.__fields_set__.remove("self")
+                tool.args_schema.__fields__.pop("self", None)
+
+        # Bind the method to tool function:
+        for tool in tools:
+            if hasattr(tool, "func") and tool.func:
+                tool.func = wrapped_partial(tool.func, self)
+            if hasattr(tool, "coroutine") and tool.coroutine:
+                tool.coroutine = wrapped_partial(tool.coroutine, self)
+
+    def get_tools(self) -> Sequence[BaseTool]:
+        members = inspect.getmembers(self, predicate=lambda m: isinstance(m, BaseTool))
+        tools = [tool for _, tool in members]
+        self._fix_method_tools(tools)
+        return tools
 
     def as_chain(self, thread_id):
         # Based on:
@@ -145,7 +167,6 @@ def create_message(
     thread: Thread,
     user: Any,
     content: Any,
-    client: OpenAI | None = None,
     request: HttpRequest | None = None,
     view: View | None = None,
 ):
@@ -161,8 +182,6 @@ def create_message(
         view=view,
     ):
         raise AIUserNotAllowedError("User is not allowed to use this assistant")
-    if not client:
-        client = cast(OpenAI, settings.call_fn("CLIENT_INIT_FN"))
 
     # TODO: Check if we can separate the message creation from the chain invoke
     assistant = assistant_cls(user=user, request=request, view=view)
