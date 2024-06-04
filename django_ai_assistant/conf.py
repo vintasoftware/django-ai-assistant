@@ -14,6 +14,7 @@ DEFAULTS = {
     "CAN_VIEW_THREAD_FN": "django_ai_assistant.permissions.allow_all",
     "CAN_CREATE_MESSAGE_FN": "django_ai_assistant.permissions.allow_all",
     "CAN_RUN_ASSISTANT": "django_ai_assistant.permissions.allow_all",
+    "API_IMPORT_PATH": "django_ai_assistant.views.api",
 }
 
 
