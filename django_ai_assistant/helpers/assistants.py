@@ -2,6 +2,7 @@ import abc
 import inspect
 from typing import Any, ClassVar, Sequence, cast
 
+from django.conf import settings
 from django.http import HttpRequest
 from django.views import View
 
@@ -12,10 +13,8 @@ from langchain_core.runnables import ConfigurableFieldSpec
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.tools import BaseTool
 from langchain_openai import ChatOpenAI
-from openai import OpenAI
 
 from django_ai_assistant.ai.chat_message_histories import DjangoChatMessageHistory
-from django_ai_assistant.conf import settings
 from django_ai_assistant.exceptions import AIAssistantNotDefinedError, AIUserNotAllowedError
 from django_ai_assistant.models import Thread
 from django_ai_assistant.permissions import can_create_message, can_create_thread, can_run_assistant
@@ -73,7 +72,12 @@ class AIAssistant(abc.ABC):  # noqa: F821
         model = self.get_model()
         temperature = self.get_temperature()
         model_kwargs = self.get_model_kwargs()
-        return ChatOpenAI(model=model, temperature=temperature, model_kwargs=model_kwargs)
+        return ChatOpenAI(
+            model=model,
+            temperature=temperature,
+            model_kwargs=model_kwargs,
+            api_key=settings.OPENAI_API_KEY,
+        )
 
     def _fix_method_tools(self, tools: Sequence[Tool | StructuredTool]):
         # Remove self from each tool args_schema:
@@ -163,7 +167,6 @@ def create_message(
     thread: Thread,
     user: Any,
     content: Any,
-    client: OpenAI | None = None,
     request: HttpRequest | None = None,
     view: View | None = None,
 ):
@@ -179,8 +182,6 @@ def create_message(
         view=view,
     ):
         raise AIUserNotAllowedError("User is not allowed to use this assistant")
-    if not client:
-        client = cast(OpenAI, settings.call_fn("CLIENT_INIT_FN"))
 
     # TODO: Check if we can separate the message creation from the chain invoke
     assistant = assistant_cls(user=user, request=request, view=view)

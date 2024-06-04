@@ -46,7 +46,7 @@ class DjangoChatMessageHistory(BaseChatMessageHistory):
         A thread_id can be used to separate different chat histories in the same table,
         the thread_id should be provided when initializing the client.
 
-        This chat client needs to be used in Django context to interact with the database.
+        This client needs to be used in Django context to interact with the database.
 
         Args:
             thread_id: The thread ID to use for the chat message history

@@ -2,11 +2,12 @@ import json
 
 from django.conf import settings
 from django.db import models
-from django.db.models import F, Index
+from django.db.models import F, Index, Manager
 
 
 class Thread(models.Model):
     id: int  # noqa: A003
+    messages: Manager["Message"]
     name = models.CharField(max_length=255, blank=True)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -41,7 +42,7 @@ class Message(models.Model):
     class Meta:
         verbose_name = "Message"
         verbose_name_plural = "Messages"
-        ordering = ("-created_at",)
+        ordering = ("created_at",)
         indexes = (Index(F("created_at"), name="message_created_at"),)
 
     def __str__(self):
