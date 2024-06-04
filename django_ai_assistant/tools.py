@@ -1,9 +1,15 @@
-from pydantic.v1 import Field, BaseModel  # noqa
-from pydantic.v1 import *  # noqa
-from langchain_core.tools import tool  # noqa
-from langchain_core.tools import *  # noqa
+import functools
 
-# Declare the public API to avoid pylance error reportPrivateImportUsage:
-Field = Field
-BaseModel = BaseModel
-tool = tool
+from langchain_core.tools import (  # noqa
+    BaseTool,
+    StructuredTool,
+    Tool,
+    tool,
+)
+from pydantic.v1 import BaseModel, Field  # noqa
+
+
+def wrapped_partial(func, *args, **kwargs):
+    partial_func = functools.partial(func, *args, **kwargs)
+    functools.update_wrapper(partial_func, func)
+    return partial_func

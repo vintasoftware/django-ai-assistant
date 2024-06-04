@@ -134,6 +134,8 @@ LOGGING = {
     "root": {"handlers": ["console"], "level": "WARNING"},
     "loggers": {
         "django_ai_assistant": {"handlers": ["console"], "level": "DEBUG", "propagate": False},
+        # Log OpenAI API requests:
+        "openai": {"handlers": ["console"], "level": "DEBUG", "propagate": False},
     },
 }
 
