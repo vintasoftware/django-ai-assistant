@@ -1,5 +1,5 @@
 import abc
-from collections.abc import Callable
+import inspect
 from typing import Any, ClassVar, Sequence, cast
 
 from django.http import HttpRequest
@@ -19,13 +19,13 @@ from django_ai_assistant.conf import settings
 from django_ai_assistant.exceptions import AIAssistantNotDefinedError, AIUserNotAllowedError
 from django_ai_assistant.models import Thread
 from django_ai_assistant.permissions import can_create_message, can_create_thread, can_run_assistant
+from django_ai_assistant.tools import StructuredTool, Tool, wrapped_partial
 
 
 class AIAssistant(abc.ABC):  # noqa: F821
     id: ClassVar[str]  # noqa: A003
     name: str
     instructions: str
-    fns: Sequence[Callable]
     model: str
     temperature: float
 
@@ -75,8 +75,26 @@ class AIAssistant(abc.ABC):  # noqa: F821
         model_kwargs = self.get_model_kwargs()
         return ChatOpenAI(model=model, temperature=temperature, model_kwargs=model_kwargs)
 
-    def get_tools(self):
-        return self.fns
+    def _fix_method_tools(self, tools: Sequence[Tool | StructuredTool]):
+        # Remove self from each tool args_schema:
+        for tool in tools:
+            if tool.args_schema:
+                if isinstance(tool.args_schema.__fields_set__, set):
+                    tool.args_schema.__fields_set__.remove("self")
+                tool.args_schema.__fields__.pop("self", None)
+
+        # Bind the method to tool function:
+        for tool in tools:
+            if hasattr(tool, "func") and tool.func:
+                tool.func = wrapped_partial(tool.func, self)
+            if hasattr(tool, "coroutine") and tool.coroutine:
+                tool.coroutine = wrapped_partial(tool.coroutine, self)
+
+    def get_tools(self) -> Sequence[BaseTool]:
+        members = inspect.getmembers(self, predicate=lambda m: isinstance(m, BaseTool))
+        tools = [tool for _, tool in members]
+        self._fix_method_tools(tools)
+        return tools
 
     def as_chain(self, thread_id):
         # Based on:
