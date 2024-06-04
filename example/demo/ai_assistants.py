@@ -51,6 +51,14 @@ class WeatherAIAssistant(AIAssistant):
         )
         return response.json()
 
+    @tool
+    def who_am_i(self) -> str:
+        """Return the username of the current user"""
+        if self._user:
+            return self._user.username
+        else:
+            return "Anonymous"
+
     def get_instructions(self):
         # Warning: this will use the server's timezone
         # See: https://docs.djangoproject.com/en/5.0/topics/i18n/timezones/#default-time-zone-and-current-time-zone
