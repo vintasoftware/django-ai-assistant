@@ -15,17 +15,14 @@ import classes from "./Chat.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { IconSend2 } from "@tabler/icons-react";
 import { getHotkeyHandler } from "@mantine/hooks";
-import {
-  DjangoMessage,
-  DjangoThread,
-  createMessage,
-  createThread,
-  fetchAssistantID,
-  fetchDjangoThreads,
-  fetchMessages,
-} from "@/api";
+import * as client from "@/client";
+import type {
+  AssistantSchema,
+  ThreadMessagesSchemaOut,
+  ThreadSchema,
+} from "@/client";
 
-function ChatMessage({ message }: { message: DjangoMessage }) {
+function ChatMessage({ message }: { message: ThreadMessagesSchemaOut }) {
   return (
     <Box mb="md">
       <Text fw={700}>{message.type === "ai" ? "AI" : "User"}</Text>
@@ -34,7 +31,11 @@ function ChatMessage({ message }: { message: DjangoMessage }) {
   );
 }
 
-function ChatMessageList({ messages }: { messages: DjangoMessage[] }) {
+function ChatMessageList({
+  messages,
+}: {
+  messages: ThreadMessagesSchemaOut[];
+}) {
   if (messages.length === 0) {
     return <Text c="dimmed">No messages.</Text>;
   }
@@ -49,15 +50,126 @@ function ChatMessageList({ messages }: { messages: DjangoMessage[] }) {
   );
 }
 
+function useAiAssistantClient(client: any) {
+  // TODO:
+  // 1. Move to frontend/src/hooks/useAiAssistantClient.tsx
+  // 2. Add loading for each request
+  // 3. Improve return of fetch functions
+
+  const [assistants, setAssistants] = useState<AssistantSchema[] | null>(null);
+
+  const [threads, setThreads] = useState<ThreadSchema[] | null>(null);
+  const [activeThread, setActiveThread] = useState<ThreadSchema | null>(null);
+
+  const [messages, setMessages] = useState<ThreadMessagesSchemaOut[]>([]);
+  const [isLoadingMessages, setIsLoadingMessages] = useState<boolean>(false);
+
+  const fetchAssistants = useCallback(async () => {
+    try {
+      setAssistants(await client.djangoAiAssistantViewsListAssistants());
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
+  const fetchThreads = useCallback(async () => {
+    try {
+      setThreads(null);
+      setThreads(await client.djangoAiAssistantViewsListThreads());
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
+  const createAndSetActiveThread = useCallback(async () => {
+    try {
+      await fetchThreads();
+      setActiveThread(
+        await client.djangoAiAssistantViewsCreateThread({
+          requestBody: {
+            name: undefined,
+          },
+        })
+      );
+    } catch (error) {
+      console.error(error);
+      // alert("Error while creating thread");
+    }
+  }, []);
+
+  const fetchMessages = useCallback(async () => {
+    setIsLoadingMessages(true);
+    try {
+      setMessages(
+        await client.djangoAiAssistantViewsListThreadMessages({
+          threadId: activeThread?.id,
+        })
+      );
+      // scrollToBottom();
+    } catch (error) {
+      console.error(error);
+      // alert("Error while loading messages");
+    }
+    setIsLoadingMessages(false);
+  }, [activeThread?.id]);
+
+  const createMessage = useCallback(
+    async (assistantId: string, messageTextValue: string) => {
+      setIsLoadingMessages(true);
+      try {
+        // setInputValue("");
+        await client.djangoAiAssistantViewsCreateThreadMessage({
+          threadId: activeThread?.id,
+          requestBody: {
+            content: messageTextValue,
+            assistant_id: assistantId,
+          },
+        });
+        await fetchMessages();
+      } catch (error) {
+        console.error(error);
+        // alert("Error while sending message");
+      }
+      setIsLoadingMessages(false);
+    },
+    [activeThread?.id]
+  );
+
+  return {
+    assistants,
+    fetchAssistants,
+    threads,
+    fetchThreads,
+    createThread: createAndSetActiveThread,
+    activeThread,
+    setActiveThread,
+    messages,
+    fetchMessages,
+    isLoadingMessages,
+    createMessage,
+  };
+}
+
 export function Chat() {
+  const {
+    assistants,
+    fetchAssistants,
+    threads,
+    fetchThreads,
+    createThread,
+    activeThread,
+    setActiveThread,
+    messages,
+    fetchMessages,
+    isLoadingMessages,
+    createMessage,
+  } = useAiAssistantClient(client);
+
   const [assistantId, setAssistantId] = useState<string>("");
-  const [threads, setThreads] = useState<DjangoThread[] | null>(null);
-  const [threadId, setThreadId] = useState<string>("");
+
   const [inputValue, setInputValue] = useState<string>("");
-  const [messages, setMessages] = useState<DjangoMessage[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const isThreadSelected = assistantId && threadId;
-  const isChatActive = assistantId && threadId && !isLoading;
+  const isThreadSelected = assistantId && activeThread;
+  const isChatActive = assistantId && activeThread && !isLoadingMessages;
 
   const scrollViewport = useRef<HTMLDivElement>(null);
   const scrollToBottom = useCallback(
@@ -69,86 +181,33 @@ export function Chat() {
     [scrollViewport]
   );
 
-  const loadThreads = useCallback(async () => {
-    try {
-      setThreads(null);
-      const threads = await fetchDjangoThreads();
-      setThreads(threads);
-    } catch (error) {
-      console.error(error);
-      // alert("Error while loading threads");
-    }
-  }, []);
-
-  const createAndSetThread = useCallback(async () => {
-    try {
-      const thread = await createThread();
-      await loadThreads();
-      setThreadId(thread.id);
-    } catch (error) {
-      console.error(error);
-      // alert("Error while creating thread");
-    }
-  }, []);
-
-  const loadMessages = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      console.log(threadId);
-      setMessages(await fetchMessages({ threadId }));
-      scrollToBottom();
-    } catch (error) {
-      console.error(error);
-      // alert("Error while loading messages");
-    }
-    setIsLoading(false);
-  }, [threadId]);
-
-  const sendMessage = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      setInputValue("");
-      await createMessage({ threadId, assistantId, content: inputValue });
-      await loadMessages();
-    } catch (error) {
-      console.error(error);
-      // alert("Error while sending message");
-    }
-    setIsLoading(false);
-  }, [threadId, inputValue]);
-
   // Load assistantId when component mounts:
   useEffect(() => {
-    async function init() {
-      try {
-        setAssistantId(await fetchAssistantID());
-      } catch (error) {
-        console.error(error);
-        // alert("Error while fetching assistant");
-      }
+    if (assistants) {
+      setAssistantId(assistants[0].id);
+    } else {
+      fetchAssistants();
     }
-    init();
-  }, []);
+  }, [assistants, fetchAssistants]);
 
   // Load threads when component mounts:
   useEffect(() => {
-    loadThreads();
-  }, [loadThreads]);
+    fetchThreads();
+  }, [fetchThreads]);
 
   // Load messages when threadId changes:
   useEffect(() => {
-    if (!assistantId) return;
-    if (!threadId) return;
-    loadMessages();
-  }, [loadMessages]);
+    if (!activeThread) return;
+    fetchMessages();
+  }, [fetchMessages]);
 
   return (
     <>
       <ThreadsNav
         threads={threads}
-        selectedThreadId={threadId}
-        selectThread={setThreadId}
-        createThread={createAndSetThread}
+        selectedThreadId={activeThread?.id}
+        selectThread={setActiveThread}
+        createThread={createThread}
       />
       <main className={classes.main}>
         <Container className={classes.chatContainer}>
@@ -164,7 +223,7 @@ export function Chat() {
               viewportRef={scrollViewport}
             >
               <LoadingOverlay
-                visible={isLoading}
+                visible={isLoadingMessages}
                 zIndex={1000}
                 overlayProps={{ blur: 2 }}
               />
@@ -189,7 +248,15 @@ export function Chat() {
               disabled={!isChatActive}
               onChange={(e) => setInputValue(e.currentTarget.value)}
               value={inputValue}
-              onKeyDown={getHotkeyHandler([["mod+Enter", sendMessage]])}
+              onKeyDown={getHotkeyHandler([
+                [
+                  "mod+Enter",
+                  (e) => {
+                    e.preventDefault();
+                    createMessage(assistantId, inputValue);
+                  },
+                ],
+              ])}
               rightSection={
                 <Button
                   variant="filled"
@@ -204,7 +271,7 @@ export function Chat() {
                   }
                   disabled={!isChatActive}
                   onClick={(e) => {
-                    sendMessage();
+                    createMessage(assistantId, inputValue);
                     e.preventDefault();
                   }}
                 >

@@ -19,9 +19,15 @@ __pycache__/
 # data
 *.dump
 
-# npm
+# p|npm
 node_modules/
 npm-debug.log
+pnpm-debug.log*
+
+# JS lib .gitignore
+dist/
+dist-ssr/
+*.local
 
 # Webpack
 /example/bundles/*

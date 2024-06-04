@@ -33,3 +33,15 @@ repos:
         # Only run missing migration check if migration-generating files have changed:
         files: (.*/?(settings|migrations|models)/.+|.+models\.py|.+constants\.py|.+choices\.py|.+pyproject\.toml)
         pass_filenames: false
+      - id: generate-openapi-schema
+        name: Generate OpenAPI schema
+        entry: poetry run python example/manage.py generate_openapi_schema --output openapi_schema.json
+        language: system
+        files: views\.py$
+        pass_filenames: false
+      - id: generate-client
+        name: Generate client
+        entry: generate-ai-assistant-client example/openapi_schema.json example/assets/js/client
+        language: system
+        files: openapi_schema\.json$
+        pass_filenames: false
