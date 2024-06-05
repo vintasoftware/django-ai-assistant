@@ -1,5 +1,7 @@
 import abc
+import copy
 import inspect
+import types
 from typing import Any, ClassVar, Sequence, cast
 
 from django.conf import settings
@@ -18,7 +20,6 @@ from django_ai_assistant.ai.chat_message_histories import DjangoChatMessageHisto
 from django_ai_assistant.exceptions import AIAssistantNotDefinedError, AIUserNotAllowedError
 from django_ai_assistant.models import Thread
 from django_ai_assistant.permissions import can_create_message, can_create_thread, can_run_assistant
-from django_ai_assistant.tools import StructuredTool, Tool, wrapped_partial
 
 
 class AIAssistant(abc.ABC):  # noqa: F821
@@ -32,6 +33,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
     _request: Any | None
     _view: Any | None
     _init_kwargs: dict[str, Any]
+    _method_tools: Sequence[BaseTool]
 
     def __init__(self, *, user=None, request=None, view=None, **kwargs):
         self._user = user
@@ -41,6 +43,37 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
         self.model = "gpt-4o"
         self.temperature = 1.0  # default OpenAI temperature for Assistant
+
+        self._set_method_tools()
+
+    def _set_method_tools(self):
+        # Find tool methods (decorated with `@tool`):
+        # NOTE: tools are defined in the class context because of the `@tool` decorator,
+        # so it is shared between instances.
+        methods = inspect.getmembers(self, predicate=lambda m: isinstance(m, BaseTool))
+        class_tools = [tool for _, tool in methods]
+
+        # Copy the tools, to avoid sharing self between instances:
+        # TODO: find a way to avoid deepcopy, such as dynamically setting self.
+        tools = copy.deepcopy(class_tools)
+
+        # Remove self from each tool args_schema:
+        for tool in tools:
+            if tool.args_schema:
+                if isinstance(tool.args_schema.__fields_set__, set):
+                    tool.args_schema.__fields_set__.remove("self")
+                tool.args_schema.__fields__.pop("self", None)
+
+        # Bind the tool method to tool function:
+        # NOTE: tools are defined in the class context because of the `@tool` decorator
+        # where the methods are still unbound.
+        for tool in tools:
+            if hasattr(tool, "func") and tool.func:
+                tool.func = types.MethodType(tool.func, self)
+            if hasattr(tool, "coroutine") and tool.coroutine:
+                tool.coroutine = types.MethodType(tool.coroutine, self)
+
+        self._method_tools = tools
 
     def get_instructions(self):
         return self.instructions
@@ -79,26 +112,8 @@ class AIAssistant(abc.ABC):  # noqa: F821
             api_key=settings.OPENAI_API_KEY,
         )
 
-    def _fix_method_tools(self, tools: Sequence[Tool | StructuredTool]):
-        # Remove self from each tool args_schema:
-        for tool in tools:
-            if tool.args_schema:
-                if isinstance(tool.args_schema.__fields_set__, set):
-                    tool.args_schema.__fields_set__.remove("self")
-                tool.args_schema.__fields__.pop("self", None)
-
-        # Bind the method to tool function:
-        for tool in tools:
-            if hasattr(tool, "func") and tool.func:
-                tool.func = wrapped_partial(tool.func, self)
-            if hasattr(tool, "coroutine") and tool.coroutine:
-                tool.coroutine = wrapped_partial(tool.coroutine, self)
-
     def get_tools(self) -> Sequence[BaseTool]:
-        members = inspect.getmembers(self, predicate=lambda m: isinstance(m, BaseTool))
-        tools = [tool for _, tool in members]
-        self._fix_method_tools(tools)
-        return tools
+        return self._method_tools
 
     def as_chain(self, thread_id):
         # Based on:
