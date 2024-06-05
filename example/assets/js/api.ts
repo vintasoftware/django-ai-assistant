@@ -21,7 +21,7 @@ export async function fetchAssistantID(): Promise<string> {
       "No assistants found. Please create an assistant on Django side."
     );
   }
-  return responseData[0].id;  // get the first assistant
+  return "game_recommendation_assistant"
 }
 
 // TODO: Get typing from Django API

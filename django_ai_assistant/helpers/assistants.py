@@ -9,11 +9,12 @@ from django.http import HttpRequest
 from django.views import View
 
 from langchain.agents import AgentExecutor, create_tool_calling_agent
+from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_core.messages import BaseMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import ConfigurableFieldSpec
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_core.tools import BaseTool
+from langchain_core.tools import BaseTool, Tool
 from langchain_openai import ChatOpenAI
 
 from django_ai_assistant.ai.chat_message_histories import DjangoChatMessageHistory
@@ -24,7 +25,9 @@ from django_ai_assistant.permissions import can_create_message, can_create_threa
 
 class AIAssistant(abc.ABC):  # noqa: F821
     id: ClassVar[str]  # noqa: A003
+    # TODO: id should match the pattern '^[a-zA-Z0-9_-]+$ to support as_tool in OpenAI
     name: str
+    description: str
     instructions: str
     model: str
     temperature: float
@@ -41,7 +44,6 @@ class AIAssistant(abc.ABC):  # noqa: F821
         self._view = view
         self._init_kwargs = kwargs
 
-        self.model = "gpt-4o"
         self.temperature = 1.0  # default OpenAI temperature for Assistant
 
         self._set_method_tools()
@@ -75,6 +77,12 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
         self._method_tools = tools
 
+    def get_name(self):
+        return self.name
+
+    def get_description(self):
+        return self.description
+
     def get_instructions(self):
         return self.instructions
 
@@ -98,7 +106,9 @@ class AIAssistant(abc.ABC):  # noqa: F821
             ]
         )
 
-    def get_message_history(self, thread_id: int):
+    def get_message_history(self, thread_id: int | None):
+        if thread_id is None:
+            return InMemoryChatMessageHistory()
         return DjangoChatMessageHistory(thread_id)
 
     def get_llm(self):
@@ -115,7 +125,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
     def get_tools(self) -> Sequence[BaseTool]:
         return self._method_tools
 
-    def as_chain(self, thread_id):
+    def as_chain(self, thread_id: int | None):
         # Based on:
         # - https://python.langchain.com/v0.2/docs/how_to/qa_chat_history_how_to/
         # - https://python.langchain.com/v0.2/docs/how_to/migrate_agent/#memory
@@ -142,16 +152,31 @@ class AIAssistant(abc.ABC):  # noqa: F821
                     annotation=int,
                     name="Thread ID",
                     description="Unique identifier for the chat thread / conversation / session.",
-                    default="",
+                    default=None,
                     is_shared=True,
                 ),
             ],
         ).with_config({"configurable": {"thread_id": thread_id}})
+
         return agent_with_chat_history
 
-    def invoke(self, *args, thread_id, **kwargs):
+    def invoke(self, *args, thread_id: int | None, **kwargs):
         chain = self.as_chain(thread_id)
         return chain.invoke(*args, **kwargs)
+
+    def run_as_tool(self, message: str, **kwargs):
+        chain = self.as_chain(thread_id=None)
+        output = chain.invoke({"input": message}, **kwargs)
+        return output["output"]
+
+    def as_tool(self):
+        description = self.get_description()
+
+        return Tool.from_function(
+            func=self.run_as_tool,
+            name=self.id,
+            description=description,
+        )
 
 
 ASSISTANT_CLS_REGISTRY: dict[str, type[AIAssistant]] = {}
