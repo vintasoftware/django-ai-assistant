@@ -16,6 +16,7 @@ from django_ai_assistant.tools import BaseModel, Field, tool
 
 class WeatherAssistant(AIAssistant):
     name = "Weather Assistant"
+    description = "A weather assistant that provides weather information."
     instructions = "You are a weather bot."
     model = "gpt-4"
 
