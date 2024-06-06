@@ -28,20 +28,20 @@ repos:
     hooks:
       - id: missing-migrations
         name: missing-migrations-local
-        entry: poetry run python example/manage.py makemigrations --check
+        entry: poetry run python manage.py makemigrations --check
         language: system
         # Only run missing migration check if migration-generating files have changed:
         files: (.*/?(settings|migrations|models)/.+|.+models\.py|.+constants\.py|.+choices\.py|.+pyproject\.toml)
         pass_filenames: false
       - id: generate-openapi-schema
         name: Generate OpenAPI schema
-        entry: poetry run python example/manage.py generate_openapi_schema --output openapi_schema.json
+        entry: poetry run python manage.py generate_openapi_schema --output frontend/openapi_schema.json
         language: system
         files: views\.py$
         pass_filenames: false
       - id: generate-client
         name: Generate client
-        entry: generate-ai-assistant-client example/openapi_schema.json example/assets/js/client
+        entry: sh -c 'cd frontend && npm run generate-client'
         language: system
         files: openapi_schema\.json$
         pass_filenames: false

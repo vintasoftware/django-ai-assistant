@@ -12,7 +12,7 @@ import type { DjangoAiAssistantViewsListAssistantsResponse, DjangoAiAssistantVie
  */
 export const djangoAiAssistantViewsListAssistants = (): CancelablePromise<DjangoAiAssistantViewsListAssistantsResponse> => { return __request(OpenAPI, {
     method: 'GET',
-    url: '/ai-assistant/assistants/'
+    url: '/assistants/'
 }); };
 
 /**
@@ -22,7 +22,7 @@ export const djangoAiAssistantViewsListAssistants = (): CancelablePromise<Django
  */
 export const djangoAiAssistantViewsListThreads = (): CancelablePromise<DjangoAiAssistantViewsListThreadsResponse> => { return __request(OpenAPI, {
     method: 'GET',
-    url: '/ai-assistant/threads/'
+    url: '/threads/'
 }); };
 
 /**
@@ -34,7 +34,7 @@ export const djangoAiAssistantViewsListThreads = (): CancelablePromise<DjangoAiA
  */
 export const djangoAiAssistantViewsCreateThread = (data: DjangoAiAssistantViewsCreateThreadData): CancelablePromise<DjangoAiAssistantViewsCreateThreadResponse> => { return __request(OpenAPI, {
     method: 'POST',
-    url: '/ai-assistant/threads/',
+    url: '/threads/',
     body: data.requestBody,
     mediaType: 'application/json'
 }); };
@@ -48,7 +48,7 @@ export const djangoAiAssistantViewsCreateThread = (data: DjangoAiAssistantViewsC
  */
 export const djangoAiAssistantViewsListThreadMessages = (data: DjangoAiAssistantViewsListThreadMessagesData): CancelablePromise<DjangoAiAssistantViewsListThreadMessagesResponse> => { return __request(OpenAPI, {
     method: 'GET',
-    url: '/ai-assistant/threads/{thread_id}/messages/',
+    url: '/threads/{thread_id}/messages/',
     path: {
         thread_id: data.threadId
     }
@@ -64,7 +64,7 @@ export const djangoAiAssistantViewsListThreadMessages = (data: DjangoAiAssistant
  */
 export const djangoAiAssistantViewsCreateThreadMessage = (data: DjangoAiAssistantViewsCreateThreadMessageData): CancelablePromise<DjangoAiAssistantViewsCreateThreadMessageResponse> => { return __request(OpenAPI, {
     method: 'POST',
-    url: '/ai-assistant/threads/{thread_id}/messages/',
+    url: '/threads/{thread_id}/messages/',
     path: {
         thread_id: data.threadId
     },

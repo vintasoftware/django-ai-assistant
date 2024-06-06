@@ -15,12 +15,11 @@ import classes from "./Chat.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { IconSend2 } from "@tabler/icons-react";
 import { getHotkeyHandler } from "@mantine/hooks";
-import * as client from "@/client";
-import type {
-  AssistantSchema,
+
+import {
+  useAiAssistantClient,
   ThreadMessagesSchemaOut,
-  ThreadSchema,
-} from "@/client";
+} from "django-ai-assistant-client";
 
 function ChatMessage({ message }: { message: ThreadMessagesSchemaOut }) {
   return (
@@ -50,128 +49,15 @@ function ChatMessageList({
   );
 }
 
-function useAiAssistantClient(client: any) {
-  // TODO:
-  // 1. Move to frontend/src/hooks/useAiAssistantClient.tsx
-  // 2. Add loading for each request
-  // 3. Improve return of fetch functions
-
-  const [assistants, setAssistants] = useState<AssistantSchema[] | null>(null);
-
-  const [threads, setThreads] = useState<ThreadSchema[] | null>(null);
-  const [activeThread, setActiveThread] = useState<ThreadSchema | null>(null);
-
-  const [messages, setMessages] = useState<ThreadMessagesSchemaOut[]>([]);
-  const [isLoadingMessages, setIsLoadingMessages] = useState<boolean>(false);
-
-  const fetchAssistants = useCallback(async () => {
-    try {
-      setAssistants(await client.djangoAiAssistantViewsListAssistants());
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
-
-  const fetchThreads = useCallback(async () => {
-    try {
-      setThreads(null);
-      setThreads(await client.djangoAiAssistantViewsListThreads());
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
-
-  const createAndSetActiveThread = useCallback(async () => {
-    try {
-      await fetchThreads();
-      setActiveThread(
-        await client.djangoAiAssistantViewsCreateThread({
-          requestBody: {
-            name: undefined,
-          },
-        })
-      );
-    } catch (error) {
-      console.error(error);
-      // alert("Error while creating thread");
-    }
-  }, []);
-
-  const fetchMessages = useCallback(
-    async ({
-      successCallback,
-    }: { successCallback?: CallableFunction } = {}) => {
-      setIsLoadingMessages(true);
-      try {
-        setMessages(
-          await client.djangoAiAssistantViewsListThreadMessages({
-            threadId: activeThread?.id,
-          })
-        );
-        successCallback?.();
-      } catch (error) {
-        console.error(error);
-        // alert("Error while loading messages");
-      }
-      setIsLoadingMessages(false);
-    },
-    [activeThread?.id]
-  );
-
-  const createMessage = useCallback(
-    async ({
-      assistantId,
-      messageTextValue,
-      successCallback,
-    }: {
-      assistantId: string;
-      messageTextValue: string;
-      successCallback?: CallableFunction;
-    }) => {
-      setIsLoadingMessages(true);
-      try {
-        await client.djangoAiAssistantViewsCreateThreadMessage({
-          threadId: activeThread?.id,
-          requestBody: {
-            content: messageTextValue,
-            assistant_id: assistantId,
-          },
-        });
-        await fetchMessages();
-        successCallback?.();
-      } catch (error) {
-        console.error(error);
-        // alert("Error while sending message");
-      }
-      setIsLoadingMessages(false);
-    },
-    [activeThread?.id]
-  );
-
-  return {
-    assistants,
-    fetchAssistants,
-    threads,
-    fetchThreads,
-    createThread: createAndSetActiveThread,
-    activeThread,
-    setActiveThread,
-    messages,
-    fetchMessages,
-    isLoadingMessages,
-    createMessage,
-  };
-}
-
 export function Chat() {
   const [assistantId, setAssistantId] = useState<string>("");
   const [inputValue, setInputValue] = useState<string>("");
 
   const {
-    assistants,
-    fetchAssistants,
     threads,
     fetchThreads,
+    assistants,
+    fetchAssistants,
     createThread,
     activeThread,
     setActiveThread,
@@ -179,7 +65,7 @@ export function Chat() {
     fetchMessages,
     isLoadingMessages,
     createMessage,
-  } = useAiAssistantClient(client);
+  } = useAiAssistantClient();
 
   const isThreadSelected = assistantId && activeThread;
   const isChatActive = assistantId && activeThread && !isLoadingMessages;

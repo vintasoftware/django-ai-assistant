@@ -1,12 +1,12 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "NinjaAPI",
-    "version": "1.0.0",
+    "title": "django_ai_assistant",
+    "version": "0.0.1",
     "description": ""
   },
   "paths": {
-    "/ai-assistant/assistants/": {
+    "/assistants/": {
       "get": {
         "operationId": "django_ai_assistant_views_list_assistants",
         "summary": "List Assistants",
@@ -29,7 +29,7 @@
         }
       }
     },
-    "/ai-assistant/threads/": {
+    "/threads/": {
       "get": {
         "operationId": "django_ai_assistant_views_list_threads",
         "summary": "List Threads",
@@ -79,7 +79,7 @@
         }
       }
     },
-    "/ai-assistant/threads/{thread_id}/messages/": {
+    "/threads/{thread_id}/messages/": {
       "get": {
         "operationId": "django_ai_assistant_views_list_thread_messages",
         "summary": "List Thread Messages",

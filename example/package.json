@@ -44,7 +44,6 @@
     "@tabler/icons-react": "^3.4.0",
     "axios": "^1.7.2",
     "cookie": "^0.6.0",
-    "django-ai-assistant-client": "file:../frontend",
     "modern-normalize": "^2.0.0"
   }
 }
