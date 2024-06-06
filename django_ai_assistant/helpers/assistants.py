@@ -169,7 +169,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         output = chain.invoke({"input": message}, **kwargs)
         return output["output"]
 
-    def as_tool(self):
+    def as_tool(self, json_output=False) -> BaseTool:
         description = self.get_description()
 
         return Tool.from_function(
