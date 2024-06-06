@@ -19,10 +19,9 @@ __pycache__/
 # data
 *.dump
 
-# p|npm
+# npm
 node_modules/
 npm-debug.log
-pnpm-debug.log*
 
 # JS lib .gitignore
 dist/
