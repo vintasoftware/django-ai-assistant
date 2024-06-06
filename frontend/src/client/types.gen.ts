@@ -52,7 +52,7 @@ export type DjangoAiAssistantViewsCreateThreadMessageData = {
 export type DjangoAiAssistantViewsCreateThreadMessageResponse = unknown;
 
 export type $OpenApiTs = {
-    '/ai-assistant/assistants/': {
+    '/assistants/': {
         get: {
             res: {
                 /**
@@ -62,7 +62,7 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/ai-assistant/threads/': {
+    '/threads/': {
         get: {
             res: {
                 /**
@@ -81,7 +81,7 @@ export type $OpenApiTs = {
             };
         };
     };
-    '/ai-assistant/threads/{thread_id}/messages/': {
+    '/threads/{thread_id}/messages/': {
         get: {
             req: DjangoAiAssistantViewsListThreadMessagesData;
             res: {
