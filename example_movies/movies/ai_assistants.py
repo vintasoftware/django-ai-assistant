@@ -1,3 +1,4 @@
+import json
 from typing import Sequence
 
 from django.utils import timezone
@@ -112,27 +113,31 @@ class MovieRecommendationAIAssistant(AIAssistant):
         )
 
     @tool
-    def is_movie_in_backlog(self, imdb_url: str) -> str:
-        """Check if a movie is in user's backlog. To get the IMDB URL, use the imdb_url_finder."""
+    def is_movie_in_backlog(self, imdb_url_list: Sequence[str]) -> str:
+        """Check if a movie is in user's backlog."""
 
-        is_in_backlog = MovieBacklogItem.objects.filter(
-            imdb_url=imdb_url.strip(),
-            user=self._user,
-        ).exists()
-        if is_in_backlog:
-            return "Yes."
-        return "No."
+        is_in_backlog_dict = {}
+        for imdb_url in imdb_url_list:
+            imdb_url = imdb_url.strip()
+            is_in_backlog_dict[imdb_url.strip()] = MovieBacklogItem.objects.filter(
+                user=self._user,
+                imdb_url=imdb_url.strip(),
+            ).exists()
+
+        return json.dumps(is_in_backlog_dict, indent=2)
 
     @tool
     def add_movie_to_backlog(self, movie_name: str, imdb_url: str) -> str:
-        """Add a movie to user's backlog. To get the IMDB URL, use the imdb_url_finder."""
+        """Add a movie to user's backlog."""
 
         MovieBacklogItem.objects.update_or_create(
-            movie_name=movie_name.strip(),
             imdb_url=imdb_url.strip(),
             user=self._user,
+            defaults={
+                "movie_name": movie_name.strip(),
+            },
         )
-        return f"Added {movie_name} to {self._user} backlog."
+        return f"Added {movie_name} to backlog."
 
     @tool
     def remove_movie_from_backlog(self, movie_name: str) -> str:
@@ -142,4 +147,4 @@ class MovieRecommendationAIAssistant(AIAssistant):
             movie_name=movie_name.strip(),
             user=self._user,
         ).delete()
-        return f"Removed {movie_name} to {self._user} backlog."
+        return f"Removed {movie_name} to backlog."
