@@ -97,27 +97,39 @@ function useAiAssistantClient(client: any) {
     }
   }, []);
 
-  const fetchMessages = useCallback(async () => {
-    setIsLoadingMessages(true);
-    try {
-      setMessages(
-        await client.djangoAiAssistantViewsListThreadMessages({
-          threadId: activeThread?.id,
-        })
-      );
-      // scrollToBottom();
-    } catch (error) {
-      console.error(error);
-      // alert("Error while loading messages");
-    }
-    setIsLoadingMessages(false);
-  }, [activeThread?.id]);
-
-  const createMessage = useCallback(
-    async (assistantId: string, messageTextValue: string) => {
+  const fetchMessages = useCallback(
+    async ({
+      successCallback,
+    }: { successCallback?: CallableFunction } = {}) => {
       setIsLoadingMessages(true);
       try {
-        // setInputValue("");
+        setMessages(
+          await client.djangoAiAssistantViewsListThreadMessages({
+            threadId: activeThread?.id,
+          })
+        );
+        successCallback?.();
+      } catch (error) {
+        console.error(error);
+        // alert("Error while loading messages");
+      }
+      setIsLoadingMessages(false);
+    },
+    [activeThread?.id]
+  );
+
+  const createMessage = useCallback(
+    async ({
+      assistantId,
+      messageTextValue,
+      successCallback,
+    }: {
+      assistantId: string;
+      messageTextValue: string;
+      successCallback?: CallableFunction;
+    }) => {
+      setIsLoadingMessages(true);
+      try {
         await client.djangoAiAssistantViewsCreateThreadMessage({
           threadId: activeThread?.id,
           requestBody: {
@@ -126,6 +138,7 @@ function useAiAssistantClient(client: any) {
           },
         });
         await fetchMessages();
+        successCallback?.();
       } catch (error) {
         console.error(error);
         // alert("Error while sending message");
@@ -151,6 +164,9 @@ function useAiAssistantClient(client: any) {
 }
 
 export function Chat() {
+  const [assistantId, setAssistantId] = useState<string>("");
+  const [inputValue, setInputValue] = useState<string>("");
+
   const {
     assistants,
     fetchAssistants,
@@ -165,9 +181,6 @@ export function Chat() {
     createMessage,
   } = useAiAssistantClient(client);
 
-  const [assistantId, setAssistantId] = useState<string>("");
-
-  const [inputValue, setInputValue] = useState<string>("");
   const isThreadSelected = assistantId && activeThread;
   const isChatActive = assistantId && activeThread && !isLoadingMessages;
 
@@ -197,9 +210,22 @@ export function Chat() {
 
   // Load messages when threadId changes:
   useEffect(() => {
+    if (!assistantId) return;
     if (!activeThread) return;
-    fetchMessages();
-  }, [fetchMessages]);
+
+    fetchMessages({ successCallback: scrollToBottom });
+  }, [assistantId, activeThread?.id, fetchMessages, scrollToBottom]);
+
+  function handleCreateMessage() {
+    createMessage({
+      assistantId,
+      messageTextValue: inputValue,
+      successCallback: () => {
+        setInputValue("");
+        scrollToBottom();
+      },
+    });
+  }
 
   return (
     <>
@@ -248,15 +274,7 @@ export function Chat() {
               disabled={!isChatActive}
               onChange={(e) => setInputValue(e.currentTarget.value)}
               value={inputValue}
-              onKeyDown={getHotkeyHandler([
-                [
-                  "mod+Enter",
-                  (e) => {
-                    e.preventDefault();
-                    createMessage(assistantId, inputValue);
-                  },
-                ],
-              ])}
+              onKeyDown={getHotkeyHandler([["mod+Enter", handleCreateMessage]])}
               rightSection={
                 <Button
                   variant="filled"
@@ -271,7 +289,7 @@ export function Chat() {
                   }
                   disabled={!isChatActive}
                   onClick={(e) => {
-                    createMessage(assistantId, inputValue);
+                    handleCreateMessage();
                     e.preventDefault();
                   }}
                 >
