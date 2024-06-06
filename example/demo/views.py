@@ -16,7 +16,7 @@ from django_ai_assistant.schemas import (
     ThreadSchemaIn,
 )
 
-from .ai_assistants import MovieRecommendationAIAssistant
+from .ai_assistants import WeatherAIAssistant
 
 
 def react_index(request):
@@ -25,8 +25,8 @@ def react_index(request):
 
 class BaseAIAssistantView(TemplateView):
     def get_assistant_id(self, **kwargs):
-        """Returns the MovieRecommendationAIAssistant. Replace this with your own logic."""
-        return MovieRecommendationAIAssistant.id
+        """Returns the WeatherAIAssistant. Replace this with your own logic."""
+        return WeatherAIAssistant.id
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
