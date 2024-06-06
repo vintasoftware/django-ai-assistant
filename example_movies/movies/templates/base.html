@@ -1,0 +1,21 @@
+{% load render_bundle from webpack_loader %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charSet="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    {% block title %}
+    <title>Django AI Assistant Demo</title>
+    {% endblock %}
+
+    {% render_bundle 'main' 'css' %}
+  </head>
+  <body>
+    {% csrf_token %}
+    {% block content %}{% endblock %}
+  </body>
+</html>
