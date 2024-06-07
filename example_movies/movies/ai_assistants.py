@@ -1,4 +1,3 @@
-import json
 from typing import Sequence
 
 from django.utils import timezone
@@ -52,22 +51,17 @@ class MovieRecommendationAIAssistant(AIAssistant):
     description = "A movie recommendation assistant."
     instructions = (
         "You're a helpful movie recommendation assistant. "
-        "Help users find movies to watch and manage their movie backlogs. "
+        "Help the user find movies to watch and manage their movie backlogs. "
         "By using the provided tools, you can:\n"
         "- Research for upcoming movies\n"
         "- Research for similar movies\n"
         "- Research more information about movies\n"
-        "- List what movies are on user's backlog\n"
-        "- Check if a movie is already in user's backlog\n"
+        "- Get what movies are on user's backlog\n"
         "- Add a movie to user's backlog\n"
         "- Remove a movie to user's backlog\n"
         "- Get the IMDB URL of a movie\n"
-        "You must carefully follow the step-by-step below to provide the best experience to the user.\n"
-        "When the user asks for a movie recommendation, "
-        "or asks about a movie, do the following in order:\n"
-        "1. Get the movie IMDB URL using the imdb_url_finder. \n"
-        "2. Check if the movie is already in user's backlog. Use the IMDB URL for that. \n"
-        "3. Only after you find out if the movie is in user's backlog, offer the user to add it, in case it's not. \n"
+        "Ask the user if they want to add your recommended movies to their backlog, "
+        "but only if the movie is not on the user's backlog yet."
     )
     name = "Movie Recommendation Assistant"
     model = "gpt-4o"
@@ -77,7 +71,18 @@ class MovieRecommendationAIAssistant(AIAssistant):
         # See: https://docs.djangoproject.com/en/5.0/topics/i18n/timezones/#default-time-zone-and-current-time-zone
         # In a real application, you should use the user's timezone
         current_date_str = timezone.now().date().isoformat()
-        return f"{self.instructions} Today is: {current_date_str}."
+        movies = MovieBacklogItem.objects.filter(user=self._user)
+        user_backlog_str = (
+            "\n".join([f"- [{movie.movie_name}]({movie.imdb_url})" for movie in movies]) or "Empty"
+        )
+
+        return "\n".join(
+            [
+                self.instructions,
+                f"Today is: {current_date_str}",
+                f"User's backlog: {user_backlog_str}",
+            ]
+        )
 
     def get_tools(self) -> Sequence[BaseTool]:
         return [
@@ -104,27 +109,13 @@ class MovieRecommendationAIAssistant(AIAssistant):
         return response["markdown"]
 
     @tool
-    def list_movies_backlog(self) -> str:
-        """List what movies are on user's backlog."""
+    def get_movies_backlog(self) -> str:
+        """Get what movies are on user's backlog."""
 
         movies = MovieBacklogItem.objects.filter(user=self._user)
         return (
             "\n".join([f"- [{movie.movie_name}]({movie.imdb_url})" for movie in movies]) or "Empty"
         )
-
-    @tool
-    def is_movie_in_backlog(self, imdb_url_list: Sequence[str]) -> str:
-        """Check if a movie is in user's backlog."""
-
-        is_in_backlog_dict = {}
-        for imdb_url in imdb_url_list:
-            imdb_url = imdb_url.strip()
-            is_in_backlog_dict[imdb_url.strip()] = MovieBacklogItem.objects.filter(
-                user=self._user,
-                imdb_url=imdb_url.strip(),
-            ).exists()
-
-        return json.dumps(is_in_backlog_dict, indent=2)
 
     @tool
     def add_movie_to_backlog(self, movie_name: str, imdb_url: str) -> str:
