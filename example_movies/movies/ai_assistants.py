@@ -1,3 +1,4 @@
+import functools
 from typing import Sequence
 
 from django.utils import timezone
@@ -43,6 +44,10 @@ class IMDBURLFinderTool(AIAssistant):
             TavilySearchResults(),
             *super().get_tools(),
         ]
+
+    @functools.lru_cache(maxsize=1024)  # noqa: B019
+    def run_as_tool(self, message: str, **kwargs):
+        return super().run_as_tool(message, **kwargs)
 
 
 @register_assistant
