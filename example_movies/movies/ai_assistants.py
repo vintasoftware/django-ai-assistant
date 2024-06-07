@@ -1,4 +1,5 @@
 import functools
+import json
 from typing import Sequence
 
 from django.db.models import Max
@@ -55,7 +56,6 @@ class IMDBURLFinderTool(AIAssistant):
         return super().run_as_tool(message, **kwargs)
 
 
-@register_assistant
 class MovieRecommendationAIAssistant(AIAssistant):
     id = "movie_recommendation_assistant"  # noqa: A003
     instructions = (
@@ -165,3 +165,96 @@ class MovieRecommendationAIAssistant(AIAssistant):
 
         MovieBacklogItem.reorder_backlog(self._user, imdb_url_list)
         return "Reordered movies in backlog. New backlog: \n" + self._get_movies_backlog()
+
+
+def _movie_recommendation_example_json():
+    return json.dumps(
+        {
+            "recommended_movies": [
+                {
+                    "movie_name": f"<movie-{i}-name-here>",
+                    "imdb_url": f"<movie-{i}-imdb-page-url-here>",
+                }
+                for i in range(1, 6)
+            ]
+        },
+        indent=2,
+    ).translate(  # Necessary due to ChatPromptTemplate
+        str.maketrans(
+            {
+                "{": "{{",
+                "}": "}}",
+            }
+        )
+    )
+
+
+@register_assistant
+class MovieRecommendationJSONAIAssistant(AIAssistant):
+    id = "movie_recommendation_json_assistant"  # noqa: A003
+    instructions = (
+        "You're a helpful movie recommendation assistant "
+        "that outputs valid JSON in a certain structure. "
+        "Help the user find movies similar to a given input movie. "
+        "The input will be the IMDB page URL of a movie. "
+        "By using the provided tools, you can:\n"
+        "- Research for similar movies\n"
+        "- Research more information about movies\n"
+        "- Visit a website URL and return the content as markdown\n"
+        "- Check the Wikipedia page of a movie\n"
+        "- Get the IMDB page URL of a movie\n"
+        "Your response will be integrated with a frontend web application,"
+        "therefore it's critical to reply with only JSON output in the following structure: \n"
+        f"```json\n{_movie_recommendation_example_json()}\n```"
+    )
+    name = "Movie Recommendation JSON Assistant"
+    model = "gpt-4o"
+
+    def get_model_kwargs(self):
+        return {"response_format": {"type": "json_object"}}
+
+    def get_instructions(self):
+        # Warning: this will use the server's timezone
+        # See: https://docs.djangoproject.com/en/5.0/topics/i18n/timezones/#default-time-zone-and-current-time-zone
+        # In a real application, you should use the user's timezone
+        current_date_str = timezone.now().date().isoformat()
+
+        return "\n".join(
+            [
+                self.instructions,
+                f"Today is: {current_date_str}",
+            ]
+        )
+
+    def get_tools(self) -> Sequence[BaseTool]:
+        return [
+            TavilySearchResults(),
+            WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper()),  # type: ignore[call-arg]
+            IMDBURLFinderTool().as_tool(
+                description="Tool to find the IMDB page URL of a given movie."
+            ),
+            *super().get_tools(),
+        ]
+
+    def invoke(self, input_dict, thread_id: int | None, **kwargs):
+        input_dict["input"] = input_dict["input"].strip()
+        return super().invoke(
+            {"input": f"Movies like the movie from this IMDB page: {json.dumps(input_dict)}"},
+            thread_id=thread_id,
+        )
+
+    @tool
+    def firecrawl_scrape_url(self, url: str) -> str:
+        """Visit the provided website URL and return the content as markdown."""
+
+        firecrawl_app = FirecrawlApp()
+        response = firecrawl_app.scrape_url(
+            url=url,
+            params={
+                "pageOptions": {
+                    "onlyMainContent": True,
+                    "waitFor": 1000,
+                },
+            },
+        )
+        return response["markdown"]
