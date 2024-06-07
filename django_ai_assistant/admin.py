@@ -16,5 +16,4 @@ class MessageAdmin(admin.ModelAdmin):
     list_display = ("id", "thread", "created_at", "created_at")
     search_fields = ("thread__name", "message")
     list_filter = ("created_at",)
-    list_select_related = ("thread",)
     raw_id_fields = ("thread",)
