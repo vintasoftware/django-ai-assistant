@@ -1,6 +1,7 @@
 import functools
 from typing import Sequence
 
+from django.db.models import Max
 from django.utils import timezone
 
 from firecrawl import FirecrawlApp
@@ -47,6 +48,11 @@ class IMDBURLFinderTool(AIAssistant):
 
     @functools.lru_cache(maxsize=1024)  # noqa: B019
     def run_as_tool(self, message: str, **kwargs):
+        # We may already know the IMDB URL, so we can return it directly:
+        any_item = MovieBacklogItem.objects.filter(movie_name__icontains=message).first()
+        if any_item:
+            return any_item.imdb_url
+
         return super().run_as_tool(message, **kwargs)
 
 
@@ -58,13 +64,14 @@ class MovieRecommendationAIAssistant(AIAssistant):
         "You're a helpful movie recommendation assistant. "
         "Help the user find movies to watch and manage their movie backlogs. "
         "By using the provided tools, you can:\n"
+        "- Get the IMDB URL of a movie\n"
         "- Research for upcoming movies\n"
         "- Research for similar movies\n"
         "- Research more information about movies\n"
         "- Get what movies are on user's backlog\n"
         "- Add a movie to user's backlog\n"
         "- Remove a movie to user's backlog\n"
-        "- Get the IMDB URL of a movie\n"
+        "- Reorder movies in user's backlog\n"
         "Ask the user if they want to add your recommended movies to their backlog, "
         "but only if the movie is not on the user's backlog yet."
     )
@@ -76,10 +83,7 @@ class MovieRecommendationAIAssistant(AIAssistant):
         # See: https://docs.djangoproject.com/en/5.0/topics/i18n/timezones/#default-time-zone-and-current-time-zone
         # In a real application, you should use the user's timezone
         current_date_str = timezone.now().date().isoformat()
-        movies = MovieBacklogItem.objects.filter(user=self._user)
-        user_backlog_str = (
-            "\n".join([f"- [{movie.movie_name}]({movie.imdb_url})" for movie in movies]) or "Empty"
-        )
+        user_backlog_str = self._get_movies_backlog()
 
         return "\n".join(
             [
@@ -113,14 +117,22 @@ class MovieRecommendationAIAssistant(AIAssistant):
         )
         return response["markdown"]
 
+    def _get_movies_backlog(self) -> str:
+        return (
+            "\n".join(
+                [
+                    f"{item.position} - [{item.movie_name}]({item.imdb_url})"
+                    for item in MovieBacklogItem.objects.filter(user=self._user)
+                ]
+            )
+            or "Empty"
+        )
+
     @tool
     def get_movies_backlog(self) -> str:
         """Get what movies are on user's backlog."""
 
-        movies = MovieBacklogItem.objects.filter(user=self._user)
-        return (
-            "\n".join([f"- [{movie.movie_name}]({movie.imdb_url})" for movie in movies]) or "Empty"
-        )
+        return self._get_movies_backlog()
 
     @tool
     def add_movie_to_backlog(self, movie_name: str, imdb_url: str) -> str:
@@ -131,6 +143,9 @@ class MovieRecommendationAIAssistant(AIAssistant):
             user=self._user,
             defaults={
                 "movie_name": movie_name.strip(),
+                "position": MovieBacklogItem.objects.filter(user=self._user).aggregate(
+                    Max("position", default=1)
+                )["position__max"],
             },
         )
         return f"Added {movie_name} to backlog."
@@ -140,7 +155,15 @@ class MovieRecommendationAIAssistant(AIAssistant):
         """Remove a movie from user's backlog."""
 
         MovieBacklogItem.objects.filter(
-            movie_name=movie_name.strip(),
             user=self._user,
+            movie_name=movie_name.strip(),
         ).delete()
+        MovieBacklogItem.reorder_backlog(self._user)
         return f"Removed {movie_name} to backlog."
+
+    @tool
+    def reorder_backlog(self, imdb_url_list: Sequence[str]) -> str:
+        """Reorder movies in user's backlog."""
+
+        MovieBacklogItem.reorder_backlog(self._user, imdb_url_list)
+        return "Reordered movies in backlog. New backlog: \n" + self._get_movies_backlog()
