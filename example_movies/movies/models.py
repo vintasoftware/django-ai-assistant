@@ -40,5 +40,4 @@ class MovieBacklogItem(models.Model):
 
             for position, item in enumerate(item_list, start=1):
                 item.position = position
-                item_list.append(item)
             MovieBacklogItem.objects.bulk_update(item_list, fields=["position"])
