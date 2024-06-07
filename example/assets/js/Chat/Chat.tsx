@@ -54,21 +54,25 @@ export function Chat() {
   const [inputValue, setInputValue] = useState<string>("");
 
   const {
-    threads,
-    fetchThreads,
     assistants,
     fetchAssistants,
+
+    threads,
+    fetchThreads,
     createThread,
     activeThread,
     setActiveThread,
+
     messages,
     fetchMessages,
-    isLoadingMessages,
+    loadingFetchMessages,
     createMessage,
+    loadingCreateMessage,
   } = useAiAssistantClient();
 
+  const loadingMessages = loadingFetchMessages || loadingCreateMessage;
   const isThreadSelected = assistantId && activeThread;
-  const isChatActive = assistantId && activeThread && !isLoadingMessages;
+  const isChatActive = assistantId && activeThread && !loadingMessages;
 
   const scrollViewport = useRef<HTMLDivElement>(null);
   const scrollToBottom = useCallback(
@@ -135,7 +139,7 @@ export function Chat() {
               viewportRef={scrollViewport}
             >
               <LoadingOverlay
-                visible={isLoadingMessages}
+                visible={loadingMessages}
                 zIndex={1000}
                 overlayProps={{ blur: 2 }}
               />
