@@ -17,16 +17,29 @@ import {
  */
 export function useAiAssistantClient() {
   const [assistants, setAssistants] = useState<AssistantSchema[] | null>(null);
+  const [loadingFetchAssistants, setLoadingFetchAssistants] =
+    useState<boolean>(false);
 
   const [threads, setThreads] = useState<ThreadSchema[] | null>(null);
   const [activeThread, setActiveThread] = useState<ThreadSchema | null>(null);
+  const [loadingFetchThreads, setLoadingFetchThreads] =
+    useState<boolean>(false);
+  const [loadingCreateThread, setLoadingCreateThread] =
+    useState<boolean>(false);
 
   const [messages, setMessages] = useState<ThreadMessagesSchemaOut[]>([]);
-  const [isLoadingMessages, setIsLoadingMessages] = useState<boolean>(false);
+  const [loadingFetchMessages, setLoadingFetchMessages] =
+    useState<boolean>(false);
+  const [loadingCreateMessage, setLoadingCreateMessage] =
+    useState<boolean>(false);
 
   const fetchAssistants = useCallback(async () => {
     try {
+      setLoadingFetchAssistants(true);
+
       setAssistants(await djangoAiAssistantViewsListAssistants());
+
+      setLoadingFetchAssistants(false);
     } catch (error) {
       console.error(error);
     }
@@ -34,15 +47,21 @@ export function useAiAssistantClient() {
 
   const fetchThreads = useCallback(async () => {
     try {
+      setLoadingFetchThreads(true);
+
       setThreads(null);
       setThreads(await djangoAiAssistantViewsListThreads());
+
+      setLoadingFetchThreads(false);
     } catch (error) {
       console.error(error);
     }
   }, []);
 
-  const createAndSetActiveThread = useCallback(async () => {
+  const createThread = useCallback(async () => {
     try {
+      setLoadingCreateThread(true);
+
       setActiveThread(
         await djangoAiAssistantViewsCreateThread({
           requestBody: {
@@ -51,6 +70,8 @@ export function useAiAssistantClient() {
         })
       );
       await fetchThreads();
+
+      setLoadingCreateThread(false);
     } catch (error) {
       console.error(error);
       // alert("Error while creating thread");
@@ -63,7 +84,8 @@ export function useAiAssistantClient() {
     }: { successCallback?: CallableFunction } = {}) => {
       if (!activeThread?.id) return;
 
-      setIsLoadingMessages(true);
+      setLoadingFetchMessages(true);
+
       try {
         setMessages(
           await djangoAiAssistantViewsListThreadMessages({
@@ -75,7 +97,8 @@ export function useAiAssistantClient() {
         console.error(error);
         // alert("Error while loading messages");
       }
-      setIsLoadingMessages(false);
+
+      setLoadingFetchMessages(false);
     },
     [activeThread?.id]
   );
@@ -92,7 +115,8 @@ export function useAiAssistantClient() {
     }) => {
       if (!activeThread?.id) return;
 
-      setIsLoadingMessages(true);
+      setLoadingCreateMessage(true);
+
       try {
         await djangoAiAssistantViewsCreateThreadMessage({
           threadId: activeThread?.id?.toString(),
@@ -107,7 +131,8 @@ export function useAiAssistantClient() {
         console.error(error);
         // alert("Error while sending message");
       }
-      setIsLoadingMessages(false);
+
+      setLoadingCreateMessage(false);
     },
     [fetchMessages, activeThread?.id]
   );
@@ -115,16 +140,20 @@ export function useAiAssistantClient() {
   return {
     assistants,
     fetchAssistants,
+    loadingFetchAssistants,
 
     threads,
     fetchThreads,
-    createThread: createAndSetActiveThread,
+    loadingFetchThreads,
+    createThread,
+    loadingCreateThread,
     activeThread,
     setActiveThread,
 
     messages,
     fetchMessages,
-    isLoadingMessages,
+    loadingFetchMessages,
     createMessage,
+    loadingCreateMessage,
   };
 }
