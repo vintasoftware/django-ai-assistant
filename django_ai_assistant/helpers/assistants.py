@@ -27,7 +27,6 @@ class AIAssistant(abc.ABC):  # noqa: F821
     id: ClassVar[str]  # noqa: A003
     # TODO: id should match the pattern '^[a-zA-Z0-9_-]+$ to support as_tool in OpenAI
     name: str
-    description: str
     instructions: str
     model: str
     temperature: float
@@ -79,9 +78,6 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
     def get_name(self):
         return self.name
-
-    def get_description(self):
-        return self.description
 
     def get_instructions(self):
         return self.instructions
@@ -169,9 +165,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         output = chain.invoke({"input": message}, **kwargs)
         return output["output"]
 
-    def as_tool(self, json_output=False) -> BaseTool:
-        description = self.get_description()
-
+    def as_tool(self, description) -> BaseTool:
         return Tool.from_function(
             func=self.run_as_tool,
             name=self.id,
