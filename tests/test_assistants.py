@@ -18,7 +18,7 @@ class WeatherAssistant(AIAssistant):
     name = "Weather Assistant"
     description = "A weather assistant that provides weather information."
     instructions = "You are a weather bot."
-    model = "gpt-4"
+    model = "gpt-4o"
 
     @tool
     def fetch_current_weather(self, location: str) -> dict:
