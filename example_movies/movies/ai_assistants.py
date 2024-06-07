@@ -177,7 +177,7 @@ def _movie_recommendation_example_json():
                     "movie_poster_image_url": f"<movie-{i}-poster-image-url-here>",
                     "imdb_url": f"<movie-{i}-imdb-page-url-here>",
                 }
-                for i in range(1, 4)
+                for i in range(1, 6)
             ]
         },
         indent=2,
