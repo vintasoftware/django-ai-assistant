@@ -30,7 +30,7 @@ class IMDBURLFinderTool(AIAssistant):
         "Then check results and provide only the IMDB URL to the user."
     )
     name = "IMDB URL Finder"
-    model = "gpt-4o"
+    model = "claude-3-opus-20240229"
 
     def get_instructions(self):
         # Warning: this will use the server's timezone
@@ -74,7 +74,7 @@ class MovieRecommendationAIAssistant(AIAssistant):
         "but only if the movie is not on the user's backlog yet."
     )
     name = "Movie Recommendation Assistant"
-    model = "gpt-4o"
+    model = "claude-3-opus-20240229"
 
     def get_instructions(self):
         # Warning: this will use the server's timezone

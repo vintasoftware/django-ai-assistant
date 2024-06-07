@@ -30,6 +30,7 @@ lxml = "^5.2.2"
 firecrawl-py = "^0.0.12"
 wikipedia = "^1.4.0"
 langchain-community = "^0.2.4"
+langchain-anthropic = "^0.1.15"
 
 [build-system]
 requires = ["poetry-core>=1.2.0"]

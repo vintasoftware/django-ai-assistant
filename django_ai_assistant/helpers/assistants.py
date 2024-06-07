@@ -9,13 +9,13 @@ from django.http import HttpRequest
 from django.views import View
 
 from langchain.agents import AgentExecutor, create_tool_calling_agent
+from langchain_anthropic import ChatAnthropic
 from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_core.messages import BaseMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import ConfigurableFieldSpec
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.tools import BaseTool, Tool
-from langchain_openai import ChatOpenAI
 
 from django_ai_assistant.ai.chat_message_histories import DjangoChatMessageHistory
 from django_ai_assistant.exceptions import AIAssistantNotDefinedError, AIUserNotAllowedError
@@ -111,11 +111,13 @@ class AIAssistant(abc.ABC):  # noqa: F821
         model = self.get_model()
         temperature = self.get_temperature()
         model_kwargs = self.get_model_kwargs()
-        return ChatOpenAI(
-            model=model,
+        return ChatAnthropic(
+            model_name=model,
             temperature=temperature,
             model_kwargs=model_kwargs,
-            api_key=settings.OPENAI_API_KEY,
+            api_key=settings.ANTHROPIC_API_KEY,
+            timeout=None,
+            max_retries=2,
         )
 
     def get_tools(self) -> Sequence[BaseTool]:
