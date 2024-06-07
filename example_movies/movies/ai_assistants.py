@@ -157,7 +157,7 @@ class MovieRecommendationAIAssistant(AIAssistant):
             movie_name=movie_name.strip(),
         ).delete()
         MovieBacklogItem.reorder_backlog(self._user)
-        return f"Removed {movie_name} to backlog."
+        return f"Removed {movie_name} from backlog."
 
     @tool
     def reorder_backlog(self, imdb_url_list: Sequence[str]) -> str:
