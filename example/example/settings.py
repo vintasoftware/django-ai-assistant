@@ -134,6 +134,8 @@ LOGGING = {
     "root": {"handlers": ["console"], "level": "WARNING"},
     "loggers": {
         "django_ai_assistant": {"handlers": ["console"], "level": "DEBUG", "propagate": False},
+        # Log OpenAI API requests:
+        "openai": {"handlers": ["console"], "level": "DEBUG", "propagate": False},
     },
 }
 
@@ -152,9 +154,7 @@ WEBPACK_LOADER = {
 
 # django-ai-assistant
 
-AI_ASSISTANT_CLIENT_INIT_FN = (
-    "django_ai_assistant.ai.client.init_openai"  # by default, gets OPENAI_API_KEY from env
-)
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 AI_ASSISTANT_CAN_CREATE_THREAD_FN = "django_ai_assistant.permissions.allow_all"
 AI_ASSISTANT_CAN_VIEW_THREAD_FN = "django_ai_assistant.permissions.allow_all"
 AI_ASSISTANT_CAN_CREATE_MESSAGE_FN = "django_ai_assistant.permissions.allow_all"
