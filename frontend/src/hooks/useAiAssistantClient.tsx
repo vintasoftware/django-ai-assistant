@@ -43,7 +43,6 @@ export function useAiAssistantClient() {
 
   const createAndSetActiveThread = useCallback(async () => {
     try {
-      await fetchThreads();
       setActiveThread(
         await djangoAiAssistantViewsCreateThread({
           requestBody: {
@@ -51,21 +50,24 @@ export function useAiAssistantClient() {
           },
         })
       );
+      await fetchThreads();
     } catch (error) {
       console.error(error);
       // alert("Error while creating thread");
     }
-  }, []);
+  }, [fetchThreads]);
 
   const fetchMessages = useCallback(
     async ({
       successCallback,
     }: { successCallback?: CallableFunction } = {}) => {
+      if (!activeThread?.id) return;
+
       setIsLoadingMessages(true);
       try {
         setMessages(
           await djangoAiAssistantViewsListThreadMessages({
-            threadId: activeThread?.id,
+            threadId: activeThread?.id.toString(),
           })
         );
         successCallback?.();
@@ -88,10 +90,12 @@ export function useAiAssistantClient() {
       messageTextValue: string;
       successCallback?: CallableFunction;
     }) => {
+      if (!activeThread?.id) return;
+
       setIsLoadingMessages(true);
       try {
         await djangoAiAssistantViewsCreateThreadMessage({
-          threadId: activeThread?.id,
+          threadId: activeThread?.id?.toString(),
           requestBody: {
             content: messageTextValue,
             assistant_id: assistantId,
@@ -105,7 +109,7 @@ export function useAiAssistantClient() {
       }
       setIsLoadingMessages(false);
     },
-    [activeThread?.id]
+    [fetchMessages, activeThread?.id]
   );
 
   return {
