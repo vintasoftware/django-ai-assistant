@@ -11,3 +11,9 @@
 .chat {
   height: 100%;
 }
+
+.mdMessage {
+  p {
+    margin-top: var(--mantine-spacing-xs);
+  }
+}
