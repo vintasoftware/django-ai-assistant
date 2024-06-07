@@ -8,6 +8,10 @@ import {
   Button,
   LoadingOverlay,
   ScrollArea,
+  Card,
+  Image,
+  Group,
+  Flex,
 } from "@mantine/core";
 import { ThreadsNav } from "./ThreadsNav";
 
@@ -26,10 +30,80 @@ import {
   fetchMessages,
 } from "@/api";
 
+interface MovieRecommendation {
+  movie_name: string;
+  movie_description: string;
+  movie_poster_image_url: string;
+  imdb_url: string;
+}
+
+function MovieCard({
+  movieRecommendation,
+}: {
+  movieRecommendation: MovieRecommendation;
+}) {
+  return (
+    <Card
+      maw={300}
+      mih={400}
+      mb="xs"
+      shadow="sm"
+      padding="lg"
+      radius="md"
+      withBorder
+    >
+      <Card.Section>
+        <Image src={movieRecommendation.movie_poster_image_url} height={160} />
+      </Card.Section>
+
+      <Group justify="space-between" mt="md" mb="xs">
+        <Text fw={500}>{movieRecommendation.movie_name}</Text>
+      </Group>
+
+      <Text size="sm" c="dimmed">
+        {movieRecommendation.movie_description}
+      </Text>
+
+      <Button
+        component="a"
+        href={movieRecommendation.imdb_url}
+        color="blue"
+        fullWidth
+        mt="md"
+        radius="md"
+      >
+        Visit IMDB
+      </Button>
+    </Card>
+  );
+}
+
 function ChatMessage({ message }: { message: DjangoMessage }) {
+  if (message.type === "ai") {
+    const movies = JSON.parse(message.content);
+    if (movies.recommended_movies.length > 0) {
+      const cards = movies.recommended_movies.map(
+        (movieRecommendation: MovieRecommendation, index: number) => (
+          <MovieCard key={index} movieRecommendation={movieRecommendation} />
+        )
+      );
+      return (
+        <Flex
+          mih={50}
+          gap="sm"
+          justify="flex-start"
+          align="center"
+          direction="row"
+          wrap="wrap"
+        >
+          {cards}
+        </Flex>
+      );
+    }
+  }
   return (
     <Box mb="md">
-      <Text fw={700}>{message.type === "ai" ? "AI" : "User"}</Text>
+      <Text fw={700}>"User"</Text>
       <Markdown className={classes.mdMessage}>{message.content}</Markdown>
     </Box>
   );

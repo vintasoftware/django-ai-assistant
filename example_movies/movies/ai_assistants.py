@@ -8,7 +8,7 @@ from django.utils import timezone
 from firecrawl import FirecrawlApp
 from langchain_community.tools import WikipediaQueryRun
 from langchain_community.tools.tavily_search import TavilySearchResults
-from langchain_community.utilities import WikipediaAPIWrapper
+from langchain_community.utilities import GoogleSerperAPIWrapper, WikipediaAPIWrapper
 from langchain_core.tools import BaseTool
 
 from django_ai_assistant.helpers.assistants import AIAssistant, register_assistant
@@ -173,9 +173,11 @@ def _movie_recommendation_example_json():
             "recommended_movies": [
                 {
                     "movie_name": f"<movie-{i}-name-here>",
+                    "movie_description": f"<movie-{i}-short-description-here>",
+                    "movie_poster_image_url": f"<movie-{i}-poster-image-url-here>",
                     "imdb_url": f"<movie-{i}-imdb-page-url-here>",
                 }
-                for i in range(1, 6)
+                for i in range(1, 4)
             ]
         },
         indent=2,
@@ -203,6 +205,7 @@ class MovieRecommendationJSONAIAssistant(AIAssistant):
         "- Visit a website URL and return the content as markdown\n"
         "- Check the Wikipedia page of a movie\n"
         "- Get the IMDB page URL of a movie\n"
+        "- Get the poster image URL of a movie\n"
         "Your response will be integrated with a frontend web application,"
         "therefore it's critical to reply with only JSON output in the following structure: \n"
         f"```json\n{_movie_recommendation_example_json()}\n```"
@@ -258,3 +261,13 @@ class MovieRecommendationJSONAIAssistant(AIAssistant):
             },
         )
         return response["markdown"]
+
+    @tool
+    def find_movie_poster_image_url(self, movie_name: str) -> str:
+        """Find the poster image URL of a movie."""
+        search = GoogleSerperAPIWrapper(type="images")
+        results = search.results(movie_name + " poster")
+        try:
+            return results["images"][0]["imageUrl"]
+        except (IndexError, KeyError):
+            return "No image found."

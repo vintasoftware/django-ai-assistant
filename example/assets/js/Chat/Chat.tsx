@@ -10,6 +10,7 @@ import {
   ScrollArea,
 } from "@mantine/core";
 import { ThreadsNav } from "./ThreadsNav";
+import { Card, Image, Text, Badge, Button, Group } from "@mantine/core";
 
 import classes from "./Chat.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -24,6 +25,42 @@ import {
   fetchDjangoThreads,
   fetchMessages,
 } from "@/api";
+
+interface MovieRecommendation {
+  movie_name: string;
+  movie_description: string;
+  imdb_movie_poster: string;
+  imdb_url: string;
+}
+
+function MovieCard(movieRecommendation: MovieRecommendation) {
+  return (
+    <Card shadow="sm" padding="lg" radius="md" withBorder>
+      <Card.Section>
+        <Image src={movieRecommendation.imdb_movie_poster} height={200} />
+      </Card.Section>
+
+      <Group justify="space-between" mt="md" mb="xs">
+        <Text fw={500}>{movieRecommendation.movie_name}</Text>
+      </Group>
+
+      <Text size="sm" c="dimmed">
+        {movieRecommendation.movie_description}
+      </Text>
+
+      <Button
+        component="a"
+        href={movieRecommendation.imdb_url}
+        color="blue"
+        fullWidth
+        mt="md"
+        radius="md"
+      >
+        Visit IMDB
+      </Button>
+    </Card>
+  );
+}
 
 function ChatMessage({ message }: { message: DjangoMessage }) {
   return (
