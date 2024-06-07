@@ -1,7 +1,8 @@
 import { Text, Group, ActionIcon, Tooltip, rem, Loader } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import classes from "./ThreadsNav.module.css";
-import { DjangoThread } from "@/api";
+
+import { ThreadSchema } from "django-ai-assistant-client";
 
 export function ThreadsNav({
   threads,
@@ -9,9 +10,9 @@ export function ThreadsNav({
   selectThread,
   createThread,
 }: {
-  threads: DjangoThread[] | null;
-  selectedThreadId: string | null;
-  selectThread: (id: string) => void;
+  threads: ThreadSchema[] | null;
+  selectedThreadId: number | null | undefined;
+  selectThread: (thread: ThreadSchema | null) => void;
   createThread: () => void;
 }) {
   const threadLinks = threads?.map((thread) => {
@@ -20,7 +21,7 @@ export function ThreadsNav({
       <a
         href="#"
         onClick={(event) => {
-          selectThread(thread.id);
+          selectThread(thread);
           event.preventDefault();
         }}
         key={thread.id}
