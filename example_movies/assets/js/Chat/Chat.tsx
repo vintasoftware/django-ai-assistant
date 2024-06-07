@@ -30,7 +30,7 @@ function ChatMessage({ message }: { message: DjangoMessage }) {
   return (
     <Box mb="md">
       <Text fw={700}>{message.type === "ai" ? "AI" : "User"}</Text>
-      <Markdown>{message.content}</Markdown>
+      <Markdown className={classes.mdMessage}>{message.content}</Markdown>
     </Box>
   );
 }
