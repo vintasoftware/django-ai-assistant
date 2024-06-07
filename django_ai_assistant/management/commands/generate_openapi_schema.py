@@ -1,9 +1,9 @@
 import json
 from pathlib import Path
 
-from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from django.utils.module_loading import import_string
+
+from django_ai_assistant.views import api
 
 
 class Command(BaseCommand):
@@ -19,7 +19,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            api = import_string(settings.AI_ASSISTANT_API_IMPORT_PATH)
             openapi_schema = api.get_openapi_schema()
             openapi_json = json.dumps(openapi_schema, indent=2)
             output_file = Path(options["output"])
