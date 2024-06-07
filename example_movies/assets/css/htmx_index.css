@@ -1,0 +1,12 @@
+#threads-container,
+#messages-container {
+  height: calc(100vh - 100px);
+}
+
+.main-container {
+  max-width: 920px;
+}
+
+[data-loading] {
+  display: none;
+}
