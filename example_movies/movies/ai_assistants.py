@@ -17,7 +17,7 @@ from .models import MovieBacklogItem
 
 
 # Note this assistant is not registered, but we'll use it as a tool on the other.
-# This one shouldn't be used direclty, as it do web searches and scraping.
+# This one shouldn't be used directly, as it does web searches and scraping.
 class IMDBURLFinderTool(AIAssistant):
     id = "imdb_url_finder"  # noqa: A003
     instructions = (
