@@ -20,7 +20,6 @@ from .models import MovieBacklogItem
 # This one shouldn't be used direclty, as it do web searches and scraping.
 class IMDBURLFinderTool(AIAssistant):
     id = "imdb_url_finder"  # noqa: A003
-    description = "A tool that finds the IMDB URL of a given movie."
     instructions = (
         "You're a tool to find the IMDB URL of a given movie. "
         "Use the Tavily Search API to find the IMDB URL. "
@@ -59,7 +58,6 @@ class IMDBURLFinderTool(AIAssistant):
 @register_assistant
 class MovieRecommendationAIAssistant(AIAssistant):
     id = "movie_recommendation_assistant"  # noqa: A003
-    description = "A movie recommendation assistant."
     instructions = (
         "You're a helpful movie recommendation assistant. "
         "Help the user find movies to watch and manage their movie backlogs. "
@@ -97,7 +95,7 @@ class MovieRecommendationAIAssistant(AIAssistant):
         return [
             TavilySearchResults(),
             WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper()),  # type: ignore[call-arg]
-            IMDBURLFinderTool().as_tool(),
+            IMDBURLFinderTool().as_tool(description="Tool to find the IMDB URL of a given movie."),
             *super().get_tools(),
         ]
 
