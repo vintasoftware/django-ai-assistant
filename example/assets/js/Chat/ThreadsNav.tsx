@@ -1,8 +1,7 @@
 import { Text, Group, ActionIcon, Tooltip, rem, Loader } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import classes from "./ThreadsNav.module.css";
-import { DjangoThread } from "@/api";
-import type { ThreadSchema } from "@/client";
+import { ThreadSchema } from "django-ai-assistant-client";
 
 export function ThreadsNav({
   threads,
