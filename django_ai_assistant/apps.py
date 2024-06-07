@@ -1,3 +1,4 @@
+import importlib.util
 from importlib import import_module
 
 from django.apps import AppConfig, apps
@@ -15,4 +16,6 @@ class AIAssistantConfig(AppConfig):
             try:
                 import_module(f"{app.name}.ai_assistants")
             except ModuleNotFoundError:
-                pass
+                # If the module exists but there is an error in it, we want to raise the error:
+                if importlib.util.find_spec(f"{app.name}.ai_assistants"):
+                    raise

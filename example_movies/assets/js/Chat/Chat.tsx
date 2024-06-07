@@ -15,26 +15,27 @@ import classes from "./Chat.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { IconSend2 } from "@tabler/icons-react";
 import { getHotkeyHandler } from "@mantine/hooks";
-
+import Markdown from "react-markdown";
 import {
-  useAiAssistantClient,
-  ThreadMessagesSchemaOut,
-} from "django-ai-assistant-client";
+  DjangoMessage,
+  DjangoThread,
+  createMessage,
+  createThread,
+  fetchAssistantID,
+  fetchDjangoThreads,
+  fetchMessages,
+} from "@/api";
 
-function ChatMessage({ message }: { message: ThreadMessagesSchemaOut }) {
+function ChatMessage({ message }: { message: DjangoMessage }) {
   return (
     <Box mb="md">
       <Text fw={700}>{message.type === "ai" ? "AI" : "User"}</Text>
-      <Text>{message.content}</Text>
+      <Markdown className={classes.mdMessage}>{message.content}</Markdown>
     </Box>
   );
 }
 
-function ChatMessageList({
-  messages,
-}: {
-  messages: ThreadMessagesSchemaOut[];
-}) {
+function ChatMessageList({ messages }: { messages: DjangoMessage[] }) {
   if (messages.length === 0) {
     return <Text c="dimmed">No messages.</Text>;
   }
@@ -51,24 +52,13 @@ function ChatMessageList({
 
 export function Chat() {
   const [assistantId, setAssistantId] = useState<string>("");
+  const [threads, setThreads] = useState<DjangoThread[] | null>(null);
+  const [threadId, setThreadId] = useState<string>("");
   const [inputValue, setInputValue] = useState<string>("");
-
-  const {
-    threads,
-    fetchThreads,
-    assistants,
-    fetchAssistants,
-    createThread,
-    activeThread,
-    setActiveThread,
-    messages,
-    fetchMessages,
-    isLoadingMessages,
-    createMessage,
-  } = useAiAssistantClient();
-
-  const isThreadSelected = assistantId && activeThread;
-  const isChatActive = assistantId && activeThread && !isLoadingMessages;
+  const [messages, setMessages] = useState<DjangoMessage[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const isThreadSelected = assistantId && threadId;
+  const isChatActive = assistantId && threadId && !isLoading;
 
   const scrollViewport = useRef<HTMLDivElement>(null);
   const scrollToBottom = useCallback(
@@ -80,46 +70,86 @@ export function Chat() {
     [scrollViewport]
   );
 
+  const loadThreads = useCallback(async () => {
+    try {
+      setThreads(null);
+      const threads = await fetchDjangoThreads();
+      setThreads(threads);
+    } catch (error) {
+      console.error(error);
+      // alert("Error while loading threads");
+    }
+  }, []);
+
+  const createAndSetThread = useCallback(async () => {
+    try {
+      const thread = await createThread();
+      await loadThreads();
+      setThreadId(thread.id);
+    } catch (error) {
+      console.error(error);
+      // alert("Error while creating thread");
+    }
+  }, []);
+
+  const loadMessages = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      console.log(threadId);
+      setMessages(await fetchMessages({ threadId }));
+      scrollToBottom(); // TODO: not working?
+    } catch (error) {
+      console.error(error);
+      // alert("Error while loading messages");
+    }
+    setIsLoading(false);
+  }, [threadId]);
+
+  const sendMessage = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      setInputValue("");
+      await createMessage({ threadId, assistantId, content: inputValue });
+      await loadMessages();
+    } catch (error) {
+      console.error(error);
+      // alert("Error while sending message");
+    }
+    setIsLoading(false);
+  }, [threadId, inputValue]);
+
   // Load assistantId when component mounts:
   useEffect(() => {
-    if (assistants) {
-      setAssistantId(assistants[0].id);
-    } else {
-      fetchAssistants();
+    async function init() {
+      try {
+        setAssistantId(await fetchAssistantID());
+      } catch (error) {
+        console.error(error);
+        // alert("Error while fetching assistant");
+      }
     }
-  }, [assistants, fetchAssistants]);
+    init();
+  }, []);
 
   // Load threads when component mounts:
   useEffect(() => {
-    fetchThreads();
-  }, [fetchThreads]);
+    loadThreads();
+  }, [loadThreads]);
 
   // Load messages when threadId changes:
   useEffect(() => {
     if (!assistantId) return;
-    if (!activeThread) return;
-
-    fetchMessages({ successCallback: scrollToBottom });
-  }, [assistantId, activeThread?.id, fetchMessages, scrollToBottom]);
-
-  function handleCreateMessage() {
-    createMessage({
-      assistantId,
-      messageTextValue: inputValue,
-      successCallback: () => {
-        setInputValue("");
-        scrollToBottom(); // TODO: not working?
-      },
-    });
-  }
+    if (!threadId) return;
+    loadMessages();
+  }, [loadMessages]);
 
   return (
     <>
       <ThreadsNav
         threads={threads}
-        selectedThreadId={activeThread?.id}
-        selectThread={setActiveThread}
-        createThread={createThread}
+        selectedThreadId={threadId}
+        selectThread={setThreadId}
+        createThread={createAndSetThread}
       />
       <main className={classes.main}>
         <Container className={classes.chatContainer}>
@@ -135,7 +165,7 @@ export function Chat() {
               viewportRef={scrollViewport}
             >
               <LoadingOverlay
-                visible={isLoadingMessages}
+                visible={isLoading}
                 zIndex={1000}
                 overlayProps={{ blur: 2 }}
               />
@@ -160,7 +190,7 @@ export function Chat() {
               disabled={!isChatActive}
               onChange={(e) => setInputValue(e.currentTarget.value)}
               value={inputValue}
-              onKeyDown={getHotkeyHandler([["mod+Enter", handleCreateMessage]])}
+              onKeyDown={getHotkeyHandler([["mod+Enter", sendMessage]])}
               rightSection={
                 <Button
                   variant="filled"
@@ -175,7 +205,7 @@ export function Chat() {
                   }
                   disabled={!isChatActive}
                   onClick={(e) => {
-                    handleCreateMessage();
+                    sendMessage();
                     e.preventDefault();
                   }}
                 >
