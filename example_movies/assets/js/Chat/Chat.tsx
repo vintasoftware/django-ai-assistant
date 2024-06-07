@@ -15,6 +15,7 @@ import classes from "./Chat.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { IconSend2 } from "@tabler/icons-react";
 import { getHotkeyHandler } from "@mantine/hooks";
+import Markdown from "react-markdown";
 import {
   DjangoMessage,
   DjangoThread,
@@ -29,7 +30,7 @@ function ChatMessage({ message }: { message: DjangoMessage }) {
   return (
     <Box mb="md">
       <Text fw={700}>{message.type === "ai" ? "AI" : "User"}</Text>
-      <Text>{message.content}</Text>
+      <Markdown className={classes.mdMessage}>{message.content}</Markdown>
     </Box>
   );
 }
