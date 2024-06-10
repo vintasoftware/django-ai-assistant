@@ -12,8 +12,10 @@ import { Callbacks } from "./types";
  */
 export function useMessage() {
   const [messages, setMessages] = useState<ThreadMessagesSchemaOut[]>([]);
-  const [loadingFetch, setLoadingFetch] = useState<boolean>(false);
-  const [loadingCreate, setLoadingCreate] = useState<boolean>(false);
+  const [loadingFetchMessages, setLoadingFetchMessages] =
+    useState<boolean>(false);
+  const [loadingCreateMessage, setLoadingCreateMessage] =
+    useState<boolean>(false);
 
   /**
    * Fetches a list of messages.
@@ -31,7 +33,7 @@ export function useMessage() {
       threadId: string;
     } & Callbacks) => {
       try {
-        setLoadingFetch(true);
+        setLoadingFetchMessages(true);
         const fetchedMessages = await djangoAiAssistantViewsListThreadMessages({
           threadId: threadId,
         });
@@ -41,7 +43,7 @@ export function useMessage() {
         console.error(error);
         onError?.(error);
       } finally {
-        setLoadingFetch(false);
+        setLoadingFetchMessages(false);
       }
     },
     []
@@ -70,7 +72,7 @@ export function useMessage() {
       messageTextValue: string;
     } & Callbacks): Promise<ThreadMessagesSchemaOut | null> => {
       try {
-        setLoadingCreate(true);
+        setLoadingCreateMessage(true);
         const message = await djangoAiAssistantViewsCreateThreadMessage({
           threadId,
           requestBody: {
@@ -88,7 +90,7 @@ export function useMessage() {
         onError?.(error);
         return null;
       } finally {
-        setLoadingCreate(false);
+        setLoadingCreateMessage(false);
       }
     },
     [fetchMessages]
@@ -98,22 +100,22 @@ export function useMessage() {
     /**
      * Function to fetch messages for a thread from the server.
      */
-    fetchResource: fetchMessages,
+    fetchMessages,
     /**
      * Function to create a new message in a thread.
      */
-    createResource: createMessage,
+    createMessage,
     /**
      * Array of fetched messages.
      */
-    resources: messages,
+    messages,
     /**
      * Loading state of the fetch operation.
      */
-    loadingFetch,
+    loadingFetchMessages,
     /**
      * Loading state of the create operation.
      */
-    loadingCreate,
+    loadingCreateMessage,
   };
 }
