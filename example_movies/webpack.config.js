@@ -61,6 +61,7 @@ module.exports = {
     extensions: [".js", ".ts", ".jsx", ".tsx"],
     alias: {
       "@": path.resolve(__dirname, "assets/js"),
+      // Necessary to deduplicate React due to npm link:
       react: path.resolve("./node_modules/react"),
     },
   },
