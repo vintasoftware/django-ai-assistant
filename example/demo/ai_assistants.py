@@ -4,7 +4,7 @@ from django.utils import timezone
 import requests
 
 from django_ai_assistant.helpers.assistants import AIAssistant, register_assistant
-from django_ai_assistant.tools import BaseModel, Field, tool
+from django_ai_assistant.tools import BaseModel, Field, method_tool
 
 
 BASE_URL = "https://api.weatherapi.com/v1/"
@@ -17,7 +17,7 @@ class WeatherAIAssistant(AIAssistant):
     name = "Weather Assistant"
     model = "gpt-4o"
 
-    @tool
+    @method_tool
     def fetch_current_weather(self, location: str) -> dict:
         """Fetch the current weather data for a location"""
 
@@ -35,7 +35,7 @@ class WeatherAIAssistant(AIAssistant):
         location: str
         dt_str: str = Field(description="Date in the format 'YYYY-MM-DD'")
 
-    @tool(args_schema=FetchForecastWeatherInput)
+    @method_tool(args_schema=FetchForecastWeatherInput)
     def fetch_forecast_weather(self, location: str, dt_str: str) -> dict:
         """Fetch the forecast weather data for a location"""
 
@@ -51,7 +51,7 @@ class WeatherAIAssistant(AIAssistant):
         )
         return response.json()
 
-    @tool
+    @method_tool
     def who_am_i(self) -> str:
         """Return the username of the current user"""
         if self._user:
