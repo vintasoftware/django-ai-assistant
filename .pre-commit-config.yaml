@@ -39,8 +39,8 @@ repos:
         language: system
         files: views\.py$
         pass_filenames: false
-      - id: generate-client
-        name: Generate client
+      - id: generate-frontend-client
+        name: Generate frontend client
         entry: sh -c 'cd frontend && npm run generate-client'
         language: system
         files: openapi_schema\.json$
