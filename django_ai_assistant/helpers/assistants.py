@@ -4,7 +4,6 @@ import inspect
 import types
 from typing import Any, ClassVar, Sequence, cast
 
-from django.conf import settings
 from django.http import HttpRequest
 from django.views import View
 
@@ -115,7 +114,6 @@ class AIAssistant(abc.ABC):  # noqa: F821
             model=model,
             temperature=temperature,
             model_kwargs=model_kwargs,
-            api_key=settings.OPENAI_API_KEY,
         )
 
     def get_tools(self) -> Sequence[BaseTool]:
