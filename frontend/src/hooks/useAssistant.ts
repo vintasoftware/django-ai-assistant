@@ -11,7 +11,8 @@ import { Callbacks } from "./types";
  */
 export function useAssistant() {
   const [assistants, setAssistants] = useState<AssistantSchema[] | null>(null);
-  const [loadingFetch, setLoadingFetch] = useState<boolean>(false);
+  const [loadingFetchAssistants, setLoadingFetchAssistants] =
+    useState<boolean>(false);
 
   /**
    * Fetches a list of AI assistants.
@@ -22,7 +23,7 @@ export function useAssistant() {
   const fetchAssistants = useCallback(
     async ({ onSuccess, onError }: Callbacks = {}) => {
       try {
-        setLoadingFetch(true);
+        setLoadingFetchAssistants(true);
         const fetchedAssistants = await djangoAiAssistantViewsListAssistants();
         setAssistants(fetchedAssistants);
         onSuccess?.();
@@ -30,7 +31,7 @@ export function useAssistant() {
         console.error(error);
         onError?.(error);
       } finally {
-        setLoadingFetch(false);
+        setLoadingFetchAssistants(false);
       }
     },
     []
@@ -40,14 +41,14 @@ export function useAssistant() {
     /**
      * Function to fetch AI assistants from the server.
      */
-    fetchResource: fetchAssistants,
+    fetchAssistants,
     /**
      * List of fetched AI assistants.
      */
-    resources: assistants,
+    assistants,
     /**
      * Loading state of the fetch operation.
      */
-    loadingFetch,
+    loadingFetchAssistants,
   };
 }

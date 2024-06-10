@@ -13,8 +13,10 @@ import { Callbacks } from "./types";
  */
 export function useThread() {
   const [threads, setThreads] = useState<ThreadSchema[] | null>(null);
-  const [loadingFetch, setLoadingFetch] = useState<boolean>(false);
-  const [loadingCreate, setLoadingCreate] = useState<boolean>(false);
+  const [loadingFetchThreads, setLoadingFetchThreads] =
+    useState<boolean>(false);
+  const [loadingCreateThread, setLoadingCreateThread] =
+    useState<boolean>(false);
 
   /**
    * Fetches a list of threads.
@@ -25,7 +27,7 @@ export function useThread() {
   const fetchThreads = useCallback(
     async ({ onSuccess, onError }: Callbacks = {}) => {
       try {
-        setLoadingFetch(true);
+        setLoadingFetchThreads(true);
         const fetchedThreads = await djangoAiAssistantViewsListThreads();
         setThreads(fetchedThreads);
         onSuccess?.();
@@ -33,7 +35,7 @@ export function useThread() {
         console.error(error);
         onError?.(error);
       } finally {
-        setLoadingFetch(false);
+        setLoadingFetchThreads(false);
       }
     },
     []
@@ -53,7 +55,7 @@ export function useThread() {
       onError,
     }: { name?: string } & Callbacks = {}): Promise<ThreadSchema | null> => {
       try {
-        setLoadingCreate(true);
+        setLoadingCreateThread(true);
         const thread = await djangoAiAssistantViewsCreateThread({
           requestBody: { name },
         });
@@ -65,7 +67,7 @@ export function useThread() {
         onError?.(error);
         return null;
       } finally {
-        setLoadingCreate(false);
+        setLoadingCreateThread(false);
       }
     },
     [fetchThreads]
@@ -75,22 +77,22 @@ export function useThread() {
     /**
      * Function to fetch threads from the server.
      */
-    fetchResource: fetchThreads,
+    fetchThreads,
     /**
      * Function to create a new thread.
      */
-    createResource: createThread,
+    createThread,
     /**
      * Array of fetched threads.
      */
-    resources: threads,
+    threads,
     /**
      * Loading state of the fetch operation.
      */
-    loadingFetch,
+    loadingFetchThreads,
     /**
      * Loading state of the create operation.
      */
-    loadingCreate,
+    loadingCreateThread,
   };
 }

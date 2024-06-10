@@ -57,19 +57,14 @@ export function Chat() {
   const [activeThread, setActiveThread] = useState<ThreadSchema | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
 
-  const { fetchResource: fetchAssistants, resources: assistants } =
-    useAssistant();
+  const { fetchAssistants, assistants } = useAssistant();
+  const { fetchThreads, threads, createThread } = useThread();
   const {
-    fetchResource: fetchThreads,
-    resources: threads,
-    createResource: createThread,
-  } = useThread();
-  const {
-    fetchResource: fetchMessages,
-    resources: messages,
-    loadingFetch: loadingFetchMessages,
-    createResource: createMessage,
-    loadingCreate: loadingCreateMessage,
+    fetchMessages,
+    messages,
+    loadingFetchMessages,
+    createMessage,
+    loadingCreateMessage,
   } = useMessage();
 
   const loadingMessages = loadingFetchMessages || loadingCreateMessage;
