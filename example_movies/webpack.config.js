@@ -61,6 +61,7 @@ module.exports = {
     extensions: [".js", ".ts", ".jsx", ".tsx"],
     alias: {
       "@": path.resolve(__dirname, "assets/js"),
+      react: path.resolve("./node_modules/react"),
     },
   },
 };
