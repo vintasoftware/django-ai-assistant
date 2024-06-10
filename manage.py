@@ -21,5 +21,5 @@ def main():
 
 
 if __name__ == "__main__":
-    load_dotenv()
+    load_dotenv("./.env.tests")
     main()
