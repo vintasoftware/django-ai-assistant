@@ -13,7 +13,7 @@ export function ThreadsNav({
   threads: ThreadSchema[] | null;
   selectedThreadId: number | null | undefined;
   selectThread: (thread: ThreadSchema | null) => void;
-  createThread: () => Promise<ThreadSchema | null>;
+  createThread: () => Promise<ThreadSchema>;
 }) {
   const threadLinks = threads?.map((thread) => {
     const isThreadSelected = selectedThreadId && selectedThreadId === thread.id;

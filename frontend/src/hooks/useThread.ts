@@ -6,8 +6,6 @@ import {
   djangoAiAssistantViewsListThreads,
 } from "../client";
 
-import { Callbacks } from "./types";
-
 /**
  * React hook to manage the Thread resource.
  */
@@ -21,51 +19,33 @@ export function useThread() {
   /**
    * Fetches a list of threads.
    *
-   * @param onSuccess Callback function called upon successful fetching of threads.
-   * @param onError Callback function called upon error while fetching threads.
+   * @returns A promise that resolves with the fetched list of threads.
    */
-  const fetchThreads = useCallback(
-    async ({ onSuccess, onError }: Callbacks = {}) => {
-      try {
-        setLoadingFetchThreads(true);
-        const fetchedThreads = await djangoAiAssistantViewsListThreads();
-        setThreads(fetchedThreads);
-        onSuccess?.();
-      } catch (error) {
-        console.error(error);
-        onError?.(error);
-      } finally {
-        setLoadingFetchThreads(false);
-      }
-    },
-    []
-  );
+  const fetchThreads = useCallback(async (): Promise<ThreadSchema[]> => {
+    try {
+      setLoadingFetchThreads(true);
+      const fetchedThreads = await djangoAiAssistantViewsListThreads();
+      setThreads(fetchedThreads);
+      return fetchedThreads;
+    } finally {
+      setLoadingFetchThreads(false);
+    }
+  }, []);
 
   /**
    * Creates a new thread.
    *
-   * @param onSuccess Callback function called upon successful creation of thread.
-   * @param onError Callback function called upon error while creating thread.
-   * @returns The created thread, or null if creation fails.
+   * @returns A promise that resolves with the created thread.
    */
   const createThread = useCallback(
-    async ({
-      name,
-      onSuccess,
-      onError,
-    }: { name?: string } & Callbacks = {}): Promise<ThreadSchema | null> => {
+    async ({ name }: { name?: string } = {}): Promise<ThreadSchema> => {
       try {
         setLoadingCreateThread(true);
         const thread = await djangoAiAssistantViewsCreateThread({
-          requestBody: { name },
+          requestBody: { name: name },
         });
         await fetchThreads();
-        onSuccess?.();
         return thread;
-      } catch (error) {
-        console.error(error);
-        onError?.(error);
-        return null;
       } finally {
         setLoadingCreateThread(false);
       }
