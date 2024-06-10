@@ -32,11 +32,10 @@ export function useMessage() {
     } & Callbacks) => {
       try {
         setLoadingFetch(true);
-        setMessages(
-          await djangoAiAssistantViewsListThreadMessages({
-            threadId: threadId,
-          })
-        );
+        const fetchedMessages = await djangoAiAssistantViewsListThreadMessages({
+          threadId: threadId,
+        });
+        setMessages(fetchedMessages);
         onSuccess?.();
       } catch (error) {
         console.error(error);
