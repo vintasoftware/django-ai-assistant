@@ -3,6 +3,7 @@ db.sqlite3
 db.sqlite3-journal
 .DS_Store
 .env
+.env.tests
 **/settings/local.py
 /staticfiles/*
 /mediafiles/*
@@ -22,6 +23,11 @@ __pycache__/
 # npm
 node_modules/
 npm-debug.log
+
+# JS lib .gitignore
+dist/
+dist-ssr/
+*.local
 
 # Webpack
 /example/bundles/*
