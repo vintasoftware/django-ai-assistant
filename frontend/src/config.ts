@@ -7,8 +7,8 @@ import { OpenAPI } from "./client";
  * @param baseURL Base URL of the AI Assistant API.
  *
  * @example
- * configAiAssistant("ai-assistant");
+ * configAIAssistant({ baseURL: "ai-assistant" });
  */
-export function configAiAssistant(baseURL: string) {
+export function configAIAssistant({ baseURL }: { baseURL: string }) {
   OpenAPI.BASE = baseURL;
 }
