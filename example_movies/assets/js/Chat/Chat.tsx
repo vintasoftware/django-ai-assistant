@@ -103,22 +103,21 @@ export function Chat() {
 
     fetchMessages({
       threadId: activeThread.id,
-      onSuccess: scrollToBottom, // TODO: not working?
     });
+    scrollToBottom(); // TODO: not working?
   }, [assistantId, activeThread?.id, fetchMessages, scrollToBottom]);
 
-  function handleCreateMessage() {
+  async function handleCreateMessage() {
     if (!activeThread) return;
 
-    createMessage({
+    await createMessage({
       threadId: activeThread.id,
       assistantId,
       messageTextValue: inputValue,
-      onSuccess: () => {
-        setInputValue("");
-        scrollToBottom(); // TODO: not working?
-      },
     });
+
+    setInputValue("");
+    scrollToBottom(); // TODO: not working?
   }
 
   return (
