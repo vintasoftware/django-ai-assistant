@@ -3,7 +3,7 @@ from langchain_core.messages import AIMessage, HumanMessage, messages_to_dict
 
 from django_ai_assistant.helpers.assistants import AIAssistant
 from django_ai_assistant.models import Thread
-from django_ai_assistant.tools import BaseModel, Field, tool
+from django_ai_assistant.tools import BaseModel, Field, method_tool
 
 
 class TemperatureAssistant(AIAssistant):
@@ -15,7 +15,7 @@ class TemperatureAssistant(AIAssistant):
     def get_instructions(self):
         return self.instructions + " Today is 2024-06-09."
 
-    @tool
+    @method_tool
     def fetch_current_temperature(self, location: str) -> str:
         """Fetch the current temperature data for a location"""
         return "32 degrees Celsius"
@@ -24,7 +24,7 @@ class TemperatureAssistant(AIAssistant):
         location: str
         dt_str: str = Field(description="Date in the format 'YYYY-MM-DD'")
 
-    @tool(args_schema=FetchForecastTemperatureInput)
+    @method_tool(args_schema=FetchForecastTemperatureInput)
     def fetch_forecast_temperature(self, location: str, dt_str: str) -> str:
         """Fetch the forecast temperature data for a location"""
         return "35 degrees Celsius"
