@@ -1,3 +1,3 @@
 export * from "./client/types.gen";
 export * from "./config";
-export * from "./hooks/useAiAssistantClient";
+export * from "./hooks";
