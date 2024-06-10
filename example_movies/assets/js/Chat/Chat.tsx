@@ -18,8 +18,11 @@ import { getHotkeyHandler } from "@mantine/hooks";
 import Markdown from "react-markdown";
 
 import {
-  useAiAssistantClient,
   ThreadMessagesSchemaOut,
+  ThreadSchema,
+  useAssistant,
+  useMessage,
+  useThread,
 } from "django-ai-assistant-client";
 
 function ChatMessage({ message }: { message: ThreadMessagesSchemaOut }) {
@@ -52,24 +55,23 @@ function ChatMessageList({
 
 export function Chat() {
   const [assistantId, setAssistantId] = useState<string>("");
+  const [activeThread, setActiveThread] = useState<ThreadSchema | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
 
+  const { fetchResource: fetchAssistants, resources: assistants } =
+    useAssistant();
   const {
-    assistants,
-    fetchAssistants,
-
-    threads,
-    fetchThreads,
-    createThread,
-    activeThread,
-    setActiveThread,
-
-    messages,
-    fetchMessages,
-    loadingFetchMessages,
-    createMessage,
-    loadingCreateMessage,
-  } = useAiAssistantClient();
+    fetchResource: fetchThreads,
+    resources: threads,
+    createResource: createThread,
+  } = useThread();
+  const {
+    fetchResource: fetchMessages,
+    resources: messages,
+    loadingFetch: loadingFetchMessages,
+    createResource: createMessage,
+    loadingCreate: loadingCreateMessage,
+  } = useMessage();
 
   const loadingMessages = loadingFetchMessages || loadingCreateMessage;
   const isThreadSelected = assistantId && activeThread;
@@ -104,14 +106,20 @@ export function Chat() {
     if (!assistantId) return;
     if (!activeThread) return;
 
-    fetchMessages({ successCallback: scrollToBottom });
+    fetchMessages({
+      threadId: activeThread.id,
+      onSuccess: scrollToBottom, // TODO: not working?
+    });
   }, [assistantId, activeThread?.id, fetchMessages, scrollToBottom]);
 
   function handleCreateMessage() {
+    if (!activeThread) return;
+
     createMessage({
+      threadId: activeThread.id,
       assistantId,
       messageTextValue: inputValue,
-      successCallback: () => {
+      onSuccess: () => {
         setInputValue("");
         scrollToBottom(); // TODO: not working?
       },

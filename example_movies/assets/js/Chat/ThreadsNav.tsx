@@ -13,7 +13,7 @@ export function ThreadsNav({
   threads: ThreadSchema[] | null;
   selectedThreadId: number | null | undefined;
   selectThread: (thread: ThreadSchema | null) => void;
-  createThread: () => void;
+  createThread: () => Promise<ThreadSchema | null>;
 }) {
   const threadLinks = threads?.map((thread) => {
     const isThreadSelected = selectedThreadId && selectedThreadId === thread.id;
@@ -46,8 +46,9 @@ export function ThreadsNav({
             <ActionIcon
               variant="default"
               size={18}
-              onClick={(e) => {
-                createThread();
+              onClick={async (e) => {
+                const thread = await createThread();
+                selectThread(thread);
                 e.preventDefault();
               }}
             >
