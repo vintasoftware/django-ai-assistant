@@ -74,10 +74,16 @@ export function Chat() {
   const scrollViewport = useRef<HTMLDivElement>(null);
   const scrollToBottom = useCallback(
     () =>
-      scrollViewport.current?.scrollTo({
-        top: scrollViewport.current!.scrollHeight,
-        behavior: "smooth",
-      }),
+      // setTimeout is used because scrollViewport.current?.scrollHeight update is not
+      // being triggered in time for the scrollTo method to work properly.
+      setTimeout(
+        () =>
+          scrollViewport.current?.scrollTo({
+            top: scrollViewport.current!.scrollHeight,
+            behavior: "smooth",
+          }),
+        500
+      ),
     [scrollViewport]
   );
 
@@ -103,8 +109,8 @@ export function Chat() {
     fetchMessages({
       threadId: activeThread.id,
     });
-    scrollToBottom(); // TODO: not working?
-  }, [assistantId, activeThread?.id, fetchMessages, scrollToBottom]);
+    scrollToBottom();
+  }, [assistantId, activeThread?.id, fetchMessages]);
 
   async function handleCreateMessage() {
     if (!activeThread) return;
@@ -116,7 +122,7 @@ export function Chat() {
     });
 
     setInputValue("");
-    scrollToBottom(); // TODO: not working?
+    scrollToBottom();
   }
 
   return (
