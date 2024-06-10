@@ -1,10 +1,7 @@
 import abc
-import copy
 import inspect
-import types
 from typing import Any, ClassVar, Sequence, cast
 
-from django.conf import settings
 from django.http import HttpRequest
 from django.views import View
 
@@ -14,13 +11,14 @@ from langchain_core.messages import BaseMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import ConfigurableFieldSpec
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_core.tools import BaseTool, Tool
 from langchain_openai import ChatOpenAI
 
 from django_ai_assistant.ai.chat_message_histories import DjangoChatMessageHistory
 from django_ai_assistant.exceptions import AIAssistantNotDefinedError, AIUserNotAllowedError
 from django_ai_assistant.models import Thread
 from django_ai_assistant.permissions import can_create_message, can_create_thread, can_run_assistant
+from django_ai_assistant.tools import BaseTool, Tool
+from django_ai_assistant.tools import tool as tool_decorator
 
 
 class AIAssistant(abc.ABC):  # noqa: F821
@@ -48,15 +46,23 @@ class AIAssistant(abc.ABC):  # noqa: F821
         self._set_method_tools()
 
     def _set_method_tools(self):
-        # Find tool methods (decorated with `@tool`):
-        # NOTE: tools are defined in the class context because of the `@tool` decorator,
-        # so it is shared between instances.
-        methods = inspect.getmembers(self, predicate=lambda m: isinstance(m, BaseTool))
-        class_tools = [tool for _, tool in methods]
+        # Find tool methods (decorated with `@method_tool` from django_ai_assistant/tools.py):
+        members = inspect.getmembers(
+            self, predicate=lambda m: hasattr(m, "_is_tool") and m._is_tool
+        )
+        tool_methods = [m for _, m in members]
 
-        # Copy the tools, to avoid sharing self between instances:
-        # TODO: find a way to avoid deepcopy, such as dynamically setting self.
-        tools = copy.deepcopy(class_tools)
+        # Transform tool methods into tool objects:
+        tools = []
+        for method in tool_methods:
+            if hasattr(method, "_tool_maker_args"):
+                tool = tool_decorator(
+                    *method._tool_maker_args,
+                    **method._tool_maker_kwargs,
+                )(method)
+            else:
+                tool = tool_decorator(method)
+            tools.append(cast(BaseTool, tool))
 
         # Remove self from each tool args_schema:
         for tool in tools:
@@ -64,15 +70,6 @@ class AIAssistant(abc.ABC):  # noqa: F821
                 if isinstance(tool.args_schema.__fields_set__, set):
                     tool.args_schema.__fields_set__.remove("self")
                 tool.args_schema.__fields__.pop("self", None)
-
-        # Bind the tool method to tool function:
-        # NOTE: tools are defined in the class context because of the `@tool` decorator
-        # where the methods are still unbound.
-        for tool in tools:
-            if hasattr(tool, "func") and tool.func:
-                tool.func = types.MethodType(tool.func, self)
-            if hasattr(tool, "coroutine") and tool.coroutine:
-                tool.coroutine = types.MethodType(tool.coroutine, self)
 
         self._method_tools = tools
 
@@ -115,7 +112,6 @@ class AIAssistant(abc.ABC):  # noqa: F821
             model=model,
             temperature=temperature,
             model_kwargs=model_kwargs,
-            api_key=settings.OPENAI_API_KEY,
         )
 
     def get_tools(self) -> Sequence[BaseTool]:

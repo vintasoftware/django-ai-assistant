@@ -106,6 +106,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # django-ai-assistant
 
+# Comment the OPENAI_API_KEY below and set one on .env.tests file at root when updating the VCRs:
 OPENAI_API_KEY = "sk-fake-test-key-123"
 AI_ASSISTANT_CAN_CREATE_THREAD_FN = "django_ai_assistant.permissions.allow_all"
 AI_ASSISTANT_CAN_VIEW_THREAD_FN = "django_ai_assistant.permissions.allow_all"
