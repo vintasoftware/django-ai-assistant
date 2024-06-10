@@ -16,17 +16,16 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { IconSend2 } from "@tabler/icons-react";
 import { getHotkeyHandler } from "@mantine/hooks";
 import Markdown from "react-markdown";
-import {
-  DjangoMessage,
-  DjangoThread,
-  createMessage,
-  createThread,
-  fetchAssistantID,
-  fetchDjangoThreads,
-  fetchMessages,
-} from "@/api";
 
-function ChatMessage({ message }: { message: DjangoMessage }) {
+import {
+  ThreadMessagesSchemaOut,
+  ThreadSchema,
+  useAssistant,
+  useMessage,
+  useThread,
+} from "django-ai-assistant-client";
+
+function ChatMessage({ message }: { message: ThreadMessagesSchemaOut }) {
   return (
     <Box mb="md">
       <Text fw={700}>{message.type === "ai" ? "AI" : "User"}</Text>
@@ -35,7 +34,11 @@ function ChatMessage({ message }: { message: DjangoMessage }) {
   );
 }
 
-function ChatMessageList({ messages }: { messages: DjangoMessage[] }) {
+function ChatMessageList({
+  messages,
+}: {
+  messages: ThreadMessagesSchemaOut[];
+}) {
   if (messages.length === 0) {
     return <Text c="dimmed">No messages.</Text>;
   }
@@ -52,13 +55,22 @@ function ChatMessageList({ messages }: { messages: DjangoMessage[] }) {
 
 export function Chat() {
   const [assistantId, setAssistantId] = useState<string>("");
-  const [threads, setThreads] = useState<DjangoThread[] | null>(null);
-  const [threadId, setThreadId] = useState<string>("");
+  const [activeThread, setActiveThread] = useState<ThreadSchema | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
-  const [messages, setMessages] = useState<DjangoMessage[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const isThreadSelected = assistantId && threadId;
-  const isChatActive = assistantId && threadId && !isLoading;
+
+  const { fetchAssistants, assistants } = useAssistant();
+  const { fetchThreads, threads, createThread } = useThread();
+  const {
+    fetchMessages,
+    messages,
+    loadingFetchMessages,
+    createMessage,
+    loadingCreateMessage,
+  } = useMessage();
+
+  const loadingMessages = loadingFetchMessages || loadingCreateMessage;
+  const isThreadSelected = assistantId && activeThread;
+  const isChatActive = assistantId && activeThread && !loadingMessages;
 
   const scrollViewport = useRef<HTMLDivElement>(null);
   const scrollToBottom = useCallback(
@@ -70,86 +82,51 @@ export function Chat() {
     [scrollViewport]
   );
 
-  const loadThreads = useCallback(async () => {
-    try {
-      setThreads(null);
-      const threads = await fetchDjangoThreads();
-      setThreads(threads);
-    } catch (error) {
-      console.error(error);
-      // alert("Error while loading threads");
-    }
-  }, []);
-
-  const createAndSetThread = useCallback(async () => {
-    try {
-      const thread = await createThread();
-      await loadThreads();
-      setThreadId(thread.id);
-    } catch (error) {
-      console.error(error);
-      // alert("Error while creating thread");
-    }
-  }, []);
-
-  const loadMessages = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      console.log(threadId);
-      setMessages(await fetchMessages({ threadId }));
-      scrollToBottom(); // TODO: not working?
-    } catch (error) {
-      console.error(error);
-      // alert("Error while loading messages");
-    }
-    setIsLoading(false);
-  }, [threadId]);
-
-  const sendMessage = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      setInputValue("");
-      await createMessage({ threadId, assistantId, content: inputValue });
-      await loadMessages();
-    } catch (error) {
-      console.error(error);
-      // alert("Error while sending message");
-    }
-    setIsLoading(false);
-  }, [threadId, inputValue]);
-
   // Load assistantId when component mounts:
   useEffect(() => {
-    async function init() {
-      try {
-        setAssistantId(await fetchAssistantID());
-      } catch (error) {
-        console.error(error);
-        // alert("Error while fetching assistant");
-      }
+    if (assistants) {
+      setAssistantId(assistants[0].id);
+    } else {
+      fetchAssistants();
     }
-    init();
-  }, []);
+  }, [assistants, fetchAssistants]);
 
   // Load threads when component mounts:
   useEffect(() => {
-    loadThreads();
-  }, [loadThreads]);
+    fetchThreads();
+  }, [fetchThreads]);
 
   // Load messages when threadId changes:
   useEffect(() => {
     if (!assistantId) return;
-    if (!threadId) return;
-    loadMessages();
-  }, [loadMessages]);
+    if (!activeThread) return;
+
+    fetchMessages({
+      threadId: activeThread.id,
+    });
+    scrollToBottom(); // TODO: not working?
+  }, [assistantId, activeThread?.id, fetchMessages, scrollToBottom]);
+
+  async function handleCreateMessage() {
+    if (!activeThread) return;
+
+    await createMessage({
+      threadId: activeThread.id,
+      assistantId,
+      messageTextValue: inputValue,
+    });
+
+    setInputValue("");
+    scrollToBottom(); // TODO: not working?
+  }
 
   return (
     <>
       <ThreadsNav
         threads={threads}
-        selectedThreadId={threadId}
-        selectThread={setThreadId}
-        createThread={createAndSetThread}
+        selectedThreadId={activeThread?.id}
+        selectThread={setActiveThread}
+        createThread={createThread}
       />
       <main className={classes.main}>
         <Container className={classes.chatContainer}>
@@ -165,7 +142,7 @@ export function Chat() {
               viewportRef={scrollViewport}
             >
               <LoadingOverlay
-                visible={isLoading}
+                visible={loadingMessages}
                 zIndex={1000}
                 overlayProps={{ blur: 2 }}
               />
@@ -190,7 +167,7 @@ export function Chat() {
               disabled={!isChatActive}
               onChange={(e) => setInputValue(e.currentTarget.value)}
               value={inputValue}
-              onKeyDown={getHotkeyHandler([["mod+Enter", sendMessage]])}
+              onKeyDown={getHotkeyHandler([["mod+Enter", handleCreateMessage]])}
               rightSection={
                 <Button
                   variant="filled"
@@ -205,7 +182,7 @@ export function Chat() {
                   }
                   disabled={!isChatActive}
                   onClick={(e) => {
-                    sendMessage();
+                    handleCreateMessage();
                     e.preventDefault();
                   }}
                 >

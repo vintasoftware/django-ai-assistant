@@ -3,6 +3,8 @@ from typing import List
 from langchain_core.messages import message_to_dict
 from ninja import NinjaAPI
 
+from django_ai_assistant import __package__, __version__
+
 from .exceptions import AIUserNotAllowedError
 from .helpers.assistants import (
     create_message,
@@ -23,7 +25,7 @@ from .schemas import (
 )
 
 
-api = NinjaAPI(urls_namespace="django_ai_assistant")
+api = NinjaAPI(title=__package__, version=__version__, urls_namespace="django_ai_assistant")
 
 
 @api.exception_handler(AIUserNotAllowedError)
