@@ -11,7 +11,7 @@ from langchain_community.utilities import WikipediaAPIWrapper
 from langchain_core.tools import BaseTool
 
 from django_ai_assistant.helpers.assistants import AIAssistant, register_assistant
-from django_ai_assistant.tools import tool
+from django_ai_assistant.tools import method_tool
 
 from .models import MovieBacklogItem
 
@@ -99,7 +99,7 @@ class MovieRecommendationAIAssistant(AIAssistant):
             *super().get_tools(),
         ]
 
-    @tool
+    @method_tool
     def firecrawl_scrape_url(self, url: str) -> str:
         """Visit the provided website URL and return the content as markdown."""
 
@@ -126,13 +126,13 @@ class MovieRecommendationAIAssistant(AIAssistant):
             or "Empty"
         )
 
-    @tool
+    @method_tool
     def get_movies_backlog(self) -> str:
         """Get what movies are on user's backlog."""
 
         return self._get_movies_backlog()
 
-    @tool
+    @method_tool
     def add_movie_to_backlog(self, movie_name: str, imdb_url: str) -> str:
         """Add a movie to user's backlog."""
 
@@ -148,7 +148,7 @@ class MovieRecommendationAIAssistant(AIAssistant):
         )
         return f"Added {movie_name} to backlog."
 
-    @tool
+    @method_tool
     def remove_movie_from_backlog(self, movie_name: str) -> str:
         """Remove a movie from user's backlog."""
 
@@ -159,7 +159,7 @@ class MovieRecommendationAIAssistant(AIAssistant):
         MovieBacklogItem.reorder_backlog(self._user)
         return f"Removed {movie_name} from backlog."
 
-    @tool
+    @method_tool
     def reorder_backlog(self, imdb_url_list: Sequence[str]) -> str:
         """Reorder movies in user's backlog."""
 
