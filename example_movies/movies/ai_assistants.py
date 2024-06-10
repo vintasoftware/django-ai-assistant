@@ -63,6 +63,7 @@ class MovieRecommendationAIAssistant(AIAssistant):
         "Help the user find movies to watch and manage their movie backlogs. "
         "By using the provided tools, you can:\n"
         "- Get the IMDB URL of a movie\n"
+        "- Visit the IMDB page of a movie to get its rating\n"
         "- Research for upcoming movies\n"
         "- Research for similar movies\n"
         "- Research more information about movies\n"
@@ -119,7 +120,7 @@ class MovieRecommendationAIAssistant(AIAssistant):
         return (
             "\n".join(
                 [
-                    f"{item.position} - [{item.movie_name}]({item.imdb_url})"
+                    f"{item.position} - [{item.movie_name}]({item.imdb_url}) - Rating {item.imdb_rating}"
                     for item in MovieBacklogItem.objects.filter(user=self._user)
                 ]
             )
@@ -133,14 +134,15 @@ class MovieRecommendationAIAssistant(AIAssistant):
         return self._get_movies_backlog()
 
     @method_tool
-    def add_movie_to_backlog(self, movie_name: str, imdb_url: str) -> str:
-        """Add a movie to user's backlog."""
+    def add_movie_to_backlog(self, movie_name: str, imdb_url: str, imdb_rating: float) -> str:
+        """Add a movie to user's backlog. Must pass the movie_name, imdb_url, and imdb_rating."""
 
         MovieBacklogItem.objects.update_or_create(
             imdb_url=imdb_url.strip(),
             user=self._user,
             defaults={
                 "movie_name": movie_name.strip(),
+                "imdb_rating": imdb_rating,
                 "position": MovieBacklogItem.objects.filter(user=self._user).aggregate(
                     Max("position", default=1)
                 )["position__max"],

@@ -5,6 +5,7 @@ from django.db import models, transaction
 class MovieBacklogItem(models.Model):
     movie_name = models.CharField(max_length=255)
     imdb_url = models.URLField()
+    imdb_rating = models.FloatField()
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
