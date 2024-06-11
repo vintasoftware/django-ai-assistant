@@ -7,7 +7,7 @@ import { configAIAssistant } from "django-ai-assistant-client";
 const theme = createTheme({});
 
 // Relates to path("ai-assistant/", include("django_ai_assistant.urls"))
-// which can be found at example/demo/urls.py)
+// which can be found at example_rag/demo/urls.py)
 configAIAssistant({ baseURL: "ai-assistant" });
 
 const App = () => {
