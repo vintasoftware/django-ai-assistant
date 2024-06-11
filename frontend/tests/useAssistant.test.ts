@@ -2,7 +2,6 @@ import { act, renderHook } from "@testing-library/react";
 import { useAssistant } from "../src/hooks";
 import { djangoAiAssistantViewsListAssistants } from "../src/client";
 
-// Mocking the djangoAiAssistantViewsListAssistants function
 jest.mock("../src/client", () => ({
   djangoAiAssistantViewsListAssistants: jest
     .fn()
