@@ -8,7 +8,7 @@ from .models import Thread
 
 
 class AssistantSchema(Schema):
-    id: str
+    id: str  # noqa: A003
     name: str
 
 
@@ -42,5 +42,5 @@ class ThreadMessageTypeEnum(str, Enum):
 
 
 class ThreadMessagesSchemaOut(Schema):
-    type: ThreadMessageTypeEnum
+    type: ThreadMessageTypeEnum  # noqa: A003
     content: str
