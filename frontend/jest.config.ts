@@ -1,7 +1,7 @@
 import type { Config } from "jest";
 
 const config: Config = {
-  //   verbose: true,
+  verbose: true,
   preset: "ts-jest",
   testMatch: [
     "**/__tests__/**/*.+(ts|tsx|js)",
