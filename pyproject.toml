@@ -20,17 +20,23 @@ coverage = "^7.2.7"
 pre-commit = "^3.3.3"
 ruff = "^0.1.8"
 python-dotenv = "^1.0.1"
-django-webpack-loader = "^3.1.0"
-requests = "^2.32.2"
 pytest-django = "^4.8.0"
-openai-responses = "^0.5.0"
 ipython = "^8.24.0"
 pytest-asyncio = "^0.23.7"
+pytest-recording = "^0.13.1"
+
+[tool.poetry.group.example.dependencies]
+django-webpack-loader = "^3.1.0"
+requests = "^2.32.2"
 lxml = "^5.2.2"
 firecrawl-py = "^0.0.12"
 wikipedia = "^1.4.0"
 langchain-community = "^0.2.4"
-pytest-recording = "^0.13.1"
+
+[tool.poetry.group.example_rag.dependencies]
+gitpython = "^3.1.43"
+scikit-learn = "^1.5.0"
+langchain-community = "^0.2.4"
 
 [build-system]
 requires = ["poetry-core>=1.2.0"]
