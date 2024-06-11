@@ -1,0 +1,53 @@
+{% extends "demo/chat_home.html" %}
+
+{% block message_list %}
+  <div id="messages-container" class="d-flex flex-column">
+    <!-- Django alert messages from django.contrib.messages: -->
+    {% if messages %}
+    <div class="alert-messages">
+        {% for message in messages %}
+        <div class="alert alert-warning">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div id="messages-list" class="overflow-auto">
+      {% for message in thread_messages %}
+        <div class="d-flex flex-column p-2">
+          <span>
+            <strong>
+              {% if message.type == "ai" %}AI{% else %}User{% endif %}
+            </strong>
+          </span>
+          <span>{{ message.content }}</span>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="text-center my-2" data-loading>
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+
+    <div class="d-flex align-items-center mt-auto">
+      <textarea
+        id="input-area"
+        class="form-control"
+        placeholder="Enter user message… (Ctrl↵ to send)"
+        name="content"
+        data-loading-disable
+      ></textarea>
+      <button
+        id="send-message-button"
+        class="btn btn-primary ms-3 d-inline-flex align-items-center"
+        hx-post="{% url 'chat_thread' thread_id %}"
+        hx-include="#input-area"
+        hx-target="#messages-container"
+        hx-swap="outerHTML"
+        hx-select="#messages-container"
+        data-loading-disable
+      >
+        Send <i class="bi bi-send ms-2"></i>
+      </button>
+    </div>
+  </div>
+{% endblock %}

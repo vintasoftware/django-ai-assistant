@@ -1,0 +1,55 @@
+{% extends "demo/htmx_index.html" %}
+
+{% block body %}
+  <div class="d-flex vh-100">
+    <aside class="h-100 col-3 border-right p-3 bg-light">
+      <h3>Threads</h3>
+
+        <div id="threads-wrapper" hx-swap-oob="true">
+        {% block threads_list %}
+          <div id="threads-container" class="d-flex flex-column">
+            <div id="threads-list" class="list-group flex-grow-1 overflow-auto">
+              {% for thread in threads %}
+                <a
+                  class="thread-item list-group-item list-group-item-action {% if thread.id == thread_id %}active{% endif %}"
+                  href="{% url 'chat_thread' thread.id %}"
+                  hx-get="{% url 'chat_thread' thread.id %}"
+                  hx-target="#messages-wrapper"
+                  hx-select="#messages-wrapper"
+                  hx-push-url="true"
+                >
+                  {{ thread.name }}
+                </a>
+              {% endfor %}
+            </div>
+
+            <button
+              id="create-thread-button"
+              class="btn btn-primary mt-3"
+              hx-post='{% url "chat_home" %}'
+              hx-target="#threads-container"
+              hx-select="#messages-container"
+              hx-select-oob="#messages-container"
+              hx-push-url="true"
+              data-loading-disable
+            >
+              Create Thread
+            </button>
+          </div>
+        {% endblock %}
+      </div>
+    </aside>
+
+    <main class="h-100 col-9 d-flex flex-column p-3 mx-auto main-container">
+      <h2 class="mb-4">Chat</h2>
+
+      <div id="messages-wrapper"  hx-swap-oob="true">
+        {% block message_list %}
+          <div class="text-center text-muted my-3">
+            Select or create a thread to start chatting.
+          </div>
+        {% endblock %}
+      </div>
+    </main>
+  </div>
+{% endblock %}

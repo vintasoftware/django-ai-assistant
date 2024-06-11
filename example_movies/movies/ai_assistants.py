@@ -95,7 +95,7 @@ class MovieRecommendationAIAssistant(AIAssistant):
     def get_tools(self) -> Sequence[BaseTool]:
         return [
             TavilySearchResults(),
-            WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper()),  # type: ignore[call-arg]
+            WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper()),  # pyright: ignore[reportCallIssue]
             IMDBURLFinderTool().as_tool(description="Tool to find the IMDB URL of a given movie."),
             *super().get_tools(),
         ]
