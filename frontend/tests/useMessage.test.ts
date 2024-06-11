@@ -103,11 +103,13 @@ describe("useMessage", () => {
       expect(result.current.loadingCreateMessage).toBe(false);
 
       await act(async () => {
-        await result.current.createMessage({
-          threadId: "1",
-          assistantId: "1",
-          messageTextValue: mockNewMessages[0].content,
-        });
+        expect(
+          await result.current.createMessage({
+            threadId: "1",
+            assistantId: "1",
+            messageTextValue: mockNewMessages[0].content,
+          })
+        ).toBeUndefined();
       });
 
       expect(result.current.messages).toEqual([
