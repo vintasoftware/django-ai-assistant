@@ -153,7 +153,7 @@ export function Chat() {
                 overlayProps={{ blur: 2 }}
               />
               {isThreadSelected ? (
-                <ChatMessageList messages={messages} />
+                <ChatMessageList messages={messages || []} />
               ) : (
                 <Text c="dimmed">
                   Select or create a thread to start chatting.
