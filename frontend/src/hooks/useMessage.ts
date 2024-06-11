@@ -10,7 +10,9 @@ import {
  * React hook to manage the Message resource.
  */
 export function useMessage() {
-  const [messages, setMessages] = useState<ThreadMessagesSchemaOut[]>([]);
+  const [messages, setMessages] = useState<ThreadMessagesSchemaOut[] | null>(
+    null
+  );
   const [loadingFetchMessages, setLoadingFetchMessages] =
     useState<boolean>(false);
   const [loadingCreateMessage, setLoadingCreateMessage] =
@@ -48,7 +50,7 @@ export function useMessage() {
    * @param threadId The ID of the thread in which to create the message.
    * @param assistantId The ID of the assistant.
    * @param messageTextValue The content of the message.
-   * @returns A promise that resolves with the created message.
+   * @returns A promise that resolves to undefined when the message is created.
    */
   const createMessage = useCallback(
     async ({
@@ -59,10 +61,11 @@ export function useMessage() {
       threadId: string;
       assistantId: string;
       messageTextValue: string;
-    }): Promise<ThreadMessagesSchemaOut> => {
+    }): Promise<undefined> => {
       try {
         setLoadingCreateMessage(true);
-        const message = await djangoAiAssistantViewsCreateThreadMessage({
+        // successful response is 201, None
+        await djangoAiAssistantViewsCreateThreadMessage({
           threadId,
           requestBody: {
             content: messageTextValue,
@@ -70,9 +73,7 @@ export function useMessage() {
           },
         });
         await fetchMessages({ threadId });
-        // FIXME: The schema is returning unknown, but it should be ThreadMessagesSchemaOut.
-        // We should check the backend to fix this.
-        return message as ThreadMessagesSchemaOut;
+        return undefined;
       } finally {
         setLoadingCreateMessage(false);
       }
