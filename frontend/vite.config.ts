@@ -5,6 +5,7 @@ import dts from "vite-plugin-dts";
 import { type UserConfigExport } from "vite";
 import { name } from "./package.json";
 
+// eslint-disable-next-line @typescript-eslint/require-await
 const app = async (): Promise<UserConfigExport> => {
   /**
    * Removes everything before the last
@@ -40,6 +41,7 @@ const app = async (): Promise<UserConfigExport> => {
         onLog: (level, log, handler) => {
           if (
             log.cause &&
+            // @ts-expect-error 2339 - cause type is unknown
             log.cause.message === "Can't resolve original location of error."
           ) {
             return;
