@@ -12,7 +12,6 @@ module.exports = {
     publicPath: "http://localhost:3000/webpack_bundles/",
     filename: "[name]-[contenthash].js",
   },
-
   devtool: "source-map",
   devServer: {
     hot: true,

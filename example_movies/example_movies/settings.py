@@ -159,4 +159,3 @@ AI_ASSISTANT_CAN_CREATE_THREAD_FN = "django_ai_assistant.permissions.allow_all"
 AI_ASSISTANT_CAN_VIEW_THREAD_FN = "django_ai_assistant.permissions.allow_all"
 AI_ASSISTANT_CAN_CREATE_MESSAGE_FN = "django_ai_assistant.permissions.allow_all"
 AI_ASSISTANT_CAN_RUN_ASSISTANT = "django_ai_assistant.permissions.allow_all"
-WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")  # get for free at https://www.weatherapi.com/

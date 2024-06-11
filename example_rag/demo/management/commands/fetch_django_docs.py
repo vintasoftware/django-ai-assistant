@@ -1,4 +1,5 @@
 import tempfile
+from typing import Any, cast
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -20,7 +21,8 @@ class Command(BaseCommand):
             self.stdout.write(self.style.NOTICE("Saving docs..."))
             head = repo.heads[settings.DJANGO_DOCS_BRANCH].checkout()
             tree = head.commit.tree
-            for blob in tree["docs"].traverse(visit_once=True):  # type: ignore[call-arg]
+            tree = cast(Any, tree)
+            for blob in tree["docs"].traverse(visit_once=True):
                 if blob.path.startswith("docs/_ext/"):
                     continue
                 if blob.path.startswith("docs/_theme/"):
