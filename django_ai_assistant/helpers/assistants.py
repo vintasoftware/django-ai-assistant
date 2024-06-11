@@ -1,33 +1,62 @@
 import abc
 import inspect
+import re
 from typing import Any, ClassVar, Sequence, cast
 
 from django.http import HttpRequest
 from django.views import View
 
-from langchain.agents import AgentExecutor, create_tool_calling_agent
+from langchain.agents import AgentExecutor
+from langchain.agents.format_scratchpad.tools import (
+    format_to_tool_messages,
+)
+from langchain.agents.output_parsers.tools import ToolsAgentOutputParser
+from langchain.chains.combine_documents.base import (
+    DEFAULT_DOCUMENT_PROMPT,
+    DEFAULT_DOCUMENT_SEPARATOR,
+)
 from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_core.messages import BaseMessage, HumanMessage
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.runnables import ConfigurableFieldSpec
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import (
+    ChatPromptTemplate,
+    MessagesPlaceholder,
+    PromptTemplate,
+    format_document,
+)
+from langchain_core.retrievers import (
+    BaseRetriever,
+    RetrieverOutput,
+)
+from langchain_core.runnables import (
+    ConfigurableFieldSpec,
+    Runnable,
+    RunnableBranch,
+    RunnablePassthrough,
+)
 from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_core.tools import BaseTool
 from langchain_openai import ChatOpenAI
 
 from django_ai_assistant.ai.chat_message_histories import DjangoChatMessageHistory
-from django_ai_assistant.exceptions import AIAssistantNotDefinedError, AIUserNotAllowedError
+from django_ai_assistant.exceptions import (
+    AIAssistantMisconfiguredError,
+    AIAssistantNotDefinedError,
+    AIUserNotAllowedError,
+)
 from django_ai_assistant.models import Thread
 from django_ai_assistant.permissions import can_create_message, can_create_thread, can_run_assistant
-from django_ai_assistant.tools import BaseTool, Tool
+from django_ai_assistant.tools import Tool
 from django_ai_assistant.tools import tool as tool_decorator
 
 
 class AIAssistant(abc.ABC):  # noqa: F821
     id: ClassVar[str]  # noqa: A003
-    # TODO: id should match the pattern '^[a-zA-Z0-9_-]+$ to support as_tool in OpenAI
     name: str
     instructions: str
     model: str
     temperature: float
+    has_rag: bool = False
 
     _user: Any | None
     _request: Any | None
@@ -36,6 +65,21 @@ class AIAssistant(abc.ABC):  # noqa: F821
     _method_tools: Sequence[BaseTool]
 
     def __init__(self, *, user=None, request=None, view=None, **kwargs):
+        if not hasattr(self, "id"):
+            raise AIAssistantMisconfiguredError(
+                f"Assistant id is not defined at {self.__class__.__name__}"
+            )
+        if self.id is None:
+            raise AIAssistantMisconfiguredError(
+                f"Assistant id is None at {self.__class__.__name__}"
+            )
+        if not re.match(r"^[a-zA-Z0-9_-]+$", self.id):
+            # id should match the pattern '^[a-zA-Z0-9_-]+$ to support as_tool in OpenAI
+            raise AIAssistantMisconfiguredError(
+                f"Assistant id '{self.id}' does not match the pattern '^[a-zA-Z0-9_-]+$'"
+                f"at {self.__class__.__name__}"
+            )
+
         self._user = user
         self._request = request
         self._view = view
@@ -90,6 +134,13 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
     def get_prompt_template(self):
         instructions = self.get_instructions()
+        context_key = self.get_context_key()
+        if self.has_rag and f"{context_key}" not in instructions:
+            raise AIAssistantMisconfiguredError(
+                f"{self.__class__.__name__} has_rag=True"
+                f"but does not have a {{{context_key}}} placeholder in instructions."
+            )
+
         return ChatPromptTemplate.from_messages(
             [
                 ("system", instructions),
@@ -117,7 +168,53 @@ class AIAssistant(abc.ABC):  # noqa: F821
     def get_tools(self) -> Sequence[BaseTool]:
         return self._method_tools
 
-    def as_chain(self, thread_id: int | None):
+    def get_document_separator(self) -> str:
+        return DEFAULT_DOCUMENT_SEPARATOR
+
+    def get_document_prompt(self) -> PromptTemplate:
+        return DEFAULT_DOCUMENT_PROMPT
+
+    def get_context_key(self) -> str:
+        return "context"
+
+    def get_retriever(self) -> BaseRetriever:
+        raise NotImplementedError(
+            f"Override the get_retriever with your implementation at {self.__class__.__name__}"
+        )
+
+    def get_contextualize_prompt(self) -> ChatPromptTemplate:
+        contextualize_q_system_prompt = (
+            "Given a chat history and the latest user question "
+            "which might reference context in the chat history, "
+            "formulate a standalone question which can be understood "
+            "without the chat history. Do NOT answer the question, "
+            "just reformulate it if needed and otherwise return it as is."
+        )
+        return ChatPromptTemplate.from_messages(
+            [
+                ("system", contextualize_q_system_prompt),
+                MessagesPlaceholder("history"),
+                ("human", "{input}"),
+            ]
+        )
+
+    def get_history_aware_retriever(self) -> Runnable[dict, RetrieverOutput]:
+        llm = self.get_llm()
+        retriever = self.get_retriever()
+        prompt = self.get_contextualize_prompt()
+
+        # Based on create_history_aware_retriever:
+        return RunnableBranch(
+            (
+                lambda x: not x.get("history", False),  # pyright: ignore[reportAttributeAccessIssue]
+                # If no chat history, then we just pass input to retriever
+                (lambda x: x["input"]) | retriever,
+            ),
+            # If chat history, then we pass inputs to LLM chain, then to retriever
+            prompt | llm | StrOutputParser() | retriever,
+        )
+
+    def as_chain(self, thread_id: int | None) -> Runnable[dict, dict]:
         # Based on:
         # - https://python.langchain.com/v0.2/docs/how_to/qa_chat_history_how_to/
         # - https://python.langchain.com/v0.2/docs/how_to/migrate_agent/#memory
@@ -126,16 +223,45 @@ class AIAssistant(abc.ABC):  # noqa: F821
         tools = self.get_tools()
         prompt = self.get_prompt_template()
         tools = cast(Sequence[BaseTool], tools)
-        agent = create_tool_calling_agent(llm=llm, tools=tools, prompt=prompt)
+        if tools:
+            llm_with_tools = llm.bind_tools(tools)
+        else:
+            llm_with_tools = llm
+        chain = (
+            # based on create_tool_calling_agent:
+            RunnablePassthrough.assign(
+                agent_scratchpad=lambda x: format_to_tool_messages(x["intermediate_steps"])
+            ).with_config(run_name="format_to_tool_messages")
+        )
+
+        if self.has_rag:
+            # based on create_retrieval_chain:
+            retriever = self.get_history_aware_retriever()
+            chain = chain | RunnablePassthrough.assign(
+                docs=retriever.with_config(run_name="retrieve_documents"),
+            )
+
+            # based on create_stuff_documents_chain:
+            document_separator = self.get_document_separator()
+            document_prompt = self.get_document_prompt()
+            context_key = self.get_context_key()
+            chain = chain | RunnablePassthrough.assign(
+                **{
+                    context_key: lambda x: document_separator.join(
+                        format_document(doc, document_prompt) for doc in x["docs"]
+                    )
+                }
+            ).with_config(run_name="format_input_docs")
+
+        chain = chain | prompt | llm_with_tools | ToolsAgentOutputParser()
+
         agent_executor = AgentExecutor(
-            agent=agent,  # type: ignore[call-arg]
+            agent=chain,  # pyright: ignore[reportArgumentType]
             tools=tools,
         )
         agent_with_chat_history = RunnableWithMessageHistory(
-            agent_executor,  # type: ignore[call-arg]
-            # This is needed because in most real world scenarios, a session id is needed
-            # It isn't really used here because we are using a simple in memory ChatMessageHistory
-            self.get_message_history,
+            agent_executor,  # pyright: ignore[reportArgumentType]
+            get_session_history=self.get_message_history,
             input_messages_key="input",
             history_messages_key="history",
             history_factory_config=[
@@ -148,7 +274,10 @@ class AIAssistant(abc.ABC):  # noqa: F821
                     is_shared=True,
                 ),
             ],
-        ).with_config({"configurable": {"thread_id": thread_id}})
+        ).with_config(
+            {"configurable": {"thread_id": thread_id}},
+            run_name="agent_with_chat_history",
+        )
 
         return agent_with_chat_history
 

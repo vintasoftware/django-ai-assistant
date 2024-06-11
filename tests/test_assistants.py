@@ -7,6 +7,7 @@ from django_ai_assistant.tools import BaseModel, Field, method_tool
 
 
 class TemperatureAssistant(AIAssistant):
+    id = "temperature_assistant"  # noqa: A003
     name = "Temperature Assistant"
     description = "A temperature assistant that provides temperature information."
     instructions = "You are a temperature bot."

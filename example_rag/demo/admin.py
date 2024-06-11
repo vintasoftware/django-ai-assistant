@@ -11,3 +11,5 @@ class DjangoDocPageAdmin(admin.ModelAdmin):
 
     def django_docs_url(self, obj):
         return mark_safe(f'<a href="{obj.django_docs_url}">{obj.django_docs_url}</a>')  # noqa: S308
+
+    django_docs_url.short_description = "Django Docs URL"

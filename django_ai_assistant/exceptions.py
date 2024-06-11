@@ -1,3 +1,7 @@
+class AIAssistantMisconfiguredError(Exception):
+    pass
+
+
 class AIAssistantNotDefinedError(Exception):
     pass
 
