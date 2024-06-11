@@ -15,17 +15,21 @@ import classes from "./Chat.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { IconSend2 } from "@tabler/icons-react";
 import { getHotkeyHandler } from "@mantine/hooks";
+import Markdown from "react-markdown";
 
 import {
-  useAiAssistantClient,
   ThreadMessagesSchemaOut,
+  ThreadSchema,
+  useAssistant,
+  useMessage,
+  useThread,
 } from "django-ai-assistant-client";
 
 function ChatMessage({ message }: { message: ThreadMessagesSchemaOut }) {
   return (
     <Box mb="md">
       <Text fw={700}>{message.type === "ai" ? "AI" : "User"}</Text>
-      <Text>{message.content}</Text>
+      <Markdown className={classes.mdMessage}>{message.content}</Markdown>
     </Box>
   );
 }
@@ -51,24 +55,18 @@ function ChatMessageList({
 
 export function Chat() {
   const [assistantId, setAssistantId] = useState<string>("");
+  const [activeThread, setActiveThread] = useState<ThreadSchema | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
 
+  const { fetchAssistants, assistants } = useAssistant();
+  const { fetchThreads, threads, createThread } = useThread();
   const {
-    assistants,
-    fetchAssistants,
-
-    threads,
-    fetchThreads,
-    createThread,
-    activeThread,
-    setActiveThread,
-
-    messages,
     fetchMessages,
+    messages,
     loadingFetchMessages,
     createMessage,
     loadingCreateMessage,
-  } = useAiAssistantClient();
+  } = useMessage();
 
   const loadingMessages = loadingFetchMessages || loadingCreateMessage;
   const isThreadSelected = assistantId && activeThread;
@@ -77,10 +75,16 @@ export function Chat() {
   const scrollViewport = useRef<HTMLDivElement>(null);
   const scrollToBottom = useCallback(
     () =>
-      scrollViewport.current?.scrollTo({
-        top: scrollViewport.current!.scrollHeight,
-        behavior: "smooth",
-      }),
+      // setTimeout is used because scrollViewport.current?.scrollHeight update is not
+      // being triggered in time for the scrollTo method to work properly.
+      setTimeout(
+        () =>
+          scrollViewport.current?.scrollTo({
+            top: scrollViewport.current!.scrollHeight,
+            behavior: "smooth",
+          }),
+        500
+      ),
     [scrollViewport]
   );
 
@@ -103,18 +107,23 @@ export function Chat() {
     if (!assistantId) return;
     if (!activeThread) return;
 
-    fetchMessages({ successCallback: scrollToBottom });
-  }, [assistantId, activeThread?.id, fetchMessages, scrollToBottom]);
+    fetchMessages({
+      threadId: activeThread.id,
+    });
+    scrollToBottom();
+  }, [assistantId, activeThread?.id, fetchMessages]);
 
-  function handleCreateMessage() {
-    createMessage({
+  async function handleCreateMessage() {
+    if (!activeThread) return;
+
+    await createMessage({
+      threadId: activeThread.id,
       assistantId,
       messageTextValue: inputValue,
-      successCallback: () => {
-        setInputValue("");
-        scrollToBottom(); // TODO: not working?
-      },
     });
+
+    setInputValue("");
+    scrollToBottom();
   }
 
   return (
