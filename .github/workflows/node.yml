@@ -33,6 +33,9 @@ jobs:
         working-directory: ./frontend
         run: |
           npm test
-          npm run coveralls
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        # When the repo becomes public:
+        # 1. Add the COVERALLS_REPO_TOKEN to GitHub secrets
+        # 2. Uncomment the lines below
+        #   npm run coveralls
+        # env:
+        #   COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
