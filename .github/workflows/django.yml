@@ -22,6 +22,8 @@ jobs:
 
       - name: Run tests
         run: |
-          poetry run pytest
+          poetry run coverage run -m pytest
+          coveralls
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
