@@ -23,7 +23,7 @@ jobs:
       - name: Run tests
         run: |
           poetry run coverage run -m pytest
-          coveralls
+          poetry run coveralls
         env:
           OPENAI_API_KEY: "sk-fake-test-key-123"
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
