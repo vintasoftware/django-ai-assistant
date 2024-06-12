@@ -38,32 +38,6 @@
   margin-bottom: rem(5px);
 }
 
-.threadLink {
-  display: block;
-  padding: rem(8px) var(--mantine-spacing-xs);
-  text-decoration: none;
-  border-radius: var(--mantine-radius-sm);
-  font-size: var(--mantine-font-size-sm);
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
-  line-height: 1;
-  font-weight: 500;
-
-  &:hover {
-    background-color: light-dark(
-      var(--mantine-color-gray-0),
-      var(--mantine-color-dark-6)
-    );
-    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
-  }
-}
-
-.threadLinkSelected {
-  background-color: light-dark(
-    var(--mantine-color-gray-0),
-    var(--mantine-color-dark-4)
-  );
-}
-
 .threadLinkInfo {
   padding: rem(8px) var(--mantine-spacing-xs);
   font-size: var(--mantine-font-size-sm);

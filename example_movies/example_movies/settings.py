@@ -157,5 +157,6 @@ WEBPACK_LOADER = {
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 AI_ASSISTANT_CAN_CREATE_THREAD_FN = "django_ai_assistant.permissions.allow_all"
 AI_ASSISTANT_CAN_VIEW_THREAD_FN = "django_ai_assistant.permissions.allow_all"
+AI_ASSISTANT_CAN_DELETE_THREAD_FN = "django_ai_assistant.permissions.allow_all"
 AI_ASSISTANT_CAN_CREATE_MESSAGE_FN = "django_ai_assistant.permissions.allow_all"
 AI_ASSISTANT_CAN_RUN_ASSISTANT = "django_ai_assistant.permissions.allow_all"
