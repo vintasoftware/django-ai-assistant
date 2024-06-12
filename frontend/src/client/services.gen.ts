@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { DjangoAiAssistantViewsListAssistantsResponse, DjangoAiAssistantViewsListThreadsResponse, DjangoAiAssistantViewsCreateThreadData, DjangoAiAssistantViewsCreateThreadResponse, DjangoAiAssistantViewsListThreadMessagesData, DjangoAiAssistantViewsListThreadMessagesResponse, DjangoAiAssistantViewsCreateThreadMessageData, DjangoAiAssistantViewsCreateThreadMessageResponse } from './types.gen';
+import type { DjangoAiAssistantViewsListAssistantsResponse, DjangoAiAssistantViewsListThreadsResponse, DjangoAiAssistantViewsCreateThreadData, DjangoAiAssistantViewsCreateThreadResponse, DjangoAiAssistantViewsDeleteThreadData, DjangoAiAssistantViewsDeleteThreadResponse, DjangoAiAssistantViewsListThreadMessagesData, DjangoAiAssistantViewsListThreadMessagesResponse, DjangoAiAssistantViewsCreateThreadMessageData, DjangoAiAssistantViewsCreateThreadMessageResponse } from './types.gen';
 
 /**
  * List Assistants
@@ -37,6 +37,21 @@ export const djangoAiAssistantViewsCreateThread = (data: DjangoAiAssistantViewsC
     url: '/threads/',
     body: data.requestBody,
     mediaType: 'application/json'
+}); };
+
+/**
+ * Delete Thread
+ * @param data The data for the request.
+ * @param data.threadId
+ * @returns void No Content
+ * @throws ApiError
+ */
+export const djangoAiAssistantViewsDeleteThread = (data: DjangoAiAssistantViewsDeleteThreadData): CancelablePromise<DjangoAiAssistantViewsDeleteThreadResponse> => { return __request(OpenAPI, {
+    method: 'DELETE',
+    url: '/threads/{thread_id}/',
+    path: {
+        thread_id: data.threadId
+    }
 }); };
 
 /**
