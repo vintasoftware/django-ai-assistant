@@ -1,0 +1,10 @@
+[run]
+branch = True
+source = django_ai_assistant
+
+[report]
+omit =
+    */tests/*
+    */migrations/*
+    *static*
+    */templates/*

@@ -1,3 +1,6 @@
+[![Django CI](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/django.yml/badge.svg)](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/django.yml)
+[![Node CI](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/node.yml/badge.svg)](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/node.yml)
+
 # django-ai-assistant
 
 Django app to integrate with [OpenAI Assistants API](https://platform.openai.com/docs/assistants/overview). Supports [Function calling](https://platform.openai.com/docs/assistants/tools/function-calling).
