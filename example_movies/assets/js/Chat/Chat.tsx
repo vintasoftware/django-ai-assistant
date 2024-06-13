@@ -59,7 +59,7 @@ export function Chat() {
   const [inputValue, setInputValue] = useState<string>("");
 
   const { fetchAssistants, assistants } = useAssistant();
-  const { fetchThreads, threads, createThread } = useThread();
+  const { fetchThreads, threads, createThread, deleteThread } = useThread();
   const {
     fetchMessages,
     messages,
@@ -133,6 +133,7 @@ export function Chat() {
         selectedThreadId={activeThread?.id}
         selectThread={setActiveThread}
         createThread={createThread}
+        deleteThread={deleteThread}
       />
       <main className={classes.main}>
         <Container className={classes.chatContainer}>

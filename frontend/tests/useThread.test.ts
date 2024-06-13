@@ -2,6 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { useThread } from "../src/hooks";
 import {
   djangoAiAssistantViewsCreateThread,
+  djangoAiAssistantViewsDeleteThread,
   djangoAiAssistantViewsListThreads,
 } from "../src/client";
 
@@ -10,6 +11,9 @@ jest.mock("../src/client", () => ({
     .fn()
     .mockImplementation(() => Promise.resolve()),
   djangoAiAssistantViewsListThreads: jest
+    .fn()
+    .mockImplementation(() => Promise.resolve()),
+  djangoAiAssistantViewsDeleteThread: jest
     .fn()
     .mockImplementation(() => Promise.resolve()),
 }));
@@ -161,6 +165,61 @@ describe("useThread", () => {
 
       expect(result.current.threads).toBeNull();
       expect(result.current.loadingCreateThread).toBe(false);
+    });
+  });
+
+  describe("deleteThread", () => {
+    it("should delete a thread and update state correctly", async () => {
+      const deletedThreadId = mockThreads[0].id;
+      (djangoAiAssistantViewsListThreads as jest.Mock).mockResolvedValue(
+        mockThreads.filter((thread) => thread.id !== deletedThreadId)
+      );
+
+      const { result } = renderHook(() => useThread());
+
+      result.current.threads = mockThreads;
+
+      expect(result.current.threads).toEqual(mockThreads);
+      expect(result.current.loadingDeleteThread).toBe(false);
+
+      await act(async () => {
+        await result.current.deleteThread({
+          threadId: deletedThreadId.toString(),
+        });
+      });
+
+      expect(result.current.threads).toEqual(
+        mockThreads.filter((thread) => thread.id !== deletedThreadId)
+      );
+      expect(result.current.loadingDeleteThread).toBe(false);
+    });
+
+    it("should set loading to false if delete fails", async () => {
+      const deletedThreadId = mockThreads[0].id;
+      (djangoAiAssistantViewsListThreads as jest.Mock).mockResolvedValue(
+        mockThreads.filter((thread) => thread.id !== deletedThreadId)
+      );
+      (djangoAiAssistantViewsDeleteThread as jest.Mock).mockRejectedValue(
+        new Error("Failed to delete")
+      );
+
+      const { result } = renderHook(() => useThread());
+
+      result.current.threads = mockThreads;
+
+      expect(result.current.threads).toEqual(mockThreads);
+      expect(result.current.loadingDeleteThread).toBe(false);
+
+      await expect(async () => {
+        await act(async () => {
+          await result.current.deleteThread({
+            threadId: deletedThreadId.toString(),
+          });
+        });
+      }).rejects.toThrow("Failed to delete");
+
+      expect(result.current.threads).toEqual(mockThreads);
+      expect(result.current.loadingDeleteThread).toBe(false);
     });
   });
 });

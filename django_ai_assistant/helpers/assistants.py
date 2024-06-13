@@ -45,7 +45,12 @@ from django_ai_assistant.exceptions import (
     AIUserNotAllowedError,
 )
 from django_ai_assistant.models import Thread
-from django_ai_assistant.permissions import can_create_message, can_create_thread, can_run_assistant
+from django_ai_assistant.permissions import (
+    can_create_message,
+    can_create_thread,
+    can_delete_thread,
+    can_run_assistant,
+)
 from django_ai_assistant.tools import Tool
 from django_ai_assistant.tools import tool as tool_decorator
 
@@ -370,6 +375,18 @@ def get_threads(
     view: View | None = None,
 ):
     return list(Thread.objects.filter(created_by=user))
+
+
+def delete_thread(
+    thread: Thread,
+    user: Any,
+    request: HttpRequest | None = None,
+    view: View | None = None,
+):
+    if not can_delete_thread(thread=thread, user=user, request=request, view=view):
+        raise AIUserNotAllowedError("User is not allowed to delete this thread")
+
+    return thread.delete()
 
 
 def get_thread_messages(

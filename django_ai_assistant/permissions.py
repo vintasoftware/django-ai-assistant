@@ -28,6 +28,20 @@ def can_create_thread(
     )
 
 
+def can_delete_thread(
+    thread,
+    user: Any,
+    request: HttpRequest | None = None,
+    view: View | None = None,
+    **kwargs,
+) -> bool:
+    return app_settings.call_fn(
+        "CAN_DELETE_THREAD_FN",
+        **_get_default_kwargs(user, request, view),
+        thread=thread,
+    )
+
+
 def can_create_message(
     thread,
     user: Any,

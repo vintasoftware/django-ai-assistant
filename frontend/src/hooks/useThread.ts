@@ -3,6 +3,7 @@ import { useState } from "react";
 import {
   ThreadSchema,
   djangoAiAssistantViewsCreateThread,
+  djangoAiAssistantViewsDeleteThread,
   djangoAiAssistantViewsListThreads,
 } from "../client";
 
@@ -14,6 +15,8 @@ export function useThread() {
   const [loadingFetchThreads, setLoadingFetchThreads] =
     useState<boolean>(false);
   const [loadingCreateThread, setLoadingCreateThread] =
+    useState<boolean>(false);
+  const [loadingDeleteThread, setLoadingDeleteThread] =
     useState<boolean>(false);
 
   /**
@@ -53,6 +56,24 @@ export function useThread() {
     [fetchThreads]
   );
 
+  /**
+   * Deletes a thread.
+   *
+   * @param threadId The ID of the thread to delete.
+   */
+  const deleteThread = useCallback(
+    async ({ threadId }: { threadId: string }): Promise<void> => {
+      try {
+        setLoadingDeleteThread(true);
+        await djangoAiAssistantViewsDeleteThread({ threadId });
+        await fetchThreads();
+      } finally {
+        setLoadingDeleteThread(false);
+      }
+    },
+    [fetchThreads]
+  );
+
   return {
     /**
      * Function to fetch threads from the server.
@@ -62,6 +83,10 @@ export function useThread() {
      * Function to create a new thread.
      */
     createThread,
+    /**
+     * Function to delete a thread.
+     */
+    deleteThread,
     /**
      * Array of fetched threads.
      */
@@ -74,5 +99,9 @@ export function useThread() {
      * Loading state of the create operation.
      */
     loadingCreateThread,
+    /**
+     * Loading state of the delete operation.
+     */
+    loadingDeleteThread,
   };
 }

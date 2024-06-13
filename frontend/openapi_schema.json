@@ -79,6 +79,28 @@
         }
       }
     },
+    "/threads/{thread_id}/": {
+      "delete": {
+        "operationId": "django_ai_assistant_views_delete_thread",
+        "summary": "Delete Thread",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "thread_id",
+            "schema": {
+              "title": "Thread Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
     "/threads/{thread_id}/messages/": {
       "get": {
         "operationId": "django_ai_assistant_views_list_thread_messages",
