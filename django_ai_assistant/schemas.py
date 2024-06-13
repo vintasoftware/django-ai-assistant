@@ -42,5 +42,6 @@ class ThreadMessageTypeEnum(str, Enum):
 
 
 class ThreadMessagesSchemaOut(Schema):
+    id: str  # noqa: A003
     type: ThreadMessageTypeEnum  # noqa: A003
     content: str

@@ -19,6 +19,7 @@ export type ThreadSchemaIn = {
 export type ThreadMessageTypeEnum = 'human' | 'ai' | 'generic' | 'system' | 'function' | 'tool';
 
 export type ThreadMessagesSchemaOut = {
+    id: string;
     type: ThreadMessageTypeEnum;
     content: string;
 };
@@ -56,6 +57,13 @@ export type DjangoAiAssistantViewsCreateThreadMessageData = {
 };
 
 export type DjangoAiAssistantViewsCreateThreadMessageResponse = unknown;
+
+export type DjangoAiAssistantViewsDeleteThreadMessageData = {
+    messageId: string;
+    threadId: string;
+};
+
+export type DjangoAiAssistantViewsDeleteThreadMessageResponse = void;
 
 export type $OpenApiTs = {
     '/assistants/': {
@@ -115,6 +123,17 @@ export type $OpenApiTs = {
                  * Created
                  */
                 201: unknown;
+            };
+        };
+    };
+    '/threads/{thread_id}/messages/{message_id}/': {
+        delete: {
+            req: DjangoAiAssistantViewsDeleteThreadMessageData;
+            res: {
+                /**
+                 * No Content
+                 */
+                204: void;
             };
         };
     };

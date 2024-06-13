@@ -76,6 +76,10 @@ export const $ThreadMessageTypeEnum = {
 
 export const $ThreadMessagesSchemaOut = {
     properties: {
+        id: {
+            title: 'Id',
+            type: 'string'
+        },
         type: {
             '$ref': '#/components/schemas/ThreadMessageTypeEnum'
         },
@@ -84,7 +88,7 @@ export const $ThreadMessagesSchemaOut = {
             type: 'string'
         }
     },
-    required: ['type', 'content'],
+    required: ['id', 'type', 'content'],
     title: 'ThreadMessagesSchemaOut',
     type: 'object'
 } as const;
