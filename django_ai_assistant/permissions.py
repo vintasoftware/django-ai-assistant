@@ -36,7 +36,6 @@ def can_delete_thread(
     view: View | None = None,
     **kwargs,
 ) -> bool:
-    print("\ncan_delete_thread")
     return app_settings.call_fn(
         "CAN_DELETE_THREAD_FN",
         **_get_default_kwargs(user, request, view),
