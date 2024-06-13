@@ -1,9 +1,10 @@
 import { useCallback } from "react";
 import { useState } from "react";
 import {
-  ThreadMessagesSchemaOut,
   djangoAiAssistantViewsCreateThreadMessage,
+  djangoAiAssistantViewsDeleteThreadMessage,
   djangoAiAssistantViewsListThreadMessages,
+  ThreadMessagesSchemaOut,
 } from "../client";
 
 /**
@@ -16,6 +17,8 @@ export function useMessage() {
   const [loadingFetchMessages, setLoadingFetchMessages] =
     useState<boolean>(false);
   const [loadingCreateMessage, setLoadingCreateMessage] =
+    useState<boolean>(false);
+  const [loadingDeleteMessage, setLoadingDeleteMessage] =
     useState<boolean>(false);
 
   /**
@@ -50,7 +53,6 @@ export function useMessage() {
    * @param threadId The ID of the thread in which to create the message.
    * @param assistantId The ID of the assistant.
    * @param messageTextValue The content of the message.
-   * @returns A promise that resolves to undefined when the message is created.
    */
   const createMessage = useCallback(
     async ({
@@ -61,7 +63,7 @@ export function useMessage() {
       threadId: string;
       assistantId: string;
       messageTextValue: string;
-    }): Promise<undefined> => {
+    }): Promise<void> => {
       try {
         setLoadingCreateMessage(true);
         // successful response is 201, None
@@ -73,9 +75,36 @@ export function useMessage() {
           },
         });
         await fetchMessages({ threadId });
-        return undefined;
       } finally {
         setLoadingCreateMessage(false);
+      }
+    },
+    [fetchMessages]
+  );
+
+  /**
+   * Deletes a message in a thread.
+   *
+   * @param threadId The ID of the thread in which to delete the message.
+   * @param messageId The ID of the message to delete.
+   */
+  const deleteMessage = useCallback(
+    async ({
+      threadId,
+      messageId,
+    }: {
+      threadId: string;
+      messageId: string;
+    }): Promise<void> => {
+      try {
+        setLoadingDeleteMessage(true);
+        await djangoAiAssistantViewsDeleteThreadMessage({
+          threadId,
+          messageId,
+        });
+        await fetchMessages({ threadId });
+      } finally {
+        setLoadingDeleteMessage(false);
       }
     },
     [fetchMessages]
@@ -91,6 +120,10 @@ export function useMessage() {
      */
     createMessage,
     /**
+     * Function to delete a message in a thread.
+     */
+    deleteMessage,
+    /**
      * Array of fetched messages.
      */
     messages,
@@ -102,5 +135,9 @@ export function useMessage() {
      * Loading state of the create operation.
      */
     loadingCreateMessage,
+    /**
+     * Loading state of the delete operation.
+     */
+    loadingDeleteMessage,
   };
 }

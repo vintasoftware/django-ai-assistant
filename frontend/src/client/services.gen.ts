@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { DjangoAiAssistantViewsListAssistantsResponse, DjangoAiAssistantViewsListThreadsResponse, DjangoAiAssistantViewsCreateThreadData, DjangoAiAssistantViewsCreateThreadResponse, DjangoAiAssistantViewsDeleteThreadData, DjangoAiAssistantViewsDeleteThreadResponse, DjangoAiAssistantViewsListThreadMessagesData, DjangoAiAssistantViewsListThreadMessagesResponse, DjangoAiAssistantViewsCreateThreadMessageData, DjangoAiAssistantViewsCreateThreadMessageResponse } from './types.gen';
+import type { DjangoAiAssistantViewsListAssistantsResponse, DjangoAiAssistantViewsListThreadsResponse, DjangoAiAssistantViewsCreateThreadData, DjangoAiAssistantViewsCreateThreadResponse, DjangoAiAssistantViewsDeleteThreadData, DjangoAiAssistantViewsDeleteThreadResponse, DjangoAiAssistantViewsListThreadMessagesData, DjangoAiAssistantViewsListThreadMessagesResponse, DjangoAiAssistantViewsCreateThreadMessageData, DjangoAiAssistantViewsCreateThreadMessageResponse, DjangoAiAssistantViewsDeleteThreadMessageData, DjangoAiAssistantViewsDeleteThreadMessageResponse } from './types.gen';
 
 /**
  * List Assistants
@@ -85,4 +85,21 @@ export const djangoAiAssistantViewsCreateThreadMessage = (data: DjangoAiAssistan
     },
     body: data.requestBody,
     mediaType: 'application/json'
+}); };
+
+/**
+ * Delete Thread Message
+ * @param data The data for the request.
+ * @param data.threadId
+ * @param data.messageId
+ * @returns void No Content
+ * @throws ApiError
+ */
+export const djangoAiAssistantViewsDeleteThreadMessage = (data: DjangoAiAssistantViewsDeleteThreadMessageData): CancelablePromise<DjangoAiAssistantViewsDeleteThreadMessageResponse> => { return __request(OpenAPI, {
+    method: 'DELETE',
+    url: '/threads/{thread_id}/messages/{message_id}/',
+    path: {
+        thread_id: data.threadId,
+        message_id: data.messageId
+    }
 }); };

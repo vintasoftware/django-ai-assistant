@@ -55,6 +55,71 @@ async def test_aadd_messages(thread_aaa, thread_bbb):
     assert await other_thread.messages.acount() == 0
 
 
+def test_remove_messages(thread_aaa, thread_bbb):
+    thread = Thread.objects.get(name="AAA")
+    other_thread = Thread.objects.get(name="BBB")
+
+    Message.objects.bulk_create(
+        [
+            Message(thread=thread, message={"data": {"content": "Hello, world!"}, "type": "human"}),
+            Message(thread=thread, message={"data": {"content": "Hi! How are you?"}, "type": "ai"}),
+            Message(thread=other_thread, message={"data": {"content": "Olá!"}, "type": "human"}),
+            Message(
+                thread=other_thread, message={"data": {"content": "Olá! Como vai?"}, "type": "ai"}
+            ),
+            Message(
+                thread=other_thread,
+                message={"data": {"content": "Bem, está quente em Recife?"}, "type": "human"},
+            ),
+        ]
+    )
+
+    assert thread.messages.count() == 2
+
+    messages = thread.messages.order_by("created_at")
+    message_history = DjangoChatMessageHistory(thread_id=thread.id)
+    message_history.remove_messages([messages[0].id])
+
+    assert messages.count() == 1
+    assert messages.first().message["data"]["content"] == "Hi! How are you?"
+    assert other_thread.messages.count() == 3
+
+
+@pytest.mark.asyncio
+@pytest.mark.django_db(transaction=True)
+async def test_aremove_messages(thread_aaa, thread_bbb):
+    thread = await Thread.objects.aget(name="AAA")
+    other_thread = await Thread.objects.aget(name="BBB")
+
+    await Message.objects.abulk_create(
+        [
+            Message(thread=thread, message={"data": {"content": "Hello, world!"}, "type": "human"}),
+            Message(thread=thread, message={"data": {"content": "Hi! How are you?"}, "type": "ai"}),
+            Message(thread=other_thread, message={"data": {"content": "Olá!"}, "type": "human"}),
+            Message(
+                thread=other_thread, message={"data": {"content": "Olá! Como vai?"}, "type": "ai"}
+            ),
+            Message(
+                thread=other_thread,
+                message={"data": {"content": "Bem, está quente em Recife?"}, "type": "human"},
+            ),
+        ]
+    )
+
+    assert await thread.messages.acount() == 2
+
+    message_history = DjangoChatMessageHistory(thread_id=thread.id)
+    await message_history.aremove_messages(
+        [(await thread.messages.order_by("created_at").afirst()).id]
+    )
+
+    assert await thread.messages.acount() == 1
+    assert (await thread.messages.order_by("created_at").afirst()).message["data"][
+        "content"
+    ] == "Hi! How are you?"
+    assert await other_thread.messages.acount() == 3
+
+
 def test_get_messages(thread_aaa, thread_bbb):
     thread = Thread.objects.get(name="AAA")
     other_thread = Thread.objects.get(name="BBB")
