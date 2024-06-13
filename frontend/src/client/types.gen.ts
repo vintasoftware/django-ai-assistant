@@ -38,6 +38,12 @@ export type DjangoAiAssistantViewsCreateThreadData = {
 
 export type DjangoAiAssistantViewsCreateThreadResponse = ThreadSchema;
 
+export type DjangoAiAssistantViewsDeleteThreadData = {
+    threadId: string;
+};
+
+export type DjangoAiAssistantViewsDeleteThreadResponse = void;
+
 export type DjangoAiAssistantViewsListThreadMessagesData = {
     threadId: string;
 };
@@ -78,6 +84,17 @@ export type $OpenApiTs = {
                  * OK
                  */
                 200: ThreadSchema;
+            };
+        };
+    };
+    '/threads/{thread_id}/': {
+        delete: {
+            req: DjangoAiAssistantViewsDeleteThreadData;
+            res: {
+                /**
+                 * No Content
+                 */
+                204: void;
             };
         };
     };

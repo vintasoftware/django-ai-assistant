@@ -1,19 +1,19 @@
 from typing import List
 
+from django.shortcuts import get_object_or_404
+
 from langchain_core.messages import message_to_dict
 from ninja import NinjaAPI
 
 from django_ai_assistant import __package__, __version__
 
 from .exceptions import AIUserNotAllowedError
+from .helpers import assistants
 from .helpers.assistants import (
     create_message,
     get_assistants_info,
     get_thread_messages,
     get_threads,
-)
-from .helpers.assistants import (
-    create_thread as ai_create_thread,
 )
 from .models import Thread
 from .schemas import (
@@ -50,7 +50,19 @@ def list_threads(request):
 @api.post("threads/", response=ThreadSchema, url_name="threads_list_create")
 def create_thread(request, payload: ThreadSchemaIn):
     name = payload.name
-    return ai_create_thread(name=name, user=request.user, request=request, view=None)
+    return assistants.create_thread(name=name, user=request.user, request=request, view=None)
+
+
+@api.delete("threads/{thread_id}/", response={204: None}, url_name="threads_delete")
+def delete_thread(request, thread_id: str):
+    thread = get_object_or_404(Thread, id=thread_id)
+    assistants.delete_thread(
+        thread=thread,
+        user=request.user,
+        request=request,
+        view=None,
+    )
+    return 204, None
 
 
 @api.get(
