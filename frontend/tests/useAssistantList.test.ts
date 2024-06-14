@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import { useAssistant } from "../src/hooks";
+import { useAssistantList } from "../src/hooks";
 import { djangoAiAssistantViewsListAssistants } from "../src/client";
 
 jest.mock("../src/client", () => ({
@@ -8,13 +8,13 @@ jest.mock("../src/client", () => ({
     .mockImplementation(() => Promise.resolve()),
 }));
 
-describe("useAssistant", () => {
+describe("useAssistantList", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("should initialize with no assistants and loading false", () => {
-    const { result } = renderHook(() => useAssistant());
+    const { result } = renderHook(() => useAssistantList());
 
     expect(result.current.assistants).toBeNull();
     expect(result.current.loadingFetchAssistants).toBe(false);
@@ -30,7 +30,7 @@ describe("useAssistant", () => {
         mockAssistants
       );
 
-      const { result } = renderHook(() => useAssistant());
+      const { result } = renderHook(() => useAssistantList());
 
       expect(result.current.assistants).toBeNull();
       expect(result.current.loadingFetchAssistants).toBe(false);
@@ -48,7 +48,7 @@ describe("useAssistant", () => {
         new Error("Failed to fetch")
       );
 
-      const { result } = renderHook(() => useAssistant());
+      const { result } = renderHook(() => useAssistantList());
 
       expect(result.current.assistants).toBeNull();
       expect(result.current.loadingFetchAssistants).toBe(false);

@@ -6,9 +6,9 @@ import {
 } from "../client";
 
 /**
- * React hook to manage the Assistant resource.
+ * React hook to manage the list of Assistants.
  */
-export function useAssistant() {
+export function useAssistantList() {
   const [assistants, setAssistants] = useState<AssistantSchema[] | null>(null);
   const [loadingFetchAssistants, setLoadingFetchAssistants] =
     useState<boolean>(false);

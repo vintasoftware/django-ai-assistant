@@ -25,25 +25,17 @@ import Markdown from "react-markdown";
 import {
   ThreadMessagesSchemaOut,
   ThreadSchema,
-  useAssistant,
-  useMessage,
-  useThread,
+  useAssistantList,
+  useMessageList,
+  useThreadList,
 } from "django-ai-assistant-client";
 
 function ChatMessage({
-  threadId,
   message,
   deleteMessage,
 }: {
-  threadId: string;
   message: ThreadMessagesSchemaOut;
-  deleteMessage: ({
-    threadId,
-    messageId,
-  }: {
-    threadId: string;
-    messageId: string;
-  }) => Promise<void>;
+  deleteMessage: ({ messageId }: { messageId: string }) => Promise<void>;
 }) {
   const isUserMessage = message.type === "human";
 
@@ -54,7 +46,7 @@ function ChatMessage({
         color="red"
         size="sm"
         onClick={async () => {
-          await deleteMessage({ threadId, messageId: message.id });
+          await deleteMessage({ messageId: message.id });
         }}
         aria-label="Delete message"
       >
@@ -97,17 +89,14 @@ function ChatMessage({
 }
 
 function ChatMessageList({
-  threadId,
   messages,
   deleteMessage,
 }: {
-  threadId: string;
   messages: ThreadMessagesSchemaOut[];
   deleteMessage: ({
     threadId,
     messageId,
   }: {
-    threadId: string;
     messageId: string;
   }) => Promise<void>;
 }) {
@@ -120,7 +109,6 @@ function ChatMessageList({
       {messages.map((message, index) => (
         <ChatMessage
           key={index}
-          threadId={threadId}
           message={message}
           deleteMessage={deleteMessage}
         />
@@ -133,7 +121,7 @@ export function Chat({ assistantId }: { assistantId: string }) {
   const [activeThread, setActiveThread] = useState<ThreadSchema | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
 
-  const { fetchThreads, threads, createThread, deleteThread } = useThread();
+  const { fetchThreads, threads, createThread, deleteThread } = useThreadList();
   const {
     fetchMessages,
     messages,
@@ -142,7 +130,7 @@ export function Chat({ assistantId }: { assistantId: string }) {
     loadingCreateMessage,
     deleteMessage,
     loadingDeleteMessage,
-  } = useMessage();
+  } = useMessageList({ threadId: activeThread?.id });
 
   const loadingMessages =
     loadingFetchMessages || loadingCreateMessage || loadingDeleteMessage;
@@ -175,9 +163,7 @@ export function Chat({ assistantId }: { assistantId: string }) {
     if (!assistantId) return;
     if (!activeThread) return;
 
-    fetchMessages({
-      threadId: activeThread.id,
-    });
+    fetchMessages();
     scrollToBottom();
   }, [assistantId, activeThread?.id, fetchMessages]);
 
@@ -185,7 +171,6 @@ export function Chat({ assistantId }: { assistantId: string }) {
     if (!activeThread) return;
 
     await createMessage({
-      threadId: activeThread.id,
       assistantId,
       messageTextValue: inputValue,
     });
@@ -223,7 +208,6 @@ export function Chat({ assistantId }: { assistantId: string }) {
               />
               {isThreadSelected ? (
                 <ChatMessageList
-                  threadId={activeThread.id}
                   messages={messages || []}
                   deleteMessage={deleteMessage}
                 />
