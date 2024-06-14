@@ -12,6 +12,8 @@ from .helpers import assistants
 from .helpers.assistants import (
     create_message,
     get_assistants_info,
+    get_single_assistant_info,
+    get_single_thread,
     get_thread_messages,
     get_threads,
 )
@@ -39,29 +41,35 @@ def ai_user_not_allowed_handler(request, exc):
 
 @api.get("assistants/", response=List[AssistantSchema], url_name="assistants_list")
 def list_assistants(request):
-    return list(get_assistants_info(user=request.user, request=request, view=None))
+    return list(get_assistants_info(user=request.user, request=request))
+
+
+@api.get("assistants/{assistant_id}/", response=AssistantSchema, url_name="assistant_detail")
+def get_assistant(request, assistant_id: str):
+    return get_single_assistant_info(assistant_id=assistant_id, user=request.user, request=request)
 
 
 @api.get("threads/", response=List[ThreadSchema], url_name="threads_list_create")
 def list_threads(request):
-    return list(get_threads(user=request.user, request=request, view=None))
+    return list(get_threads(user=request.user, request=request))
 
 
 @api.post("threads/", response=ThreadSchema, url_name="threads_list_create")
 def create_thread(request, payload: ThreadSchemaIn):
     name = payload.name
-    return assistants.create_thread(name=name, user=request.user, request=request, view=None)
+    return assistants.create_thread(name=name, user=request.user, request=request)
 
 
-@api.delete("threads/{thread_id}/", response={204: None}, url_name="threads_delete")
+@api.get("threads/{thread_id}/", response=ThreadSchema, url_name="thread_detail_delete")
+def get_thread(request, thread_id: str):
+    thread = get_single_thread(thread_id=thread_id, user=request.user, request=request)
+    return thread
+
+
+@api.delete("threads/{thread_id}/", response={204: None}, url_name="thread_detail_delete")
 def delete_thread(request, thread_id: str):
     thread = get_object_or_404(Thread, id=thread_id)
-    assistants.delete_thread(
-        thread=thread,
-        user=request.user,
-        request=request,
-        view=None,
-    )
+    assistants.delete_thread(thread=thread, user=request.user, request=request)
     return 204, None
 
 
@@ -71,9 +79,7 @@ def delete_thread(request, thread_id: str):
     url_name="messages_list_create",
 )
 def list_thread_messages(request, thread_id: str):
-    messages = get_thread_messages(
-        thread_id=thread_id, user=request.user, request=request, view=None
-    )
+    messages = get_thread_messages(thread_id=thread_id, user=request.user, request=request)
     return [message_to_dict(m)["data"] for m in messages]
 
 
@@ -92,9 +98,7 @@ def create_thread_message(request, thread_id: str, payload: ThreadMessagesSchema
         user=request.user,
         content=payload.content,
         request=request,
-        view=None,
     )
-
     return 201, None
 
 
@@ -107,6 +111,5 @@ def delete_thread_message(request, thread_id: str, message_id: str):
         message=message,
         user=request.user,
         request=request,
-        view=None,
     )
     return 204, None

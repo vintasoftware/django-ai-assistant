@@ -31,6 +31,12 @@ export type ThreadMessagesSchemaIn = {
 
 export type DjangoAiAssistantViewsListAssistantsResponse = Array<AssistantSchema>;
 
+export type DjangoAiAssistantViewsGetAssistantData = {
+    assistantId: string;
+};
+
+export type DjangoAiAssistantViewsGetAssistantResponse = AssistantSchema;
+
 export type DjangoAiAssistantViewsListThreadsResponse = Array<ThreadSchema>;
 
 export type DjangoAiAssistantViewsCreateThreadData = {
@@ -38,6 +44,12 @@ export type DjangoAiAssistantViewsCreateThreadData = {
 };
 
 export type DjangoAiAssistantViewsCreateThreadResponse = ThreadSchema;
+
+export type DjangoAiAssistantViewsGetThreadData = {
+    threadId: string;
+};
+
+export type DjangoAiAssistantViewsGetThreadResponse = ThreadSchema;
 
 export type DjangoAiAssistantViewsDeleteThreadData = {
     threadId: string;
@@ -76,6 +88,17 @@ export type $OpenApiTs = {
             };
         };
     };
+    '/assistants/{assistant_id}/': {
+        get: {
+            req: DjangoAiAssistantViewsGetAssistantData;
+            res: {
+                /**
+                 * OK
+                 */
+                200: AssistantSchema;
+            };
+        };
+    };
     '/threads/': {
         get: {
             res: {
@@ -96,6 +119,15 @@ export type $OpenApiTs = {
         };
     };
     '/threads/{thread_id}/': {
+        get: {
+            req: DjangoAiAssistantViewsGetThreadData;
+            res: {
+                /**
+                 * OK
+                 */
+                200: ThreadSchema;
+            };
+        };
         delete: {
             req: DjangoAiAssistantViewsDeleteThreadData;
             res: {
