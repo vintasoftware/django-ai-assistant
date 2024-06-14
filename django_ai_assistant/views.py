@@ -15,7 +15,7 @@ from .helpers.assistants import (
     get_thread_messages,
     get_threads,
 )
-from .models import Thread
+from .models import Message, Thread
 from .schemas import (
     AssistantSchema,
     ThreadMessagesSchemaIn,
@@ -96,3 +96,17 @@ def create_thread_message(request, thread_id: str, payload: ThreadMessagesSchema
     )
 
     return 201, None
+
+
+@api.delete(
+    "threads/{thread_id}/messages/{message_id}/", response={204: None}, url_name="messages_delete"
+)
+def delete_thread_message(request, thread_id: str, message_id: str):
+    message = get_object_or_404(Message, id=message_id, thread_id=thread_id)
+    assistants.delete_message(
+        message=message,
+        user=request.user,
+        request=request,
+        view=None,
+    )
+    return 204, None

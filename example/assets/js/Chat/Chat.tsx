@@ -1,19 +1,24 @@
 import {
-  Container,
-  Text,
-  Stack,
-  Title,
-  Textarea,
+  ActionIcon,
+  Avatar,
   Box,
   Button,
+  Container,
+  Group,
   LoadingOverlay,
+  Paper,
   ScrollArea,
+  Stack,
+  Text,
+  Textarea,
+  Title,
+  Tooltip,
 } from "@mantine/core";
 import { ThreadsNav } from "./ThreadsNav";
 
 import classes from "./Chat.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { IconSend2 } from "@tabler/icons-react";
+import { IconSend2, IconTrash } from "@tabler/icons-react";
 import { getHotkeyHandler } from "@mantine/hooks";
 import Markdown from "react-markdown";
 
@@ -25,31 +30,101 @@ import {
   useThread,
 } from "django-ai-assistant-client";
 
-function ChatMessage({ message }: { message: ThreadMessagesSchemaOut }) {
+function ChatMessage({
+  threadId,
+  message,
+  deleteMessage,
+}: {
+  threadId: string;
+  message: ThreadMessagesSchemaOut;
+  deleteMessage: ({
+    threadId,
+    messageId,
+  }: {
+    threadId: string;
+    messageId: string;
+  }) => Promise<void>;
+}) {
+  const isUserMessage = message.type === "human";
+
+  const DeleteButton = () => (
+    <Tooltip label="Delete message" withArrow position="bottom">
+      <ActionIcon
+        variant="light"
+        color="red"
+        size="sm"
+        onClick={async () => {
+          await deleteMessage({ threadId, messageId: message.id });
+        }}
+        aria-label="Delete message"
+      >
+        <IconTrash style={{ width: "70%", height: "70%" }} stroke={1.5} />
+      </ActionIcon>
+    </Tooltip>
+  );
+
   return (
-    <Box mb="md">
-      <Text fw={700}>{message.type === "ai" ? "AI" : "User"}</Text>
-      <Markdown className={classes.mdMessage}>{message.content}</Markdown>
-    </Box>
+    <Group
+      gap="lg"
+      align="flex-end"
+      justify={isUserMessage ? "flex-end" : "flex-start"}
+    >
+      {!isUserMessage ? (
+        <Avatar color="green" radius="xl">
+          AI
+        </Avatar>
+      ) : null}
+
+      {isUserMessage ? <DeleteButton /> : null}
+
+      <Paper
+        flex={1}
+        maw="75%"
+        shadow="none"
+        radius="lg"
+        p="lg"
+        bg="var(--mantine-color-gray-0)"
+      >
+        <Group gap="md" justify="space-between" align="top">
+          <Markdown className={classes.mdMessage}>{message.content}</Markdown>
+        </Group>
+      </Paper>
+
+      {!isUserMessage ? <DeleteButton /> : null}
+    </Group>
   );
 }
 
 function ChatMessageList({
+  threadId,
   messages,
+  deleteMessage,
 }: {
+  threadId: string;
   messages: ThreadMessagesSchemaOut[];
+  deleteMessage: ({
+    threadId,
+    messageId,
+  }: {
+    threadId: string;
+    messageId: string;
+  }) => Promise<void>;
 }) {
   if (messages.length === 0) {
     return <Text c="dimmed">No messages.</Text>;
   }
 
-  // TODO: check why horizontal scroll appears
   return (
-    <div>
+    <Stack gap="xl">
       {messages.map((message, index) => (
-        <ChatMessage key={index} message={message} />
+        <ChatMessage
+          key={index}
+          threadId={threadId}
+          message={message}
+          deleteMessage={deleteMessage}
+        />
       ))}
-    </div>
+    </Stack>
   );
 }
 
@@ -66,9 +141,12 @@ export function Chat() {
     loadingFetchMessages,
     createMessage,
     loadingCreateMessage,
+    deleteMessage,
+    loadingDeleteMessage,
   } = useMessage();
 
-  const loadingMessages = loadingFetchMessages || loadingCreateMessage;
+  const loadingMessages =
+    loadingFetchMessages || loadingCreateMessage || loadingDeleteMessage;
   const isThreadSelected = assistantId && activeThread;
   const isChatActive = assistantId && activeThread && !loadingMessages;
 
@@ -154,7 +232,11 @@ export function Chat() {
                 overlayProps={{ blur: 2 }}
               />
               {isThreadSelected ? (
-                <ChatMessageList messages={messages || []} />
+                <ChatMessageList
+                  threadId={activeThread.id}
+                  messages={messages || []}
+                  deleteMessage={deleteMessage}
+                />
               ) : (
                 <Text c="dimmed">
                   Select or create a thread to start chatting.

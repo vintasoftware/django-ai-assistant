@@ -9,6 +9,8 @@ from __future__ import annotations
 import logging
 from typing import Any, List, Sequence, cast
 
+from django.db import transaction
+
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.messages import BaseMessage, message_to_dict, messages_from_dict
 
@@ -68,12 +70,19 @@ class DjangoChatMessageHistory(BaseChatMessageHistory):
         Args:
             messages: A list of BaseMessage objects to store.
         """
-        Message.objects.bulk_create(
-            [
+        with transaction.atomic():
+            message_objects = [
                 Message(thread_id=self._thread_id, message=message_to_dict(message))
                 for message in messages
             ]
-        )
+
+            created_messages = Message.objects.bulk_create(message_objects)
+
+            # Update langchain message IDs with Django message IDs
+            for created_message in created_messages:
+                created_message.message["data"]["id"] = str(created_message.id)
+
+            Message.objects.bulk_update(created_messages, ["message"])
 
     async def aadd_messages(self, messages: Sequence[BaseMessage]) -> None:
         """Add messages to the chat thread.
@@ -81,12 +90,36 @@ class DjangoChatMessageHistory(BaseChatMessageHistory):
         Args:
             messages: A list of BaseMessage objects to store.
         """
-        await Message.objects.abulk_create(
-            [
-                Message(thread_id=self._thread_id, message=message_to_dict(message))
-                for message in messages
-            ]
-        )
+        # NOTE: This method does not use transactions because it do not yet work in async mode.
+        # Source: https://docs.djangoproject.com/en/5.0/topics/async/#queries-the-orm
+        message_objects = [
+            Message(thread_id=self._thread_id, message=message_to_dict(message))
+            for message in messages
+        ]
+
+        created_messages = await Message.objects.abulk_create(message_objects)
+
+        # Update langchain message IDs with Django message IDs
+        for created_message in created_messages:
+            created_message.message["data"]["id"] = str(created_message.id)
+
+        await Message.objects.abulk_update(created_messages, ["message"])
+
+    def remove_messages(self, message_ids: List[str]) -> None:
+        """Remove messages from the chat thread.
+
+        Args:
+            message_ids: A list of message IDs to remove.
+        """
+        Message.objects.filter(id__in=message_ids).delete()
+
+    async def aremove_messages(self, message_ids: List[str]) -> None:
+        """Remove messages from the chat thread.
+
+        Args:
+            message_ids: A list of message IDs to remove.
+        """
+        await Message.objects.filter(id__in=message_ids).adelete()
 
     def _get_messages_qs(self):
         return Message.objects.filter(thread_id=self._thread_id).order_by("created_at")

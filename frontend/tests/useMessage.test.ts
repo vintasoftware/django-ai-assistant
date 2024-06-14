@@ -2,7 +2,9 @@ import { act, renderHook } from "@testing-library/react";
 import { useMessage } from "../src/hooks";
 import {
   djangoAiAssistantViewsCreateThreadMessage,
+  djangoAiAssistantViewsDeleteThreadMessage,
   djangoAiAssistantViewsListThreadMessages,
+  ThreadMessagesSchemaOut,
 } from "../src/client";
 
 jest.mock("../src/client", () => ({
@@ -12,6 +14,9 @@ jest.mock("../src/client", () => ({
   djangoAiAssistantViewsListThreadMessages: jest
     .fn()
     .mockImplementation(() => Promise.resolve()),
+  djangoAiAssistantViewsDeleteThreadMessage: jest
+    .fn()
+    .mockImplementation(() => Promise.resolve()),
 }));
 
 describe("useMessage", () => {
@@ -19,12 +24,14 @@ describe("useMessage", () => {
     jest.clearAllMocks();
   });
 
-  const mockMessages = [
+  const mockMessages: ThreadMessagesSchemaOut[] = [
     {
+      id: "1",
       type: "human",
       content: "Hello!",
     },
     {
+      id: "2",
       type: "ai",
       content: "Hello! How can I assist you today?",
     },
@@ -141,6 +148,63 @@ describe("useMessage", () => {
 
       expect(result.current.messages).toBeNull();
       expect(result.current.loadingCreateMessage).toBe(false);
+    });
+  });
+
+  describe("deleteMessage", () => {
+    it("should delete a message and update state correctly", async () => {
+      const deletedMessageId = mockMessages[0].id;
+      (djangoAiAssistantViewsListThreadMessages as jest.Mock).mockResolvedValue(
+        mockMessages.filter((message) => message.id !== deletedMessageId)
+      );
+
+      const { result } = renderHook(() => useMessage());
+
+      result.current.messages = mockMessages;
+
+      expect(result.current.messages).toEqual(mockMessages);
+      expect(result.current.loadingDeleteMessage).toBe(false);
+
+      await act(async () => {
+        await result.current.deleteMessage({
+          threadId: "1",
+          messageId: deletedMessageId,
+        });
+      });
+
+      expect(result.current.messages).toEqual(
+        mockMessages.filter((message) => message.id !== deletedMessageId)
+      );
+      expect(result.current.loadingDeleteMessage).toBe(false);
+    });
+
+    it("should set loading to false if delete fails", async () => {
+      const deletedMessageId = mockMessages[0].id;
+      (djangoAiAssistantViewsListThreadMessages as jest.Mock).mockResolvedValue(
+        mockMessages.filter((message) => message.id !== deletedMessageId)
+      );
+      (
+        djangoAiAssistantViewsDeleteThreadMessage as jest.Mock
+      ).mockRejectedValue(new Error("Failed to delete"));
+
+      const { result } = renderHook(() => useMessage());
+
+      result.current.messages = mockMessages;
+
+      expect(result.current.messages).toEqual(mockMessages);
+      expect(result.current.loadingDeleteMessage).toBe(false);
+
+      await expect(async () => {
+        await act(async () => {
+          await result.current.deleteMessage({
+            threadId: "1",
+            messageId: deletedMessageId,
+          });
+        });
+      }).rejects.toThrow("Failed to delete");
+
+      expect(result.current.messages).toEqual(mockMessages);
+      expect(result.current.loadingDeleteMessage).toBe(false);
     });
   });
 });

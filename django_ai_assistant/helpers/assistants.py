@@ -44,10 +44,11 @@ from django_ai_assistant.exceptions import (
     AIAssistantNotDefinedError,
     AIUserNotAllowedError,
 )
-from django_ai_assistant.models import Thread
+from django_ai_assistant.models import Message, Thread
 from django_ai_assistant.permissions import (
     can_create_message,
     can_create_thread,
+    can_delete_message,
     can_delete_thread,
     can_run_assistant,
 )
@@ -416,3 +417,15 @@ def create_thread_message_as_user(
         raise AIUserNotAllowedError("User is not allowed to create messages in this thread")
 
     DjangoChatMessageHistory(thread.id).add_messages([HumanMessage(content=content)])
+
+
+def delete_message(
+    message: Message,
+    user: Any,
+    request: HttpRequest | None = None,
+    view: View | None = None,
+):
+    if not can_delete_message(message=message, user=user, request=request, view=view):
+        raise AIUserNotAllowedError("User is not allowed to delete this message")
+
+    return DjangoChatMessageHistory(thread_id=message.thread_id).remove_messages([message.id])
