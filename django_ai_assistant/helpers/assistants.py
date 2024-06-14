@@ -399,6 +399,20 @@ def get_threads(
     return list(Thread.objects.filter(created_by=user))
 
 
+def update_thread(
+    thread: Thread,
+    name: str,
+    user: Any,
+    request: HttpRequest | None = None,
+):
+    if not can_delete_thread(thread=thread, user=user, request=request):
+        raise AIUserNotAllowedError("User is not allowed to update this thread")
+
+    thread.name = name
+    thread.save()
+    return thread
+
+
 def delete_thread(
     thread: Thread,
     user: Any,
