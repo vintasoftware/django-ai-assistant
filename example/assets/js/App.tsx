@@ -4,7 +4,6 @@ import { Container, createTheme, MantineProvider } from "@mantine/core";
 import { Chat } from "@/components";
 import { createBrowserRouter, Link, RouterProvider } from "react-router-dom";
 import { configAIAssistant } from "django-ai-assistant-client";
-import React from "react";
 
 const theme = createTheme({});
 
