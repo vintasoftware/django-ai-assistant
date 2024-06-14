@@ -7,6 +7,73 @@ Django app to integrate with [OpenAI Assistants API](https://platform.openai.com
 
 ⚠️ Under heavy development. Not launched yet!
 
+## Dev Setup
+
+### Clone the repo
+
+`git clone git@github.com:vintasoftware/django-ai-assistant.git`
+
+### Set up a virtualenv, optionally set up nvm, and activate your environment(s)
+
+You can use [pyenv](https://github.com/pyenv/pyenv), [pipenv](https://github.com/pypa/pipenv/blob/main/docs/installation.md), vanilla venvs or the tool of your choice.
+
+[NVM](https://github.com/nvm-sh/nvm)
+
+### Install vite
+
+`npm install -g vite` or install locally if you prefer
+
+### Create a .env file at the root of the project
+
+`cp .env.example .env`
+
+To gather the API keys for these tools, head to the following links:
+- [OpenAI](https://platform.openai.com/api-keys)
+- [Weather](https://www.weatherapi.com/)
+- [Tavily](https://app.tavily.com/home)
+- [Firecrawl](https://www.firecrawl.dev/)
+
+### Build the frontend
+
+`cd frontend`
+
+`vite build`
+
+### Install dependencies
+
+#### Backend
+
+`cd example`
+
+`poetry install`
+
+#### Frontend
+
+`cd example`
+
+`npm install`
+
+### Run the project
+
+From the example folder:
+
+#### Frontend 
+
+`npm run start`
+
+#### Backend
+
+`python manage.py migrate`
+
+`python manage.py createsuperuser`
+
+`python manage.py runserver`
+
+### Log in to Django Admin
+
+Go to /admin and log in with your superuser account.
+
+
 ## Contributing
 
 If you wish to contribute to this project, please first discuss the change you wish to make via an [issue](https://github.com/vintasoftware/django-react-boilerplate/issues).
