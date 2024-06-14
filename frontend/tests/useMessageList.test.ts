@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import { useMessage } from "../src/hooks";
+import { useMessageList } from "../src/hooks";
 import {
   djangoAiAssistantViewsCreateThreadMessage,
   djangoAiAssistantViewsDeleteThreadMessage,
@@ -19,7 +19,7 @@ jest.mock("../src/client", () => ({
     .mockImplementation(() => Promise.resolve()),
 }));
 
-describe("useMessage", () => {
+describe("useMessageList", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -38,7 +38,7 @@ describe("useMessage", () => {
   ];
 
   it("should initialize with no messages and loading false", () => {
-    const { result } = renderHook(() => useMessage());
+    const { result } = renderHook(() => useMessageList({ threadId: null }));
 
     expect(result.current.messages).toBeNull();
     expect(result.current.loadingFetchMessages).toBe(false);
@@ -51,13 +51,13 @@ describe("useMessage", () => {
         mockMessages
       );
 
-      const { result } = renderHook(() => useMessage());
+      const { result } = renderHook(() => useMessageList({ threadId: "1" }));
 
       expect(result.current.messages).toBeNull();
       expect(result.current.loadingFetchMessages).toBe(false);
 
       await act(async () => {
-        await result.current.fetchMessages({ threadId: "1" });
+        await result.current.fetchMessages();
       });
 
       expect(result.current.messages).toEqual(mockMessages);
@@ -69,14 +69,14 @@ describe("useMessage", () => {
         new Error("Failed to fetch")
       );
 
-      const { result } = renderHook(() => useMessage());
+      const { result } = renderHook(() => useMessageList({ threadId: "1" }));
 
       expect(result.current.messages).toBeNull();
       expect(result.current.loadingFetchMessages).toBe(false);
 
       await expect(async () => {
         await act(async () => {
-          await result.current.fetchMessages({ threadId: "1" });
+          await result.current.fetchMessages();
         });
       }).rejects.toThrow("Failed to fetch");
 
@@ -104,7 +104,7 @@ describe("useMessage", () => {
         [...mockMessages, ...mockNewMessages]
       );
 
-      const { result } = renderHook(() => useMessage());
+      const { result } = renderHook(() => useMessageList({ threadId: "1" }));
 
       expect(result.current.messages).toBeNull();
       expect(result.current.loadingCreateMessage).toBe(false);
@@ -112,7 +112,6 @@ describe("useMessage", () => {
       await act(async () => {
         expect(
           await result.current.createMessage({
-            threadId: "1",
             assistantId: "1",
             messageTextValue: mockNewMessages[0].content,
           })
@@ -131,7 +130,7 @@ describe("useMessage", () => {
         djangoAiAssistantViewsCreateThreadMessage as jest.Mock
       ).mockRejectedValue(new Error("Failed to create"));
 
-      const { result } = renderHook(() => useMessage());
+      const { result } = renderHook(() => useMessageList({ threadId: "1" }));
 
       expect(result.current.messages).toBeNull();
       expect(result.current.loadingCreateMessage).toBe(false);
@@ -139,7 +138,6 @@ describe("useMessage", () => {
       await expect(async () => {
         await act(async () => {
           await result.current.createMessage({
-            threadId: "1",
             assistantId: "1",
             messageTextValue: "Hello!",
           });
@@ -158,7 +156,7 @@ describe("useMessage", () => {
         mockMessages.filter((message) => message.id !== deletedMessageId)
       );
 
-      const { result } = renderHook(() => useMessage());
+      const { result } = renderHook(() => useMessageList({ threadId: "1" }));
 
       result.current.messages = mockMessages;
 
@@ -167,7 +165,6 @@ describe("useMessage", () => {
 
       await act(async () => {
         await result.current.deleteMessage({
-          threadId: "1",
           messageId: deletedMessageId,
         });
       });
@@ -187,7 +184,7 @@ describe("useMessage", () => {
         djangoAiAssistantViewsDeleteThreadMessage as jest.Mock
       ).mockRejectedValue(new Error("Failed to delete"));
 
-      const { result } = renderHook(() => useMessage());
+      const { result } = renderHook(() => useMessageList({ threadId: "1" }));
 
       result.current.messages = mockMessages;
 
@@ -197,7 +194,6 @@ describe("useMessage", () => {
       await expect(async () => {
         await act(async () => {
           await result.current.deleteMessage({
-            threadId: "1",
             messageId: deletedMessageId,
           });
         });
