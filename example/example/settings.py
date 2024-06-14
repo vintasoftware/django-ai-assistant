@@ -29,7 +29,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "webpack_loader",
     "django_ai_assistant",
-    "demo",
+    "demo",  # contains the views
+    "weather",
+    "movies",
+    "rag",
 ]
 
 MIDDLEWARE = [
@@ -166,3 +169,4 @@ AI_ASSISTANT_CAN_RUN_ASSISTANT = "django_ai_assistant.permissions.allow_all"
 # Example specific settings:
 
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")  # get for free at https://www.weatherapi.com/
+DJANGO_DOCS_BRANCH = "stable/5.0.x"

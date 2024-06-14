@@ -52,4 +52,6 @@ def vcr_config():
             ("x-stainless-runtime-version", None),
         ],
         "before_record_response": clear_response,
+        # Request must has the same body as the recorded request:
+        "match_on": ["method", "scheme", "host", "port", "path", "query", "body"],
     }
