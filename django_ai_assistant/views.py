@@ -54,19 +54,19 @@ def list_threads(request):
     return list(get_threads(user=request.user, request=request))
 
 
-@api.get("threads/{thread_id}/", response=ThreadSchema, url_name="thread_detail")
-def get_thread(request, thread_id: str):
-    thread = get_single_thread(thread_id=thread_id, user=request.user, request=request)
-    return thread
-
-
 @api.post("threads/", response=ThreadSchema, url_name="threads_list_create")
 def create_thread(request, payload: ThreadSchemaIn):
     name = payload.name
     return assistants.create_thread(name=name, user=request.user, request=request)
 
 
-@api.delete("threads/{thread_id}/", response={204: None}, url_name="threads_delete")
+@api.get("threads/{thread_id}/", response=ThreadSchema, url_name="thread_detail_delete")
+def get_thread(request, thread_id: str):
+    thread = get_single_thread(thread_id=thread_id, user=request.user, request=request)
+    return thread
+
+
+@api.delete("threads/{thread_id}/", response={204: None}, url_name="thread_detail_delete")
 def delete_thread(request, thread_id: str):
     thread = get_object_or_404(Thread, id=thread_id)
     assistants.delete_thread(thread=thread, user=request.user, request=request)
