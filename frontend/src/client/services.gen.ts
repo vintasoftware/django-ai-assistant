@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { DjangoAiAssistantViewsListAssistantsResponse, DjangoAiAssistantViewsGetAssistantData, DjangoAiAssistantViewsGetAssistantResponse, DjangoAiAssistantViewsListThreadsResponse, DjangoAiAssistantViewsCreateThreadData, DjangoAiAssistantViewsCreateThreadResponse, DjangoAiAssistantViewsGetThreadData, DjangoAiAssistantViewsGetThreadResponse, DjangoAiAssistantViewsDeleteThreadData, DjangoAiAssistantViewsDeleteThreadResponse, DjangoAiAssistantViewsListThreadMessagesData, DjangoAiAssistantViewsListThreadMessagesResponse, DjangoAiAssistantViewsCreateThreadMessageData, DjangoAiAssistantViewsCreateThreadMessageResponse, DjangoAiAssistantViewsDeleteThreadMessageData, DjangoAiAssistantViewsDeleteThreadMessageResponse } from './types.gen';
+import type { DjangoAiAssistantViewsListAssistantsResponse, DjangoAiAssistantViewsGetAssistantData, DjangoAiAssistantViewsGetAssistantResponse, DjangoAiAssistantViewsListThreadsResponse, DjangoAiAssistantViewsCreateThreadData, DjangoAiAssistantViewsCreateThreadResponse, DjangoAiAssistantViewsGetThreadData, DjangoAiAssistantViewsGetThreadResponse, DjangoAiAssistantViewsUpdateThreadData, DjangoAiAssistantViewsUpdateThreadResponse, DjangoAiAssistantViewsDeleteThreadData, DjangoAiAssistantViewsDeleteThreadResponse, DjangoAiAssistantViewsListThreadMessagesData, DjangoAiAssistantViewsListThreadMessagesResponse, DjangoAiAssistantViewsCreateThreadMessageData, DjangoAiAssistantViewsCreateThreadMessageResponse, DjangoAiAssistantViewsDeleteThreadMessageData, DjangoAiAssistantViewsDeleteThreadMessageResponse } from './types.gen';
 
 /**
  * List Assistants
@@ -67,6 +67,24 @@ export const djangoAiAssistantViewsGetThread = (data: DjangoAiAssistantViewsGetT
     path: {
         thread_id: data.threadId
     }
+}); };
+
+/**
+ * Update Thread
+ * @param data The data for the request.
+ * @param data.threadId
+ * @param data.requestBody
+ * @returns ThreadSchema OK
+ * @throws ApiError
+ */
+export const djangoAiAssistantViewsUpdateThread = (data: DjangoAiAssistantViewsUpdateThreadData): CancelablePromise<DjangoAiAssistantViewsUpdateThreadResponse> => { return __request(OpenAPI, {
+    method: 'PATCH',
+    url: '/threads/{thread_id}/',
+    path: {
+        thread_id: data.threadId
+    },
+    body: data.requestBody,
+    mediaType: 'application/json'
 }); };
 
 /**

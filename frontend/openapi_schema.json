@@ -136,6 +136,43 @@
           }
         }
       },
+      "patch": {
+        "operationId": "django_ai_assistant_views_update_thread",
+        "summary": "Update Thread",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "thread_id",
+            "schema": {
+              "title": "Thread Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThreadSchema"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThreadSchemaIn"
+              }
+            }
+          },
+          "required": true
+        }
+      },
       "delete": {
         "operationId": "django_ai_assistant_views_delete_thread",
         "summary": "Delete Thread",

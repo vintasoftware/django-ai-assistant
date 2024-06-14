@@ -51,6 +51,13 @@ export type DjangoAiAssistantViewsGetThreadData = {
 
 export type DjangoAiAssistantViewsGetThreadResponse = ThreadSchema;
 
+export type DjangoAiAssistantViewsUpdateThreadData = {
+    requestBody: ThreadSchemaIn;
+    threadId: string;
+};
+
+export type DjangoAiAssistantViewsUpdateThreadResponse = ThreadSchema;
+
 export type DjangoAiAssistantViewsDeleteThreadData = {
     threadId: string;
 };
@@ -121,6 +128,15 @@ export type $OpenApiTs = {
     '/threads/{thread_id}/': {
         get: {
             req: DjangoAiAssistantViewsGetThreadData;
+            res: {
+                /**
+                 * OK
+                 */
+                200: ThreadSchema;
+            };
+        };
+        patch: {
+            req: DjangoAiAssistantViewsUpdateThreadData;
             res: {
                 /**
                  * OK
