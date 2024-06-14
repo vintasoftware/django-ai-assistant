@@ -4,7 +4,7 @@ from django.http import HttpRequest
 from django.views import View
 
 from django_ai_assistant.conf import app_settings
-from django_ai_assistant.models import Thread
+from django_ai_assistant.models import Message, Thread
 
 
 def _get_default_kwargs(user: Any, request: HttpRequest | None, view: View | None):
@@ -57,6 +57,21 @@ def can_create_message(
     )
 
 
+def can_delete_message(
+    message: Message,
+    user: Any,
+    request: HttpRequest | None = None,
+    view: View | None = None,
+    **kwargs,
+) -> bool:
+    return app_settings.call_fn(
+        "CAN_DELETE_MESSAGE_FN",
+        **_get_default_kwargs(user, request, view),
+        message=message,
+        thread=message.thread,
+    )
+
+
 def can_run_assistant(
     assistant_cls,
     user: Any,
@@ -71,11 +86,11 @@ def can_run_assistant(
     )
 
 
-def allow_all(**kwargs):
+def allow_all(**kwargs) -> bool:
     return True
 
 
-def owns_thread(user, thread, **kwargs):
+def owns_thread(user: Any, thread: Thread, **kwargs) -> bool:
     if user.is_superuser:
         return True
 

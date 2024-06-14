@@ -50,6 +50,9 @@ def test_AIAssistant_invoke():
         thread_id=thread.id,
     )
 
+    messages = thread.messages.order_by("created_at").values_list("message", flat=True)
+    messages_ids = thread.messages.order_by("created_at").values_list("id", flat=True)
+
     assert response_0 == {
         "history": [],
         "input": "What is the temperature today in Recife?",
@@ -57,23 +60,28 @@ def test_AIAssistant_invoke():
     }
     assert response_1 == {
         "history": [
-            HumanMessage(content="What is the temperature today in Recife?"),
-            AIMessage(content="The current temperature in Recife today is 32 degrees Celsius."),
+            HumanMessage(content="What is the temperature today in Recife?", id=messages_ids[0]),
+            AIMessage(
+                content="The current temperature in Recife today is 32 degrees Celsius.",
+                id=messages_ids[1],
+            ),
         ],
         "input": "What about tomorrow?",
         "output": "The forecasted temperature in Recife for tomorrow, June 10, 2024, is "
         "expected to be 35 degrees Celsius.",
     }
-    assert list(
-        thread.messages.order_by("created_at").values_list("message", flat=True)
-    ) == messages_to_dict(
+    assert list(messages) == messages_to_dict(
         [
-            HumanMessage(content="What is the temperature today in Recife?"),
-            AIMessage(content="The current temperature in Recife today is 32 degrees Celsius."),
-            HumanMessage(content="What about tomorrow?"),
+            HumanMessage(content="What is the temperature today in Recife?", id=messages_ids[0]),
+            AIMessage(
+                content="The current temperature in Recife today is 32 degrees Celsius.",
+                id=messages_ids[1],
+            ),
+            HumanMessage(content="What about tomorrow?", id=messages_ids[2]),
             AIMessage(
                 content="The forecasted temperature in Recife for tomorrow, June 10, 2024, is "
-                "expected to be 35 degrees Celsius."
+                "expected to be 35 degrees Celsius.",
+                id=messages_ids[3],
             ),
         ]
     )
@@ -140,6 +148,9 @@ def test_AIAssistant_with_rag_invoke():
         thread_id=thread.id,
     )
 
+    messages = thread.messages.order_by("created_at").values_list("message", flat=True)
+    messages_ids = thread.messages.order_by("created_at").values_list("id", flat=True)
+
     assert response_0 == {
         "history": [],
         "input": "I'm at Central Park W & 79st, New York, NY 10024, United States.",
@@ -152,8 +163,8 @@ def test_AIAssistant_with_rag_invoke():
     }
     assert response_1 == {
         "history": [
-            HumanMessage(content=response_0["input"]),
-            AIMessage(content=response_0["output"]),
+            HumanMessage(content=response_0["input"], id=messages_ids[0]),
+            AIMessage(content=response_0["output"], id=messages_ids[1]),
         ],
         "input": "11 W 53rd St, New York, NY 10019, United States.",
         "output": "You're at the location of the Museum of Modern Art (MoMA), home to an "
@@ -163,13 +174,11 @@ def test_AIAssistant_with_rag_invoke():
         "observation deck. These attractions offer a blend of artistic and urban "
         "experiences.",
     }
-    assert list(
-        thread.messages.order_by("created_at").values_list("message", flat=True)
-    ) == messages_to_dict(
+    assert list(messages) == messages_to_dict(
         [
-            HumanMessage(content=response_0["input"]),
-            AIMessage(content=response_0["output"]),
-            HumanMessage(content=response_1["input"]),
-            AIMessage(content=response_1["output"]),
+            HumanMessage(content=response_0["input"], id=messages_ids[0]),
+            AIMessage(content=response_0["output"], id=messages_ids[1]),
+            HumanMessage(content=response_1["input"], id=messages_ids[2]),
+            AIMessage(content=response_1["output"], id=messages_ids[3]),
         ]
     )

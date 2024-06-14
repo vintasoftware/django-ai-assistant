@@ -163,6 +163,37 @@
           "required": true
         }
       }
+    },
+    "/threads/{thread_id}/messages/{message_id}/": {
+      "delete": {
+        "operationId": "django_ai_assistant_views_delete_thread_message",
+        "summary": "Delete Thread Message",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "thread_id",
+            "schema": {
+              "title": "Thread Id",
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "message_id",
+            "schema": {
+              "title": "Message Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -252,6 +283,10 @@
       },
       "ThreadMessagesSchemaOut": {
         "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
           "type": {
             "$ref": "#/components/schemas/ThreadMessageTypeEnum"
           },
@@ -261,6 +296,7 @@
           }
         },
         "required": [
+          "id",
           "type",
           "content"
         ],
