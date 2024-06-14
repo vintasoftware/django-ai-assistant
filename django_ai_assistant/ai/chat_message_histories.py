@@ -71,16 +71,15 @@ class DjangoChatMessageHistory(BaseChatMessageHistory):
             messages: A list of BaseMessage objects to store.
         """
         with transaction.atomic():
-            message_objects = [
-                Message(thread_id=self._thread_id, message=message_to_dict(message))
-                for message in messages
-            ]
-
-            created_messages = Message.objects.bulk_create(message_objects)
+            created_messages = Message.objects.bulk_create(
+                [Message(thread_id=self._thread_id, message=dict()) for message in messages]
+            )
 
             # Update langchain message IDs with Django message IDs
-            for created_message in created_messages:
-                created_message.message["data"]["id"] = str(created_message.id)
+            for idx, created_message in enumerate(created_messages):
+                message_with_id = messages[idx]
+                message_with_id.id = str(created_message.id)
+                created_message.message = message_to_dict(message_with_id)
 
             Message.objects.bulk_update(created_messages, ["message"])
 
@@ -92,16 +91,15 @@ class DjangoChatMessageHistory(BaseChatMessageHistory):
         """
         # NOTE: This method does not use transactions because it do not yet work in async mode.
         # Source: https://docs.djangoproject.com/en/5.0/topics/async/#queries-the-orm
-        message_objects = [
-            Message(thread_id=self._thread_id, message=message_to_dict(message))
-            for message in messages
-        ]
-
-        created_messages = await Message.objects.abulk_create(message_objects)
+        created_messages = await Message.objects.abulk_create(
+            [Message(thread_id=self._thread_id, message=dict()) for message in messages]
+        )
 
         # Update langchain message IDs with Django message IDs
-        for created_message in created_messages:
-            created_message.message["data"]["id"] = str(created_message.id)
+        for idx, created_message in enumerate(created_messages):
+            message_with_id = messages[idx]
+            message_with_id.id = str(created_message.id)
+            created_message.message = message_to_dict(message_with_id)
 
         await Message.objects.abulk_update(created_messages, ["message"])
 
