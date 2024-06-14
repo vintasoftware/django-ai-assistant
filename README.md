@@ -47,6 +47,10 @@ To gather the API keys for these tools, head to the following links:
 
 `poetry install`
 
+Install pre-commit hooks:
+
+`pre-commit install`
+
 #### Frontend
 
 `cd example`
