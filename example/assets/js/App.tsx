@@ -1,6 +1,12 @@
 import "@mantine/core/styles.css";
 
-import { Container, createTheme, MantineProvider } from "@mantine/core";
+import {
+  Container,
+  createTheme,
+  List,
+  MantineProvider,
+  Title,
+} from "@mantine/core";
 import { Chat } from "@/components";
 import { createBrowserRouter, Link, RouterProvider } from "react-router-dom";
 import { configAIAssistant } from "django-ai-assistant-client";
@@ -15,21 +21,23 @@ configAIAssistant({ baseURL: "ai-assistant" });
 const ExampleIndex = () => {
   return (
     <Container>
-      <h1>Examples</h1>
-      <ul>
-        <li>
+      <Title order={1} my="md">
+        Examples
+      </Title>
+      <List>
+        <List.Item>
           <Link to="/weather-chat">Weather Chat</Link>
-        </li>
-        <li>
+        </List.Item>
+        <List.Item>
           <Link to="/movies-chat">Movie Recommendation Chat</Link>
-        </li>
-        <li>
+        </List.Item>
+        <List.Item>
           <Link to="/rag-chat">Django Docs RAG Chat</Link>
-        </li>
-        <li>
+        </List.Item>
+        <List.Item>
           <Link to="/htmx">HTMX demo (no React)</Link>
-        </li>
-      </ul>
+        </List.Item>
+      </List>
     </Container>
   );
 };
