@@ -29,6 +29,35 @@
         }
       }
     },
+    "/assistants/{assistant_id}/": {
+      "get": {
+        "operationId": "django_ai_assistant_views_get_assistant",
+        "summary": "Get Assistant",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assistant_id",
+            "schema": {
+              "title": "Assistant Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssistantSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/threads/": {
       "get": {
         "operationId": "django_ai_assistant_views_list_threads",
@@ -80,6 +109,33 @@
       }
     },
     "/threads/{thread_id}/": {
+      "get": {
+        "operationId": "django_ai_assistant_views_get_thread",
+        "summary": "Get Thread",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "thread_id",
+            "schema": {
+              "title": "Thread Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThreadSchema"
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "operationId": "django_ai_assistant_views_delete_thread",
         "summary": "Delete Thread",
