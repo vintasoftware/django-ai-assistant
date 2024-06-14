@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-"""Django's command-line utility for administrative tasks."""
+"""
+Use this manage.py for generate the OpenAPI schema. NOT for examples.
+For tests, use pytest directly.
+"""
 import os
 import sys
 

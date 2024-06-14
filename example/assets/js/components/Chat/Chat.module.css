@@ -1,0 +1,19 @@
+.main {
+  font-size: var(--mantine-font-size-md);
+  height: 100vh;
+  width: calc(100% - rem(250px));
+  margin-left: auto;
+}
+
+.chatContainer {
+  max-width: calc(51.25rem * var(--mantine-scale));
+  height: 100%;
+}
+
+.chat {
+  height: 100%;
+}
+
+.mdMessage p {
+  margin: 0;
+}

@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic.base import TemplateView
 
 from pydantic import ValidationError
+from weather.ai_assistants import WeatherAIAssistant
 
 from django_ai_assistant.helpers.assistants import (
     create_message,
@@ -16,10 +17,8 @@ from django_ai_assistant.schemas import (
     ThreadSchemaIn,
 )
 
-from .ai_assistants import WeatherAIAssistant
 
-
-def react_index(request):
+def react_index(request, **kwargs):
     return render(request, "demo/react_index.html")
 
 
@@ -30,7 +29,12 @@ class BaseAIAssistantView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        threads = list(get_threads(user=self.request.user, request=self.request, view=None))
+        threads = list(
+            get_threads(
+                user=self.request.user,
+                request=self.request,
+            )
+        )
         context.update(
             {
                 "assistant_id": self.get_assistant_id(**kwargs),
@@ -51,7 +55,11 @@ class AIAssistantChatHomeView(BaseAIAssistantView):
             messages.error(request, "Invalid thread data")
             return redirect("chat_home")
 
-        thread = create_thread(name=thread_data.name, user=request.user, request=request, view=None)
+        thread = create_thread(
+            name=thread_data.name,
+            user=request.user,
+            request=request,
+        )
         return redirect("chat_thread", thread_id=thread.id)
 
 
@@ -65,7 +73,6 @@ class AIAssistantChatThreadView(BaseAIAssistantView):
             thread_id=self.kwargs["thread_id"],
             user=self.request.user,
             request=self.request,
-            view=None,
         )
         context.update(
             {
@@ -96,6 +103,5 @@ class AIAssistantChatThreadView(BaseAIAssistantView):
             user=request.user,
             content=message.content,
             request=request,
-            view=None,
         )
         return redirect("chat_thread", thread_id=thread_id)
