@@ -26,7 +26,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
       }
     },
     "/assistants/{assistant_id}/": {
@@ -55,7 +60,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
       }
     },
     "/threads/": {
@@ -78,7 +88,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
       },
       "post": {
         "operationId": "django_ai_assistant_create_thread",
@@ -105,7 +120,12 @@
             }
           },
           "required": true
-        }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
       }
     },
     "/threads/{thread_id}/": {
@@ -134,7 +154,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
       },
       "patch": {
         "operationId": "django_ai_assistant_update_thread",
@@ -171,7 +196,12 @@
             }
           },
           "required": true
-        }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
       },
       "delete": {
         "operationId": "django_ai_assistant_delete_thread",
@@ -191,7 +221,12 @@
           "204": {
             "description": "No Content"
           }
-        }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
       }
     },
     "/threads/{thread_id}/messages/": {
@@ -224,7 +259,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
       },
       "post": {
         "operationId": "django_ai_assistant_create_thread_message",
@@ -254,7 +294,12 @@
             }
           },
           "required": true
-        }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
       }
     },
     "/threads/{thread_id}/messages/{message_id}/": {
@@ -285,7 +330,12 @@
           "204": {
             "description": "No Content"
           }
-        }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
       }
     }
   },
@@ -413,6 +463,13 @@
         ],
         "title": "ThreadMessagesSchemaIn",
         "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "SessionAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "sessionid"
       }
     }
   },
