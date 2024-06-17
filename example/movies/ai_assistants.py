@@ -11,8 +11,7 @@ from langchain_community.utilities import WikipediaAPIWrapper
 from langchain_core.tools import BaseTool
 
 from django_ai_assistant import AIAssistant, method_tool, register_assistant
-
-from .models import MovieBacklogItem
+from movies.models import MovieBacklogItem
 
 
 # Note this assistant is not registered, but we'll use it as a tool on the other.
