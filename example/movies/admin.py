@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from .models import MovieBacklogItem
+from movies.models import MovieBacklogItem
 
 
 @admin.register(MovieBacklogItem)
