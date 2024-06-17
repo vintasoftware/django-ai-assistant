@@ -10,7 +10,6 @@ from rag.models import DjangoDocPage
 class DjangoDocsAssistant(AIAssistant):
     id = "django_docs_assistant"  # noqa: A003
     name = "Django Docs Assistant"
-    description = "An assistant that answers questions related to Django web framework."
     instructions = (
         "You are an assistant for answering questions related to Django web framework. "
         "Use the following pieces of retrieved context from Django's documentation to answer "
