@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+from django.contrib.auth.models import User
 from django.test import Client, TestCase
 
 import pytest
@@ -7,6 +8,7 @@ import pytest
 from django_ai_assistant.exceptions import AIAssistantNotDefinedError
 from django_ai_assistant.helpers.assistants import AIAssistant, register_assistant
 from django_ai_assistant.tools import BaseModel, Field, method_tool
+from tests.helpers import create_thread
 
 
 # Set up
@@ -73,4 +75,24 @@ class AssistantViewsTests(TestCase):
 
 # Threads Views
 
-# Up next
+
+class ThreadsListViewsTests(TestCase):
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.create_user(username="testuser", password="password")
+        self.client = Client()
+        self.client.login(username="testuser", password="password")
+
+    def test_list_threads_without_results(self):
+        response = self.client.get("/threads/")
+
+        assert response.status_code == HTTPStatus.OK
+        assert response.json() == []
+
+    def test_list_threads_with_results(self):
+        thread = create_thread(user=self.user)
+
+        response = self.client.get("/threads/")
+
+        assert response.status_code == HTTPStatus.OK
+        assert response.json()[0].get("id") == thread.id
