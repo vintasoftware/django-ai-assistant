@@ -3,8 +3,6 @@ import inspect
 import re
 from typing import Any, ClassVar, Sequence, cast
 
-from django.http import HttpRequest
-
 from langchain.agents import AgentExecutor
 from langchain.agents.format_scratchpad.tools import (
     format_to_tool_messages,
@@ -15,7 +13,6 @@ from langchain.chains.combine_documents.base import (
     DEFAULT_DOCUMENT_SEPARATOR,
 )
 from langchain_core.chat_history import InMemoryChatMessageHistory
-from langchain_core.messages import BaseMessage, HumanMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import (
     ChatPromptTemplate,
@@ -37,22 +34,11 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.tools import BaseTool
 from langchain_openai import ChatOpenAI
 
-from django_ai_assistant.ai.chat_message_histories import DjangoChatMessageHistory
 from django_ai_assistant.exceptions import (
     AIAssistantMisconfiguredError,
-    AIAssistantNotDefinedError,
-    AIUserNotAllowedError,
 )
-from django_ai_assistant.models import Message, Thread
-from django_ai_assistant.permissions import (
-    can_create_message,
-    can_create_thread,
-    can_delete_message,
-    can_delete_thread,
-    can_run_assistant,
-)
-from django_ai_assistant.tools import Tool
-from django_ai_assistant.tools import tool as tool_decorator
+from django_ai_assistant.langchain.tools import Tool
+from django_ai_assistant.langchain.tools import tool as tool_decorator
 
 
 class AIAssistant(abc.ABC):  # noqa: F821
@@ -97,9 +83,14 @@ class AIAssistant(abc.ABC):  # noqa: F821
     def _set_method_tools(self):
         # Find tool methods (decorated with `@method_tool` from django_ai_assistant/tools.py):
         members = inspect.getmembers(
-            self, predicate=lambda m: hasattr(m, "_is_tool") and m._is_tool
+            self,
+            predicate=lambda m: inspect.ismethod(m) and getattr(m, "_is_tool", False),
         )
         tool_methods = [m for _, m in members]
+
+        # Sort tool methods by the order they appear in the source code,
+        # since this can be meaningful:
+        tool_methods.sort(key=lambda m: inspect.getsourcelines(m)[1])
 
         # Transform tool methods into tool objects:
         tools = []
@@ -156,6 +147,9 @@ class AIAssistant(abc.ABC):  # noqa: F821
         )
 
     def get_message_history(self, thread_id: int | None):
+        # DjangoChatMessageHistory must be here because Django may not be loaded yet elsewhere:
+        from django_ai_assistant.langchain.chat_message_histories import DjangoChatMessageHistory
+
         if thread_id is None:
             return InMemoryChatMessageHistory()
         return DjangoChatMessageHistory(thread_id)
@@ -309,154 +303,3 @@ ASSISTANT_CLS_REGISTRY: dict[str, type[AIAssistant]] = {}
 def register_assistant(cls: type[AIAssistant]):
     ASSISTANT_CLS_REGISTRY[cls.id] = cls
     return cls
-
-
-def _get_assistant_cls(
-    assistant_id: str,
-    user: Any,
-    request: HttpRequest | None = None,
-):
-    if assistant_id not in ASSISTANT_CLS_REGISTRY:
-        raise AIAssistantNotDefinedError(f"Assistant with id={assistant_id} not found")
-    assistant_cls = ASSISTANT_CLS_REGISTRY[assistant_id]
-    if not can_run_assistant(
-        assistant_cls=assistant_cls,
-        user=user,
-        request=request,
-    ):
-        raise AIUserNotAllowedError("User is not allowed to use this assistant")
-    return assistant_cls
-
-
-def get_single_assistant_info(
-    assistant_id: str,
-    user: Any,
-    request: HttpRequest | None = None,
-):
-    assistant_cls = _get_assistant_cls(assistant_id, user, request)
-
-    return {
-        "id": assistant_id,
-        "name": assistant_cls.name,
-    }
-
-
-def get_assistants_info(
-    user: Any,
-    request: HttpRequest | None = None,
-):
-    return [
-        _get_assistant_cls(assistant_id=assistant_id, user=user, request=request)
-        for assistant_id in ASSISTANT_CLS_REGISTRY.keys()
-    ]
-
-
-def create_message(
-    assistant_id: str,
-    thread: Thread,
-    user: Any,
-    content: Any,
-    request: HttpRequest | None = None,
-):
-    assistant_cls = _get_assistant_cls(assistant_id, user, request)
-
-    if not can_create_message(thread=thread, user=user, request=request):
-        raise AIUserNotAllowedError("User is not allowed to create messages in this thread")
-
-    # TODO: Check if we can separate the message creation from the chain invoke
-    assistant = assistant_cls(user=user, request=request)
-    assistant_message = assistant.invoke(
-        {"input": content},
-        thread_id=thread.id,
-    )
-    return assistant_message
-
-
-def create_thread(
-    name: str,
-    user: Any,
-    request: HttpRequest | None = None,
-):
-    if not can_create_thread(user=user, request=request):
-        raise AIUserNotAllowedError("User is not allowed to create threads")
-
-    thread = Thread.objects.create(name=name, created_by=user)
-    return thread
-
-
-def get_single_thread(
-    thread_id: str,
-    user: Any,
-    request: HttpRequest | None = None,
-):
-    return Thread.objects.filter(created_by=user).get(id=thread_id)
-
-
-def get_threads(
-    user: Any,
-    request: HttpRequest | None = None,
-):
-    return list(Thread.objects.filter(created_by=user))
-
-
-def update_thread(
-    thread: Thread,
-    name: str,
-    user: Any,
-    request: HttpRequest | None = None,
-):
-    if not can_delete_thread(thread=thread, user=user, request=request):
-        raise AIUserNotAllowedError("User is not allowed to update this thread")
-
-    thread.name = name
-    thread.save()
-    return thread
-
-
-def delete_thread(
-    thread: Thread,
-    user: Any,
-    request: HttpRequest | None = None,
-):
-    if not can_delete_thread(thread=thread, user=user, request=request):
-        raise AIUserNotAllowedError("User is not allowed to delete this thread")
-
-    return thread.delete()
-
-
-def get_thread_messages(
-    thread_id: str,
-    user: Any,
-    request: HttpRequest | None = None,
-) -> list[BaseMessage]:
-    # TODO: have more permissions for threads? View thread permission?
-    thread = Thread.objects.get(id=thread_id)
-    if user != thread.created_by:
-        raise AIUserNotAllowedError("User is not allowed to view messages in this thread")
-
-    return DjangoChatMessageHistory(thread.id).get_messages()
-
-
-def create_thread_message_as_user(
-    thread_id: str,
-    content: str,
-    user: Any,
-    request: HttpRequest | None = None,
-):
-    # TODO: have more permissions for threads? View thread permission?
-    thread = Thread.objects.get(id=thread_id)
-    if user != thread.created_by:
-        raise AIUserNotAllowedError("User is not allowed to create messages in this thread")
-
-    DjangoChatMessageHistory(thread.id).add_messages([HumanMessage(content=content)])
-
-
-def delete_message(
-    message: Message,
-    user: Any,
-    request: HttpRequest | None = None,
-):
-    if not can_delete_message(message=message, user=user, request=request):
-        raise AIUserNotAllowedError("User is not allowed to delete this message")
-
-    return DjangoChatMessageHistory(thread_id=message.thread_id).remove_messages([str(message.id)])

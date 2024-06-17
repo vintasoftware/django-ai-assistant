@@ -1,9 +1,9 @@
 import { act, renderHook } from "@testing-library/react";
 import { useAssistant } from "../src/hooks";
-import { djangoAiAssistantViewsGetAssistant } from "../src/client";
+import { djangoAiAssistantGetAssistant } from "../src/client";
 
 jest.mock("../src/client", () => ({
-  djangoAiAssistantViewsGetAssistant: jest
+  djangoAiAssistantGetAssistant: jest
     .fn()
     .mockImplementation(() => Promise.resolve()),
 }));
@@ -23,7 +23,7 @@ describe("useAssistant", () => {
   describe("fetchAssistant", () => {
     it("should fetch assistant and update state correctly", async () => {
       const mockAssistant = { id: 'weather_assistant', name: "Assistant 1" };
-      (djangoAiAssistantViewsGetAssistant as jest.Mock).mockResolvedValue(
+      (djangoAiAssistantGetAssistant as jest.Mock).mockResolvedValue(
         mockAssistant
       );
       const { result } = renderHook(() => useAssistant({ assistantId: 'weather_assistant' }));
@@ -37,7 +37,7 @@ describe("useAssistant", () => {
     });
 
     it("should set loading to false if fetch fails", async () => {
-      (djangoAiAssistantViewsGetAssistant as jest.Mock).mockRejectedValue(
+      (djangoAiAssistantGetAssistant as jest.Mock).mockRejectedValue(
         new Error("Failed to fetch")
       );
 
