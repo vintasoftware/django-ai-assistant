@@ -7,10 +7,22 @@ import {
   ThreadMessagesSchemaOut,
 } from "../client";
 
+
+function hasNullThreadId(threadId: string | null): threadId is null {
+  if (threadId == null) {
+    console.warn("threadId is null or undefined. Ignoring fetch operation.");
+    return true;
+  }
+  return false;
+}
+
+
 /**
- * React hook to manage the Message resource.
+ * React hook to manage the list, create, and delete of Messages.
+ *
+ * @param threadId The ID of the thread for which to manage messages.
  */
-export function useMessage() {
+export function useMessageList({ threadId }: { threadId: string | null }) {
   const [messages, setMessages] = useState<ThreadMessagesSchemaOut[] | null>(
     null
   );
@@ -23,16 +35,14 @@ export function useMessage() {
 
   /**
    * Fetches a list of messages.
+   * Does nothing if `threadId` of `useMessageList` hook is null.
    *
-   * @param threadId The ID of the thread for which to fetch messages.
-   * @returns A promise that resolves with the fetched list of messages.
+   * @returns - A promise that resolves with the fetched list of messages.
    */
   const fetchMessages = useCallback(
-    async ({
-      threadId,
-    }: {
-      threadId: string;
-    }): Promise<ThreadMessagesSchemaOut[]> => {
+    async (): Promise<ThreadMessagesSchemaOut[] | null> => {
+      if (hasNullThreadId(threadId)) return null;
+
       try {
         setLoadingFetchMessages(true);
         const fetchedMessages = await djangoAiAssistantViewsListThreadMessages({
@@ -44,26 +54,26 @@ export function useMessage() {
         setLoadingFetchMessages(false);
       }
     },
-    []
+    [threadId]
   );
 
   /**
    * Creates a new message in a thread.
+   * Does nothing if `threadId` of `useMessageList` hook is null.
    *
-   * @param threadId The ID of the thread in which to create the message.
    * @param assistantId The ID of the assistant.
    * @param messageTextValue The content of the message.
    */
   const createMessage = useCallback(
     async ({
-      threadId,
       assistantId,
       messageTextValue,
     }: {
-      threadId: string;
       assistantId: string;
       messageTextValue: string;
     }): Promise<void> => {
+      if (hasNullThreadId(threadId)) return;
+
       try {
         setLoadingCreateMessage(true);
         // successful response is 201, None
@@ -74,40 +84,41 @@ export function useMessage() {
             assistant_id: assistantId,
           },
         });
-        await fetchMessages({ threadId });
+        await fetchMessages();
       } finally {
         setLoadingCreateMessage(false);
       }
     },
-    [fetchMessages]
+    [fetchMessages, threadId]
   );
 
   /**
    * Deletes a message in a thread.
+   * Does nothing if `threadId` of `useMessageList` hook is null.
    *
    * @param threadId The ID of the thread in which to delete the message.
    * @param messageId The ID of the message to delete.
    */
   const deleteMessage = useCallback(
     async ({
-      threadId,
       messageId,
     }: {
-      threadId: string;
       messageId: string;
     }): Promise<void> => {
+      if (hasNullThreadId(threadId)) return;
+
       try {
         setLoadingDeleteMessage(true);
         await djangoAiAssistantViewsDeleteThreadMessage({
           threadId,
           messageId,
         });
-        await fetchMessages({ threadId });
+        await fetchMessages();
       } finally {
         setLoadingDeleteMessage(false);
       }
     },
-    [fetchMessages]
+    [fetchMessages, threadId]
   );
 
   return {

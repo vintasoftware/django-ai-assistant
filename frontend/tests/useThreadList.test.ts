@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import { useThread } from "../src/hooks";
+import { useThreadList } from "../src/hooks";
 import {
   djangoAiAssistantViewsCreateThread,
   djangoAiAssistantViewsDeleteThread,
@@ -18,7 +18,7 @@ jest.mock("../src/client", () => ({
     .mockImplementation(() => Promise.resolve()),
 }));
 
-describe("useThread", () => {
+describe("useThreadList", () => {
   const mockThreads = [
     {
       id: 2,
@@ -39,7 +39,7 @@ describe("useThread", () => {
   });
 
   it("should initialize with no threads and loading false", () => {
-    const { result } = renderHook(() => useThread());
+    const { result } = renderHook(() => useThreadList());
 
     expect(result.current.threads).toBeNull();
     expect(result.current.loadingFetchThreads).toBe(false);
@@ -52,7 +52,7 @@ describe("useThread", () => {
         mockThreads
       );
 
-      const { result } = renderHook(() => useThread());
+      const { result } = renderHook(() => useThreadList());
 
       expect(result.current.threads).toBeNull();
       expect(result.current.loadingFetchThreads).toBe(false);
@@ -70,7 +70,7 @@ describe("useThread", () => {
         new Error("Failed to fetch")
       );
 
-      const { result } = renderHook(() => useThread());
+      const { result } = renderHook(() => useThreadList());
 
       expect(result.current.threads).toBeNull();
       expect(result.current.loadingFetchThreads).toBe(false);
@@ -102,7 +102,7 @@ describe("useThread", () => {
         ...mockThreads,
       ]);
 
-      const { result } = renderHook(() => useThread());
+      const { result } = renderHook(() => useThreadList());
 
       expect(result.current.threads).toBeNull();
       expect(result.current.loadingCreateThread).toBe(false);
@@ -133,7 +133,7 @@ describe("useThread", () => {
         ...mockThreads,
       ]);
 
-      const { result } = renderHook(() => useThread());
+      const { result } = renderHook(() => useThreadList());
 
       expect(result.current.threads).toBeNull();
       expect(result.current.loadingCreateThread).toBe(false);
@@ -152,7 +152,7 @@ describe("useThread", () => {
         new Error("Failed to create")
       );
 
-      const { result } = renderHook(() => useThread());
+      const { result } = renderHook(() => useThreadList());
 
       expect(result.current.threads).toBeNull();
       expect(result.current.loadingCreateThread).toBe(false);
@@ -175,7 +175,7 @@ describe("useThread", () => {
         mockThreads.filter((thread) => thread.id !== deletedThreadId)
       );
 
-      const { result } = renderHook(() => useThread());
+      const { result } = renderHook(() => useThreadList());
 
       result.current.threads = mockThreads;
 
@@ -203,7 +203,7 @@ describe("useThread", () => {
         new Error("Failed to delete")
       );
 
-      const { result } = renderHook(() => useThread());
+      const { result } = renderHook(() => useThreadList());
 
       result.current.threads = mockThreads;
 
