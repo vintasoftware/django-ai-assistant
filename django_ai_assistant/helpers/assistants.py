@@ -83,9 +83,14 @@ class AIAssistant(abc.ABC):  # noqa: F821
     def _set_method_tools(self):
         # Find tool methods (decorated with `@method_tool` from django_ai_assistant/tools.py):
         members = inspect.getmembers(
-            self, predicate=lambda m: hasattr(m, "_is_tool") and m._is_tool
+            self,
+            predicate=lambda m: inspect.ismethod(m) and getattr(m, "_is_tool", False),
         )
         tool_methods = [m for _, m in members]
+
+        # Sort tool methods by the order they appear in the source code,
+        # since this can be meaningful:
+        tool_methods.sort(key=lambda m: inspect.getsourcelines(m)[1])
 
         # Transform tool methods into tool objects:
         tools = []

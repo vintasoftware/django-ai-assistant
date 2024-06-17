@@ -13,7 +13,6 @@ from django_ai_assistant.models import Thread
 class TemperatureAssistant(AIAssistant):
     id = "temperature_assistant"  # noqa: A003
     name = "Temperature Assistant"
-    description = "A temperature assistant that provides temperature information."
     instructions = "You are a temperature bot."
     model = "gpt-4o"
 
@@ -105,7 +104,6 @@ class SequentialRetriever(BaseRetriever):
 class TourGuideAssistant(AIAssistant):
     id = "tour_guide_assistant"  # noqa: A003
     name = "Tour Guide Assistant"
-    description = "A tour guide assistant that offers information about nearby attractions."
     instructions = (
         "You are a tour guide assistant offers information about nearby attractions. "
         "The user is at a location and wants to know what to learn about nearby attractions. "
@@ -182,3 +180,37 @@ def test_AIAssistant_with_rag_invoke():
             AIMessage(content=response_1["output"], id=messages_ids[3]),
         ]
     )
+
+
+@pytest.mark.django_db(transaction=True)
+def test_AIAssistant_tool_order_same_as_declaration():
+    class FooAssistant(AIAssistant):
+        id = "foo_assistant"  # noqa: A003
+        name = "Foo Assistant"
+        instructions = "You are a helpful assistant."
+        model = "gpt-4o"
+
+        @method_tool
+        def tool_d(self, foo: str, bar: float, baz: int, qux: str) -> str:
+            """Tool D"""
+            return "DDD"
+
+        @method_tool
+        def tool_c(self, foo: str, bar: float, baz: int) -> str:
+            """Tool C"""
+            return "CCC"
+
+        @method_tool
+        def tool_b(self, foo: str, bar: float) -> str:
+            """Tool B"""
+            return "BBB"
+
+        @method_tool
+        def tool_a(self, foo: str) -> str:
+            """Tool A"""
+            return "AAA"
+
+    assistant = FooAssistant()
+
+    assert hasattr(assistant, "_method_tools")
+    assert [t.name for t in assistant._method_tools] == ["tool_d", "tool_c", "tool_b", "tool_a"]
