@@ -9,7 +9,7 @@ from django_ai_assistant.api.schemas import (
     ThreadMessagesSchemaIn,
     ThreadSchemaIn,
 )
-from django_ai_assistant.helpers.assistants import (
+from django_ai_assistant.helpers.use_cases import (
     create_message,
     create_thread,
     get_thread_messages,

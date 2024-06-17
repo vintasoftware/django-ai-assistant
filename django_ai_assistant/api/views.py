@@ -15,15 +15,7 @@ from django_ai_assistant.api.schemas import (
     ThreadSchemaIn,
 )
 from django_ai_assistant.exceptions import AIUserNotAllowedError
-from django_ai_assistant.helpers import assistants
-from django_ai_assistant.helpers.assistants import (
-    create_message,
-    get_assistants_info,
-    get_single_assistant_info,
-    get_single_thread,
-    get_thread_messages,
-    get_threads,
-)
+from django_ai_assistant.helpers import use_cases
 from django_ai_assistant.models import Message, Thread
 
 
@@ -48,28 +40,30 @@ def ai_user_not_allowed_handler(request, exc):
 
 @api.get("assistants/", response=List[AssistantSchema], url_name="assistants_list")
 def list_assistants(request):
-    return list(get_assistants_info(user=request.user, request=request))
+    return list(use_cases.get_assistants_info(user=request.user, request=request))
 
 
 @api.get("assistants/{assistant_id}/", response=AssistantSchema, url_name="assistant_detail")
 def get_assistant(request, assistant_id: str):
-    return get_single_assistant_info(assistant_id=assistant_id, user=request.user, request=request)
+    return use_cases.get_single_assistant_info(
+        assistant_id=assistant_id, user=request.user, request=request
+    )
 
 
 @api.get("threads/", response=List[ThreadSchema], url_name="threads_list_create")
 def list_threads(request):
-    return list(get_threads(user=request.user, request=request))
+    return list(use_cases.get_threads(user=request.user, request=request))
 
 
 @api.post("threads/", response=ThreadSchema, url_name="threads_list_create")
 def create_thread(request, payload: ThreadSchemaIn):
     name = payload.name
-    return assistants.create_thread(name=name, user=request.user, request=request)
+    return use_cases.create_thread(name=name, user=request.user, request=request)
 
 
 @api.get("threads/{thread_id}/", response=ThreadSchema, url_name="thread_detail_update_delete")
 def get_thread(request, thread_id: str):
-    thread = get_single_thread(thread_id=thread_id, user=request.user, request=request)
+    thread = use_cases.get_single_thread(thread_id=thread_id, user=request.user, request=request)
     return thread
 
 
@@ -77,13 +71,13 @@ def get_thread(request, thread_id: str):
 def update_thread(request, thread_id: str, payload: ThreadSchemaIn):
     thread = get_object_or_404(Thread, id=thread_id)
     name = payload.name
-    return assistants.update_thread(thread=thread, name=name, user=request.user, request=request)
+    return use_cases.update_thread(thread=thread, name=name, user=request.user, request=request)
 
 
 @api.delete("threads/{thread_id}/", response={204: None}, url_name="thread_detail_update_delete")
 def delete_thread(request, thread_id: str):
     thread = get_object_or_404(Thread, id=thread_id)
-    assistants.delete_thread(thread=thread, user=request.user, request=request)
+    use_cases.delete_thread(thread=thread, user=request.user, request=request)
     return 204, None
 
 
@@ -93,7 +87,9 @@ def delete_thread(request, thread_id: str):
     url_name="messages_list_create",
 )
 def list_thread_messages(request, thread_id: str):
-    messages = get_thread_messages(thread_id=thread_id, user=request.user, request=request)
+    messages = use_cases.get_thread_messages(
+        thread_id=thread_id, user=request.user, request=request
+    )
     return [message_to_dict(m)["data"] for m in messages]
 
 
@@ -106,7 +102,7 @@ def list_thread_messages(request, thread_id: str):
 def create_thread_message(request, thread_id: str, payload: ThreadMessagesSchemaIn):
     thread = Thread.objects.get(id=thread_id)
 
-    create_message(
+    use_cases.create_message(
         assistant_id=payload.assistant_id,
         thread=thread,
         user=request.user,
@@ -121,7 +117,7 @@ def create_thread_message(request, thread_id: str, payload: ThreadMessagesSchema
 )
 def delete_thread_message(request, thread_id: str, message_id: str):
     message = get_object_or_404(Message, id=message_id, thread_id=thread_id)
-    assistants.delete_message(
+    use_cases.delete_message(
         message=message,
         user=request.user,
         request=request,
