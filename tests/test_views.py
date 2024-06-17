@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from django.test import Client, TestCase
 
 import pytest
@@ -47,7 +49,7 @@ class AssistantViewsTests(TestCase):
     def test_list_assistants_with_results(self):
         response = self.client.get("/assistants/")
 
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert response.json() == [{"id": "temperature_assistant", "name": "Temperature Assistant"}]
 
     def test_does_not_list_assistants_if_unauthorized(self):
@@ -57,7 +59,7 @@ class AssistantViewsTests(TestCase):
     def test_get_assistant_that_exists(self):
         response = self.client.get("/assistants/temperature_assistant/")
 
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert response.json() == {"id": "temperature_assistant", "name": "Temperature Assistant"}
 
     def test_get_assistant_that_does_not_exist(self):
