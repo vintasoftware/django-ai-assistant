@@ -37,12 +37,14 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.tools import BaseTool
 from langchain_openai import ChatOpenAI
 
-from django_ai_assistant.ai.chat_message_histories import DjangoChatMessageHistory
 from django_ai_assistant.exceptions import (
     AIAssistantMisconfiguredError,
     AIAssistantNotDefinedError,
     AIUserNotAllowedError,
 )
+from django_ai_assistant.langchain.chat_message_histories import DjangoChatMessageHistory
+from django_ai_assistant.langchain.tools import Tool
+from django_ai_assistant.langchain.tools import tool as tool_decorator
 from django_ai_assistant.models import Message, Thread
 from django_ai_assistant.permissions import (
     can_create_message,
@@ -51,8 +53,6 @@ from django_ai_assistant.permissions import (
     can_delete_thread,
     can_run_assistant,
 )
-from django_ai_assistant.tools import Tool
-from django_ai_assistant.tools import tool as tool_decorator
 
 
 class AIAssistant(abc.ABC):  # noqa: F821

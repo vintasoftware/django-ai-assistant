@@ -4,12 +4,19 @@ from django.shortcuts import get_object_or_404
 
 from langchain_core.messages import message_to_dict
 from ninja import NinjaAPI
+from ninja.operation import Operation
 
-from django_ai_assistant import __package__, __version__
-
-from .exceptions import AIUserNotAllowedError
-from .helpers import assistants
-from .helpers.assistants import (
+from django_ai_assistant import package_name, version
+from django_ai_assistant.api.schemas import (
+    AssistantSchema,
+    ThreadMessagesSchemaIn,
+    ThreadMessagesSchemaOut,
+    ThreadSchema,
+    ThreadSchemaIn,
+)
+from django_ai_assistant.exceptions import AIUserNotAllowedError
+from django_ai_assistant.helpers import assistants
+from django_ai_assistant.helpers.assistants import (
     create_message,
     get_assistants_info,
     get_single_assistant_info,
@@ -17,17 +24,17 @@ from .helpers.assistants import (
     get_thread_messages,
     get_threads,
 )
-from .models import Message, Thread
-from .schemas import (
-    AssistantSchema,
-    ThreadMessagesSchemaIn,
-    ThreadMessagesSchemaOut,
-    ThreadSchema,
-    ThreadSchemaIn,
-)
+from django_ai_assistant.models import Message, Thread
 
 
-api = NinjaAPI(title=__package__, version=__version__, urls_namespace="django_ai_assistant")
+class API(NinjaAPI):
+    # Force "operationId" to be like "django_ai_assistant_delete_thread"
+    def get_openapi_operation_id(self, operation: Operation) -> str:
+        name = operation.view_func.__name__
+        return (package_name + "_" + name).replace(".", "_")
+
+
+api = API(title=package_name, version=version, urls_namespace="django_ai_assistant")
 
 
 @api.exception_handler(AIUserNotAllowedError)
