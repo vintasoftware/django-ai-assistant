@@ -39,6 +39,12 @@ To gather the API keys for these tools, head to the following links:
 
 `vite build`
 
+### Create a .env file at the example folder
+
+`cd example`
+
+`cp .env.example .env`
+
 ### Install dependencies
 
 #### Backend
