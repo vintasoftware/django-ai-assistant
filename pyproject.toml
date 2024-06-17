@@ -26,6 +26,7 @@ ipython = "^8.24.0"
 pytest-asyncio = "^0.23.7"
 pytest-recording = "^0.13.1"
 coveralls = "^4.0.1"
+model-bakery = "^1.18.1"
 
 [tool.poetry.group.example.dependencies]
 django-webpack-loader = "^3.1.0"
