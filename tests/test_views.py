@@ -1,3 +1,4 @@
+import json
 from http import HTTPStatus
 
 from django.contrib.auth.models import User
@@ -81,6 +82,8 @@ def test_does_not_return_assistant_if_unauthorized():
 
 # Threads Views
 
+# GET
+
 
 @pytest.mark.django_db(transaction=True)
 def test_list_threads_without_results(authenticated_client):
@@ -98,3 +101,98 @@ def test_list_threads_with_results(authenticated_client):
 
     assert response.status_code == HTTPStatus.OK
     assert response.json()[0].get("id") == thread.id
+
+
+@pytest.mark.django_db(transaction=True)
+def test_does_not_list_other_users_threads(authenticated_client):
+    baker.make(Thread)
+    response = authenticated_client.get("/threads/")
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == []
+
+
+def test_does_not_list_threads_if_unauthorized():
+    # TODO: Implement this test once permissions are in place
+    pass
+
+
+# POST
+
+
+@pytest.mark.django_db(transaction=True)
+def test_create_thread(authenticated_client):
+    response = authenticated_client.post(
+        "/threads/", data=json.dumps({}), content_type="application/json"
+    )
+
+    thread = Thread.objects.first()
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json().get("id") == thread.id
+
+
+def test_cannot_create_thread_if_unauthorized():
+    # TODO: Implement this test once permissions are in place
+    pass
+
+
+# PATCH
+
+
+@pytest.mark.django_db(transaction=True)
+def test_update_thread(authenticated_client):
+    thread = baker.make(Thread, created_by=User.objects.first())
+    response = authenticated_client.patch(
+        f"/threads/{thread.id}/",
+        data=json.dumps({"name": "New name"}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == HTTPStatus.OK
+
+
+@pytest.mark.django_db(transaction=True)
+def test_cannot_update_other_users_threads(authenticated_client):
+    thread = baker.make(Thread)
+    response = authenticated_client.patch(
+        f"/threads/{thread.id}/",
+        data=json.dumps({"name": "New name"}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == HTTPStatus.FORBIDDEN
+
+
+def test_cannot_update_thread_if_unauthorized():
+    # TODO: Implement this test once permissions are in place
+    pass
+
+
+# DELETE
+
+
+@pytest.mark.django_db(transaction=True)
+def test_delete_thread(authenticated_client):
+    thread = baker.make(Thread, created_by=User.objects.first())
+    response = authenticated_client.delete(f"/threads/{thread.id}/")
+
+    assert response.status_code == HTTPStatus.NO_CONTENT
+
+
+@pytest.mark.django_db(transaction=True)
+def test_cannot_delete_other_users_threads(authenticated_client):
+    thread = baker.make(Thread)
+    response = authenticated_client.delete(f"/threads/{thread.id}/")
+
+    assert response.status_code == HTTPStatus.FORBIDDEN
+
+
+def test_cannot_delete_thread_if_unauthorized():
+    # TODO: Implement this test once permissions are in place
+    pass
+
+
+# Threads Messages Views (will need VCR)
+
+# TBD
