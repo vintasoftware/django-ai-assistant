@@ -29,60 +29,60 @@ export type ThreadMessagesSchemaIn = {
     content: string;
 };
 
-export type DjangoAiAssistantViewsListAssistantsResponse = Array<AssistantSchema>;
+export type DjangoAiAssistantListAssistantsResponse = Array<AssistantSchema>;
 
-export type DjangoAiAssistantViewsGetAssistantData = {
+export type DjangoAiAssistantGetAssistantData = {
     assistantId: string;
 };
 
-export type DjangoAiAssistantViewsGetAssistantResponse = AssistantSchema;
+export type DjangoAiAssistantGetAssistantResponse = AssistantSchema;
 
-export type DjangoAiAssistantViewsListThreadsResponse = Array<ThreadSchema>;
+export type DjangoAiAssistantListThreadsResponse = Array<ThreadSchema>;
 
-export type DjangoAiAssistantViewsCreateThreadData = {
+export type DjangoAiAssistantCreateThreadData = {
     requestBody: ThreadSchemaIn;
 };
 
-export type DjangoAiAssistantViewsCreateThreadResponse = ThreadSchema;
+export type DjangoAiAssistantCreateThreadResponse = ThreadSchema;
 
-export type DjangoAiAssistantViewsGetThreadData = {
+export type DjangoAiAssistantGetThreadData = {
     threadId: string;
 };
 
-export type DjangoAiAssistantViewsGetThreadResponse = ThreadSchema;
+export type DjangoAiAssistantGetThreadResponse = ThreadSchema;
 
-export type DjangoAiAssistantViewsUpdateThreadData = {
+export type DjangoAiAssistantUpdateThreadData = {
     requestBody: ThreadSchemaIn;
     threadId: string;
 };
 
-export type DjangoAiAssistantViewsUpdateThreadResponse = ThreadSchema;
+export type DjangoAiAssistantUpdateThreadResponse = ThreadSchema;
 
-export type DjangoAiAssistantViewsDeleteThreadData = {
+export type DjangoAiAssistantDeleteThreadData = {
     threadId: string;
 };
 
-export type DjangoAiAssistantViewsDeleteThreadResponse = void;
+export type DjangoAiAssistantDeleteThreadResponse = void;
 
-export type DjangoAiAssistantViewsListThreadMessagesData = {
+export type DjangoAiAssistantListThreadMessagesData = {
     threadId: string;
 };
 
-export type DjangoAiAssistantViewsListThreadMessagesResponse = Array<ThreadMessagesSchemaOut>;
+export type DjangoAiAssistantListThreadMessagesResponse = Array<ThreadMessagesSchemaOut>;
 
-export type DjangoAiAssistantViewsCreateThreadMessageData = {
+export type DjangoAiAssistantCreateThreadMessageData = {
     requestBody: ThreadMessagesSchemaIn;
     threadId: string;
 };
 
-export type DjangoAiAssistantViewsCreateThreadMessageResponse = unknown;
+export type DjangoAiAssistantCreateThreadMessageResponse = unknown;
 
-export type DjangoAiAssistantViewsDeleteThreadMessageData = {
+export type DjangoAiAssistantDeleteThreadMessageData = {
     messageId: string;
     threadId: string;
 };
 
-export type DjangoAiAssistantViewsDeleteThreadMessageResponse = void;
+export type DjangoAiAssistantDeleteThreadMessageResponse = void;
 
 export type $OpenApiTs = {
     '/assistants/': {
@@ -97,7 +97,7 @@ export type $OpenApiTs = {
     };
     '/assistants/{assistant_id}/': {
         get: {
-            req: DjangoAiAssistantViewsGetAssistantData;
+            req: DjangoAiAssistantGetAssistantData;
             res: {
                 /**
                  * OK
@@ -116,7 +116,7 @@ export type $OpenApiTs = {
             };
         };
         post: {
-            req: DjangoAiAssistantViewsCreateThreadData;
+            req: DjangoAiAssistantCreateThreadData;
             res: {
                 /**
                  * OK
@@ -127,7 +127,7 @@ export type $OpenApiTs = {
     };
     '/threads/{thread_id}/': {
         get: {
-            req: DjangoAiAssistantViewsGetThreadData;
+            req: DjangoAiAssistantGetThreadData;
             res: {
                 /**
                  * OK
@@ -136,7 +136,7 @@ export type $OpenApiTs = {
             };
         };
         patch: {
-            req: DjangoAiAssistantViewsUpdateThreadData;
+            req: DjangoAiAssistantUpdateThreadData;
             res: {
                 /**
                  * OK
@@ -145,7 +145,7 @@ export type $OpenApiTs = {
             };
         };
         delete: {
-            req: DjangoAiAssistantViewsDeleteThreadData;
+            req: DjangoAiAssistantDeleteThreadData;
             res: {
                 /**
                  * No Content
@@ -156,7 +156,7 @@ export type $OpenApiTs = {
     };
     '/threads/{thread_id}/messages/': {
         get: {
-            req: DjangoAiAssistantViewsListThreadMessagesData;
+            req: DjangoAiAssistantListThreadMessagesData;
             res: {
                 /**
                  * OK
@@ -165,7 +165,7 @@ export type $OpenApiTs = {
             };
         };
         post: {
-            req: DjangoAiAssistantViewsCreateThreadMessageData;
+            req: DjangoAiAssistantCreateThreadMessageData;
             res: {
                 /**
                  * Created
@@ -176,7 +176,7 @@ export type $OpenApiTs = {
     };
     '/threads/{thread_id}/messages/{message_id}/': {
         delete: {
-            req: DjangoAiAssistantViewsDeleteThreadMessageData;
+            req: DjangoAiAssistantDeleteThreadMessageData;
             res: {
                 /**
                  * No Content

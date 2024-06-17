@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from .models import DjangoDocPage
+from rag.models import DjangoDocPage
 
 
 @admin.register(DjangoDocPage)

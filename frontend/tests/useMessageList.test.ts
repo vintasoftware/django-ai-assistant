@@ -1,20 +1,20 @@
 import { act, renderHook } from "@testing-library/react";
 import { useMessageList } from "../src/hooks";
 import {
-  djangoAiAssistantViewsCreateThreadMessage,
-  djangoAiAssistantViewsDeleteThreadMessage,
-  djangoAiAssistantViewsListThreadMessages,
+  djangoAiAssistantCreateThreadMessage,
+  djangoAiAssistantDeleteThreadMessage,
+  djangoAiAssistantListThreadMessages,
   ThreadMessagesSchemaOut,
 } from "../src/client";
 
 jest.mock("../src/client", () => ({
-  djangoAiAssistantViewsCreateThreadMessage: jest
+  djangoAiAssistantCreateThreadMessage: jest
     .fn()
     .mockImplementation(() => Promise.resolve()),
-  djangoAiAssistantViewsListThreadMessages: jest
+  djangoAiAssistantListThreadMessages: jest
     .fn()
     .mockImplementation(() => Promise.resolve()),
-  djangoAiAssistantViewsDeleteThreadMessage: jest
+  djangoAiAssistantDeleteThreadMessage: jest
     .fn()
     .mockImplementation(() => Promise.resolve()),
 }));
@@ -47,7 +47,7 @@ describe("useMessageList", () => {
 
   describe("fetchMessages", () => {
     it("should fetch messages and update state correctly", async () => {
-      (djangoAiAssistantViewsListThreadMessages as jest.Mock).mockResolvedValue(
+      (djangoAiAssistantListThreadMessages as jest.Mock).mockResolvedValue(
         mockMessages
       );
 
@@ -65,7 +65,7 @@ describe("useMessageList", () => {
     });
 
     it("should set loading to false if fetch fails", async () => {
-      (djangoAiAssistantViewsListThreadMessages as jest.Mock).mockRejectedValue(
+      (djangoAiAssistantListThreadMessages as jest.Mock).mockRejectedValue(
         new Error("Failed to fetch")
       );
 
@@ -98,9 +98,9 @@ describe("useMessageList", () => {
         },
       ];
       (
-        djangoAiAssistantViewsCreateThreadMessage as jest.Mock
+        djangoAiAssistantCreateThreadMessage as jest.Mock
       ).mockResolvedValue(null);
-      (djangoAiAssistantViewsListThreadMessages as jest.Mock).mockResolvedValue(
+      (djangoAiAssistantListThreadMessages as jest.Mock).mockResolvedValue(
         [...mockMessages, ...mockNewMessages]
       );
 
@@ -127,7 +127,7 @@ describe("useMessageList", () => {
 
     it("should set loading to false if create fails", async () => {
       (
-        djangoAiAssistantViewsCreateThreadMessage as jest.Mock
+        djangoAiAssistantCreateThreadMessage as jest.Mock
       ).mockRejectedValue(new Error("Failed to create"));
 
       const { result } = renderHook(() => useMessageList({ threadId: "1" }));
@@ -152,7 +152,7 @@ describe("useMessageList", () => {
   describe("deleteMessage", () => {
     it("should delete a message and update state correctly", async () => {
       const deletedMessageId = mockMessages[0].id;
-      (djangoAiAssistantViewsListThreadMessages as jest.Mock).mockResolvedValue(
+      (djangoAiAssistantListThreadMessages as jest.Mock).mockResolvedValue(
         mockMessages.filter((message) => message.id !== deletedMessageId)
       );
 
@@ -177,11 +177,11 @@ describe("useMessageList", () => {
 
     it("should set loading to false if delete fails", async () => {
       const deletedMessageId = mockMessages[0].id;
-      (djangoAiAssistantViewsListThreadMessages as jest.Mock).mockResolvedValue(
+      (djangoAiAssistantListThreadMessages as jest.Mock).mockResolvedValue(
         mockMessages.filter((message) => message.id !== deletedMessageId)
       );
       (
-        djangoAiAssistantViewsDeleteThreadMessage as jest.Mock
+        djangoAiAssistantDeleteThreadMessage as jest.Mock
       ).mockRejectedValue(new Error("Failed to delete"));
 
       const { result } = renderHook(() => useMessageList({ threadId: "1" }));
