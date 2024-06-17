@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Message, Thread
+from django_ai_assistant.models import Message, Thread
 
 
 @admin.register(Thread)

@@ -1,19 +1,19 @@
 import { act, renderHook } from "@testing-library/react";
 import { useThreadList } from "../src/hooks";
 import {
-  djangoAiAssistantViewsCreateThread,
-  djangoAiAssistantViewsDeleteThread,
-  djangoAiAssistantViewsListThreads,
+  djangoAiAssistantCreateThread,
+  djangoAiAssistantDeleteThread,
+  djangoAiAssistantListThreads,
 } from "../src/client";
 
 jest.mock("../src/client", () => ({
-  djangoAiAssistantViewsCreateThread: jest
+  djangoAiAssistantCreateThread: jest
     .fn()
     .mockImplementation(() => Promise.resolve()),
-  djangoAiAssistantViewsListThreads: jest
+  djangoAiAssistantListThreads: jest
     .fn()
     .mockImplementation(() => Promise.resolve()),
-  djangoAiAssistantViewsDeleteThread: jest
+  djangoAiAssistantDeleteThread: jest
     .fn()
     .mockImplementation(() => Promise.resolve()),
 }));
@@ -48,7 +48,7 @@ describe("useThreadList", () => {
 
   describe("fetchThreads", () => {
     it("should fetch threads and update state correctly", async () => {
-      (djangoAiAssistantViewsListThreads as jest.Mock).mockResolvedValue(
+      (djangoAiAssistantListThreads as jest.Mock).mockResolvedValue(
         mockThreads
       );
 
@@ -66,7 +66,7 @@ describe("useThreadList", () => {
     });
 
     it("should set loading to false if fetch fails", async () => {
-      (djangoAiAssistantViewsListThreads as jest.Mock).mockRejectedValue(
+      (djangoAiAssistantListThreads as jest.Mock).mockRejectedValue(
         new Error("Failed to fetch")
       );
 
@@ -94,10 +94,10 @@ describe("useThreadList", () => {
         created_at: "2024-06-11T00:00:00Z",
         updated_at: "2024-06-11T00:00:00Z",
       };
-      (djangoAiAssistantViewsCreateThread as jest.Mock).mockResolvedValue(
+      (djangoAiAssistantCreateThread as jest.Mock).mockResolvedValue(
         mockNewThread
       );
-      (djangoAiAssistantViewsListThreads as jest.Mock).mockResolvedValue([
+      (djangoAiAssistantListThreads as jest.Mock).mockResolvedValue([
         mockNewThread,
         ...mockThreads,
       ]);
@@ -125,10 +125,10 @@ describe("useThreadList", () => {
         created_at: "2024-06-11T00:00:00Z",
         updated_at: "2024-06-11T00:00:00Z",
       };
-      (djangoAiAssistantViewsCreateThread as jest.Mock).mockResolvedValue(
+      (djangoAiAssistantCreateThread as jest.Mock).mockResolvedValue(
         mockNewThread
       );
-      (djangoAiAssistantViewsListThreads as jest.Mock).mockResolvedValue([
+      (djangoAiAssistantListThreads as jest.Mock).mockResolvedValue([
         mockNewThread,
         ...mockThreads,
       ]);
@@ -148,7 +148,7 @@ describe("useThreadList", () => {
     });
 
     it("should set loading to false if create fails", async () => {
-      (djangoAiAssistantViewsCreateThread as jest.Mock).mockRejectedValue(
+      (djangoAiAssistantCreateThread as jest.Mock).mockRejectedValue(
         new Error("Failed to create")
       );
 
@@ -171,7 +171,7 @@ describe("useThreadList", () => {
   describe("deleteThread", () => {
     it("should delete a thread and update state correctly", async () => {
       const deletedThreadId = mockThreads[0].id;
-      (djangoAiAssistantViewsListThreads as jest.Mock).mockResolvedValue(
+      (djangoAiAssistantListThreads as jest.Mock).mockResolvedValue(
         mockThreads.filter((thread) => thread.id !== deletedThreadId)
       );
 
@@ -196,10 +196,10 @@ describe("useThreadList", () => {
 
     it("should set loading to false if delete fails", async () => {
       const deletedThreadId = mockThreads[0].id;
-      (djangoAiAssistantViewsListThreads as jest.Mock).mockResolvedValue(
+      (djangoAiAssistantListThreads as jest.Mock).mockResolvedValue(
         mockThreads.filter((thread) => thread.id !== deletedThreadId)
       );
-      (djangoAiAssistantViewsDeleteThread as jest.Mock).mockRejectedValue(
+      (djangoAiAssistantDeleteThread as jest.Mock).mockRejectedValue(
         new Error("Failed to delete")
       );
 

@@ -4,7 +4,7 @@ import pytest
 
 from django_ai_assistant.exceptions import AIAssistantNotDefinedError
 from django_ai_assistant.helpers.assistants import AIAssistant, register_assistant
-from django_ai_assistant.tools import BaseModel, Field, method_tool
+from django_ai_assistant.langchain.tools import BaseModel, Field, method_tool
 
 
 # Set up
@@ -51,7 +51,6 @@ def test_does_not_list_assistants_if_unauthorized():
     pass
 
 
-@pytest.mark.django_db(transaction=True)
 def test_get_assistant_that_exists(client):
     response = client.get("/assistants/temperature_assistant/")
 
@@ -59,7 +58,6 @@ def test_get_assistant_that_exists(client):
     assert response.json() == {"id": "temperature_assistant", "name": "Temperature Assistant"}
 
 
-@pytest.mark.django_db(transaction=True)
 def test_get_assistant_that_does_not_exist(client):
     with pytest.raises(AIAssistantNotDefinedError):
         client.get("/assistants/fake_assistant/")

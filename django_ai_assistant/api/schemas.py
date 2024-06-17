@@ -4,7 +4,7 @@ from django.utils import timezone
 
 from ninja import Field, ModelSchema, Schema
 
-from .models import Thread
+from django_ai_assistant.models import Thread
 
 
 class AssistantSchema(Schema):
