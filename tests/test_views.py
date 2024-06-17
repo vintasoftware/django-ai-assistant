@@ -39,7 +39,6 @@ class TemperatureAssistant(AIAssistant):
 # Assistant Views
 
 
-@pytest.mark.django_db(transaction=True)
 def test_list_assistants_with_results(client):
     response = client.get("/assistants/")
 
@@ -52,7 +51,6 @@ def test_does_not_list_assistants_if_unauthorized():
     pass
 
 
-@pytest.mark.django_db(transaction=True)
 def test_get_assistant_that_exists(client):
     response = client.get("/assistants/temperature_assistant/")
 
@@ -60,7 +58,6 @@ def test_get_assistant_that_exists(client):
     assert response.json() == {"id": "temperature_assistant", "name": "Temperature Assistant"}
 
 
-@pytest.mark.django_db(transaction=True)
 def test_get_assistant_that_does_not_exist(client):
     with pytest.raises(AIAssistantNotDefinedError):
         client.get("/assistants/fake_assistant/")
