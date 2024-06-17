@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useState } from "react";
 import {
   AssistantSchema,
-  djangoAiAssistantViewsGetAssistant,
+  djangoAiAssistantGetAssistant,
 } from "../client";
 
 /**
@@ -23,7 +23,7 @@ export function useAssistant({ assistantId }: {
   const fetchAssistant = useCallback(async (): Promise<AssistantSchema> => {
     try {
       setLoadingFetchAssistant(true);
-      const fetchedAssistant = await djangoAiAssistantViewsGetAssistant({ assistantId });
+      const fetchedAssistant = await djangoAiAssistantGetAssistant({ assistantId });
       setAssistant(fetchedAssistant);
       return fetchedAssistant;
     } finally {
