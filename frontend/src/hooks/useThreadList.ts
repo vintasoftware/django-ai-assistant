@@ -2,9 +2,9 @@ import { useCallback } from "react";
 import { useState } from "react";
 import {
   ThreadSchema,
-  djangoAiAssistantViewsCreateThread,
-  djangoAiAssistantViewsDeleteThread,
-  djangoAiAssistantViewsListThreads,
+  djangoAiAssistantCreateThread,
+  djangoAiAssistantDeleteThread,
+  djangoAiAssistantListThreads,
 } from "../client";
 
 /**
@@ -27,7 +27,7 @@ export function useThreadList() {
   const fetchThreads = useCallback(async (): Promise<ThreadSchema[]> => {
     try {
       setLoadingFetchThreads(true);
-      const fetchedThreads = await djangoAiAssistantViewsListThreads();
+      const fetchedThreads = await djangoAiAssistantListThreads();
       setThreads(fetchedThreads);
       return fetchedThreads;
     } finally {
@@ -44,7 +44,7 @@ export function useThreadList() {
     async ({ name }: { name?: string } = {}): Promise<ThreadSchema> => {
       try {
         setLoadingCreateThread(true);
-        const thread = await djangoAiAssistantViewsCreateThread({
+        const thread = await djangoAiAssistantCreateThread({
           requestBody: { name: name },
         });
         await fetchThreads();
@@ -65,7 +65,7 @@ export function useThreadList() {
     async ({ threadId }: { threadId: string }): Promise<void> => {
       try {
         setLoadingDeleteThread(true);
-        await djangoAiAssistantViewsDeleteThread({ threadId });
+        await djangoAiAssistantDeleteThread({ threadId });
         await fetchThreads();
       } finally {
         setLoadingDeleteThread(false);
