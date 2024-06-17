@@ -6,7 +6,7 @@ import {
 } from "../client";
 
 /**
- * React hook to manage the Assistants.
+ * React hook to manage an Assistant.
  */
 export function useAssistant({ assistantId }: {
   assistantId: string;
@@ -16,9 +16,9 @@ export function useAssistant({ assistantId }: {
     useState<boolean>(false);
 
   /**
-   * Fetches a list of AI assistants.
+   * Fetches an AI assistant.
    *
-   * @returns A promise that resolves with the fetched list of AI assistants.
+   * @returns A promise that resolves with the fetched AI assistant.
    */
   const fetchAssistant = useCallback(async (): Promise<AssistantSchema> => {
     try {
