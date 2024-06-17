@@ -8,9 +8,9 @@ import {
 } from "../client";
 
 /**
- * React hook to manage the Thread resource.
+ * React hook to manage the list, create, and delete of Threads.
  */
-export function useThread() {
+export function useThreadList() {
   const [threads, setThreads] = useState<ThreadSchema[] | null>(null);
   const [loadingFetchThreads, setLoadingFetchThreads] =
     useState<boolean>(false);
