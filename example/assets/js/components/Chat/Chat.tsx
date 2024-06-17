@@ -25,7 +25,7 @@ import Markdown from "react-markdown";
 import {
   ThreadMessagesSchemaOut,
   ThreadSchema,
-  useAssistantList,
+  useAssistant,
   useMessageList,
   useThreadList,
 } from "django-ai-assistant-client";
@@ -132,6 +132,8 @@ export function Chat({ assistantId }: { assistantId: string }) {
     loadingDeleteMessage,
   } = useMessageList({ threadId: activeThread?.id });
 
+  const { fetchAssistant, assistant } = useAssistant({ assistantId });
+
   const loadingMessages =
     loadingFetchMessages || loadingCreateMessage || loadingDeleteMessage;
   const isThreadSelected = Boolean(activeThread);
@@ -153,10 +155,11 @@ export function Chat({ assistantId }: { assistantId: string }) {
     [scrollViewport]
   );
 
-  // Load threads when component mounts:
+  // Load threads and assistant details when component mounts:
   useEffect(() => {
     fetchThreads();
-  }, [fetchThreads]);
+    fetchAssistant();
+  }, [fetchThreads, fetchAssistant]);
 
   // Load messages when threadId changes:
   useEffect(() => {
@@ -192,7 +195,7 @@ export function Chat({ assistantId }: { assistantId: string }) {
         <Container className={classes.chatContainer}>
           <Stack className={classes.chat}>
             <Title mt="md" order={2}>
-              Chat: {assistantId}
+              Chat: {assistant?.name || "Loading…"}
             </Title>
             <ScrollArea
               pos="relative"
