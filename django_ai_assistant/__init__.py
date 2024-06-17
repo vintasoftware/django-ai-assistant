@@ -1,5 +1,9 @@
 from importlib import metadata
 
+from django_ai_assistant.helpers.assistants import (  # noqa
+    AIAssistant,
+    register_assistant,
+)
 from django_ai_assistant.langchain.tools import (  # noqa
     BaseModel,
     BaseTool,
