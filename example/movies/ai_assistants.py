@@ -10,10 +10,8 @@ from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_community.utilities import WikipediaAPIWrapper
 from langchain_core.tools import BaseTool
 
-from django_ai_assistant.helpers.assistants import AIAssistant, register_assistant
-from django_ai_assistant.tools import method_tool
-
-from .models import MovieBacklogItem
+from django_ai_assistant import AIAssistant, method_tool, register_assistant
+from movies.models import MovieBacklogItem
 
 
 # Note this assistant is not registered, but we'll use it as a tool on the other.

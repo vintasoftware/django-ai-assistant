@@ -6,8 +6,8 @@ from langchain_core.messages import AIMessage, HumanMessage, messages_to_dict
 from langchain_core.retrievers import BaseRetriever
 
 from django_ai_assistant.helpers.assistants import AIAssistant
+from django_ai_assistant.langchain.tools import BaseModel, Field, method_tool
 from django_ai_assistant.models import Thread
-from django_ai_assistant.tools import BaseModel, Field, method_tool
 
 
 class TemperatureAssistant(AIAssistant):

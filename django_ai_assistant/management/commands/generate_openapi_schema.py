@@ -3,7 +3,7 @@ from pathlib import Path
 
 from django.core.management.base import BaseCommand, CommandError
 
-from django_ai_assistant.views import api
+from django_ai_assistant.api.views import api
 
 
 class Command(BaseCommand):
