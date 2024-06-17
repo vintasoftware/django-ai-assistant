@@ -40,6 +40,13 @@ class TemperatureAssistant(AIAssistant):
         return "35 degrees Celsius"
 
 
+@pytest.fixture
+def authenticated_client(client):
+    User.objects.create_user(username="testuser", password="password")
+    client.login(username="testuser", password="password")
+    return client
+
+
 # Assistant Views
 
 
@@ -73,13 +80,6 @@ def test_does_not_return_assistant_if_unauthorized():
 
 
 # Threads Views
-
-
-@pytest.fixture
-def authenticated_client(client):
-    User.objects.create_user(username="testuser", password="password")
-    client.login(username="testuser", password="password")
-    return client
 
 
 @pytest.mark.django_db(transaction=True)
