@@ -4,7 +4,7 @@ from django.utils import timezone
 import requests
 
 from django_ai_assistant.helpers.assistants import AIAssistant, register_assistant
-from django_ai_assistant.tools import BaseModel, Field, method_tool
+from django_ai_assistant.langchain.tools import BaseModel, Field, method_tool
 
 
 BASE_URL = "https://api.weatherapi.com/v1/"
