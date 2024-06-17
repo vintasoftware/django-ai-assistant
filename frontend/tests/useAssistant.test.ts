@@ -22,24 +22,17 @@ describe("useAssistant", () => {
 
   describe("fetchAssistant", () => {
     it("should fetch assistant and update state correctly", async () => {
-      const mockAssistants = [
-        { id: 'weather_assistant', name: "Assistant 1" },
-        { id: 'movies_assistant', name: "Assistant 2" },
-      ];
+      const mockAssistant = { id: 'weather_assistant', name: "Assistant 1" };
       (djangoAiAssistantViewsGetAssistant as jest.Mock).mockResolvedValue(
-        mockAssistants
+        mockAssistant
       );
-
       const { result } = renderHook(() => useAssistant({ assistantId: 'weather_assistant' }));
-
       expect(result.current.assistant).toBeNull();
       expect(result.current.loadingFetchAssistant).toBe(false);
-
       await act(async () => {
         await result.current.fetchAssistant();
       });
-
-      expect(result.current.assistant).toEqual(mockAssistants);
+      expect(result.current.assistant).toEqual(mockAssistant);
       expect(result.current.loadingFetchAssistant).toBe(false);
     });
 
