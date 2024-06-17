@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import { useState } from "react";
 import {
-  djangoAiAssistantViewsCreateThreadMessage,
-  djangoAiAssistantViewsDeleteThreadMessage,
-  djangoAiAssistantViewsListThreadMessages,
+  djangoAiAssistantCreateThreadMessage,
+  djangoAiAssistantDeleteThreadMessage,
+  djangoAiAssistantListThreadMessages,
   ThreadMessagesSchemaOut,
 } from "../client";
 
@@ -45,7 +45,7 @@ export function useMessageList({ threadId }: { threadId: string | null }) {
 
       try {
         setLoadingFetchMessages(true);
-        const fetchedMessages = await djangoAiAssistantViewsListThreadMessages({
+        const fetchedMessages = await djangoAiAssistantListThreadMessages({
           threadId: threadId,
         });
         setMessages(fetchedMessages);
@@ -77,7 +77,7 @@ export function useMessageList({ threadId }: { threadId: string | null }) {
       try {
         setLoadingCreateMessage(true);
         // successful response is 201, None
-        await djangoAiAssistantViewsCreateThreadMessage({
+        await djangoAiAssistantCreateThreadMessage({
           threadId,
           requestBody: {
             content: messageTextValue,
@@ -109,7 +109,7 @@ export function useMessageList({ threadId }: { threadId: string | null }) {
 
       try {
         setLoadingDeleteMessage(true);
-        await djangoAiAssistantViewsDeleteThreadMessage({
+        await djangoAiAssistantDeleteThreadMessage({
           threadId,
           messageId,
         });

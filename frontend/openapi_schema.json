@@ -8,7 +8,7 @@
   "paths": {
     "/assistants/": {
       "get": {
-        "operationId": "django_ai_assistant_views_list_assistants",
+        "operationId": "django_ai_assistant_list_assistants",
         "summary": "List Assistants",
         "parameters": [],
         "responses": {
@@ -31,7 +31,7 @@
     },
     "/assistants/{assistant_id}/": {
       "get": {
-        "operationId": "django_ai_assistant_views_get_assistant",
+        "operationId": "django_ai_assistant_get_assistant",
         "summary": "Get Assistant",
         "parameters": [
           {
@@ -60,7 +60,7 @@
     },
     "/threads/": {
       "get": {
-        "operationId": "django_ai_assistant_views_list_threads",
+        "operationId": "django_ai_assistant_list_threads",
         "summary": "List Threads",
         "parameters": [],
         "responses": {
@@ -81,7 +81,7 @@
         }
       },
       "post": {
-        "operationId": "django_ai_assistant_views_create_thread",
+        "operationId": "django_ai_assistant_create_thread",
         "summary": "Create Thread",
         "parameters": [],
         "responses": {
@@ -110,7 +110,7 @@
     },
     "/threads/{thread_id}/": {
       "get": {
-        "operationId": "django_ai_assistant_views_get_thread",
+        "operationId": "django_ai_assistant_get_thread",
         "summary": "Get Thread",
         "parameters": [
           {
@@ -137,7 +137,7 @@
         }
       },
       "patch": {
-        "operationId": "django_ai_assistant_views_update_thread",
+        "operationId": "django_ai_assistant_update_thread",
         "summary": "Update Thread",
         "parameters": [
           {
@@ -174,7 +174,7 @@
         }
       },
       "delete": {
-        "operationId": "django_ai_assistant_views_delete_thread",
+        "operationId": "django_ai_assistant_delete_thread",
         "summary": "Delete Thread",
         "parameters": [
           {
@@ -196,7 +196,7 @@
     },
     "/threads/{thread_id}/messages/": {
       "get": {
-        "operationId": "django_ai_assistant_views_list_thread_messages",
+        "operationId": "django_ai_assistant_list_thread_messages",
         "summary": "List Thread Messages",
         "parameters": [
           {
@@ -227,7 +227,7 @@
         }
       },
       "post": {
-        "operationId": "django_ai_assistant_views_create_thread_message",
+        "operationId": "django_ai_assistant_create_thread_message",
         "summary": "Create Thread Message",
         "parameters": [
           {
@@ -259,7 +259,7 @@
     },
     "/threads/{thread_id}/messages/{message_id}/": {
       "delete": {
-        "operationId": "django_ai_assistant_views_delete_thread_message",
+        "operationId": "django_ai_assistant_delete_thread_message",
         "summary": "Delete Thread Message",
         "parameters": [
           {

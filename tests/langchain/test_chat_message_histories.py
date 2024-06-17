@@ -1,7 +1,7 @@
 import pytest
 from langchain_core.messages import AIMessage, HumanMessage
 
-from django_ai_assistant.ai.chat_message_histories import DjangoChatMessageHistory
+from django_ai_assistant.langchain.chat_message_histories import DjangoChatMessageHistory
 from django_ai_assistant.models import Message, Thread
 
 

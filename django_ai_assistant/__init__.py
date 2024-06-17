@@ -1,4 +1,19 @@
 from importlib import metadata
 
+from django_ai_assistant.helpers.assistants import (  # noqa
+    AIAssistant,
+    register_assistant,
+)
+from django_ai_assistant.langchain.tools import (  # noqa
+    BaseModel,
+    BaseTool,
+    Field,
+    StructuredTool,
+    Tool,
+    method_tool,
+    tool,
+)
 
-__version__ = metadata.version(__package__)
+
+version = __version__ = metadata.version(__package__)
+package_name = __package__

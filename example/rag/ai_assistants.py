@@ -2,16 +2,14 @@ from langchain_community.retrievers import TFIDFRetriever
 from langchain_core.retrievers import BaseRetriever
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from django_ai_assistant.helpers.assistants import AIAssistant, register_assistant
-
-from .models import DjangoDocPage
+from django_ai_assistant import AIAssistant, register_assistant
+from rag.models import DjangoDocPage
 
 
 @register_assistant
 class DjangoDocsAssistant(AIAssistant):
     id = "django_docs_assistant"  # noqa: A003
     name = "Django Docs Assistant"
-    description = "An assistant that answers questions related to Django web framework."
     instructions = (
         "You are an assistant for answering questions related to Django web framework. "
         "Use the following pieces of retrieved context from Django's documentation to answer "

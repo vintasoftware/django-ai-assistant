@@ -10,10 +10,8 @@ from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_community.utilities import WikipediaAPIWrapper
 from langchain_core.tools import BaseTool
 
-from django_ai_assistant.helpers.assistants import AIAssistant, register_assistant
-from django_ai_assistant.tools import method_tool
-
-from .models import MovieBacklogItem
+from django_ai_assistant import AIAssistant, method_tool, register_assistant
+from movies.models import MovieBacklogItem
 
 
 # Note this assistant is not registered, but we'll use it as a tool on the other.
@@ -82,7 +80,7 @@ class MovieRecommendationAIAssistant(AIAssistant):
         # See: https://docs.djangoproject.com/en/5.0/topics/i18n/timezones/#default-time-zone-and-current-time-zone
         # In a real application, you should use the user's timezone
         current_date_str = timezone.now().date().isoformat()
-        user_backlog_str = self._get_movies_backlog()
+        user_backlog_str = self.get_movies_backlog()
 
         return "\n".join(
             [
@@ -116,7 +114,10 @@ class MovieRecommendationAIAssistant(AIAssistant):
         )
         return response["markdown"]
 
-    def _get_movies_backlog(self) -> str:
+    @method_tool
+    def get_movies_backlog(self) -> str:
+        """Get what movies are on user's backlog."""
+
         return (
             "\n".join(
                 [
@@ -126,12 +127,6 @@ class MovieRecommendationAIAssistant(AIAssistant):
             )
             or "Empty"
         )
-
-    @method_tool
-    def get_movies_backlog(self) -> str:
-        """Get what movies are on user's backlog."""
-
-        return self._get_movies_backlog()
 
     @method_tool
     def add_movie_to_backlog(self, movie_name: str, imdb_url: str, imdb_rating: float) -> str:
@@ -166,4 +161,4 @@ class MovieRecommendationAIAssistant(AIAssistant):
         """Reorder movies in user's backlog."""
 
         MovieBacklogItem.reorder_backlog(self._user, imdb_url_list)
-        return "Reordered movies in backlog. New backlog: \n" + self._get_movies_backlog()
+        return "Reordered movies in backlog. New backlog: \n" + self.get_movies_backlog()
