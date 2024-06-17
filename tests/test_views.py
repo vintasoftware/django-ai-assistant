@@ -1,7 +1,5 @@
 from http import HTTPStatus
 
-from django.test import Client, TestCase
-
 import pytest
 
 from django_ai_assistant.exceptions import AIAssistantNotDefinedError
@@ -41,34 +39,36 @@ class TemperatureAssistant(AIAssistant):
 # Assistant Views
 
 
-class AssistantViewsTests(TestCase):
-    def setUp(self):
-        super().setUp()
-        self.client = Client()
+@pytest.mark.django_db(transaction=True)
+def test_list_assistants_with_results(client):
+    response = client.get("/assistants/")
 
-    def test_list_assistants_with_results(self):
-        response = self.client.get("/assistants/")
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == [{"id": "temperature_assistant", "name": "Temperature Assistant"}]
 
-        assert response.status_code == HTTPStatus.OK
-        assert response.json() == [{"id": "temperature_assistant", "name": "Temperature Assistant"}]
 
-    def test_does_not_list_assistants_if_unauthorized(self):
-        # TODO: Implement this test once permissions are in place
-        pass
+def test_does_not_list_assistants_if_unauthorized():
+    # TODO: Implement this test once permissions are in place
+    pass
 
-    def test_get_assistant_that_exists(self):
-        response = self.client.get("/assistants/temperature_assistant/")
 
-        assert response.status_code == HTTPStatus.OK
-        assert response.json() == {"id": "temperature_assistant", "name": "Temperature Assistant"}
+@pytest.mark.django_db(transaction=True)
+def test_get_assistant_that_exists(client):
+    response = client.get("/assistants/temperature_assistant/")
 
-    def test_get_assistant_that_does_not_exist(self):
-        with pytest.raises(AIAssistantNotDefinedError):
-            self.client.get("/assistants/fake_assistant/")
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {"id": "temperature_assistant", "name": "Temperature Assistant"}
 
-    def test_does_not_return_assistant_if_unauthorized(self):
-        # TODO: Implement this test once permissions are in place
-        pass
+
+@pytest.mark.django_db(transaction=True)
+def test_get_assistant_that_does_not_exist(client):
+    with pytest.raises(AIAssistantNotDefinedError):
+        client.get("/assistants/fake_assistant/")
+
+
+def test_does_not_return_assistant_if_unauthorized():
+    # TODO: Implement this test once permissions are in place
+    pass
 
 
 # Threads Views
