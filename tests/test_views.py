@@ -104,8 +104,7 @@ def test_list_threads_without_results(authenticated_client):
 @pytest.mark.django_db(transaction=True)
 def test_list_threads_with_results(authenticated_client):
     user = User.objects.first()
-    baker.make(Thread, created_by=user)
-    baker.make(Thread, created_by=user)
+    baker.make(Thread, created_by=user, _quantity=2)
     response = authenticated_client.get(reverse("django_ai_assistant:threads_list_create"))
 
     assert response.status_code == HTTPStatus.OK
