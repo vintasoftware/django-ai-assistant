@@ -1,4 +1,3 @@
-import json
 from http import HTTPStatus
 
 from django.contrib.auth.models import User
@@ -122,9 +121,7 @@ def test_does_not_list_threads_if_unauthorized():
 
 @pytest.mark.django_db(transaction=True)
 def test_create_thread(authenticated_client):
-    response = authenticated_client.post(
-        "/threads/", data=json.dumps({}), content_type="application/json"
-    )
+    response = authenticated_client.post("/threads/", data={}, content_type="application/json")
 
     thread = Thread.objects.first()
 
@@ -145,7 +142,7 @@ def test_update_thread(authenticated_client):
     thread = baker.make(Thread, created_by=User.objects.first())
     response = authenticated_client.patch(
         f"/threads/{thread.id}/",
-        data=json.dumps({"name": "New name"}),
+        data={"name": "New name"},
         content_type="application/json",
     )
 
@@ -157,7 +154,7 @@ def test_cannot_update_other_users_threads(authenticated_client):
     thread = baker.make(Thread)
     response = authenticated_client.patch(
         f"/threads/{thread.id}/",
-        data=json.dumps({"name": "New name"}),
+        data={"name": "New name"},
         content_type="application/json",
     )
 
