@@ -19,7 +19,6 @@ from django_ai_assistant.models import Thread
 class TemperatureAssistant(AIAssistant):
     id = "temperature_assistant"  # noqa: A003
     name = "Temperature Assistant"
-    description = "A temperature assistant that provides temperature information."
     instructions = "You are a temperature bot."
     model = "gpt-4o"
 
