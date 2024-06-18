@@ -104,11 +104,12 @@ def test_list_threads_without_results(authenticated_client):
 @pytest.mark.django_db(transaction=True)
 def test_list_threads_with_results(authenticated_client):
     user = User.objects.first()
-    thread = baker.make(Thread, created_by=user)
+    baker.make(Thread, created_by=user)
+    baker.make(Thread, created_by=user)
     response = authenticated_client.get(reverse("django_ai_assistant:threads_list_create"))
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json()[0].get("id") == thread.id
+    assert len(response.json()) == 2
 
 
 @pytest.mark.django_db(transaction=True)
@@ -118,6 +119,17 @@ def test_does_not_list_other_users_threads(authenticated_client):
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == []
+
+
+@pytest.mark.django_db(transaction=True)
+def test_gets_specific_thread(authenticated_client):
+    thread = baker.make(Thread, created_by=User.objects.first())
+    response = authenticated_client.get(
+        reverse("django_ai_assistant:thread_detail_update_delete", kwargs={"thread_id": thread.id})
+    )
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json().get("id") == thread.id
 
 
 def test_does_not_list_threads_if_unauthorized():
