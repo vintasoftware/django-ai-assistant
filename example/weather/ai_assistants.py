@@ -16,6 +16,13 @@ class WeatherAIAssistant(AIAssistant):
     name = "Weather Assistant"
     model = "gpt-4o"
 
+    def get_instructions(self):
+        # Warning: this will use the server's timezone
+        # See: https://docs.djangoproject.com/en/5.0/topics/i18n/timezones/#default-time-zone-and-current-time-zone
+        # In a real application, you should use the user's timezone
+        current_date_str = timezone.now().date().isoformat()
+        return f"You are a weather bot. Use the provided functions to answer questions. Today is: {current_date_str}."
+
     @method_tool
     def fetch_current_weather(self, location: str) -> dict:
         """Fetch the current weather data for a location"""
@@ -57,10 +64,3 @@ class WeatherAIAssistant(AIAssistant):
             return self._user.username
         else:
             return "Anonymous"
-
-    def get_instructions(self):
-        # Warning: this will use the server's timezone
-        # See: https://docs.djangoproject.com/en/5.0/topics/i18n/timezones/#default-time-zone-and-current-time-zone
-        # In a real application, you should use the user's timezone
-        current_date_str = timezone.now().date().isoformat()
-        return f"You are a weather bot. Use the provided functions to answer questions. Today is: {current_date_str}."
