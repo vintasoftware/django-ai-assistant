@@ -25,6 +25,20 @@ def can_create_thread(
     )
 
 
+def can_view_thread(
+    thread: Thread,
+    user: Any,
+    request: HttpRequest | None = None,
+    **kwargs,
+) -> bool:
+    return app_settings.call_fn(
+        "CAN_VIEW_THREAD_FN",
+        **_get_default_kwargs(user, request),
+        thread=thread,
+        **kwargs,
+    )
+
+
 def can_update_thread(
     thread: Thread,
     user: Any,

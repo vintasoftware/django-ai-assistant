@@ -17,6 +17,7 @@ from django_ai_assistant.permissions import (
     can_delete_message,
     can_delete_thread,
     can_run_assistant,
+    can_view_thread,
 )
 
 
@@ -98,7 +99,12 @@ def get_single_thread(
     user: Any,
     request: HttpRequest | None = None,
 ):
-    return Thread.objects.filter(created_by=user).get(id=thread_id)
+    thread = Thread.objects.get(id=thread_id)
+
+    if not can_view_thread(thread=thread, user=user, request=request):
+        raise AIUserNotAllowedError("User is not allowed to view this thread")
+
+    return thread
 
 
 def get_threads(
