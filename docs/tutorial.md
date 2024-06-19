@@ -243,7 +243,7 @@ It has a OpenAPI schema that you can explore at `ai-assistant/docs/`.
 ### Configuring permissions
 
 The API uses the helpers from the `django_ai_assistant.use_cases` module, which have permission checks
-to ensure the user has can use a certain AI Assistant or do CRUD on Threads and Messages.
+to ensure the user can use a certain AI Assistant or do CRUD on Threads and Messages.
 
 By default, any authenticated user can use any AI Assistant, and create a thread.
 Users can manage both their own threads and the messages on them. Therefore, the default permissions are:
@@ -365,7 +365,7 @@ For this to work, your must do the following in your AI Assistant:
 
 For example:
 
-```{.python title="myapp/ai_assistants.py"  hl_lines="12 16"}
+```{.python title="myapp/ai_assistants.py"  hl_lines="12 16 18"}
 from django_ai_assistant import AIAssistant, register_assistant
 
 @register_assistant
