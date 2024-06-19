@@ -253,7 +253,7 @@ def test_cannot_delete_thread_if_unauthorized():
 @pytest.mark.django_db(transaction=True)
 def test_list_thread_messages(authenticated_client):
     thread = baker.make(Thread, created_by=User.objects.first())
-    use_cases.create_thread_message_as_user(thread.id, "Hello", User.objects.first())
+    use_cases.create_thread_message_as_user(thread.id, "Hello", thread.created_by)
     response = authenticated_client.get(
         reverse("django_ai_assistant:messages_list_create", kwargs={"thread_id": thread.id})
     )
