@@ -22,7 +22,7 @@ import { AxiosRequestConfig } from "axios";
 export function configAIAssistant(props: OpenAPIConfig): OpenAPIConfig {
   function defaultRequestInterceptor(request: AxiosRequestConfig) {
     const { csrftoken } = cookie.parse(document.cookie);
-    if (csrftoken && request.headers) {
+    if (request.headers && csrftoken) {
       request.headers["X-CSRFTOKEN"] = csrftoken;
     }
     return request;
