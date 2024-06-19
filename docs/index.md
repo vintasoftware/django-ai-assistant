@@ -17,8 +17,8 @@ Your application's end users won't even realize that a LLM is doing the heavy-li
 Some ideas for innovative AI assistants:
 
 - A movie recommender chatbot that helps users manage their movie backlogs
-- An autofill button for certain forms of you application
-- Personalized email reminders that consider user's written preferences and application's recent notifications
+- An autofill button for certain forms of your application
+- Personalized email reminders that consider users' written preferences and the application's recent notifications
 - A real-time audio guide for tourists that recommends attractions given the user's current location
 
 We have an open-source example with some of those applications. But it's best to start with the [Get Started](get-started.md) guide.
