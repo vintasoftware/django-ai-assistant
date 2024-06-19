@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - Python: <a href="https://pypi.org/project/django-ai-assistant" target="_blank"><img src="https://img.shields.io/pypi/pyversions/django-ai-assistant.svg?color=%2334D058" alt="Supported Python versions"></a>
-- Django >= 3.2
+- Django: <a href="https://pypi.org/project/django-ai-assistant" target="_blank"><img src="https://img.shields.io/pypi/frameworkversions/django/django-ai-assistant.svg" alt="Supported Django versions"></a>
 
 ## How to install
 
