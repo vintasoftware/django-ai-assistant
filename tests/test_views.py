@@ -20,7 +20,6 @@ from django_ai_assistant.models import Thread
 class TemperatureAssistant(AIAssistant):
     id = "temperature_assistant"  # noqa: A003
     name = "Temperature Assistant"
-    description = "A temperature assistant that provides temperature information."
     instructions = "You are a temperature bot."
     model = "gpt-4o"
 
@@ -105,8 +104,7 @@ def test_list_threads_without_results(authenticated_client):
 @pytest.mark.django_db(transaction=True)
 def test_list_threads_with_results(authenticated_client):
     user = User.objects.first()
-    baker.make(Thread, created_by=user)
-    baker.make(Thread, created_by=user)
+    baker.make(Thread, created_by=user, _quantity=2)
     response = authenticated_client.get(reverse("django_ai_assistant:threads_list_create"))
 
     assert response.status_code == HTTPStatus.OK
@@ -171,6 +169,7 @@ def test_update_thread(authenticated_client):
     )
 
     assert response.status_code == HTTPStatus.OK
+    assert Thread.objects.filter(id=thread.id).first().name == "New name"
 
 
 @pytest.mark.django_db(transaction=True)
@@ -183,6 +182,7 @@ def test_cannot_update_other_users_threads(authenticated_client):
     )
 
     assert response.status_code == HTTPStatus.FORBIDDEN
+    assert Thread.objects.filter(id=thread.id).first().name != "New name"
 
 
 def test_cannot_update_thread_if_unauthorized():
@@ -201,6 +201,7 @@ def test_delete_thread(authenticated_client):
     )
 
     assert response.status_code == HTTPStatus.NO_CONTENT
+    assert not Thread.objects.filter(id=thread.id).exists()
 
 
 @pytest.mark.django_db(transaction=True)
@@ -211,6 +212,7 @@ def test_cannot_delete_other_users_threads(authenticated_client):
     )
 
     assert response.status_code == HTTPStatus.FORBIDDEN
+    assert Thread.objects.filter(id=thread.id).exists()
 
 
 def test_cannot_delete_thread_if_unauthorized():
