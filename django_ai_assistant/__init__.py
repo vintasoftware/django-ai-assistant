@@ -2,6 +2,7 @@ from importlib import metadata
 
 from django_ai_assistant.helpers.assistants import (  # noqa
     AIAssistant,
+    get_assistant_cls,
     get_assistant_cls_registry,
 )
 from django_ai_assistant.langchain.tools import (  # noqa

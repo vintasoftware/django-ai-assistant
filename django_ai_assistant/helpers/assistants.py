@@ -55,6 +55,8 @@ class AIAssistant(abc.ABC):  # noqa: F821
     _init_kwargs: dict[str, Any]
     _method_tools: Sequence[BaseTool]
 
+    _registry: ClassVar[dict[str, type["AIAssistant"]]] = {}
+
     def __init__(self, *, user=None, request=None, view=None, **kwargs):
         if not hasattr(self, "id"):
             raise AIAssistantMisconfiguredError(
@@ -79,6 +81,27 @@ class AIAssistant(abc.ABC):  # noqa: F821
         self.temperature = 1.0  # default OpenAI temperature for Assistant
 
         self._set_method_tools()
+
+    def __init_subclass__(cls, **kwargs):
+        """
+        Called when a class is subclassed from AIAssistant.
+
+        This method is automatically invoked when a new subclass of AIAssistant
+        is created. It allows AIAssistant to perform additional setup or configuration
+        for the subclass, such as registering the subclass in a registry.
+
+        Args:
+            cls (type): The newly created subclass.
+            **kwargs: Additional keyword arguments passed during subclass creation.
+        """
+        super().__init_subclass__(**kwargs)
+        if hasattr(cls, "id") and cls.id is not None:
+            if not re.match(r"^[a-zA-Z0-9_-]+$", cls.id):
+                raise AIAssistantMisconfiguredError(
+                    f"Assistant id '{cls.id}' does not match the pattern '^[a-zA-Z0-9_-]+$'"
+                    f"at {cls.__name__}"
+                )
+            cls._registry[cls.id] = cls
 
     def _set_method_tools(self):
         # Find tool methods (decorated with `@method_tool` from django_ai_assistant/tools.py):
@@ -114,12 +137,12 @@ class AIAssistant(abc.ABC):  # noqa: F821
         self._method_tools = tools
 
     @classmethod
-    def _get_assistant_cls_registry(cls: type["AIAssistant"]) -> dict[str, type["AIAssistant"]]:
-        registry: dict[str, type["AIAssistant"]] = {}
-        for subclass in cls.__subclasses__():
-            registry[subclass.id] = subclass
-            registry.update(subclass._get_assistant_cls_registry())
-        return registry
+    def get_registry(cls):
+        return cls._registry
+
+    @classmethod
+    def clear_registry(cls):
+        cls._registry.clear()
 
     def get_name(self):
         return self.name
@@ -306,4 +329,10 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
 
 def get_assistant_cls_registry() -> dict[str, type[AIAssistant]]:
-    return AIAssistant._get_assistant_cls_registry()
+    """Get the registry of AIAssistant classes."""
+    return AIAssistant.get_registry()
+
+
+def get_assistant_cls(assistant_id: str) -> type[AIAssistant]:
+    """Get the AIAssistant class for the given assistant ID."""
+    return AIAssistant.get_registry()[assistant_id]
