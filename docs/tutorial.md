@@ -243,6 +243,31 @@ urlpatterns = [
 The built-in API supports retrieval of Assistants info, as well as CRUD for Threads and Messages.
 It has a OpenAPI schema that you can explore at `ai-assistant/docs/`.
 
+
+#### Configuring the API
+
+The built-in API is implemented using [Django Ninja](https://django-ninja.dev/reference/api/). By default, it is initialized with the following setting:
+
+```python title="myproject/settings.py"
+AI_ASSISTANT_INIT_API_FN = "django_ai_assistant.api.views.init_api"
+```
+
+You can override this setting in your Django project's `settings.py` to customize the API, such as using a different authentication method or modifying other configurations.
+
+The method signature for `AI_ASSISTANT_INIT_API_FN` is as follows:
+
+```python
+from ninja import NinjaAPI
+
+
+def init_api():
+    return NinjaAPI(
+        ...
+    )
+```
+
+By providing your own implementation of init_api, you can tailor the API setup to better fit your project's requirements.
+
 ### Configuring permissions
 
 The API uses the helpers from the `django_ai_assistant.use_cases` module, which have permission checks
