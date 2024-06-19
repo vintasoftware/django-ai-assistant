@@ -93,12 +93,7 @@ function ChatMessageList({
   deleteMessage,
 }: {
   messages: ThreadMessagesSchemaOut[];
-  deleteMessage: ({
-    threadId,
-    messageId,
-  }: {
-    messageId: string;
-  }) => Promise<void>;
+  deleteMessage: ({ messageId }: { messageId: string }) => Promise<void>;
 }) {
   if (messages.length === 0) {
     return <Text c="dimmed">No messages.</Text>;
