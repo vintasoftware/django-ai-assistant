@@ -46,6 +46,28 @@ describe("useMessageList", () => {
   });
 
   describe("fetchMessages", () => {
+    it("should not fetch messages if threadId is null", async () => {
+      const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+
+      const { result } = renderHook(() => useMessageList({ threadId: null }));
+
+      expect(result.current.messages).toBeNull();
+      expect(result.current.loadingFetchMessages).toBe(false);
+
+      await act(async () => {
+        expect(await result.current.fetchMessages()).toBeNull();
+      });
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        "threadId is null or undefined. Ignoring fetch operation."
+      );
+
+      expect(result.current.messages).toBeNull();
+      expect(result.current.loadingFetchMessages).toBe(false);
+
+      warnSpy.mockRestore();
+    });
+
     it("should fetch messages and update state correctly", async () => {
       (djangoAiAssistantListThreadMessages as jest.Mock).mockResolvedValue(
         mockMessages
@@ -86,6 +108,33 @@ describe("useMessageList", () => {
   });
 
   describe("createMessage", () => {
+    it("should not create message if threadId is null", async () => {
+      const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+
+      const { result } = renderHook(() => useMessageList({ threadId: null }));
+
+      expect(result.current.messages).toBeNull();
+      expect(result.current.loadingCreateMessage).toBe(false);
+
+      await act(async () => {
+        expect(
+          await result.current.createMessage({
+            assistantId: "1",
+            messageTextValue: "Test message",
+          })
+        ).toBeUndefined();
+      });
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        "threadId is null or undefined. Ignoring create operation."
+      );
+
+      expect(result.current.messages).toBeNull();
+      expect(result.current.loadingCreateMessage).toBe(false);
+
+      warnSpy.mockRestore();
+    });
+
     it("should create message and update state correctly", async () => {
       const mockNewMessages = [
         {
@@ -97,12 +146,13 @@ describe("useMessageList", () => {
           content: "The current temperature in Recife is 30°C.",
         },
       ];
-      (
-        djangoAiAssistantCreateThreadMessage as jest.Mock
-      ).mockResolvedValue(null);
-      (djangoAiAssistantListThreadMessages as jest.Mock).mockResolvedValue(
-        [...mockMessages, ...mockNewMessages]
+      (djangoAiAssistantCreateThreadMessage as jest.Mock).mockResolvedValue(
+        null
       );
+      (djangoAiAssistantListThreadMessages as jest.Mock).mockResolvedValue([
+        ...mockMessages,
+        ...mockNewMessages,
+      ]);
 
       const { result } = renderHook(() => useMessageList({ threadId: "1" }));
 
@@ -126,9 +176,9 @@ describe("useMessageList", () => {
     });
 
     it("should set loading to false if create fails", async () => {
-      (
-        djangoAiAssistantCreateThreadMessage as jest.Mock
-      ).mockRejectedValue(new Error("Failed to create"));
+      (djangoAiAssistantCreateThreadMessage as jest.Mock).mockRejectedValue(
+        new Error("Failed to create")
+      );
 
       const { result } = renderHook(() => useMessageList({ threadId: "1" }));
 
@@ -150,6 +200,32 @@ describe("useMessageList", () => {
   });
 
   describe("deleteMessage", () => {
+    it("should not delete message if threadId is null", async () => {
+      const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+
+      const { result } = renderHook(() => useMessageList({ threadId: null }));
+
+      expect(result.current.messages).toBeNull();
+      expect(result.current.loadingCreateMessage).toBe(false);
+
+      await act(async () => {
+        expect(
+          await result.current.deleteMessage({
+            messageId: mockMessages[0].id,
+          })
+        ).toBeUndefined();
+      });
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        "threadId is null or undefined. Ignoring delete operation."
+      );
+
+      expect(result.current.messages).toBeNull();
+      expect(result.current.loadingDeleteMessage).toBe(false);
+
+      warnSpy.mockRestore();
+    });
+
     it("should delete a message and update state correctly", async () => {
       const deletedMessageId = mockMessages[0].id;
       (djangoAiAssistantListThreadMessages as jest.Mock).mockResolvedValue(
@@ -180,9 +256,9 @@ describe("useMessageList", () => {
       (djangoAiAssistantListThreadMessages as jest.Mock).mockResolvedValue(
         mockMessages.filter((message) => message.id !== deletedMessageId)
       );
-      (
-        djangoAiAssistantDeleteThreadMessage as jest.Mock
-      ).mockRejectedValue(new Error("Failed to delete"));
+      (djangoAiAssistantDeleteThreadMessage as jest.Mock).mockRejectedValue(
+        new Error("Failed to delete")
+      );
 
       const { result } = renderHook(() => useMessageList({ threadId: "1" }));
 
