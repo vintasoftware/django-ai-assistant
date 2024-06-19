@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Use this manage.py for generate the OpenAPI schema. NOT for examples.
+Use this manage.py to generate the OpenAPI schema. NOT for examples.
 For tests, use pytest directly.
 """
 import os
