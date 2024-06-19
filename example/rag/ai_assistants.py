@@ -2,11 +2,10 @@ from langchain_community.retrievers import TFIDFRetriever
 from langchain_core.retrievers import BaseRetriever
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from django_ai_assistant import AIAssistant, register_assistant
+from django_ai_assistant import AIAssistant
 from rag.models import DjangoDocPage
 
 
-@register_assistant
 class DjangoDocsAssistant(AIAssistant):
     id = "django_docs_assistant"  # noqa: A003
     name = "Django Docs Assistant"

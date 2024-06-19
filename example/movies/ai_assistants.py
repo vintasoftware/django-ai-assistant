@@ -10,7 +10,7 @@ from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_community.utilities import WikipediaAPIWrapper
 from langchain_core.tools import BaseTool
 
-from django_ai_assistant import AIAssistant, method_tool, register_assistant
+from django_ai_assistant import AIAssistant, method_tool
 from movies.models import MovieBacklogItem
 
 
@@ -53,7 +53,6 @@ class IMDBURLFinderTool(AIAssistant):
         return super().run_as_tool(message, **kwargs)
 
 
-@register_assistant
 class MovieRecommendationAIAssistant(AIAssistant):
     id = "movie_recommendation_assistant"  # noqa: A003
     instructions = (
