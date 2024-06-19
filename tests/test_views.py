@@ -59,8 +59,9 @@ def authenticated_client(client):
 # Assistant Views
 
 
-def test_list_assistants_with_results(client):
-    response = client.get(reverse("django_ai_assistant:assistants_list"))
+@pytest.mark.django_db()
+def test_list_assistants_with_results(authenticated_client):
+    response = authenticated_client.get(reverse("django_ai_assistant:assistants_list"))
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == [{"id": "temperature_assistant", "name": "Temperature Assistant"}]
@@ -71,8 +72,9 @@ def test_does_not_list_assistants_if_unauthorized():
     pass
 
 
-def test_get_assistant_that_exists(client):
-    response = client.get(
+@pytest.mark.django_db()
+def test_get_assistant_that_exists(authenticated_client):
+    response = authenticated_client.get(
         reverse(
             "django_ai_assistant:assistant_detail", kwargs={"assistant_id": "temperature_assistant"}
         )
@@ -82,9 +84,10 @@ def test_get_assistant_that_exists(client):
     assert response.json() == {"id": "temperature_assistant", "name": "Temperature Assistant"}
 
 
-def test_get_assistant_that_does_not_exist(client):
+@pytest.mark.django_db()
+def test_get_assistant_that_does_not_exist(authenticated_client):
     with pytest.raises(AIAssistantNotDefinedError):
-        client.get(
+        authenticated_client.get(
             reverse(
                 "django_ai_assistant:assistant_detail", kwargs={"assistant_id": "fake_assistant"}
             )
