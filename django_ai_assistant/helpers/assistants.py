@@ -114,7 +114,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         """Called when a class is subclassed from AIAssistant.
 
         This method is automatically invoked when a new subclass of AIAssistant
-        is created. It allows AIAssistant to perform additional setup or configuration
+        is created. It allows AIAssistant to perform additional setup or configuration.
         for the subclass, such as registering the subclass in a registry.
 
         Args:
@@ -237,7 +237,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
     def get_prompt_template(self) -> ChatPromptTemplate:
         """Get the `ChatPromptTemplate` for the Langchain chain to use.\n
-        The system prompt come from the `get_instructions` method.\n
+        The system prompt comes from the `get_instructions` method.\n
         The template includes placeholders for the instructions, chat `{history}`, user `{input}`,
         and `{agent_scratchpad}`, all which are necessary for the chain to work properly.\n
         The chat history is filled by the chain using the message history from `get_message_history`.\n
@@ -417,7 +417,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
     def as_chain(self, thread_id: int | None) -> Runnable[dict, dict]:
         """Create the Langchain chain for the assistant.\n
-        This chain is a agent that supports chat history, tool calling, and RAG (if `has_rag=True`).\n
+        This chain is an agent that supports chat history, tool calling, and RAG (if `has_rag=True`).\n
         `as_chain` uses many other methods to create the chain.\n
         Prefer to override the other methods to customize the chain for the assistant.
         Only override this method if you need to customize the chain at a lower level.
