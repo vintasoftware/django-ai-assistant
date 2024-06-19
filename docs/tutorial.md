@@ -204,10 +204,10 @@ Also, any extra parameters passed in constructor are stored at `self._init_kwarg
 
 The django-ai-assistant app provides two models `Thread` and `Message` to store and retrieve conversations with AI Assistants.
 LLMs are stateless by design, meaning they don't hold any context between calls. All they know is the current input.
-But by using the `AIAssistant` class, the conversation state is stored in the database as as `Message`s of a `Thread`,
+But by using the `AIAssistant` class, the conversation state is stored in the database as multiple `Message` of a `Thread`,
 and automatically retrieved then passed to the LLM when calling the AI Assistant.
 
-To create of `Thread`s and `Message`s, you can use the helpers from the `django_ai_assistant.use_cases` module. For example:
+To create a `Thread`, you can use a helper from the `django_ai_assistant.use_cases` module. For example:
 
 ```{.python hl_lines="4 8"}
 from django_ai_assistant.use_cases import create_thread, get_thread_messages
