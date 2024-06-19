@@ -229,7 +229,9 @@ class AIAssistant(abc.ABC):  # noqa: F821
         return ChatPromptTemplate.from_messages(
             [
                 ("system", contextualize_q_system_prompt),
+                # TODO: make history key confirgurable?
                 MessagesPlaceholder("history"),
+                # TODO: make input key confirgurable?
                 ("human", "{input}"),
             ]
         )
@@ -320,6 +322,15 @@ class AIAssistant(abc.ABC):  # noqa: F821
     def invoke(self, *args, thread_id: int | None, **kwargs):
         chain = self.as_chain(thread_id)
         return chain.invoke(*args, **kwargs)
+
+    def run(self, message, thread_id: int | None, **kwargs):
+        return self.invoke(
+            {
+                "input": message,
+            },
+            thread_id=thread_id,
+            **kwargs,
+        )["output"]
 
     def run_as_tool(self, message: str, **kwargs):
         chain = self.as_chain(thread_id=None)
