@@ -6,6 +6,7 @@ from django.urls import reverse
 import pytest
 from model_bakery import baker
 
+from django_ai_assistant import package_name, version
 from django_ai_assistant.exceptions import AIAssistantNotDefinedError, AIUserNotAllowedError
 from django_ai_assistant.helpers import use_cases
 from django_ai_assistant.helpers.assistants import AIAssistant, register_assistant
@@ -46,6 +47,18 @@ def authenticated_client(client):
     User.objects.create_user(username="testuser", password="password")
     client.login(username="testuser", password="password")
     return client
+
+
+# OPENAPI JSON View
+
+
+@pytest.mark.django_db()
+def test_generates_json_with_correct_version(authenticated_client):
+    response = authenticated_client.get("/openapi.json")
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json()["info"]["version"] == version
+    assert response.json()["info"]["title"] == package_name
 
 
 # Assistant Views
@@ -131,7 +144,7 @@ def test_gets_specific_thread(authenticated_client):
     )
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json().get("id") == thread.id
+    assert response.json()["id"] == thread.id
 
 
 def test_does_not_list_threads_if_unauthorized():
@@ -151,7 +164,7 @@ def test_create_thread(authenticated_client):
     thread = Thread.objects.first()
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json().get("id") == thread.id
+    assert response.json()["id"] == thread.id
 
 
 def test_cannot_create_thread_if_unauthorized():
