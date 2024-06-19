@@ -157,7 +157,6 @@ WEBPACK_LOADER = {
 
 # django-ai-assistant
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 AI_ASSISTANT_CAN_CREATE_THREAD_FN = "django_ai_assistant.permissions.allow_all"
 AI_ASSISTANT_CAN_VIEW_THREAD_FN = "django_ai_assistant.permissions.owns_thread"
 AI_ASSISTANT_CAN_UPDATE_THREAD_FN = "django_ai_assistant.permissions.owns_thread"
