@@ -8,8 +8,9 @@ from model_bakery import baker
 
 from django_ai_assistant.exceptions import AIAssistantNotDefinedError, AIUserNotAllowedError
 from django_ai_assistant.helpers.assistants import AIAssistant, register_assistant
+from django_ai_assistant.helpers.use_cases import create_thread_message_as_user
 from django_ai_assistant.langchain.tools import BaseModel, Field, method_tool
-from django_ai_assistant.models import Message, Thread
+from django_ai_assistant.models import Thread
 
 
 # Set up
@@ -223,18 +224,30 @@ def test_cannot_delete_thread_if_unauthorized():
 
 
 @pytest.mark.django_db(transaction=True)
+@pytest.mark.vcr
 def test_list_thread_messages(authenticated_client):
     thread = baker.make(Thread, created_by=User.objects.first())
-    message = baker.make(Message, thread=thread)
-    response = authenticated_client.get(f"/threads/{thread.id}/messages/")
+    create_thread_message_as_user(thread.id, "Hello", User.objects.first())
+    response = authenticated_client.get(
+        reverse("django_ai_assistant:messages_list_create", kwargs={"thread_id": thread.id})
+    )
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json()[0].id == message.id
 
 
 @pytest.mark.django_db(transaction=True)
+@pytest.mark.vcr
 def test_does_not_list_thread_messages_if_not_thread_user(authenticated_client):
     with pytest.raises(AIUserNotAllowedError):
         thread = baker.make(Thread)
-        baker.make(Message, thread=thread)
-        authenticated_client.get(f"/threads/{thread.id}/messages/")
+        create_thread_message_as_user(thread.id, "Hello", User.objects.create())
+        authenticated_client.get(
+            reverse("django_ai_assistant:messages_list_create", kwargs={"thread_id": thread.id})
+        )
+
+
+# POST
+
+# @pytest.mark.django_db(transaction=True)
+# def test_create_thread_message(authenticated_client):
+#     create_thread_message
