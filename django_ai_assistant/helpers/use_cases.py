@@ -8,7 +8,7 @@ from django_ai_assistant.exceptions import (
     AIAssistantNotDefinedError,
     AIUserNotAllowedError,
 )
-from django_ai_assistant.helpers import assistants
+from django_ai_assistant.helpers.assistants import AIAssistant
 from django_ai_assistant.langchain.chat_message_histories import DjangoChatMessageHistory
 from django_ai_assistant.models import Message, Thread
 from django_ai_assistant.permissions import (
@@ -20,14 +20,14 @@ from django_ai_assistant.permissions import (
 )
 
 
-def get_assistant_cls(
+def get_cls(
     assistant_id: str,
     user: Any,
     request: HttpRequest | None = None,
 ):
-    if assistant_id not in assistants.get_assistant_cls_registry():
+    if assistant_id not in AIAssistant.get_cls_registry():
         raise AIAssistantNotDefinedError(f"Assistant with id={assistant_id} not found")
-    assistant_cls = assistants.get_assistant_cls(assistant_id)
+    assistant_cls = AIAssistant.get_cls(assistant_id)
     if not can_run_assistant(
         assistant_cls=assistant_cls,
         user=user,
@@ -42,7 +42,7 @@ def get_single_assistant_info(
     user: Any,
     request: HttpRequest | None = None,
 ):
-    assistant_cls = get_assistant_cls(assistant_id, user, request)
+    assistant_cls = get_cls(assistant_id, user, request)
 
     return {
         "id": assistant_id,
@@ -55,8 +55,8 @@ def get_assistants_info(
     request: HttpRequest | None = None,
 ):
     return [
-        get_assistant_cls(assistant_id=assistant_id, user=user, request=request)
-        for assistant_id in assistants.get_assistant_cls_registry().keys()
+        get_cls(assistant_id=assistant_id, user=user, request=request)
+        for assistant_id in AIAssistant.get_cls_registry().keys()
     ]
 
 
@@ -67,7 +67,7 @@ def create_message(
     content: Any,
     request: HttpRequest | None = None,
 ):
-    assistant_cls = get_assistant_cls(assistant_id, user, request)
+    assistant_cls = get_cls(assistant_id, user, request)
 
     if not can_create_message(thread=thread, user=user, request=request):
         raise AIUserNotAllowedError("User is not allowed to create messages in this thread")
