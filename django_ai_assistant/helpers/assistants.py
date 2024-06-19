@@ -113,6 +113,14 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
         self._method_tools = tools
 
+    @classmethod
+    def _get_assistant_cls_registry(cls: type["AIAssistant"]) -> dict[str, type["AIAssistant"]]:
+        registry: dict[str, type["AIAssistant"]] = {}
+        for subclass in cls.__subclasses__():
+            registry[subclass.id] = subclass
+            registry.update(subclass._get_assistant_cls_registry())
+        return registry
+
     def get_name(self):
         return self.name
 
@@ -297,9 +305,5 @@ class AIAssistant(abc.ABC):  # noqa: F821
         )
 
 
-ASSISTANT_CLS_REGISTRY: dict[str, type[AIAssistant]] = {}
-
-
-def register_assistant(cls: type[AIAssistant]):
-    ASSISTANT_CLS_REGISTRY[cls.id] = cls
-    return cls
+def get_assistant_cls_registry() -> dict[str, type[AIAssistant]]:
+    return AIAssistant._get_assistant_cls_registry()

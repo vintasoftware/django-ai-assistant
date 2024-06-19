@@ -3,14 +3,13 @@ from http import HTTPStatus
 import pytest
 
 from django_ai_assistant.exceptions import AIAssistantNotDefinedError
-from django_ai_assistant.helpers.assistants import AIAssistant, register_assistant
+from django_ai_assistant.helpers.assistants import AIAssistant
 from django_ai_assistant.langchain.tools import BaseModel, Field, method_tool
 
 
 # Set up
 
 
-@register_assistant
 class TemperatureAssistant(AIAssistant):
     id = "temperature_assistant"  # noqa: A003
     name = "Temperature Assistant"
