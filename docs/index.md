@@ -13,7 +13,7 @@ do anything a Django view can, such as accessing DBs, checking permissions, send
 downloading and uploading media files, etc.
 
 While users commonly interact with LLMs via conversations, AI Assistants can do a lot with any kind of string input, including JSON.
-You can abstract from your application's end user that a LLM is doing the heavy-lifting behind the scenes!
+Your application's end users won't even realize that a LLM is doing the heavy-lifting behind the scenes!
 Some ideas for innovative AI assistants:
 
 - A movie recommender chatbot that helps users manage their movie backlogs
