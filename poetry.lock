@@ -580,13 +580,13 @@ tests = ["asttokens (>=2.1.0)", "coverage", "coverage-enable-subprocess", "ipyth
 
 [[package]]
 name = "filelock"
-version = "3.15.1"
+version = "3.15.2"
 description = "A platform independent file lock."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "filelock-3.15.1-py3-none-any.whl", hash = "sha256:71b3102950e91dfc1bb4209b64be4dc8854f40e5f534428d8684f953ac847fac"},
-    {file = "filelock-3.15.1.tar.gz", hash = "sha256:58a2549afdf9e02e10720eaa4d4470f56386d7a6f72edd7d0596337af8ed7ad8"},
+    {file = "filelock-3.15.2-py3-none-any.whl", hash = "sha256:82364342ab60e6dabe1f0da72e335565fe1bdd51d261faa5186ce7bc2d68f859"},
+    {file = "filelock-3.15.2.tar.gz", hash = "sha256:aec67423de6b6aab5574028e61f5a00afba4bc6adc633317e78b10df91161e1d"},
 ]
 
 [package.extras]
