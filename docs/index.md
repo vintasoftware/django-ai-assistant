@@ -9,7 +9,7 @@ that would otherwise be too expensive to build and maintain.
 
 The latest LLMs from major AI providers have a "killer feature" called Tool Calling,
 which enables AI models to call provided methods from Django's side, and essentially
-do anything a Django view can, such as accessing DB, checking permissions, sending emails,
+do anything a Django view can, such as accessing DBs, checking permissions, sending emails,
 downloading and uploading media files, etc.
 
 While users commonly interact with LLMs via conversations, AI Assistants can do a lot with any kind of string input, including JSON.
