@@ -236,7 +236,7 @@ def test_cannot_delete_thread_if_unauthorized():
     pass
 
 
-# Threads Messages Views (will need VCR)
+# Threads Messages Views
 
 # GET
 
