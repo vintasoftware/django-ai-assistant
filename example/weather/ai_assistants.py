@@ -3,14 +3,13 @@ from django.utils import timezone
 
 import requests
 
-from django_ai_assistant import AIAssistant, BaseModel, Field, method_tool, register_assistant
+from django_ai_assistant import AIAssistant, BaseModel, Field, method_tool
 
 
 BASE_URL = "https://api.weatherapi.com/v1/"
 TIMEOUT = 10
 
 
-@register_assistant
 class WeatherAIAssistant(AIAssistant):
     id = "weather_assistant"  # noqa: A003
     name = "Weather Assistant"
