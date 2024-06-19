@@ -16,26 +16,30 @@ from django_ai_assistant.api.schemas import (
     ThreadSchema,
     ThreadSchemaIn,
 )
+from django_ai_assistant.conf import app_settings
 from django_ai_assistant.exceptions import AIUserNotAllowedError
 from django_ai_assistant.helpers import use_cases
 from django_ai_assistant.models import Message, Thread
 
 
-class API(NinjaAPI):
-    # Force "operationId" to be like "django_ai_assistant_delete_thread"
-    def get_openapi_operation_id(self, operation: Operation) -> str:
-        name = operation.view_func.__name__
-        return (package_name + "_" + name).replace(".", "_")
+def init_api():
+    class API(NinjaAPI):
+        # Force "operationId" to be like "django_ai_assistant_delete_thread"
+        def get_openapi_operation_id(self, operation: Operation) -> str:
+            name = operation.view_func.__name__
+            return (package_name + "_" + name).replace(".", "_")
+
+    return API(
+        title=package_name,
+        version=version,
+        urls_namespace="django_ai_assistant",
+        # Add auth to all endpoints
+        auth=django_auth,
+        csrf=True,
+    )
 
 
-api = API(
-    title=package_name,
-    version=version,
-    urls_namespace="django_ai_assistant",
-    # Add auth to all endpoints
-    auth=django_auth,
-    csrf=True,
-)
+api = app_settings.call_fn("INIT_API_FN")
 
 
 @api.exception_handler(AIUserNotAllowedError)
