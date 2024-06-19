@@ -21,4 +21,4 @@ Some ideas for innovative AI assistants:
 - Personalized email reminders that consider users' written preferences and the application's recent notifications
 - A real-time audio guide for tourists that recommends attractions given the user's current location
 
-We have an open-source example with some of those applications. But it's best to start with the [Get Started](get-started.md) guide.
+We have an open-source example with some of those applications, but it's best to start with the [Get Started](get-started.md) guide.

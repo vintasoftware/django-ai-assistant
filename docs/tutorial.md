@@ -28,7 +28,7 @@ This is possible by defining "tools" the AI can use. These tools are methods in 
 
 To create an AI Assistant, you need to:
 
-1. Create a `ai_assistants.py` file;
+1. Create an `ai_assistants.py` file;
 2. Define a class that inherits from `AIAssistant` with the decorator `@register_assistant` over it;
 3. Provide an `id`, a `name`, some `instructions` for the LLM (a system prompt), and a `model` name:
 
@@ -46,7 +46,7 @@ class WeatherAIAssistant(AIAssistant):
 ### Defining tools
 
 Useful tools give abilities the LLM doesn't have out-of-the-box,
-such as getting the current date and finding the current weather by calling some API.
+such as getting the current date and finding the current weather by calling an API.
 
 Use the `@method_tool` decorator to define a tool method in the AI Assistant:
 
