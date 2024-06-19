@@ -28,7 +28,7 @@ theme:
         icon: material/brightness-4
         name: Switch to system preference
 
-copyright: <a href="https://www.vinta.com.br">Vinta Software</a>
+copyright: <a href="https://www.vintasoftware.com">Vinta Software</a>
 
 markdown_extensions:
   - admonition
