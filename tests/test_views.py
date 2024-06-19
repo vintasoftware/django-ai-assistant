@@ -7,10 +7,10 @@ import pytest
 from model_bakery import baker
 
 from django_ai_assistant.exceptions import AIAssistantNotDefinedError, AIUserNotAllowedError
+from django_ai_assistant.helpers import use_cases
 from django_ai_assistant.helpers.assistants import AIAssistant, register_assistant
-from django_ai_assistant.helpers.use_cases import create_thread_message_as_user
 from django_ai_assistant.langchain.tools import BaseModel, Field, method_tool
-from django_ai_assistant.models import Thread
+from django_ai_assistant.models import Message, Thread
 
 
 # Set up
@@ -226,23 +226,22 @@ def test_cannot_delete_thread_if_unauthorized():
 
 
 @pytest.mark.django_db(transaction=True)
-@pytest.mark.vcr
 def test_list_thread_messages(authenticated_client):
     thread = baker.make(Thread, created_by=User.objects.first())
-    create_thread_message_as_user(thread.id, "Hello", User.objects.first())
+    use_cases.create_thread_message_as_user(thread.id, "Hello", User.objects.first())
     response = authenticated_client.get(
         reverse("django_ai_assistant:messages_list_create", kwargs={"thread_id": thread.id})
     )
 
     assert response.status_code == HTTPStatus.OK
+    assert len(response.json()) == 1
 
 
 @pytest.mark.django_db(transaction=True)
-@pytest.mark.vcr
 def test_does_not_list_thread_messages_if_not_thread_user(authenticated_client):
     with pytest.raises(AIUserNotAllowedError):
         thread = baker.make(Thread)
-        create_thread_message_as_user(thread.id, "Hello", User.objects.create())
+        use_cases.create_thread_message_as_user(thread.id, "Hello", User.objects.create())
         authenticated_client.get(
             reverse("django_ai_assistant:messages_list_create", kwargs={"thread_id": thread.id})
         )
@@ -250,6 +249,59 @@ def test_does_not_list_thread_messages_if_not_thread_user(authenticated_client):
 
 # POST
 
-# @pytest.mark.django_db(transaction=True)
-# def test_create_thread_message(authenticated_client):
-#     create_thread_message
+
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.vcr
+def test_create_thread_message(authenticated_client):
+    thread = baker.make(Thread, created_by=User.objects.first())
+    response = authenticated_client.post(
+        reverse("django_ai_assistant:messages_list_create", kwargs={"thread_id": thread.id}),
+        data={
+            "content": "Hello, what is the temperature in SF right now?",
+            "assistant_id": "temperature_assistant",
+        },
+        content_type="application/json",
+    )
+
+    assert response.status_code == HTTPStatus.CREATED
+    assert Message.objects.count() == 2
+
+    human_message = Message.objects.filter(message__type="human").first()
+    ai_message = Message.objects.filter(message__type="ai").first()
+
+    assert (
+        human_message.message["data"]["content"]
+        == "Hello, what is the temperature in SF right now?"
+    )
+    assert (
+        ai_message.message["data"]["content"]
+        == "The current temperature in San Francisco, CA is 32 degrees Celsius."
+    )
+
+
+# DELETE
+
+
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.vcr
+def test_delete_thread_message(authenticated_client):
+    thread = baker.make(Thread, created_by=User.objects.first())
+    authenticated_client.post(
+        reverse("django_ai_assistant:messages_list_create", kwargs={"thread_id": thread.id}),
+        data={
+            "content": "Hello, what is the temperature in SF right now?",
+            "assistant_id": "temperature_assistant",
+        },
+        content_type="application/json",
+    )
+    message = Message.objects.first()
+
+    response = authenticated_client.delete(
+        reverse(
+            "django_ai_assistant:messages_delete",
+            kwargs={"thread_id": thread.id, "message_id": message.id},
+        )
+    )
+
+    assert response.status_code == HTTPStatus.NO_CONTENT
+    assert not Message.objects.filter(id=message.id).exists()
