@@ -137,11 +137,17 @@ class AIAssistant(abc.ABC):  # noqa: F821
         self._method_tools = tools
 
     @classmethod
-    def get_registry(cls):
+    def get_cls_registry(cls) -> dict[str, type["AIAssistant"]]:
+        """Get the registry of AIAssistant classes."""
         return cls._registry
 
     @classmethod
-    def clear_registry(cls):
+    def get_cls(cls, assistant_id: str) -> type["AIAssistant"]:
+        """Get the AIAssistant class for the given assistant ID."""
+        return cls.get_cls_registry()[assistant_id]
+
+    @classmethod
+    def clear_cls_registry(cls: type["AIAssistant"]) -> None:
         cls._registry.clear()
 
     def get_name(self):
@@ -326,13 +332,3 @@ class AIAssistant(abc.ABC):  # noqa: F821
             name=self.id,
             description=description,
         )
-
-
-def get_assistant_cls_registry() -> dict[str, type[AIAssistant]]:
-    """Get the registry of AIAssistant classes."""
-    return AIAssistant.get_registry()
-
-
-def get_assistant_cls(assistant_id: str) -> type[AIAssistant]:
-    """Get the AIAssistant class for the given assistant ID."""
-    return AIAssistant.get_registry()[assistant_id]

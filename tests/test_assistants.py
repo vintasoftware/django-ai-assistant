@@ -5,7 +5,7 @@ from langchain_core.documents import Document
 from langchain_core.messages import AIMessage, HumanMessage, messages_to_dict
 from langchain_core.retrievers import BaseRetriever
 
-from django_ai_assistant.helpers.assistants import AIAssistant, get_assistant_cls
+from django_ai_assistant.helpers.assistants import AIAssistant
 from django_ai_assistant.langchain.tools import BaseModel, Field, method_tool
 from django_ai_assistant.models import Thread
 
@@ -13,7 +13,7 @@ from django_ai_assistant.models import Thread
 @pytest.fixture(scope="module", autouse=True)
 def setup_assistants():
     # Clear the registry before the tests in the module
-    AIAssistant.clear_registry()
+    AIAssistant.clear_cls_registry()
 
     # Define the assistant class inside the fixture to ensure registration
     class TemperatureAssistant(AIAssistant):
@@ -70,7 +70,7 @@ def setup_assistants():
 
     yield
     # Clear the registry after the tests in the module
-    AIAssistant.clear_registry()
+    AIAssistant.clear_cls_registry()
 
 
 @pytest.mark.django_db(transaction=True)
@@ -78,7 +78,7 @@ def setup_assistants():
 def test_AIAssistant_invoke():
     thread = Thread.objects.create(name="Recife Temperature Chat")
 
-    assistant = get_assistant_cls("temperature_assistant")()
+    assistant = AIAssistant.get_cls("temperature_assistant")()
     response_0 = assistant.invoke(
         {"input": "What is the temperature today in Recife?"},
         thread_id=thread.id,
@@ -145,7 +145,7 @@ class SequentialRetriever(BaseRetriever):
 def test_AIAssistant_with_rag_invoke():
     thread = Thread.objects.create(name="Tour Guide Chat")
 
-    assistant = get_assistant_cls("tour_guide_assistant")()
+    assistant = AIAssistant.get_cls("tour_guide_assistant")()
     response_0 = assistant.invoke(
         {"input": "I'm at Central Park W & 79st, New York, NY 10024, United States."},
         thread_id=thread.id,

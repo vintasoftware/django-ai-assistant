@@ -18,7 +18,7 @@ from django_ai_assistant.models import Thread
 @pytest.fixture(scope="module", autouse=True)
 def setup_assistants():
     # Clear the registry before the tests in the module
-    AIAssistant.clear_registry()
+    AIAssistant.clear_cls_registry()
 
     # Define the assistant class inside the fixture to ensure registration
     class TemperatureAssistant(AIAssistant):
@@ -46,7 +46,7 @@ def setup_assistants():
 
     yield
     # Clear the registry after the tests in the module
-    AIAssistant.clear_registry()
+    AIAssistant.clear_cls_registry()
 
 
 @pytest.fixture
