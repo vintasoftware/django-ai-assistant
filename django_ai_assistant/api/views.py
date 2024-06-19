@@ -1,5 +1,6 @@
 from typing import List
 
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 
 from langchain_core.messages import message_to_dict
@@ -71,7 +72,12 @@ def create_thread(request, payload: ThreadSchemaIn):
 
 @api.get("threads/{thread_id}/", response=ThreadSchema, url_name="thread_detail_update_delete")
 def get_thread(request, thread_id: str):
-    thread = use_cases.get_single_thread(thread_id=thread_id, user=request.user, request=request)
+    try:
+        thread = use_cases.get_single_thread(
+            thread_id=thread_id, user=request.user, request=request
+        )
+    except Thread.DoesNotExist:
+        raise Http404("No %s matches the given query." % Thread._meta.object_name) from None
     return thread
 
 
