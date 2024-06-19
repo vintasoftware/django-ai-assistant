@@ -1,7 +1,7 @@
-import json
 from http import HTTPStatus
 
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 import pytest
 from model_bakery import baker
@@ -19,7 +19,6 @@ from django_ai_assistant.models import Thread
 class TemperatureAssistant(AIAssistant):
     id = "temperature_assistant"  # noqa: A003
     name = "Temperature Assistant"
-    description = "A temperature assistant that provides temperature information."
     instructions = "You are a temperature bot."
     model = "gpt-4o"
 
@@ -53,7 +52,7 @@ def authenticated_client(client):
 
 @pytest.mark.django_db()
 def test_list_assistants_with_results(authenticated_client):
-    response = authenticated_client.get("/assistants/")
+    response = authenticated_client.get(reverse("django_ai_assistant:assistants_list"))
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == [{"id": "temperature_assistant", "name": "Temperature Assistant"}]
@@ -66,7 +65,11 @@ def test_does_not_list_assistants_if_unauthorized():
 
 @pytest.mark.django_db()
 def test_get_assistant_that_exists(authenticated_client):
-    response = authenticated_client.get("/assistants/temperature_assistant/")
+    response = authenticated_client.get(
+        reverse(
+            "django_ai_assistant:assistant_detail", kwargs={"assistant_id": "temperature_assistant"}
+        )
+    )
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {"id": "temperature_assistant", "name": "Temperature Assistant"}
@@ -75,7 +78,11 @@ def test_get_assistant_that_exists(authenticated_client):
 @pytest.mark.django_db()
 def test_get_assistant_that_does_not_exist(authenticated_client):
     with pytest.raises(AIAssistantNotDefinedError):
-        authenticated_client.get("/assistants/fake_assistant/")
+        authenticated_client.get(
+            reverse(
+                "django_ai_assistant:assistant_detail", kwargs={"assistant_id": "fake_assistant"}
+            )
+        )
 
 
 def test_does_not_return_assistant_if_unauthorized():
@@ -90,7 +97,7 @@ def test_does_not_return_assistant_if_unauthorized():
 
 @pytest.mark.django_db(transaction=True)
 def test_list_threads_without_results(authenticated_client):
-    response = authenticated_client.get("/threads/")
+    response = authenticated_client.get(reverse("django_ai_assistant:threads_list_create"))
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == []
@@ -99,20 +106,31 @@ def test_list_threads_without_results(authenticated_client):
 @pytest.mark.django_db(transaction=True)
 def test_list_threads_with_results(authenticated_client):
     user = User.objects.first()
-    thread = baker.make(Thread, created_by=user)
-    response = authenticated_client.get("/threads/")
+    baker.make(Thread, created_by=user, _quantity=2)
+    response = authenticated_client.get(reverse("django_ai_assistant:threads_list_create"))
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json()[0].get("id") == thread.id
+    assert len(response.json()) == 2
 
 
 @pytest.mark.django_db(transaction=True)
 def test_does_not_list_other_users_threads(authenticated_client):
     baker.make(Thread)
-    response = authenticated_client.get("/threads/")
+    response = authenticated_client.get(reverse("django_ai_assistant:threads_list_create"))
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == []
+
+
+@pytest.mark.django_db(transaction=True)
+def test_gets_specific_thread(authenticated_client):
+    thread = baker.make(Thread, created_by=User.objects.first())
+    response = authenticated_client.get(
+        reverse("django_ai_assistant:thread_detail_update_delete", kwargs={"thread_id": thread.id})
+    )
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json().get("id") == thread.id
 
 
 def test_does_not_list_threads_if_unauthorized():
@@ -126,7 +144,7 @@ def test_does_not_list_threads_if_unauthorized():
 @pytest.mark.django_db(transaction=True)
 def test_create_thread(authenticated_client):
     response = authenticated_client.post(
-        "/threads/", data=json.dumps({}), content_type="application/json"
+        reverse("django_ai_assistant:threads_list_create"), data={}, content_type="application/json"
     )
 
     thread = Thread.objects.first()
@@ -147,24 +165,26 @@ def test_cannot_create_thread_if_unauthorized():
 def test_update_thread(authenticated_client):
     thread = baker.make(Thread, created_by=User.objects.first())
     response = authenticated_client.patch(
-        f"/threads/{thread.id}/",
-        data=json.dumps({"name": "New name"}),
+        reverse("django_ai_assistant:thread_detail_update_delete", kwargs={"thread_id": thread.id}),
+        data={"name": "New name"},
         content_type="application/json",
     )
 
     assert response.status_code == HTTPStatus.OK
+    assert Thread.objects.filter(id=thread.id).first().name == "New name"
 
 
 @pytest.mark.django_db(transaction=True)
 def test_cannot_update_other_users_threads(authenticated_client):
     thread = baker.make(Thread)
     response = authenticated_client.patch(
-        f"/threads/{thread.id}/",
-        data=json.dumps({"name": "New name"}),
+        reverse("django_ai_assistant:thread_detail_update_delete", kwargs={"thread_id": thread.id}),
+        data={"name": "New name"},
         content_type="application/json",
     )
 
     assert response.status_code == HTTPStatus.FORBIDDEN
+    assert Thread.objects.filter(id=thread.id).first().name != "New name"
 
 
 def test_cannot_update_thread_if_unauthorized():
@@ -178,17 +198,23 @@ def test_cannot_update_thread_if_unauthorized():
 @pytest.mark.django_db(transaction=True)
 def test_delete_thread(authenticated_client):
     thread = baker.make(Thread, created_by=User.objects.first())
-    response = authenticated_client.delete(f"/threads/{thread.id}/")
+    response = authenticated_client.delete(
+        reverse("django_ai_assistant:thread_detail_update_delete", kwargs={"thread_id": thread.id})
+    )
 
     assert response.status_code == HTTPStatus.NO_CONTENT
+    assert not Thread.objects.filter(id=thread.id).exists()
 
 
 @pytest.mark.django_db(transaction=True)
 def test_cannot_delete_other_users_threads(authenticated_client):
     thread = baker.make(Thread)
-    response = authenticated_client.delete(f"/threads/{thread.id}/")
+    response = authenticated_client.delete(
+        reverse("django_ai_assistant:thread_detail_update_delete", kwargs={"thread_id": thread.id})
+    )
 
     assert response.status_code == HTTPStatus.FORBIDDEN
+    assert Thread.objects.filter(id=thread.id).exists()
 
 
 def test_cannot_delete_thread_if_unauthorized():
