@@ -31,6 +31,7 @@ mkdocs-material = "^9.5.27"
 pymdown-extensions = "^10.8.1"
 markdown = "^3.6"
 pygments = "^2.18.0"
+model-bakery = "^1.18.1"
 
 [tool.poetry.group.example.dependencies]
 django-webpack-loader = "^3.1.0"
@@ -73,7 +74,7 @@ select = [
     # flake8-no-pep420
     "INP",
     # Ruff-specific rules
-    "RUF"
+    "RUF",
 ]
 exclude = [
     ".bzr",
@@ -101,33 +102,33 @@ exclude = [
     "*/migrations/*",
 ]
 ignore = [
-  # Disable eradicate (commented code removal)
-  "ERA001",
-  # Disable Conflicting lint rules,
-  # see https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
-  "W191",
-  "E501",
-  "E111",
-  "E117",
-  "D206",
-  "D300",
-  "Q000",
-  "Q001",
-  "Q002",
-  "Q003",
-  "COM812",
-  "COM819",
-  "ISC001",
-  "ISC002",
-  # Allow `except Exception`:
-  "BLE001",
-  # Disable unused `noqa` directive
-  "RUF100",
-  # Disable pyupgrade UP rules that conflict with django-ninja
-  "UP006",
-  "UP035",
-  "UP037",
-  "UP040",
+    # Disable eradicate (commented code removal)
+    "ERA001",
+    # Disable Conflicting lint rules,
+    # see https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+    "W191",
+    "E501",
+    "E111",
+    "E117",
+    "D206",
+    "D300",
+    "Q000",
+    "Q001",
+    "Q002",
+    "Q003",
+    "COM812",
+    "COM819",
+    "ISC001",
+    "ISC002",
+    # Allow `except Exception`:
+    "BLE001",
+    # Disable unused `noqa` directive
+    "RUF100",
+    # Disable pyupgrade UP rules that conflict with django-ninja
+    "UP006",
+    "UP035",
+    "UP037",
+    "UP040",
 ]
 line-length = 100
 indent-width = 4
@@ -139,7 +140,14 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 ignore-overlong-task-comments = true
 
 [tool.ruff.lint.isort]
-section-order = ["future", "standard-library", "django", "third-party", "first-party", "local-folder"]
+section-order = [
+    "future",
+    "standard-library",
+    "django",
+    "third-party",
+    "first-party",
+    "local-folder",
+]
 lines-after-imports = 2
 
 [tool.ruff.lint.isort.sections]
@@ -159,7 +167,15 @@ lines-after-imports = 2
 [tool.coverage.run]
 branch = true
 source = ["backend"]
-omit = ["**/venv/*", "**/env/*", "**/virtualenvs/*", "**/node_modules/*", "**/migrations/*", "**/settings/*", "**/tests/*"]
+omit = [
+    "**/venv/*",
+    "**/env/*",
+    "**/virtualenvs/*",
+    "**/node_modules/*",
+    "**/migrations/*",
+    "**/settings/*",
+    "**/tests/*",
+]
 
 [tool.pyright]
 pythonVersion = "3.12"

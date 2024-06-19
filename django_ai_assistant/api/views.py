@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from langchain_core.messages import message_to_dict
 from ninja import NinjaAPI
 from ninja.operation import Operation
+from ninja.security import django_auth
 
 from django_ai_assistant import package_name, version
 from django_ai_assistant.api.schemas import (
@@ -27,7 +28,14 @@ class API(NinjaAPI):
         return (package_name + "_" + name).replace(".", "_")
 
 
-api = API(title=package_name, version=version, urls_namespace="django_ai_assistant")
+api = API(
+    title=package_name,
+    version=version,
+    urls_namespace="django_ai_assistant",
+    # Add auth to all endpoints
+    auth=django_auth,
+    csrf=True,
+)
 
 
 @api.exception_handler(AIUserNotAllowedError)
