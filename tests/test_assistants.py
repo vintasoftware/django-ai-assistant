@@ -10,28 +10,67 @@ from django_ai_assistant.langchain.tools import BaseModel, Field, method_tool
 from django_ai_assistant.models import Thread
 
 
-class TemperatureAssistant(AIAssistant):
-    id = "temperature_assistant"  # noqa: A003
-    name = "Temperature Assistant"
-    instructions = "You are a temperature bot."
-    model = "gpt-4o"
+@pytest.fixture(scope="module", autouse=True)
+def setup_assistants():
+    # Clear the registry before the tests in the module
+    AIAssistant.clear_cls_registry()
 
-    def get_instructions(self):
-        return self.instructions + " Today is 2024-06-09."
+    # Define the assistant class inside the fixture to ensure registration
+    class TemperatureAssistant(AIAssistant):
+        id = "temperature_assistant"  # noqa: A003
+        name = "Temperature Assistant"
+        instructions = "You are a temperature bot."
+        model = "gpt-4o"
 
-    @method_tool
-    def fetch_current_temperature(self, location: str) -> str:
-        """Fetch the current temperature data for a location"""
-        return "32 degrees Celsius"
+        def get_instructions(self):
+            return self.instructions + " Today is 2024-06-09."
 
-    class FetchForecastTemperatureInput(BaseModel):
-        location: str
-        dt_str: str = Field(description="Date in the format 'YYYY-MM-DD'")
+        @method_tool
+        def fetch_current_temperature(self, location: str) -> str:
+            """Fetch the current temperature data for a location"""
+            return "32 degrees Celsius"
 
-    @method_tool(args_schema=FetchForecastTemperatureInput)
-    def fetch_forecast_temperature(self, location: str, dt_str: str) -> str:
-        """Fetch the forecast temperature data for a location"""
-        return "35 degrees Celsius"
+        class FetchForecastTemperatureInput(BaseModel):
+            location: str
+            dt_str: str = Field(description="Date in the format 'YYYY-MM-DD'")
+
+        @method_tool(args_schema=FetchForecastTemperatureInput)
+        def fetch_forecast_temperature(self, location: str, dt_str: str) -> str:
+            """Fetch the forecast temperature data for a location"""
+            return "35 degrees Celsius"
+
+    class TourGuideAssistant(AIAssistant):
+        id = "tour_guide_assistant"  # noqa: A003
+        name = "Tour Guide Assistant"
+        instructions = (
+            "You are a tour guide assistant offers information about nearby attractions. "
+            "The user is at a location and wants to know what to learn about nearby attractions. "
+            "Use the following pieces of context to suggest nearby attractions to the user. "
+            "If there are no interesting attractions nearby, "
+            "tell the user there's nothing to see where they're at. "
+            "Use three sentences maximum and keep your suggestions concise."
+            "\n\n"
+            "---START OF CONTEXT---\n"
+            "{context}"
+            "---END OF CONTEXT---\n"
+        )
+        model = "gpt-4o"
+        has_rag = True
+
+        def get_retriever(self) -> BaseRetriever:
+            return SequentialRetriever(
+                sequential_responses=[
+                    [
+                        Document(page_content="Central Park"),
+                        Document(page_content="American Museum of Natural History"),
+                    ],
+                    [Document(page_content="Museum of Modern Art")],
+                ]
+            )
+
+    yield
+    # Clear the registry after the tests in the module
+    AIAssistant.clear_cls_registry()
 
 
 @pytest.mark.django_db(transaction=True)
@@ -39,7 +78,7 @@ class TemperatureAssistant(AIAssistant):
 def test_AIAssistant_invoke():
     thread = Thread.objects.create(name="Recife Temperature Chat")
 
-    assistant = TemperatureAssistant()
+    assistant = AIAssistant.get_cls("temperature_assistant")()
     response_0 = assistant.invoke(
         {"input": "What is the temperature today in Recife?"},
         thread_id=thread.id,
@@ -101,42 +140,12 @@ class SequentialRetriever(BaseRetriever):
         return self._get_relevant_documents(query)
 
 
-class TourGuideAssistant(AIAssistant):
-    id = "tour_guide_assistant"  # noqa: A003
-    name = "Tour Guide Assistant"
-    instructions = (
-        "You are a tour guide assistant offers information about nearby attractions. "
-        "The user is at a location and wants to know what to learn about nearby attractions. "
-        "Use the following pieces of context to suggest nearby attractions to the user. "
-        "If there are no interesting attractions nearby, "
-        "tell the user there's nothing to see where they're at. "
-        "Use three sentences maximum and keep your suggestions concise."
-        "\n\n"
-        "---START OF CONTEXT---\n"
-        "{context}"
-        "---END OF CONTEXT---\n"
-    )
-    model = "gpt-4o"
-    has_rag = True
-
-    def get_retriever(self) -> BaseRetriever:
-        return SequentialRetriever(
-            sequential_responses=[
-                [
-                    Document(page_content="Central Park"),
-                    Document(page_content="American Museum of Natural History"),
-                ],
-                [Document(page_content="Museum of Modern Art")],
-            ]
-        )
-
-
 @pytest.mark.django_db(transaction=True)
 @pytest.mark.vcr
 def test_AIAssistant_with_rag_invoke():
     thread = Thread.objects.create(name="Tour Guide Chat")
 
-    assistant = TourGuideAssistant()
+    assistant = AIAssistant.get_cls("tour_guide_assistant")()
     response_0 = assistant.invoke(
         {"input": "I'm at Central Park W & 79st, New York, NY 10024, United States."},
         thread_id=thread.id,
