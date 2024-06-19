@@ -58,21 +58,6 @@ class AIAssistant(abc.ABC):  # noqa: F821
     _registry: ClassVar[dict[str, type["AIAssistant"]]] = {}
 
     def __init__(self, *, user=None, request=None, view=None, **kwargs):
-        if not hasattr(self, "id"):
-            raise AIAssistantMisconfiguredError(
-                f"Assistant id is not defined at {self.__class__.__name__}"
-            )
-        if self.id is None:
-            raise AIAssistantMisconfiguredError(
-                f"Assistant id is None at {self.__class__.__name__}"
-            )
-        if not re.match(r"^[a-zA-Z0-9_-]+$", self.id):
-            # id should match the pattern '^[a-zA-Z0-9_-]+$ to support as_tool in OpenAI
-            raise AIAssistantMisconfiguredError(
-                f"Assistant id '{self.id}' does not match the pattern '^[a-zA-Z0-9_-]+$'"
-                f"at {self.__class__.__name__}"
-            )
-
         self._user = user
         self._request = request
         self._view = view
@@ -95,13 +80,19 @@ class AIAssistant(abc.ABC):  # noqa: F821
             **kwargs: Additional keyword arguments passed during subclass creation.
         """
         super().__init_subclass__(**kwargs)
-        if hasattr(cls, "id") and cls.id is not None:
-            if not re.match(r"^[a-zA-Z0-9_-]+$", cls.id):
-                raise AIAssistantMisconfiguredError(
-                    f"Assistant id '{cls.id}' does not match the pattern '^[a-zA-Z0-9_-]+$'"
-                    f"at {cls.__name__}"
-                )
-            cls._registry[cls.id] = cls
+
+        if not hasattr(cls, "id"):
+            raise AIAssistantMisconfiguredError(f"Assistant id is not defined at {cls.__name__}")
+        if cls.id is None:
+            raise AIAssistantMisconfiguredError(f"Assistant id is None at {cls.__name__}")
+        if not re.match(r"^[a-zA-Z0-9_-]+$", cls.id):
+            # id should match the pattern '^[a-zA-Z0-9_-]+$ to support as_tool in OpenAI
+            raise AIAssistantMisconfiguredError(
+                f"Assistant id '{cls.id}' does not match the pattern '^[a-zA-Z0-9_-]+$'"
+                f"at {cls.__name__}"
+            )
+
+        cls._registry[cls.id] = cls
 
     def _set_method_tools(self):
         # Find tool methods (decorated with `@method_tool` from django_ai_assistant/tools.py):
