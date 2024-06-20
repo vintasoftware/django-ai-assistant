@@ -1,12 +1,12 @@
 # Django AI Assistant
 
-Combine the power of Large Language Models with Django's productivity.
+Combine the power of Large Language Models with Django's productivity to build intelligent applications.
 
 Regardless of the feasibility of AGI, AI assistants are a new paradigm for computation.
 AI agents and assistants allow devs to easily build applications that make smart decisions.
 
 The latest LLMs from major AI providers have a "killer feature" called Tool Calling,
-which enables AI models to call provided methods from Django's side, and essentially
+which enables AI models to call methods from Django's side, and essentially
 do anything a Django view can, such as DB queries, file management, external API calls, etc.
 
 While users commonly interact with LLMs via conversations, AI Assistants can do a lot with any kind of string input, including JSON.

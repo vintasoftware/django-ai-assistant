@@ -3,62 +3,23 @@
 
 # django-ai-assistant
 
-Django app to integrate with [OpenAI Assistants API](https://platform.openai.com/docs/assistants/overview). Supports [Function calling](https://platform.openai.com/docs/assistants/tools/function-calling).
+Combine the power of LLMs with Django's productivity to build intelligent applications.
+Let AI Assistants call methods from Django's side and do anything your users need!
 
-⚠️ Under heavy development. Not launched yet!
+Use AI Tool Calling and RAG with Django to easily build state of the art AI Assistants.
 
-## Dev Setup
+⚠️ Under heavy development. Not publicly launched yet!
 
-### Clone the repo
-
-`git clone git@github.com:vintasoftware/django-ai-assistant.git`
-
-### Set up a virtualenv, optionally set up nvm, and activate your environment(s)
-
-You can use [pyenv](https://github.com/pyenv/pyenv), [pipenv](https://github.com/pypa/pipenv/blob/main/docs/installation.md), vanilla venvs or the tool of your choice.
-
-[NVM](https://github.com/nvm-sh/nvm)
-
-### Install dependencies
-
-#### Backend
-
-`poetry install`
-
-#### Frontend
-
-```bash
-cd frontend
-npm install
-```
-
-### Install pre-commit hooks
-
-`pre-commit install`
-
-### Log in to Django Admin
-
-Go to /admin and log in with your superuser account.
-
-## Developing with the example project
-
-Run the frontend project in build:watch mode:
-
-```bash
-cd frontend
-npm run build:watch
-```
-
-Then follow the instructions in the [example README](example/README.md).
+Please check the documentation: [https://vintasoftware.github.io/django-ai-assistant/](https://vintasoftware.github.io/django-ai-assistant/)
 
 ## Contributing
 
-If you wish to contribute to this project, please first discuss the change you wish to make via an [issue](https://github.com/vintasoftware/django-react-boilerplate/issues).
+You're welcome to contribute with Django AI Assistant! Please feel free to tackle existing [issues](https://github.com/vintasoftware/django-ai-assistant/issues). If you have a new idea, please open a new issue to discuss it.
 
-Check our [contributing guide](https://github.com/vintasoftware/django-react-boilerplate/blob/main/CONTRIBUTING.md) to learn more about our development process and how you can test your changes to the boilerplate.
+Check our [contributing guide](CONTRIBUTING.md) to learn more about how to develop and test the project locally, before opening a pull request.
 
 ## Commercial Support
 
-[![alt text](https://avatars2.githubusercontent.com/u/5529080?s=80&v=4 "Vinta Logo")](https://www.vinta.com.br/)
+[![alt text](https://avatars2.githubusercontent.com/u/5529080?s=80&v=4 "Vinta Logo")](https://www.vintasoftware.com/)
 
-This project is maintained by [Vinta Software](https://www.vinta.com.br/) and is used in products of Vinta's clients. We are always looking for exciting work! If you need any commercial support, feel free to get in touch: contact@vinta.com.br
+This is an open-source project maintained by [Vinta Software](https://www.vinta.com.br/) and is used in products of Vinta's clients. We are always looking for exciting work! If you need any commercial support, feel free to get in touch: contact@vinta.com.br
