@@ -19,70 +19,26 @@ You can use [pyenv](https://github.com/pyenv/pyenv), [pipenv](https://github.com
 
 [NVM](https://github.com/nvm-sh/nvm)
 
-### Install vite
-
-`npm install -g vite` or install locally if you prefer
-
-### Create a .env file at the root of the project
-
-`cp .env.example .env`
-
-To gather the API keys for these tools, head to the following links:
-- [OpenAI](https://platform.openai.com/api-keys)
-- [Weather](https://www.weatherapi.com/)
-- [Tavily](https://app.tavily.com/home)
-- [Firecrawl](https://www.firecrawl.dev/)
-
-### Build the frontend
-
-`cd frontend`
-
-`vite build`
-
-### Create a .env file at the example folder
-
-`cd example`
-
-`cp .env.example .env`
-
 ### Install dependencies
 
 #### Backend
 
-`cd example`
-
 `poetry install`
-
-Install pre-commit hooks:
-
-`pre-commit install`
 
 #### Frontend
 
-`cd example`
+```bash
+cd frontend
+npm install
+```
 
-`npm install`
+### Install pre-commit hooks
 
-### Run the project
-
-From the example folder:
-
-#### Frontend 
-
-`npm run start`
-
-#### Backend
-
-`python manage.py migrate`
-
-`python manage.py createsuperuser`
-
-`python manage.py runserver`
+`pre-commit install`
 
 ### Log in to Django Admin
 
 Go to /admin and log in with your superuser account.
-
 
 ## Contributing
 
