@@ -63,29 +63,29 @@ def use_fake_permissions(settings):
 # Assistant tests
 
 
-def test_get_cls_returns_assistant_cls():
+def test_get_assistant_cls_returns_assistant_cls():
     assistant_id = "temperature_assistant"
     user = User()
 
-    assistant_cls = use_cases.get_cls(assistant_id, user)
+    assistant_cls = use_cases.get_assistant_cls(assistant_id, user)
 
     assert assistant_cls.id == assistant_id
 
 
-def test_get_cls_raises_error_when_assistant_not_defined():
+def test_get_assistant_cls_raises_error_when_assistant_not_defined():
     assistant_id = "not_defined"
     user = User()
 
     with pytest.raises(AIAssistantNotDefinedError):
-        use_cases.get_cls(assistant_id, user)
+        use_cases.get_assistant_cls(assistant_id, user)
 
 
-def test_get_cls_raises_error_when_user_not_allowed(use_fake_permissions):
+def test_get_assistant_cls_raises_error_when_user_not_allowed(use_fake_permissions):
     assistant_id = "temperature_assistant"
     user = User()
 
     with pytest.raises(AIUserNotAllowedError):
-        use_cases.get_cls(assistant_id, user)
+        use_cases.get_assistant_cls(assistant_id, user)
 
 
 def test_get_single_assistant_info_returns_info():
