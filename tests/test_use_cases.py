@@ -76,16 +76,20 @@ def test_get_assistant_cls_raises_error_when_assistant_not_defined():
     assistant_id = "not_defined"
     user = User()
 
-    with pytest.raises(AIAssistantNotDefinedError):
+    with pytest.raises(AIAssistantNotDefinedError) as exc_info:
         use_cases.get_assistant_cls(assistant_id, user)
+
+    assert str(exc_info.value) == "Assistant with id=not_defined not found"
 
 
 def test_get_assistant_cls_raises_error_when_user_not_allowed(use_fake_permissions):
     assistant_id = "temperature_assistant"
     user = User()
 
-    with pytest.raises(AIUserNotAllowedError):
+    with pytest.raises(AIUserNotAllowedError) as exc_info:
         use_cases.get_assistant_cls(assistant_id, user)
+
+    assert str(exc_info.value) == "User is not allowed to use this assistant"
 
 
 def test_get_single_assistant_info_returns_info():
