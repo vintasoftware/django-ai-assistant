@@ -1,7 +1,7 @@
 [![Django CI](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/django.yml/badge.svg)](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/django.yml)
 [![Node CI](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/node.yml/badge.svg)](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/node.yml)
 
-# django-ai-assistant
+# django-ai-assistant ![docs/images/robot-happy-outline.svg]
 
 Combine the power of LLMs with Django's productivity to build intelligent applications.
 Let AI Assistants call methods from Django's side and do anything your users need!

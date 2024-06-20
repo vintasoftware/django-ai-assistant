@@ -1,4 +1,4 @@
-# Django AI Assistant
+# Django AI Assistant :material-robot-happy-outline:
 
 Combine the power of Large Language Models with Django's productivity to build intelligent applications.
 
