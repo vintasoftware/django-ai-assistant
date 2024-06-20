@@ -40,7 +40,7 @@ cd frontend
 npm run build:watch
 ```
 
-Then follow the instructions in the [example README](example/README.md).
+Then follow the instructions in the [example README](https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme).
 
 ## Tests
 
