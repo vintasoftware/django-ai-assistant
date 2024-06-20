@@ -53,6 +53,7 @@ nav:
   - Reference:
     - helpers.assistants: assistants-ref.md
     - helpers.use_cases: use-cases-ref.md
+  - Contributing: contributing.md
 
 plugins:
   - mkdocstrings:
