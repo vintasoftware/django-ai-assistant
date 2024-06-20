@@ -204,7 +204,7 @@ def update_thread(
     name: str,
     user: Any,
     request: HttpRequest | None = None,
-):
+) -> Thread:
     """Update thread name.\n
     Uses `AI_ASSISTANT_CAN_UPDATE_THREAD_FN` permission to check if user can update the thread.
 
