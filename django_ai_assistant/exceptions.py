@@ -8,3 +8,7 @@ class AIAssistantNotDefinedError(Exception):
 
 class AIUserNotAllowedError(Exception):
     pass
+
+
+class AIAssistantPrimaryKeyTypeNotInListError(Exception):
+    pass

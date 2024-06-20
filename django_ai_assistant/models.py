@@ -1,12 +1,27 @@
 import json
+import uuid
+from typing import Any
 
 from django.conf import settings
 from django.db import models
 from django.db.models import F, Index, Manager
 
+from django_ai_assistant.exceptions import AIAssistantPrimaryKeyTypeNotInListError
+
+
+def get_id_field():
+    if settings.AI_ASSISTANT_PRIMARY_KEY_FIELD == "auto":
+        return int
+    elif settings.AI_ASSISTANT_PRIMARY_KEY_FIELD == "uuid":
+        return models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    elif settings.AI_ASSISTANT_PRIMARY_KEY_FIELD == "string":
+        return models.CharField(primary_key=True, max_length=255)
+    else:
+        raise AIAssistantPrimaryKeyTypeNotInListError
+
 
 class Thread(models.Model):
-    id: int  # noqa: A003
+    id: Any = get_id_field()  # noqa: A003
     messages: Manager["Message"]
     name = models.CharField(max_length=255, blank=True)
     created_by = models.ForeignKey(
@@ -32,7 +47,7 @@ class Thread(models.Model):
 
 
 class Message(models.Model):
-    id: int  # noqa: A003
+    id: Any = get_id_field()  # noqa: A003
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE, related_name="messages")
     thread_id: int  # noqa: A003
     message = models.JSONField()  # langchain BaseMessage
