@@ -56,8 +56,12 @@ def fake_permission_func(**kwargs):
 
 @pytest.fixture()
 def use_fake_permissions(settings):
-    settings.AI_ASSISTANT_CAN_RUN_ASSISTANT = "tests.test_use_cases.fake_permission_func"
-    settings.AI_ASSISTANT_CAN_CREATE_THREAD_FN = "tests.test_use_cases.fake_permission_func"
+    settings.AI_ASSISTANT_CAN_RUN_ASSISTANT = (
+        "tests.test_helpers.test_use_cases.fake_permission_func"
+    )
+    settings.AI_ASSISTANT_CAN_CREATE_THREAD_FN = (
+        "tests.test_helpers.test_use_cases.fake_permission_func"
+    )
 
 
 # Assistant tests
