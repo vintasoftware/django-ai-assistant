@@ -40,6 +40,17 @@ npm install
 
 Go to /admin and log in with your superuser account.
 
+## Developing with the example project
+
+Run the frontend project in build:watch mode:
+
+```bash
+cd frontend
+npm run build:watch
+```
+
+Then follow the instructions in the [example README](example/README.md).
+
 ## Contributing
 
 If you wish to contribute to this project, please first discuss the change you wish to make via an [issue](https://github.com/vintasoftware/django-react-boilerplate/issues).
