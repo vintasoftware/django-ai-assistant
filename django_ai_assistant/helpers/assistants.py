@@ -554,7 +554,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
             **kwargs,
         )["output"]
 
-    def _run_as_tool(self, message: str, **kwargs: Any):
+    def _run_as_tool(self, message: str, **kwargs: Any) -> str:
         return self.run(message, thread_id=None, **kwargs)
 
     def as_tool(self, description: str) -> BaseTool:
