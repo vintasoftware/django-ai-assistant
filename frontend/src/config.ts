@@ -1,27 +1,38 @@
 import cookie from "cookie";
 
-import { OpenAPI } from "./client";
+import { OpenAPI, OpenAPIConfig } from "./client";
 import { AxiosRequestConfig } from "axios";
 
 /**
- * Configures the base URL for the AI Assistant API which is path associated with
- * the Django include.
+ * Configures the AI Assistant client, such as setting the base URL (which is
+ * associated with the Django path include) and request interceptors.
  *
- * Configures the Axios request to include the CSRF token if it exists.
+ * By default, this function will add a request interceptor to include the CSRF token
+ * in the request headers if it exists. You can override the default request interceptor
+ * by providing your own request interceptor function in the configuration object.
  *
- * @param baseURL Base URL of the AI Assistant API.
+ * NOTE: This function must be called in the root of your application before any
+ * requests are made to the AI Assistant API.
+ *
+ * @param props An `OpenAPIConfig` object containing configuration options for the OpenAPI client.
  *
  * @example
- * configAIAssistant({ baseURL: "ai-assistant" });
+ * configAIAssistant({ BASE: "ai-assistant" });
  */
-export function configAIAssistant({ baseURL }: { baseURL: string }) {
-  OpenAPI.BASE = baseURL;
-
-  OpenAPI.interceptors.request.use((request: AxiosRequestConfig) => {
+export function configAIAssistant(props: OpenAPIConfig): OpenAPIConfig {
+  function defaultRequestInterceptor(request: AxiosRequestConfig) {
     const { csrftoken } = cookie.parse(document.cookie);
     if (request.headers && csrftoken) {
       request.headers["X-CSRFTOKEN"] = csrftoken;
     }
     return request;
-  });
+  }
+
+  OpenAPI.interceptors.request.use(defaultRequestInterceptor);
+
+  // Apply the configuration options to the OpenAPI client, and allow the user
+  // to override the default request interceptor.
+  Object.assign(OpenAPI, props);
+
+  return OpenAPI;
 }
