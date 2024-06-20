@@ -16,6 +16,7 @@ from django_ai_assistant.api.schemas import (
     ThreadSchema,
     ThreadSchemaIn,
 )
+from django_ai_assistant.conf import app_settings
 from django_ai_assistant.exceptions import AIAssistantNotDefinedError, AIUserNotAllowedError
 from django_ai_assistant.helpers import use_cases
 from django_ai_assistant.models import Message, Thread
@@ -28,14 +29,18 @@ class API(NinjaAPI):
         return (package_name + "_" + name).replace(".", "_")
 
 
-api = API(
-    title=package_name,
-    version=version,
-    urls_namespace="django_ai_assistant",
-    # Add auth to all endpoints
-    auth=django_auth,
-    csrf=True,
-)
+def init_api():
+    return API(
+        title=package_name,
+        version=version,
+        urls_namespace="django_ai_assistant",
+        # Add auth to all endpoints
+        auth=django_auth,
+        csrf=True,
+    )
+
+
+api = app_settings.call_fn("INIT_API_FN")
 
 
 @api.exception_handler(AIUserNotAllowedError)

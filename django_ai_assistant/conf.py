@@ -9,6 +9,7 @@ PREFIX = "AI_ASSISTANT_"
 
 
 DEFAULTS = {
+    "INIT_API_FN": "django_ai_assistant.api.views.init_api",
     "CAN_CREATE_THREAD_FN": "django_ai_assistant.permissions.allow_all",
     "CAN_VIEW_THREAD_FN": "django_ai_assistant.permissions.owns_thread",
     "CAN_UPDATE_THREAD_FN": "django_ai_assistant.permissions.owns_thread",
