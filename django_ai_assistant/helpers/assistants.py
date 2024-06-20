@@ -114,7 +114,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         """Called when a class is subclassed from AIAssistant.
 
         This method is automatically invoked when a new subclass of AIAssistant
-        is created. It allows AIAssistant to perform additional setup or configuration.
+        is created. It allows AIAssistant to perform additional setup or configuration
         for the subclass, such as registering the subclass in a registry.
 
         Args:
