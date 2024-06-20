@@ -261,12 +261,10 @@ from ninja import NinjaAPI
 
 
 def init_api():
-    return NinjaAPI(
-        ...
-    )
+    return NinjaAPI(...)
 ```
 
-By providing your own implementation of init_api, you can tailor the API setup to better fit your project's requirements.
+By providing your own implementation of `init_api`, you can tailor the API setup to better fit your project's requirements.
 
 ### Configuring permissions
 
