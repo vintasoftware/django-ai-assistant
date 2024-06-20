@@ -35,7 +35,6 @@ To create an AI Assistant, you need to:
 ```python title="myapp/ai_assistants.py"
 from django_ai_assistant import AIAssistant
 
-
 class WeatherAIAssistant(AIAssistant):
     id = "weather_assistant"
     name = "Weather Assistant"
@@ -50,11 +49,10 @@ such as getting the current date and finding the current weather by calling an A
 
 Use the `@method_tool` decorator to define a tool method in the AI Assistant:
 
-```{.python title="myapp/ai_assistants.py" hl_lines="15-22"}
+```{.python title="myapp/ai_assistants.py" hl_lines="14-21"}
 from django.utils import timezone
 from django_ai_assistant import AIAssistant, method_tool
 import json
-
 
 class WeatherAIAssistant(AIAssistant):
     id = "weather_assistant"
@@ -94,9 +92,8 @@ AI: The weather in NYC is sunny with a temperature of 25°C.
 
 You have access to the current request user in tools:
 
-```{.python title="myapp/ai_assistants.py" hl_lines=13}
+```{.python title="myapp/ai_assistants.py" hl_lines=12}
 from django_ai_assistant import AIAssistant, method_tool
-
 
 class PersonalAIAssistant(AIAssistant):
     id = "personal_assistant"
@@ -112,10 +109,9 @@ class PersonalAIAssistant(AIAssistant):
 
 You can also add any Django logic to tools, such as querying the database:
 
-```{.python title="myapp/ai_assistants.py" hl_lines=14-16}
+```{.python title="myapp/ai_assistants.py" hl_lines=13-15}
 from django_ai_assistant import AIAssistant, method_tool
 import json
-
 
 class IssueManagementAIAssistant(AIAssistant):
     id = "issue_mgmt_assistant"
@@ -153,10 +149,9 @@ Then, set the `TAVILY_API_KEY` environment variable. You'll need to sign up at [
 
 Finally, add the tool to your AI Assistant class by overriding the `get_tools` method:
 
-```{.python title="myapp/ai_assistants.py"  hl_lines="2 20"}
+```{.python title="myapp/ai_assistants.py"  hl_lines="2 19"}
 from django_ai_assistant import AIAssistant
 from langchain_community.tools.tavily_search import TavilySearchResults
-
 
 class MovieSearchAIAssistant(AIAssistant):
     id = "movie_search_assistant"  # noqa: A003
@@ -191,7 +186,6 @@ You can manually call an AI Assistant from anywhere in your Django application:
 ```python
 from myapp.ai_assistants import WeatherAIAssistant
 
-
 assistant = WeatherAIAssistant()
 output = assistant.run("What's the weather in New York City?")
 assert output == "The weather in NYC is sunny with a temperature of 25°C."
@@ -210,10 +204,9 @@ and automatically retrieved then passed to the LLM when calling the AI Assistant
 
 To create a `Thread`, you can use a helper from the `django_ai_assistant.use_cases` module. For example:
 
-```{.python hl_lines="5 9"}
+```{.python hl_lines="4 8"}
 from django_ai_assistant.use_cases import create_thread, get_thread_messages
 from myapp.ai_assistants import WeatherAIAssistant
-
 
 thread = create_thread(name="Weather Chat", user=some_user)
 assistant = WeatherAIAssistant()
@@ -232,7 +225,6 @@ such as a React application or a mobile app. Add the following to your Django pr
 
 ```python title="myproject/urls.py"
 from django.urls import include, path
-
 
 urlpatterns = [
     path("ai-assistant/", include("django_ai_assistant.urls")),
@@ -258,7 +250,6 @@ The method signature for `AI_ASSISTANT_INIT_API_FN` is as follows:
 
 ```python
 from ninja import NinjaAPI
-
 
 def init_api():
     return NinjaAPI(...)
@@ -293,7 +284,6 @@ Thread permission signatures look like this:
 from django_ai_assistant.models import Thread
 from django.http import HttpRequest
 
-
 def check_custom_thread_permission(
         thread: Thread,
         user: Any,
@@ -306,7 +296,6 @@ While Message permission signatures look like this:
 ```python
 from django_ai_assistant.models import Thread, Message
 from django.http import HttpRequest
-
 
 def check_custom_message_permission(
         message: Message,
@@ -326,7 +315,6 @@ but you can use [any chat model from Langchain that supports Tool Calling](https
 ```python title="myapp/ai_assistants.py"
 from django_ai_assistant import AIAssistant
 from langchain_anthropic import ChatAnthropic
-
 
 class WeatherAIAssistant(AIAssistant):
     id = "weather_assistant"
@@ -352,14 +340,12 @@ class WeatherAIAssistant(AIAssistant):
 One AI Assistant can call another AI Assistant as a tool. This is useful for composing complex AI Assistants.
 Use the `as_tool` method for that:
 
-```{.python title="myapp/ai_assistants.py"  hl_lines="14 16"}
+```{.python title="myapp/ai_assistants.py"  hl_lines="12 14"}
 class SimpleAssistant(AIAssistant):
     ...
 
-
 class AnotherSimpleAssistant(AIAssistant):
     ...
-
 
 class ComplexAssistant(AIAssistant):
     ...
@@ -392,9 +378,8 @@ For this to work, your must do the following in your AI Assistant:
 
 For example:
 
-```{.python title="myapp/ai_assistants.py"  hl_lines="12 16 18"}
+```{.python title="myapp/ai_assistants.py"  hl_lines="11 15 17"}
 from django_ai_assistant import AIAssistant
-
 
 class DocsAssistant(AIAssistant):
     id = "docs_assistant"  # noqa: A003
