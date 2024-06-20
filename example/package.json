@@ -43,7 +43,6 @@
     "@mantine/hooks": "^7.9.2",
     "@tabler/icons-react": "^3.4.0",
     "cookie": "^0.6.0",
-    "django-ai-assistant-client": "file:../frontend",
     "modern-normalize": "^2.0.0",
     "react-markdown": "^9.0.1",
     "react-router-dom": "^6.23.1"
