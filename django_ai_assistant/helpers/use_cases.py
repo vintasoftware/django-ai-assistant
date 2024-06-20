@@ -21,7 +21,7 @@ from django_ai_assistant.permissions import (
 )
 
 
-def get_cls(
+def get_assistant_cls(
     assistant_id: str,
     user: Any,
     request: HttpRequest | None = None,
@@ -43,7 +43,7 @@ def get_single_assistant_info(
     user: Any,
     request: HttpRequest | None = None,
 ):
-    assistant_cls = get_cls(assistant_id, user, request)
+    assistant_cls = get_assistant_cls(assistant_id, user, request)
 
     return {
         "id": assistant_id,
@@ -56,7 +56,7 @@ def get_assistants_info(
     request: HttpRequest | None = None,
 ):
     return [
-        get_cls(assistant_id=assistant_id, user=user, request=request)
+        get_assistant_cls(assistant_id=assistant_id, user=user, request=request)
         for assistant_id in AIAssistant.get_cls_registry().keys()
     ]
 
@@ -68,7 +68,7 @@ def create_message(
     content: Any,
     request: HttpRequest | None = None,
 ):
-    assistant_cls = get_cls(assistant_id, user, request)
+    assistant_cls = get_assistant_cls(assistant_id, user, request)
 
     if not can_create_message(thread=thread, user=user, request=request):
         raise AIUserNotAllowedError("User is not allowed to create messages in this thread")
