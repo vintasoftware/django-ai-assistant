@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.urls import reverse
 
@@ -12,6 +13,7 @@ from django_ai_assistant.helpers import use_cases
 from django_ai_assistant.helpers.assistants import AIAssistant
 from django_ai_assistant.langchain.tools import BaseModel, Field, method_tool
 from django_ai_assistant.models import Message, Thread
+from tests.utils import assert_ids
 
 
 # Set up
@@ -153,7 +155,7 @@ def test_gets_specific_thread(authenticated_client):
     )
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json()["id"] == thread.id
+    assert_ids(response.json()["id"], thread.id, settings.AI_ASSISTANT_PRIMARY_KEY_FIELD)
 
 
 def test_does_not_list_threads_if_unauthorized():
@@ -173,7 +175,7 @@ def test_create_thread(authenticated_client):
     thread = Thread.objects.first()
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json()["id"] == thread.id
+    assert_ids(response.json()["id"], thread.id, settings.AI_ASSISTANT_PRIMARY_KEY_FIELD)
 
 
 def test_cannot_create_thread_if_unauthorized():

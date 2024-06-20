@@ -49,7 +49,7 @@ class Thread(models.Model):
 class Message(models.Model):
     id: Any = get_id_field()  # noqa: A003
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE, related_name="messages")
-    thread_id: int  # noqa: A003
+    thread_id: int  # noqa: A003 NEED TO LOOK AT THIS TOMORROW
     message = models.JSONField()  # langchain BaseMessage
     created_at = models.DateTimeField(auto_now_add=True)
     # TODO: add created_by field

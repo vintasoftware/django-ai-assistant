@@ -264,13 +264,13 @@ class AIAssistant(abc.ABC):  # noqa: F821
             ]
         )
 
-    def get_message_history(self, thread_id: int | None) -> BaseChatMessageHistory:
+    def get_message_history(self, thread_id: Any | None) -> BaseChatMessageHistory:
         """Get the chat message history instance for the given `thread_id`.\n
         The Langchain chain uses the return of this method to get the thread messages
         for the assistant, filling the `history` placeholder in the `get_prompt_template`.\n
 
         Args:
-            thread_id (int | None): The thread ID for the chat message history.
+            thread_id (Any | None): The thread ID for the chat message history.
                 If `None`, an in-memory chat message history is used.
 
         Returns:
@@ -415,7 +415,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
             prompt | llm | StrOutputParser() | retriever,
         )
 
-    def as_chain(self, thread_id: int | None) -> Runnable[dict, dict]:
+    def as_chain(self, thread_id: Any | None) -> Runnable[dict, dict]:
         """Create the Langchain chain for the assistant.\n
         This chain is an agent that supports chat history, tool calling, and RAG (if `has_rag=True`).\n
         `as_chain` uses many other methods to create the chain.\n
@@ -427,7 +427,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         along with the key `"history"` containing the previous chat history.
 
         Args:
-            thread_id (int | None): The thread ID for the chat message history.
+            thread_id (Any | None): The thread ID for the chat message history.
                 If `None`, an in-memory chat message history is used.
 
         Returns:
@@ -499,7 +499,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
         return agent_with_chat_history
 
-    def invoke(self, *args, thread_id: int | None, **kwargs):
+    def invoke(self, *args, thread_id: Any | None, **kwargs):
         """Invoke the assistant Langchain chain with the given arguments and keyword arguments.\n
         This is the lower-level method to run the assistant.\n
         The chain is created by the `as_chain` method.\n
@@ -507,7 +507,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         Args:
             *args: Positional arguments to pass to the chain.
                 Make sure to include a `dict` like `{"input": "user message"}`.
-            thread_id (int | None): The thread ID for the chat message history.
+            thread_id (Any | None): The thread ID for the chat message history.
                 If `None`, an in-memory chat message history is used.
             **kwargs: Keyword arguments to pass to the chain.
 
@@ -518,13 +518,13 @@ class AIAssistant(abc.ABC):  # noqa: F821
         chain = self.as_chain(thread_id)
         return chain.invoke(*args, **kwargs)
 
-    def run(self, message, thread_id: int | None, **kwargs):
+    def run(self, message, thread_id: Any | None, **kwargs):
         """Run the assistant with the given message and thread ID.\n
         This is the higher-level method to run the assistant.\n
 
         Args:
             message (str): The user message to pass to the assistant.
-            thread_id (int | None): The thread ID for the chat message history.
+            thread_id (Any | None): The thread ID for the chat message history.
                 If `None`, an in-memory chat message history is used.
             **kwargs: Additional keyword arguments to pass to the chain.
 
