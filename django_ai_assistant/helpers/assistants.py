@@ -378,9 +378,9 @@ class AIAssistant(abc.ABC):  # noqa: F821
         return ChatPromptTemplate.from_messages(
             [
                 ("system", contextualize_q_system_prompt),
-                # TODO: make history key confirgurable?
+                # TODO: make history key configurable?
                 MessagesPlaceholder("history"),
-                # TODO: make input key confirgurable?
+                # TODO: make input key configurable?
                 ("human", "{input}"),
             ]
         )
