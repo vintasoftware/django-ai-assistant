@@ -22,13 +22,14 @@ from django_ai_assistant.helpers import use_cases
 from django_ai_assistant.models import Message, Thread
 
 
-def init_api():
-    class API(NinjaAPI):
-        # Force "operationId" to be like "django_ai_assistant_delete_thread"
-        def get_openapi_operation_id(self, operation: Operation) -> str:
-            name = operation.view_func.__name__
-            return (package_name + "_" + name).replace(".", "_")
+class API(NinjaAPI):
+    # Force "operationId" to be like "django_ai_assistant_delete_thread"
+    def get_openapi_operation_id(self, operation: Operation) -> str:
+        name = operation.view_func.__name__
+        return (package_name + "_" + name).replace(".", "_")
 
+
+def init_api():
     return API(
         title=package_name,
         version=version,
