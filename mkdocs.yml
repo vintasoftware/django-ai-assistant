@@ -7,6 +7,8 @@ edit_uri: blob/main/docs/
 
 theme:
   name: material
+  features:
+    - navigation.tabs
   palette:
     # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
@@ -43,6 +45,23 @@ markdown_extensions:
   - attr_list
 
 nav:
-  - Home: index.md
-  - Get Started: get-started.md
-  - Tutorial: tutorial.md
+  - Home:
+    - Overview: index.md
+  - Usage:
+    - Get Started: get-started.md
+    - Tutorial: tutorial.md
+  - Reference:
+    - helpers.assistants: assistants-ref.md
+    - helpers.use_cases: use-cases-ref.md
+
+plugins:
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true
+            show_root_members_full_path: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            members_order: source
+            modernize_annotations: true

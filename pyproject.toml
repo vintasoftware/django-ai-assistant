@@ -33,6 +33,7 @@ markdown = "^3.6"
 pygments = "^2.18.0"
 model-bakery = "^1.18.1"
 pytest-cov = "^5.0.0"
+mkdocstrings = {extras = ["python"], version = "^0.25.1"}
 
 [tool.poetry.group.example.dependencies]
 django-webpack-loader = "^3.1.0"
