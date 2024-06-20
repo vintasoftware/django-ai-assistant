@@ -1,4 +1,3 @@
-import functools
 from typing import Sequence
 
 from django.db.models import Max
@@ -42,15 +41,6 @@ class IMDBURLFinderTool(AIAssistant):
             TavilySearchResults(),
             *super().get_tools(),
         ]
-
-    @functools.lru_cache(maxsize=1024)  # noqa: B019
-    def run_as_tool(self, message: str, **kwargs):
-        # We may already know the IMDB URL, so we can return it directly:
-        any_item = MovieBacklogItem.objects.filter(movie_name__icontains=message).first()
-        if any_item:
-            return any_item.imdb_url
-
-        return super().run_as_tool(message, **kwargs)
 
 
 class MovieRecommendationAIAssistant(AIAssistant):
