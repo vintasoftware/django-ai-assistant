@@ -16,7 +16,7 @@ const theme = createTheme({});
 
 // Relates to path("ai-assistant/", include("django_ai_assistant.urls"))
 // which can be found at example/demo/urls.py)
-configAIAssistant({ baseURL: "ai-assistant" });
+configAIAssistant({ BASE: "ai-assistant" });
 
 const ExampleIndex = () => {
   return (
