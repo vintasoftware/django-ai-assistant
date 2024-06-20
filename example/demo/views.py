@@ -29,12 +29,7 @@ class BaseAIAssistantView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        threads = list(
-            get_threads(
-                user=self.request.user,
-                request=self.request,
-            )
-        )
+        threads = list(get_threads(user=self.request.user))
         context.update(
             {
                 "assistant_id": self.get_assistant_id(**kwargs),
