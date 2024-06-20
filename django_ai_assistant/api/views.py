@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, List
 
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -71,7 +71,7 @@ def create_thread(request, payload: ThreadSchemaIn):
 
 
 @api.get("threads/{thread_id}/", response=ThreadSchema, url_name="thread_detail_update_delete")
-def get_thread(request, thread_id: str):
+def get_thread(request, thread_id: Any):
     try:
         thread = use_cases.get_single_thread(
             thread_id=thread_id, user=request.user, request=request
@@ -82,14 +82,14 @@ def get_thread(request, thread_id: str):
 
 
 @api.patch("threads/{thread_id}/", response=ThreadSchema, url_name="thread_detail_update_delete")
-def update_thread(request, thread_id: str, payload: ThreadSchemaIn):
+def update_thread(request, thread_id: Any, payload: ThreadSchemaIn):
     thread = get_object_or_404(Thread, id=thread_id)
     name = payload.name
     return use_cases.update_thread(thread=thread, name=name, user=request.user, request=request)
 
 
 @api.delete("threads/{thread_id}/", response={204: None}, url_name="thread_detail_update_delete")
-def delete_thread(request, thread_id: str):
+def delete_thread(request, thread_id: Any):
     thread = get_object_or_404(Thread, id=thread_id)
     use_cases.delete_thread(thread=thread, user=request.user, request=request)
     return 204, None
@@ -100,7 +100,7 @@ def delete_thread(request, thread_id: str):
     response=List[ThreadMessagesSchemaOut],
     url_name="messages_list_create",
 )
-def list_thread_messages(request, thread_id: str):
+def list_thread_messages(request, thread_id: Any):
     messages = use_cases.get_thread_messages(
         thread_id=thread_id, user=request.user, request=request
     )
@@ -113,7 +113,7 @@ def list_thread_messages(request, thread_id: str):
     response={201: None},
     url_name="messages_list_create",
 )
-def create_thread_message(request, thread_id: str, payload: ThreadMessagesSchemaIn):
+def create_thread_message(request, thread_id: Any, payload: ThreadMessagesSchemaIn):
     thread = Thread.objects.get(id=thread_id)
 
     use_cases.create_message(
@@ -129,7 +129,7 @@ def create_thread_message(request, thread_id: str, payload: ThreadMessagesSchema
 @api.delete(
     "threads/{thread_id}/messages/{message_id}/", response={204: None}, url_name="messages_delete"
 )
-def delete_thread_message(request, thread_id: str, message_id: str):
+def delete_thread_message(request, thread_id: Any, message_id: Any):
     message = get_object_or_404(Message, id=message_id, thread_id=thread_id)
     use_cases.delete_message(
         message=message,

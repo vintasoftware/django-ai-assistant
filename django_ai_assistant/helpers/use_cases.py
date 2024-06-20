@@ -95,7 +95,7 @@ def create_thread(
 
 
 def get_single_thread(
-    thread_id: str,
+    thread_id: Any,
     user: Any,
     request: HttpRequest | None = None,
 ):
@@ -140,7 +140,7 @@ def delete_thread(
 
 
 def get_thread_messages(
-    thread_id: str,
+    thread_id: Any,
     user: Any,
     request: HttpRequest | None = None,
 ) -> list[BaseMessage]:
@@ -153,7 +153,7 @@ def get_thread_messages(
 
 
 def create_thread_message_as_user(
-    thread_id: str,
+    thread_id: Any,
     content: str,
     user: Any,
     request: HttpRequest | None = None,

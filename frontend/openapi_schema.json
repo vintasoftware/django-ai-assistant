@@ -137,8 +137,7 @@
             "in": "path",
             "name": "thread_id",
             "schema": {
-              "title": "Thread Id",
-              "type": "string"
+              "title": "Thread Id"
             },
             "required": true
           }
@@ -169,8 +168,7 @@
             "in": "path",
             "name": "thread_id",
             "schema": {
-              "title": "Thread Id",
-              "type": "string"
+              "title": "Thread Id"
             },
             "required": true
           }
@@ -211,8 +209,7 @@
             "in": "path",
             "name": "thread_id",
             "schema": {
-              "title": "Thread Id",
-              "type": "string"
+              "title": "Thread Id"
             },
             "required": true
           }
@@ -238,8 +235,7 @@
             "in": "path",
             "name": "thread_id",
             "schema": {
-              "title": "Thread Id",
-              "type": "string"
+              "title": "Thread Id"
             },
             "required": true
           }
@@ -274,8 +270,7 @@
             "in": "path",
             "name": "thread_id",
             "schema": {
-              "title": "Thread Id",
-              "type": "string"
+              "title": "Thread Id"
             },
             "required": true
           }
@@ -311,8 +306,7 @@
             "in": "path",
             "name": "thread_id",
             "schema": {
-              "title": "Thread Id",
-              "type": "string"
+              "title": "Thread Id"
             },
             "required": true
           },
@@ -320,8 +314,7 @@
             "in": "path",
             "name": "message_id",
             "schema": {
-              "title": "Message Id",
-              "type": "string"
+              "title": "Message Id"
             },
             "required": true
           }
@@ -362,15 +355,9 @@
       "ThreadSchema": {
         "properties": {
           "id": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "ID"
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
           },
           "name": {
             "anyOf": [
