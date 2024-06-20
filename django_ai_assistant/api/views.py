@@ -16,7 +16,7 @@ from django_ai_assistant.api.schemas import (
     ThreadSchema,
     ThreadSchemaIn,
 )
-from django_ai_assistant.exceptions import AIUserNotAllowedError
+from django_ai_assistant.exceptions import AIAssistantNotDefinedError, AIUserNotAllowedError
 from django_ai_assistant.helpers import use_cases
 from django_ai_assistant.models import Message, Thread
 
@@ -47,6 +47,15 @@ def ai_user_not_allowed_handler(request, exc):
     )
 
 
+@api.exception_handler(AIAssistantNotDefinedError)
+def ai_assistant_not_defined_handler(request, exc):
+    return api.create_response(
+        request,
+        {"message": str(exc)},
+        status=404,
+    )
+
+
 @api.get("assistants/", response=List[AssistantSchema], url_name="assistants_list")
 def list_assistants(request):
     return list(use_cases.get_assistants_info(user=request.user, request=request))
@@ -61,7 +70,7 @@ def get_assistant(request, assistant_id: str):
 
 @api.get("threads/", response=List[ThreadSchema], url_name="threads_list_create")
 def list_threads(request):
-    return list(use_cases.get_threads(user=request.user, request=request))
+    return list(use_cases.get_threads(user=request.user))
 
 
 @api.post("threads/", response=ThreadSchema, url_name="threads_list_create")
@@ -77,7 +86,7 @@ def get_thread(request, thread_id: str):
             thread_id=thread_id, user=request.user, request=request
         )
     except Thread.DoesNotExist:
-        raise Http404("No %s matches the given query." % Thread._meta.object_name) from None
+        raise Http404(f"No Thread with id={thread_id} found") from None
     return thread
 
 
@@ -101,9 +110,8 @@ def delete_thread(request, thread_id: str):
     url_name="messages_list_create",
 )
 def list_thread_messages(request, thread_id: str):
-    messages = use_cases.get_thread_messages(
-        thread_id=thread_id, user=request.user, request=request
-    )
+    thread = get_object_or_404(Thread, id=thread_id)
+    messages = use_cases.get_thread_messages(thread=thread, user=request.user, request=request)
     return [message_to_dict(m)["data"] for m in messages]
 
 

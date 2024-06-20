@@ -44,10 +44,11 @@ from django_ai_assistant.langchain.tools import tool as tool_decorator
 
 class AIAssistant(abc.ABC):  # noqa: F821
     """Base class for AI Assistants. Subclasses must define at least the following attributes:
-    - id: str
-    - name: str
-    - instructions: str
-    - model: str
+
+    * id: str
+    * name: str
+    * instructions: str
+    * model: str
 
     Subclasses can override the public methods to customize the behavior of the assistant.\n
     Tools can be added to the assistant by decorating methods with `@method_tool`.\n
@@ -102,7 +103,21 @@ class AIAssistant(abc.ABC):  # noqa: F821
     Automatically populated by when a subclass is declared.\n
     Use `get_cls_registry` and `get_cls` to access the registry."""
 
-    def __init__(self, *, user=None, request=None, view=None, **kwargs):
+    def __init__(self, *, user=None, request=None, view=None, **kwargs: Any):
+        """Initialize the AIAssistant instance.\n
+        Optionally set the current user, request, and view for the assistant.\n
+        Those can be used in any `@method_tool` to customize behavior.\n
+
+        Args:
+            user (Any | None): The current user the assistant is helping. A model instance.
+                Defaults to `None`. Stored in `self._user`.
+            request (Any | None): The current Django request the assistant was initialized with.
+                A request instance. Defaults to `None`. Stored in `self._request`.
+            view (Any | None): The current Django view the assistant was initialized with.
+                A view instance. Defaults to `None`. Stored in `self._view`.
+            **kwargs: Extra keyword arguments passed to the constructor. Stored in `self._init_kwargs`.
+        """
+
         self._user = user
         self._request = request
         self._view = view
@@ -110,7 +125,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
         self._set_method_tools()
 
-    def __init_subclass__(cls, **kwargs):
+    def __init_subclass__(cls, **kwargs: Any):
         """Called when a class is subclassed from AIAssistant.
 
         This method is automatically invoked when a new subclass of AIAssistant
@@ -499,7 +514,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
         return agent_with_chat_history
 
-    def invoke(self, *args, thread_id: int | None, **kwargs):
+    def invoke(self, *args: Any, thread_id: int | None, **kwargs: Any) -> dict:
         """Invoke the assistant Langchain chain with the given arguments and keyword arguments.\n
         This is the lower-level method to run the assistant.\n
         The chain is created by the `as_chain` method.\n
@@ -518,7 +533,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         chain = self.as_chain(thread_id)
         return chain.invoke(*args, **kwargs)
 
-    def run(self, message, thread_id: int | None, **kwargs):
+    def run(self, message: str, thread_id: int | None, **kwargs: Any) -> str:
         """Run the assistant with the given message and thread ID.\n
         This is the higher-level method to run the assistant.\n
 
@@ -539,10 +554,10 @@ class AIAssistant(abc.ABC):  # noqa: F821
             **kwargs,
         )["output"]
 
-    def _run_as_tool(self, message: str, **kwargs):
+    def _run_as_tool(self, message: str, **kwargs: Any):
         return self.run(message, thread_id=None, **kwargs)
 
-    def as_tool(self, description) -> BaseTool:
+    def as_tool(self, description: str) -> BaseTool:
         """Create a tool from the assistant.\n
         This is useful to compose assistants.\n
 

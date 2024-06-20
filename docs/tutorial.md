@@ -215,15 +215,14 @@ from django_ai_assistant.use_cases import create_thread, get_thread_messages
 from myapp.ai_assistants import WeatherAIAssistant
 
 
-thread = create_thread(name="Weather Chat", user=some_user)
+thread = create_thread(name="Weather Chat", user=user)
 assistant = WeatherAIAssistant()
 assistant.run("What's the weather in New York City?", thread_id=thread.id)
 
-messages = get_thread_messages(thread)  # returns both user and AI messages
+messages = get_thread_messages(thread=thread, user=user)  # returns both user and AI messages
 ```
 
-More CRUD helpers are available at `django_ai_assistant.use_cases` module. Check the API Reference for more information.
-<!--- TODO: create API reference -->
+More CRUD helpers are available at `django_ai_assistant.use_cases` module. Check the [Reference](use-cases-ref.md) for more information.
 
 ### Using built-in API views
 
@@ -396,5 +395,4 @@ shows an example of a RAG-powered AI Assistant that's able to answer questions a
 
 ### Further configuration of AI Assistants
 
-You can further configure the `AIAssistant` subclasses by overriding its public methods. Check the API Reference for more information.
-<!--- TODO: create API reference -->
+You can further configure the `AIAssistant` subclasses by overriding its public methods. Check the [Reference](assistants-ref.md) for more information.
