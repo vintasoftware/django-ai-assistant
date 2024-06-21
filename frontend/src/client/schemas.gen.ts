@@ -19,9 +19,15 @@ export const $AssistantSchema = {
 export const $ThreadSchema = {
     properties: {
         id: {
-            format: 'uuid',
-            title: 'Id',
-            type: 'string'
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'ID'
         },
         name: {
             anyOf: [

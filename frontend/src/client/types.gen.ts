@@ -6,7 +6,7 @@ export type AssistantSchema = {
 };
 
 export type ThreadSchema = {
-    id?: string;
+    id?: number | null;
     name?: string | null;
     created_at: string;
     updated_at: string;
