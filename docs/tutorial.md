@@ -1,3 +1,8 @@
+---
+search:
+  boost: 2 
+---
+
 # Tutorial
 
 In this tutorial, you will learn how to use Django AI Assistant to supercharge your Django project with LLM capabilities.
@@ -215,7 +220,7 @@ assistant.run("What's the weather in New York City?", thread_id=thread.id)
 messages = get_thread_messages(thread=thread, user=user)  # returns both user and AI messages
 ```
 
-More CRUD helpers are available at `django_ai_assistant.use_cases` module. Check the [Reference](use-cases-ref.md) for more information.
+More CRUD helpers are available at `django_ai_assistant.use_cases` module. Check the [Reference](reference/use-cases-ref.md) for more information.
 
 ### Using built-in API views
 
@@ -403,4 +408,4 @@ shows an example of a RAG-powered AI Assistant that's able to answer questions a
 
 ### Further configuration of AI Assistants
 
-You can further configure the `AIAssistant` subclasses by overriding its public methods. Check the [Reference](assistants-ref.md) for more information.
+You can further configure the `AIAssistant` subclasses by overriding its public methods. Check the [Reference](reference/assistants-ref.md) for more information.
