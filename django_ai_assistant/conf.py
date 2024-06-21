@@ -18,7 +18,6 @@ DEFAULTS = {
     "CAN_UPDATE_MESSAGE_FN": "django_ai_assistant.permissions.owns_thread",
     "CAN_DELETE_MESSAGE_FN": "django_ai_assistant.permissions.owns_thread",
     "CAN_RUN_ASSISTANT": "django_ai_assistant.permissions.allow_all",
-    "PRIMARY_KEY_FIELD": "uuid",  # Options: 'auto', 'uuid', 'string'
 }
 
 
