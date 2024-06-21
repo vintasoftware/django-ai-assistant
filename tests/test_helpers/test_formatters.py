@@ -9,7 +9,12 @@ def test_cast_id_does_not_transform_regular_ids():
     assert isinstance(cast_id(1, Thread), int)
 
 
-def test_cast_id_does_not_transform_str_ids():
+def test_cast_id_does_not_transform_str_ids(monkeypatch):
+    def mock_get_internal_type():
+        return "CharField"
+
+    monkeypatch.setattr(Thread._meta.pk, "get_internal_type", mock_get_internal_type)
+
     assert isinstance(cast_id("dfjsdjfkndskjf", Thread), str)
 
 
@@ -30,7 +35,12 @@ def test_with_cast_id_transforms_regular_ids():
     assert isinstance(dummy_function(thread_id=1), int)
 
 
-def test_with_cast_id_transforms_str_ids():
+def test_with_cast_id_transforms_str_ids(monkeypatch):
+    def mock_get_internal_type():
+        return "CharField"
+
+    monkeypatch.setattr(Thread._meta.pk, "get_internal_type", mock_get_internal_type)
+
     @with_cast_id
     def dummy_function(thread_id):
         return thread_id
