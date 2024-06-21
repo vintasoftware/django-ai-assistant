@@ -53,6 +53,9 @@ spritesmith.scss
 # templated email
 tmp_email/
 
+# docs
+site/
+
 .direnv
 .envrc
 .tool-versions
