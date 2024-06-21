@@ -401,6 +401,53 @@ class DocsAssistant(AIAssistant):
 The `rag/ai_assistants.py` file in the [example project](https://github.com/vintasoftware/django-ai-assistant/tree/main/example)
 shows an example of a RAG-powered AI Assistant that's able to answer questions about Django using the Django Documentation as context.
 
+### Support for other types of Primary Key (PK)
+
+You can have our models use other types of primary key, such as strings, UUIDs, etc. For example:
+
+```{.python title="myapp/fields.py"}
+import uuid
+
+from django.db.backends.base.operations import BaseDatabaseOperations
+from django.db.models import AutoField, UUIDField
+
+BaseDatabaseOperations.integer_field_ranges['UUIDField'] = (0, 0)
+
+
+class UUIDAutoField(UUIDField, AutoField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('default', uuid.uuid4)
+        kwargs.setdefault('editable', False)
+        super().__init__(*args, **kwargs)
+
+```
+
+```{.python title="myapp/apps.py"}
+from django_ai_assistant.apps import AIAssistantConfig
+
+
+class AIAssistantConfigOverride(AIAssistantConfig):
+    default_auto_field = "django_ai_assistant.api.fields.UUIDAutoField"
+
+```
+
+```{.python title="myapp/settings.py"}
+INSTALLED_APPS = [
+    # "django_ai_assistant", remove this line and add the one below
+    "example.apps.AIAssistantConfigOverride",
+]
+
+```
+
+```bash
+cd myapp
+python manage.py makemigrations
+python manage.py migrate
+
+```
+
+Docs reference: [https://docs.djangoproject.com/en/5.0/ref/applications/#for-application-users](https://docs.djangoproject.com/en/5.0/ref/applications/#for-application-users)
+
 ### Further configuration of AI Assistants
 
 You can further configure the `AIAssistant` subclasses by overriding its public methods. Check the [Reference](assistants-ref.md) for more information.
