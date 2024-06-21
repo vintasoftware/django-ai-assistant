@@ -28,8 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "webpack_loader",
-    # "django_ai_assistant",
-    "example.apps.AIAssistantConfigOverride",
+    "django_ai_assistant",
     "demo",  # contains the views
     "weather",
     "movies",
@@ -167,7 +166,6 @@ AI_ASSISTANT_CAN_CREATE_MESSAGE_FN = "django_ai_assistant.permissions.owns_threa
 AI_ASSISTANT_CAN_UPDATE_MESSAGE_FN = "django_ai_assistant.permissions.owns_thread"
 AI_ASSISTANT_CAN_DELETE_MESSAGE_FN = "django_ai_assistant.permissions.owns_thread"
 AI_ASSISTANT_CAN_RUN_ASSISTANT = "django_ai_assistant.permissions.allow_all"
-AI_ASSISTANT_PRIMARY_KEY_FIELD = "uuid"  # Options: 'auto', 'uuid', 'string'
 
 
 # Example specific settings:
