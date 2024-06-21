@@ -27,6 +27,10 @@ jobs:
           pip install poetry
           poetry install
 
+      - name: Check docs build
+        run: |
+          poetry run mkdocs build
+
       - name: Run tests
         run: |
           poetry run coverage run -m pytest
@@ -42,8 +46,8 @@ jobs:
           flag-name: django-coverage
           allow-empty: true
 
-  build-node:
-    name: Node CI
+  build-frontend:
+    name: Frontend CI
     runs-on: ubuntu-latest
     # Wait for Django to finish before starting due to Coveralls parallel
     # Source: https://docs.coveralls.io/parallel-builds
@@ -88,7 +92,7 @@ jobs:
 
   finish:
     name: Coveralls
-    needs: [build-django, build-node]
+    needs: [build-django, build-frontend]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
