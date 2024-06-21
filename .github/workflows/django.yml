@@ -23,10 +23,7 @@ jobs:
       - name: Run tests
         run: |
           poetry run coverage run -m pytest
-        # When the repo becomes public:
-        # 1. Add the COVERALLS_REPO_TOKEN to GitHub secrets
-        # 2. Uncomment the lines below
-        #    poetry run coveralls
+          poetry run coveralls
         env:
           OPENAI_API_KEY: "sk-fake-test-key-123"
-          # COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
