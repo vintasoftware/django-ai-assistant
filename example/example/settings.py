@@ -28,8 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "webpack_loader",
-    # "django_ai_assistant",
-    "example.apps.AIAssistantConfigOverride",
+    "django_ai_assistant",
     "demo",  # contains the views
     "weather",
     "movies",
