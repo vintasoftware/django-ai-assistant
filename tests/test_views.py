@@ -7,7 +7,7 @@ import pytest
 from langchain_core.messages import HumanMessage
 from model_bakery import baker
 
-from django_ai_assistant import package_name, version
+from django_ai_assistant import PACKAGE_NAME, VERSION
 from django_ai_assistant.helpers.assistants import AIAssistant
 from django_ai_assistant.langchain.chat_message_histories import DjangoChatMessageHistory
 from django_ai_assistant.langchain.tools import BaseModel, Field, method_tool
@@ -66,8 +66,8 @@ def test_generates_json_with_correct_version(authenticated_client):
     response = authenticated_client.get("/openapi.json")
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json()["info"]["version"] == version
-    assert response.json()["info"]["title"] == package_name
+    assert response.json()["info"]["version"] == VERSION
+    assert response.json()["info"]["title"] == PACKAGE_NAME
 
 
 # Assistant Views
