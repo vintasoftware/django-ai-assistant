@@ -1,12 +1,13 @@
 from functools import wraps
 
 from django_ai_assistant.helpers.formatters import cast_id
-from django_ai_assistant.models import Message, Thread
 
 
 def with_cast_id(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
+        from django_ai_assistant.models import Message, Thread
+
         thread_id = kwargs.get("thread_id")
         message_id = kwargs.get("message_id")
         message_ids = kwargs.get("message_ids")
