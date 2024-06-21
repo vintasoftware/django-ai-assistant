@@ -14,5 +14,5 @@ from django_ai_assistant.langchain.tools import (  # noqa
 )
 
 
-version = __version__ = metadata.version(__package__)
-package_name = __package__
+PACKAGE_NAME = __package__ or "django-ai-assistant"
+VERSION = __version__ = metadata.version(PACKAGE_NAME)
