@@ -27,6 +27,7 @@ Go to the example project to finish the link with the frontend library:
 ```bash
 cd ..  # back to project root directory
 cd example
+npm install
 npm link django-ai-assistant-client
 ```
 
@@ -34,7 +35,6 @@ Run the example Webpack devserver to build the React frontend:
 
 ```bash
 # in example directory
-npm install
 npm run start
 ```
 
