@@ -1,5 +1,9 @@
 # Contributing
 
+We can always use your help to improve Django AI Assistant! Please feel free to tackle existing [issues](https://github.com/vintasoftware/django-ai-assistant/issues). If you have a new idea, please create a thread on [Discussions](https://github.com/vintasoftware/django-ai-assistant/discussions).
+
+Please follow this guide to learn more about how to develop and test the project locally, before opening a pull request.
+
 ## Local Dev Setup
 
 ### Clone the repo
