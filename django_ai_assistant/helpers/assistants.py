@@ -35,6 +35,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.tools import BaseTool
 from langchain_openai import ChatOpenAI
 
+from django_ai_assistant.decorators import with_cast_id
 from django_ai_assistant.exceptions import (
     AIAssistantMisconfiguredError,
 )
@@ -279,6 +280,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
             ]
         )
 
+    @with_cast_id
     def get_message_history(self, thread_id: Any | None) -> BaseChatMessageHistory:
         """Get the chat message history instance for the given `thread_id`.\n
         The Langchain chain uses the return of this method to get the thread messages
@@ -430,6 +432,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
             prompt | llm | StrOutputParser() | retriever,
         )
 
+    @with_cast_id
     def as_chain(self, thread_id: Any | None) -> Runnable[dict, dict]:
         """Create the Langchain chain for the assistant.\n
         This chain is an agent that supports chat history, tool calling, and RAG (if `has_rag=True`).\n
@@ -514,6 +517,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
         return agent_with_chat_history
 
+    @with_cast_id
     def invoke(self, *args: Any, thread_id: Any | None, **kwargs: Any) -> dict:
         """Invoke the assistant Langchain chain with the given arguments and keyword arguments.\n
         This is the lower-level method to run the assistant.\n
@@ -533,6 +537,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         chain = self.as_chain(thread_id)
         return chain.invoke(*args, **kwargs)
 
+    @with_cast_id
     def run(self, message: str, thread_id: Any | None, **kwargs: Any) -> str:
         """Run the assistant with the given message and thread ID.\n
         This is the higher-level method to run the assistant.\n
