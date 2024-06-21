@@ -5,12 +5,12 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 
 import pytest
+from langchain_core.messages import HumanMessage
 from model_bakery import baker
 
 from django_ai_assistant import package_name, version
-from django_ai_assistant.exceptions import AIAssistantNotDefinedError, AIUserNotAllowedError
-from django_ai_assistant.helpers import use_cases
 from django_ai_assistant.helpers.assistants import AIAssistant
+from django_ai_assistant.langchain.chat_message_histories import DjangoChatMessageHistory
 from django_ai_assistant.langchain.tools import BaseModel, Field, method_tool
 from django_ai_assistant.models import Message, Thread
 from tests.utils import assert_ids
@@ -102,12 +102,12 @@ def test_get_assistant_that_exists(authenticated_client):
 
 @pytest.mark.django_db()
 def test_get_assistant_that_does_not_exist(authenticated_client):
-    with pytest.raises(AIAssistantNotDefinedError):
-        authenticated_client.get(
-            reverse(
-                "django_ai_assistant:assistant_detail", kwargs={"assistant_id": "fake_assistant"}
-            )
-        )
+    response = authenticated_client.get(
+        reverse("django_ai_assistant:assistant_detail", kwargs={"assistant_id": "fake_assistant"})
+    )
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {"message": "Assistant with id=fake_assistant not found"}
 
 
 def test_does_not_return_assistant_if_unauthorized():
@@ -255,7 +255,7 @@ def test_cannot_delete_thread_if_unauthorized():
 @pytest.mark.django_db(transaction=True)
 def test_list_thread_messages(authenticated_client):
     thread = baker.make(Thread, created_by=User.objects.first())
-    use_cases.create_thread_message_as_user(thread.id, "Hello", thread.created_by)
+    DjangoChatMessageHistory(thread.id).add_messages([HumanMessage(content="Hello")])
     response = authenticated_client.get(
         reverse("django_ai_assistant:messages_list_create", kwargs={"thread_id": thread.id})
     )
@@ -266,12 +266,13 @@ def test_list_thread_messages(authenticated_client):
 
 @pytest.mark.django_db(transaction=True)
 def test_does_not_list_thread_messages_if_not_thread_user(authenticated_client):
-    with pytest.raises(AIUserNotAllowedError):
-        thread = baker.make(Thread)
-        use_cases.create_thread_message_as_user(thread.id, "Hello", User.objects.create())
-        authenticated_client.get(
-            reverse("django_ai_assistant:messages_list_create", kwargs={"thread_id": thread.id})
-        )
+    thread = baker.make(Thread, created_by=baker.make(User))
+    DjangoChatMessageHistory(thread.id).add_messages([HumanMessage(content="Hello")])
+    response = authenticated_client.get(
+        reverse("django_ai_assistant:messages_list_create", kwargs={"thread_id": thread.id})
+    )
+
+    assert response.status_code == HTTPStatus.FORBIDDEN
 
 
 # POST
