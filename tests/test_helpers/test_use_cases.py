@@ -131,8 +131,8 @@ def test_get_assistants_info_returns_info():
 
     info = use_cases.get_assistants_info(user)
 
-    assert info[0].id == "temperature_assistant"
-    assert info[0].name == "Temperature Assistant"
+    assert info[0]["id"] == "temperature_assistant"
+    assert info[0]["name"] == "Temperature Assistant"
     assert len(info) == 1
 
 
@@ -284,7 +284,7 @@ def test_get_thread_messages():
     baker.make(
         Message, message={"type": "human", "data": {"content": "hi"}}, thread=thread, _quantity=3
     )
-    response = use_cases.get_thread_messages(thread.id, user)
+    response = use_cases.get_thread_messages(thread, user)
 
     assert len(response) == 3
 
@@ -298,29 +298,9 @@ def test_get_thread_messages_raises_exception_when_user_not_allowed():
     )
 
     with pytest.raises(AIUserNotAllowedError) as exc_info:
-        use_cases.get_thread_messages(thread.id, user)
+        use_cases.get_thread_messages(thread, user)
 
     assert str(exc_info.value) == "User is not allowed to view messages in this thread"
-
-
-@pytest.mark.django_db(transaction=True)
-def test_create_thread_message_as_user():
-    user = baker.make(User)
-    thread = baker.make(Thread, created_by=user)
-    use_cases.create_thread_message_as_user(thread.id, "Hello, how are you?", user)
-
-    assert Message.objects.filter(thread=thread).count() == 1
-
-
-@pytest.mark.django_db(transaction=True)
-def test_create_thread_message_as_user_raises_exception_when_user_not_allowed():
-    user = baker.make(User)
-    thread = baker.make(Thread)
-
-    with pytest.raises(AIUserNotAllowedError) as exc_info:
-        use_cases.create_thread_message_as_user(thread.id, "Hello, how are you?", user)
-
-    assert str(exc_info.value) == "User is not allowed to create messages in this thread"
 
 
 @pytest.mark.django_db(transaction=True)
