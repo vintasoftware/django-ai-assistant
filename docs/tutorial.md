@@ -411,6 +411,51 @@ class DocsAssistant(AIAssistant):
 The `rag/ai_assistants.py` file in the [example project](https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme)
 shows an example of a RAG-powered AI Assistant that's able to answer questions about Django using the Django Documentation as context.
 
+### Support for other types of Primary Key (PK)
+
+You can have Django AI Assistant models use other types of primary key, such as strings, UUIDs, etc.
+This is useful if you're concerned about leaking IDs that exponse thread count, message count, etc. to the frontend.
+When using UUIDs, it will prevent users from figuring out if a thread or message exist or not (due to HTTP 404 vs 403).
+
+Here are the files you have to change if you need the ids to be UUID:
+
+```{.python title="myapp/fields.py"}
+import uuid
+from django.db.backends.base.operations import BaseDatabaseOperations
+from django.db.models import AutoField, UUIDField
+
+BaseDatabaseOperations.integer_field_ranges['UUIDField'] = (0, 0)
+
+class UUIDAutoField(UUIDField, AutoField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('default', uuid.uuid4)
+        kwargs.setdefault('editable', False)
+        super().__init__(*args, **kwargs)
+```
+
+```{.python title="myapp/apps.py"}
+from django_ai_assistant.apps import AIAssistantConfig
+
+class AIAssistantConfigOverride(AIAssistantConfig):
+    default_auto_field = "django_ai_assistant.api.fields.UUIDAutoField"
+```
+
+```{.python title="myproject/settings.py"}
+INSTALLED_APPS = [
+    # "django_ai_assistant", remove this line and add the one below
+    "example.apps.AIAssistantConfigOverride",
+]
+```
+
+Make sure to run migrations after those changes:
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+For more information, check [Django docs on overriding AppConfig](https://docs.djangoproject.com/en/5.0/ref/applications/#for-application-users).
+
 ### Further configuration of AI Assistants
 
 You can further configure the `AIAssistant` subclasses by overriding its public methods. Check the [Reference](reference/assistants-ref.md) for more information.
