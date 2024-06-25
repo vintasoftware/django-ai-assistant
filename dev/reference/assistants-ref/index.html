@@ -1416,8 +1416,7 @@
 
               <details class="quote">
                 <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 45</span>
-<span class="normal"> 46</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 46</span>
 <span class="normal"> 47</span>
 <span class="normal"> 48</span>
 <span class="normal"> 49</span>
@@ -1945,7 +1944,12 @@
 <span class="normal">571</span>
 <span class="normal">572</span>
 <span class="normal">573</span>
-<span class="normal">574</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">AIAssistant</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>  <span class="c1"># noqa: F821</span>
+<span class="normal">574</span>
+<span class="normal">575</span>
+<span class="normal">576</span>
+<span class="normal">577</span>
+<span class="normal">578</span>
+<span class="normal">579</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">AIAssistant</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>  <span class="c1"># noqa: F821</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for AI Assistants. Subclasses must define at least the following attributes:</span>
 
 <span class="sd">    * id: str</span>
@@ -2182,13 +2186,14 @@
             <span class="p">]</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_message_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseChatMessageHistory</span><span class="p">:</span>
+    <span class="nd">@with_cast_id</span>
+    <span class="k">def</span> <span class="nf">get_message_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseChatMessageHistory</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the chat message history instance for the given `thread_id`.\n</span>
 <span class="sd">        The Langchain chain uses the return of this method to get the thread messages</span>
 <span class="sd">        for the assistant, filling the `history` placeholder in the `get_prompt_template`.\n</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            thread_id (int | None): The thread ID for the chat message history.</span>
+<span class="sd">            thread_id (Any | None): The thread ID for the chat message history.</span>
 <span class="sd">                If `None`, an in-memory chat message history is used.</span>
 
 <span class="sd">        Returns:</span>
@@ -2333,7 +2338,8 @@
             <span class="n">prompt</span> <span class="o">|</span> <span class="n">llm</span> <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span> <span class="o">|</span> <span class="n">retriever</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">as_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Runnable</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+    <span class="nd">@with_cast_id</span>
+    <span class="k">def</span> <span class="nf">as_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Runnable</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the Langchain chain for the assistant.\n</span>
 <span class="sd">        This chain is an agent that supports chat history, tool calling, and RAG (if `has_rag=True`).\n</span>
 <span class="sd">        `as_chain` uses many other methods to create the chain.\n</span>
@@ -2345,7 +2351,7 @@
 <span class="sd">        along with the key `&quot;history&quot;` containing the previous chat history.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            thread_id (int | None): The thread ID for the chat message history.</span>
+<span class="sd">            thread_id (Any | None): The thread ID for the chat message history.</span>
 <span class="sd">                If `None`, an in-memory chat message history is used.</span>
 
 <span class="sd">        Returns:</span>
@@ -2417,7 +2423,8 @@
 
         <span class="k">return</span> <span class="n">agent_with_chat_history</span>
 
-    <span class="k">def</span> <span class="nf">invoke</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="nd">@with_cast_id</span>
+    <span class="k">def</span> <span class="nf">invoke</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Invoke the assistant Langchain chain with the given arguments and keyword arguments.\n</span>
 <span class="sd">        This is the lower-level method to run the assistant.\n</span>
 <span class="sd">        The chain is created by the `as_chain` method.\n</span>
@@ -2425,7 +2432,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            *args: Positional arguments to pass to the chain.</span>
 <span class="sd">                Make sure to include a `dict` like `{&quot;input&quot;: &quot;user message&quot;}`.</span>
-<span class="sd">            thread_id (int | None): The thread ID for the chat message history.</span>
+<span class="sd">            thread_id (Any | None): The thread ID for the chat message history.</span>
 <span class="sd">                If `None`, an in-memory chat message history is used.</span>
 <span class="sd">            **kwargs: Keyword arguments to pass to the chain.</span>
 
@@ -2436,13 +2443,14 @@
         <span class="n">chain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_chain</span><span class="p">(</span><span class="n">thread_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="nd">@with_cast_id</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run the assistant with the given message and thread ID.\n</span>
 <span class="sd">        This is the higher-level method to run the assistant.\n</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            message (str): The user message to pass to the assistant.</span>
-<span class="sd">            thread_id (int | None): The thread ID for the chat message history.</span>
+<span class="sd">            thread_id (Any | None): The thread ID for the chat message history.</span>
 <span class="sd">                If `None`, an in-memory chat message history is used.</span>
 <span class="sd">            **kwargs: Additional keyword arguments to pass to the chain.</span>
 
@@ -2857,8 +2865,7 @@ A view instance. Defaults to <code>None</code>. Stored in <code>self._view</code
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">106</span>
-<span class="normal">107</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">107</span>
 <span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
@@ -2877,7 +2884,8 @@ A view instance. Defaults to <code>None</code>. Stored in <code>self._view</code
 <span class="normal">123</span>
 <span class="normal">124</span>
 <span class="normal">125</span>
-<span class="normal">126</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">request</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<span class="normal">126</span>
+<span class="normal">127</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">request</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize the AIAssistant instance.\n</span>
 <span class="sd">    Optionally set the current user, request, and view for the assistant.\n</span>
 <span class="sd">    Those can be used in any `@method_tool` to customize behavior.\n</span>
@@ -2946,14 +2954,14 @@ A view instance. Defaults to <code>None</code>. Stored in <code>self._view</code
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">187</span>
-<span class="normal">188</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">188</span>
 <span class="normal">189</span>
 <span class="normal">190</span>
 <span class="normal">191</span>
 <span class="normal">192</span>
 <span class="normal">193</span>
-<span class="normal">194</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">194</span>
+<span class="normal">195</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">get_cls_registry</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">[</span><span class="s2">&quot;AIAssistant&quot;</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the registry of AIAssistant classes.</span>
 
@@ -3017,8 +3025,7 @@ A view instance. Defaults to <code>None</code>. Stored in <code>self._view</code
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">196</span>
-<span class="normal">197</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">197</span>
 <span class="normal">198</span>
 <span class="normal">199</span>
 <span class="normal">200</span>
@@ -3026,7 +3033,8 @@ A view instance. Defaults to <code>None</code>. Stored in <code>self._view</code
 <span class="normal">202</span>
 <span class="normal">203</span>
 <span class="normal">204</span>
-<span class="normal">205</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">205</span>
+<span class="normal">206</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">get_cls</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">assistant_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="s2">&quot;AIAssistant&quot;</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the AIAssistant class for the given assistant ID.</span>
 
@@ -3061,11 +3069,11 @@ A view instance. Defaults to <code>None</code>. Stored in <code>self._view</code
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">207</span>
-<span class="normal">208</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">208</span>
 <span class="normal">209</span>
 <span class="normal">210</span>
-<span class="normal">211</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">211</span>
+<span class="normal">212</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">clear_cls_registry</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="s2">&quot;AIAssistant&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear the registry of AIAssistant classes.&quot;&quot;&quot;</span>
 
@@ -3115,14 +3123,14 @@ A view instance. Defaults to <code>None</code>. Stored in <code>self._view</code
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">213</span>
-<span class="normal">214</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">214</span>
 <span class="normal">215</span>
 <span class="normal">216</span>
 <span class="normal">217</span>
 <span class="normal">218</span>
 <span class="normal">219</span>
-<span class="normal">220</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_instructions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">220</span>
+<span class="normal">221</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_instructions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the instructions for the assistant. By default, this is the `instructions` attribute.\n</span>
 <span class="sd">    Override the `instructions` attribute or this method to use different instructions.</span>
 
@@ -3176,15 +3184,15 @@ A view instance. Defaults to <code>None</code>. Stored in <code>self._view</code
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">222</span>
-<span class="normal">223</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">223</span>
 <span class="normal">224</span>
 <span class="normal">225</span>
 <span class="normal">226</span>
 <span class="normal">227</span>
 <span class="normal">228</span>
 <span class="normal">229</span>
-<span class="normal">230</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">230</span>
+<span class="normal">231</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the LLM model name for the assistant. By default, this is the `model` attribute.\n</span>
 <span class="sd">    Used by the `get_llm` method to create the LLM instance.\n</span>
 <span class="sd">    Override the `model` attribute or this method to use a different LLM model.</span>
@@ -3240,8 +3248,7 @@ By default, this is the <code>temperature</code> attribute, which is <code>1.0</
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">232</span>
-<span class="normal">233</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">233</span>
 <span class="normal">234</span>
 <span class="normal">235</span>
 <span class="normal">236</span>
@@ -3249,7 +3256,8 @@ By default, this is the <code>temperature</code> attribute, which is <code>1.0</
 <span class="normal">238</span>
 <span class="normal">239</span>
 <span class="normal">240</span>
-<span class="normal">241</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="normal">241</span>
+<span class="normal">242</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the temperature to use for the assistant LLM model.</span>
 <span class="sd">    By default, this is the `temperature` attribute, which is `1.0` by default.\n</span>
 <span class="sd">    Used by the `get_llm` method to create the LLM instance.\n</span>
@@ -3305,15 +3313,15 @@ By default, this is the <code>temperature</code> attribute, which is <code>1.0</
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">243</span>
-<span class="normal">244</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">244</span>
 <span class="normal">245</span>
 <span class="normal">246</span>
 <span class="normal">247</span>
 <span class="normal">248</span>
 <span class="normal">249</span>
 <span class="normal">250</span>
-<span class="normal">251</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_model_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="normal">251</span>
+<span class="normal">252</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_model_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get additional keyword arguments to pass to the LLM model constructor.\n</span>
 <span class="sd">    Used by the `get_llm` method to create the LLM instance.\n</span>
 <span class="sd">    Override this method to pass additional keyword arguments to the LLM model constructor.</span>
@@ -3372,8 +3380,7 @@ for the context, which is <code>{context}</code> by default, defined by the <cod
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">253</span>
-<span class="normal">254</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">254</span>
 <span class="normal">255</span>
 <span class="normal">256</span>
 <span class="normal">257</span>
@@ -3399,7 +3406,8 @@ for the context, which is <code>{context}</code> by default, defined by the <cod
 <span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
-<span class="normal">280</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_prompt_template</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ChatPromptTemplate</span><span class="p">:</span>
+<span class="normal">280</span>
+<span class="normal">281</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_prompt_template</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ChatPromptTemplate</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the `ChatPromptTemplate` for the Langchain chain to use.\n</span>
 <span class="sd">    The system prompt comes from the `get_instructions` method.\n</span>
 <span class="sd">    The template includes placeholders for the instructions, chat `{history}`, user `{input}`,</span>
@@ -3463,7 +3471,7 @@ for the assistant, filling the <code>history</code> placeholder in the <code>get
           <tr class="doc-section-item">
             <td><code>thread_id</code></td>
             <td>
-                  <code>int | None</code>
+                  <code><span title="typing.Any">Any</span> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -3503,8 +3511,7 @@ If <code>None</code>, an in-memory chat message history is used.</p>
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">282</span>
-<span class="normal">283</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">283</span>
 <span class="normal">284</span>
 <span class="normal">285</span>
 <span class="normal">286</span>
@@ -3521,13 +3528,16 @@ If <code>None</code>, an in-memory chat message history is used.</p>
 <span class="normal">297</span>
 <span class="normal">298</span>
 <span class="normal">299</span>
-<span class="normal">300</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_message_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseChatMessageHistory</span><span class="p">:</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@with_cast_id</span>
+<span class="k">def</span> <span class="nf">get_message_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseChatMessageHistory</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the chat message history instance for the given `thread_id`.\n</span>
 <span class="sd">    The Langchain chain uses the return of this method to get the thread messages</span>
 <span class="sd">    for the assistant, filling the `history` placeholder in the `get_prompt_template`.\n</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        thread_id (int | None): The thread ID for the chat message history.</span>
+<span class="sd">        thread_id (Any | None): The thread ID for the chat message history.</span>
 <span class="sd">            If `None`, an in-memory chat message history is used.</span>
 
 <span class="sd">    Returns:</span>
@@ -3587,9 +3597,7 @@ By default, this uses the OpenAI implementation.</p>
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">302</span>
-<span class="normal">303</span>
-<span class="normal">304</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
 <span class="normal">307</span>
@@ -3603,7 +3611,9 @@ By default, this uses the OpenAI implementation.</p>
 <span class="normal">315</span>
 <span class="normal">316</span>
 <span class="normal">317</span>
-<span class="normal">318</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_llm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseChatModel</span><span class="p">:</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_llm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseChatModel</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the Langchain LLM instance for the assistant.</span>
 <span class="sd">    By default, this uses the OpenAI implementation.\n</span>
 <span class="sd">    `get_model`, `get_temperature`, and `get_model_kwargs` are used to create the LLM instance.\n</span>
@@ -3667,16 +3677,16 @@ such as <a href="https://python.langchain.com/v0.2/docs/integrations/tools/">any
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">320</span>
-<span class="normal">321</span>
-<span class="normal">322</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
 <span class="normal">327</span>
 <span class="normal">328</span>
-<span class="normal">329</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_tools</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">BaseTool</span><span class="p">]:</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_tools</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">BaseTool</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the list of method tools the assistant can use.</span>
 <span class="sd">    By default, this is the `_method_tools` attribute, which are all `@method_tool`s.\n</span>
 <span class="sd">    Override and call super to add additional tools,</span>
@@ -3732,15 +3742,15 @@ such as <a href="https://python.langchain.com/v0.2/docs/integrations/tools/">any
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">331</span>
-<span class="normal">332</span>
-<span class="normal">333</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">333</span>
 <span class="normal">334</span>
 <span class="normal">335</span>
 <span class="normal">336</span>
 <span class="normal">337</span>
 <span class="normal">338</span>
-<span class="normal">339</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_document_separator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_document_separator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the RAG document separator to use in the prompt. Only used when `has_rag=True`.\n</span>
 <span class="sd">    Defaults to `&quot;\\n\\n&quot;`, which is the Langchain default.\n</span>
 <span class="sd">    Override this method to use a different separator.</span>
@@ -3796,16 +3806,16 @@ Only used when <code>has_rag=True</code>.</p>
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">341</span>
-<span class="normal">342</span>
-<span class="normal">343</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">343</span>
 <span class="normal">344</span>
 <span class="normal">345</span>
 <span class="normal">346</span>
 <span class="normal">347</span>
 <span class="normal">348</span>
 <span class="normal">349</span>
-<span class="normal">350</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_document_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PromptTemplate</span><span class="p">:</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_document_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PromptTemplate</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the PromptTemplate template to use when rendering RAG documents in the prompt.</span>
 <span class="sd">    Only used when `has_rag=True`.\n</span>
 <span class="sd">    Defaults to `PromptTemplate.from_template(&quot;{page_content}&quot;)`, which is the Langchain default.\n</span>
@@ -3860,14 +3870,14 @@ Only used when <code>has_rag=True</code>.</p>
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">352</span>
-<span class="normal">353</span>
-<span class="normal">354</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">354</span>
 <span class="normal">355</span>
 <span class="normal">356</span>
 <span class="normal">357</span>
 <span class="normal">358</span>
-<span class="normal">359</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_context_placeholder</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_context_placeholder</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the RAG context placeholder to use in the prompt when `has_rag=True`.\n</span>
 <span class="sd">    Defaults to `&quot;context&quot;`. Override this method to use a different placeholder.</span>
 
@@ -3920,16 +3930,16 @@ Only used when <code>has_rag=True</code>.</p>
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">361</span>
-<span class="normal">362</span>
-<span class="normal">363</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">363</span>
 <span class="normal">364</span>
 <span class="normal">365</span>
 <span class="normal">366</span>
 <span class="normal">367</span>
 <span class="normal">368</span>
 <span class="normal">369</span>
-<span class="normal">370</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseRetriever</span><span class="p">:</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseRetriever</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the RAG retriever to use for fetching documents.\n</span>
 <span class="sd">    Must be implemented by subclasses when `has_rag=True`.\n</span>
 
@@ -3991,9 +4001,7 @@ reformulate the latest user question without the chat history.</p>
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">372</span>
-<span class="normal">373</span>
-<span class="normal">374</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">374</span>
 <span class="normal">375</span>
 <span class="normal">376</span>
 <span class="normal">377</span>
@@ -4020,7 +4028,9 @@ reformulate the latest user question without the chat history.</p>
 <span class="normal">398</span>
 <span class="normal">399</span>
 <span class="normal">400</span>
-<span class="normal">401</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_contextualize_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ChatPromptTemplate</span><span class="p">:</span>
+<span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_contextualize_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ChatPromptTemplate</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the contextualize prompt template for the assistant.\n</span>
 <span class="sd">    This is used when `has_rag=True` and there are previous messages in the thread.</span>
 <span class="sd">    Since the latest user question might reference the chat history,</span>
@@ -4102,9 +4112,7 @@ to query the retriever for relevant documents.</p>
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">403</span>
-<span class="normal">404</span>
-<span class="normal">405</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">405</span>
 <span class="normal">406</span>
 <span class="normal">407</span>
 <span class="normal">408</span>
@@ -4130,7 +4138,9 @@ to query the retriever for relevant documents.</p>
 <span class="normal">428</span>
 <span class="normal">429</span>
 <span class="normal">430</span>
-<span class="normal">431</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_history_aware_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Runnable</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">RetrieverOutput</span><span class="p">]:</span>
+<span class="normal">431</span>
+<span class="normal">432</span>
+<span class="normal">433</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_history_aware_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Runnable</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">RetrieverOutput</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the history-aware retriever Langchain chain for the assistant.\n</span>
 <span class="sd">    This is used when `has_rag=True` to fetch documents based on the chat history.\n</span>
 <span class="sd">    By default, this is a chain that checks if there is chat history,</span>
@@ -4200,7 +4210,7 @@ along with the key <code>"history"</code> containing the previous chat history.<
           <tr class="doc-section-item">
             <td><code>thread_id</code></td>
             <td>
-                  <code>int | None</code>
+                  <code><span title="typing.Any">Any</span> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -4240,9 +4250,7 @@ If <code>None</code>, an in-memory chat message history is used.</p>
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">433</span>
-<span class="normal">434</span>
-<span class="normal">435</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">435</span>
 <span class="normal">436</span>
 <span class="normal">437</span>
 <span class="normal">438</span>
@@ -4322,7 +4330,11 @@ If <code>None</code>, an in-memory chat message history is used.</p>
 <span class="normal">512</span>
 <span class="normal">513</span>
 <span class="normal">514</span>
-<span class="normal">515</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">as_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Runnable</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+<span class="normal">515</span>
+<span class="normal">516</span>
+<span class="normal">517</span>
+<span class="normal">518</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@with_cast_id</span>
+<span class="k">def</span> <span class="nf">as_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Runnable</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create the Langchain chain for the assistant.\n</span>
 <span class="sd">    This chain is an agent that supports chat history, tool calling, and RAG (if `has_rag=True`).\n</span>
 <span class="sd">    `as_chain` uses many other methods to create the chain.\n</span>
@@ -4334,7 +4346,7 @@ If <code>None</code>, an in-memory chat message history is used.</p>
 <span class="sd">    along with the key `&quot;history&quot;` containing the previous chat history.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        thread_id (int | None): The thread ID for the chat message history.</span>
+<span class="sd">        thread_id (Any | None): The thread ID for the chat message history.</span>
 <span class="sd">            If `None`, an in-memory chat message history is used.</span>
 
 <span class="sd">    Returns:</span>
@@ -4456,7 +4468,7 @@ Make sure to include a <code>dict</code> like <code>{"input": "user message"}</c
           <tr class="doc-section-item">
             <td><code>thread_id</code></td>
             <td>
-                  <code>int | None</code>
+                  <code><span title="typing.Any">Any</span> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -4511,10 +4523,7 @@ structured like <code>{"output": "assistant response", "history": ...}</code>.</
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">517</span>
-<span class="normal">518</span>
-<span class="normal">519</span>
-<span class="normal">520</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">520</span>
 <span class="normal">521</span>
 <span class="normal">522</span>
 <span class="normal">523</span>
@@ -4528,7 +4537,12 @@ structured like <code>{"output": "assistant response", "history": ...}</code>.</
 <span class="normal">531</span>
 <span class="normal">532</span>
 <span class="normal">533</span>
-<span class="normal">534</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">invoke</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="normal">534</span>
+<span class="normal">535</span>
+<span class="normal">536</span>
+<span class="normal">537</span>
+<span class="normal">538</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@with_cast_id</span>
+<span class="k">def</span> <span class="nf">invoke</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Invoke the assistant Langchain chain with the given arguments and keyword arguments.\n</span>
 <span class="sd">    This is the lower-level method to run the assistant.\n</span>
 <span class="sd">    The chain is created by the `as_chain` method.\n</span>
@@ -4536,7 +4550,7 @@ structured like <code>{"output": "assistant response", "history": ...}</code>.</
 <span class="sd">    Args:</span>
 <span class="sd">        *args: Positional arguments to pass to the chain.</span>
 <span class="sd">            Make sure to include a `dict` like `{&quot;input&quot;: &quot;user message&quot;}`.</span>
-<span class="sd">        thread_id (int | None): The thread ID for the chat message history.</span>
+<span class="sd">        thread_id (Any | None): The thread ID for the chat message history.</span>
 <span class="sd">            If `None`, an in-memory chat message history is used.</span>
 <span class="sd">        **kwargs: Keyword arguments to pass to the chain.</span>
 
@@ -4595,7 +4609,7 @@ structured like <code>{"output": "assistant response", "history": ...}</code>.</
           <tr class="doc-section-item">
             <td><code>thread_id</code></td>
             <td>
-                  <code>int | None</code>
+                  <code><span title="typing.Any">Any</span> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -4649,11 +4663,7 @@ If <code>None</code>, an in-memory chat message history is used.</p>
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">536</span>
-<span class="normal">537</span>
-<span class="normal">538</span>
-<span class="normal">539</span>
-<span class="normal">540</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">540</span>
 <span class="normal">541</span>
 <span class="normal">542</span>
 <span class="normal">543</span>
@@ -4668,13 +4678,19 @@ If <code>None</code>, an in-memory chat message history is used.</p>
 <span class="normal">552</span>
 <span class="normal">553</span>
 <span class="normal">554</span>
-<span class="normal">555</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">555</span>
+<span class="normal">556</span>
+<span class="normal">557</span>
+<span class="normal">558</span>
+<span class="normal">559</span>
+<span class="normal">560</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@with_cast_id</span>
+<span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the assistant with the given message and thread ID.\n</span>
 <span class="sd">    This is the higher-level method to run the assistant.\n</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        message (str): The user message to pass to the assistant.</span>
-<span class="sd">        thread_id (int | None): The thread ID for the chat message history.</span>
+<span class="sd">        thread_id (Any | None): The thread ID for the chat message history.</span>
 <span class="sd">            If `None`, an in-memory chat message history is used.</span>
 <span class="sd">        **kwargs: Additional keyword arguments to pass to the chain.</span>
 
@@ -4762,12 +4778,7 @@ If <code>None</code>, an in-memory chat message history is used.</p>
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">560</span>
-<span class="normal">561</span>
-<span class="normal">562</span>
-<span class="normal">563</span>
-<span class="normal">564</span>
-<span class="normal">565</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">565</span>
 <span class="normal">566</span>
 <span class="normal">567</span>
 <span class="normal">568</span>
@@ -4776,7 +4787,12 @@ If <code>None</code>, an in-memory chat message history is used.</p>
 <span class="normal">571</span>
 <span class="normal">572</span>
 <span class="normal">573</span>
-<span class="normal">574</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">as_tool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseTool</span><span class="p">:</span>
+<span class="normal">574</span>
+<span class="normal">575</span>
+<span class="normal">576</span>
+<span class="normal">577</span>
+<span class="normal">578</span>
+<span class="normal">579</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">as_tool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseTool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a tool from the assistant.\n</span>
 <span class="sd">    This is useful to compose assistants.\n</span>
 

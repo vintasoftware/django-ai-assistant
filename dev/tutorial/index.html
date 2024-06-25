@@ -661,6 +661,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#support-for-other-types-of-primary-key-pk" class="md-nav__link">
+    <span class="md-ellipsis">
+      Support for other types of Primary Key (PK)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#further-configuration-of-ai-assistants" class="md-nav__link">
     <span class="md-ellipsis">
       Further configuration of AI Assistants
@@ -1062,6 +1071,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#support-for-other-types-of-primary-key-pk" class="md-nav__link">
+    <span class="md-ellipsis">
+      Support for other types of Primary Key (PK)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#further-configuration-of-ai-assistants" class="md-nav__link">
     <span class="md-ellipsis">
       Further configuration of AI Assistants
@@ -1407,6 +1425,38 @@ thereby improving the quality of the response by avoiding generic or off-topic a
 </code></pre></div>
 <p>The <code>rag/ai_assistants.py</code> file in the <a href="https://github.com/vintasoftware/django-ai-assistant/tree/main/example">example project</a>
 shows an example of a RAG-powered AI Assistant that's able to answer questions about Django using the Django Documentation as context.</p>
+<h3 id="support-for-other-types-of-primary-key-pk">Support for other types of Primary Key (PK)<a class="headerlink" href="#support-for-other-types-of-primary-key-pk" title="Permanent link">&para;</a></h3>
+<p>You can have Django AI Assistant models use other types of primary key, such as strings, UUIDs, etc.
+This is useful if you're concerned about leaking IDs that exponse thread count, message count, etc. to the frontend.
+When using UUIDs, it will prevent users from figuring out if a thread or message exist or not (due to HTTP 404 vs 403).</p>
+<p>Here are the files you have to change if you need the ids to be UUID:</p>
+<div class="highlight"><span class="filename">myapp/fields.py</span><pre><span></span><code><span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">from</span> <span class="nn">django.db.backends.base.operations</span> <span class="kn">import</span> <span class="n">BaseDatabaseOperations</span>
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">AutoField</span><span class="p">,</span> <span class="n">UUIDField</span>
+
+<span class="n">BaseDatabaseOperations</span><span class="o">.</span><span class="n">integer_field_ranges</span><span class="p">[</span><span class="s1">&#39;UUIDField&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">UUIDAutoField</span><span class="p">(</span><span class="n">UUIDField</span><span class="p">,</span> <span class="n">AutoField</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;editable&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><span class="filename">myapp/apps.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">django_ai_assistant.apps</span> <span class="kn">import</span> <span class="n">AIAssistantConfig</span>
+
+<span class="k">class</span> <span class="nc">AIAssistantConfigOverride</span><span class="p">(</span><span class="n">AIAssistantConfig</span><span class="p">):</span>
+    <span class="n">default_auto_field</span> <span class="o">=</span> <span class="s2">&quot;django_ai_assistant.api.fields.UUIDAutoField&quot;</span>
+</code></pre></div>
+<div class="highlight"><span class="filename">myproject/settings.py</span><pre><span></span><code><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># &quot;django_ai_assistant&quot;, remove this line and add the one below</span>
+    <span class="s2">&quot;example.apps.AIAssistantConfigOverride&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>Make sure to run migrations after those changes:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>manage.py<span class="w"> </span>makemigrations
+python<span class="w"> </span>manage.py<span class="w"> </span>migrate
+</code></pre></div>
+<p>For more information, check <a href="https://docs.djangoproject.com/en/5.0/ref/applications/#for-application-users">Django docs on overriding AppConfig</a>.</p>
 <h3 id="further-configuration-of-ai-assistants">Further configuration of AI Assistants<a class="headerlink" href="#further-configuration-of-ai-assistants" title="Permanent link">&para;</a></h3>
 <p>You can further configure the <code>AIAssistant</code> subclasses by overriding its public methods. Check the <a href="../reference/assistants-ref/">Reference</a> for more information.</p>
 
