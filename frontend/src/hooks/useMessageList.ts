@@ -1,10 +1,10 @@
 import { useCallback } from "react";
 import { useState } from "react";
 import {
-  djangoAiAssistantCreateThreadMessage,
-  djangoAiAssistantDeleteThreadMessage,
-  djangoAiAssistantListThreadMessages,
-  ThreadMessagesSchemaOut,
+  aiCreateThreadMessage,
+  aiDeleteThreadMessage,
+  aiListThreadMessages,
+  ThreadMessage,
 } from "../client";
 
 function hasNullThreadId(
@@ -26,7 +26,7 @@ function hasNullThreadId(
  * @param threadId The ID of the thread for which to manage messages.
  */
 export function useMessageList({ threadId }: { threadId: string | null }) {
-  const [messages, setMessages] = useState<ThreadMessagesSchemaOut[] | null>(
+  const [messages, setMessages] = useState<ThreadMessage[] | null>(
     null
   );
   const [loadingFetchMessages, setLoadingFetchMessages] =
@@ -43,13 +43,13 @@ export function useMessageList({ threadId }: { threadId: string | null }) {
    * @returns - A promise that resolves with the fetched list of messages.
    */
   const fetchMessages = useCallback(async (): Promise<
-    ThreadMessagesSchemaOut[] | null
+    ThreadMessage[] | null
   > => {
     if (hasNullThreadId(threadId)) return null;
 
     try {
       setLoadingFetchMessages(true);
-      const fetchedMessages = await djangoAiAssistantListThreadMessages({
+      const fetchedMessages = await aiListThreadMessages({
         threadId: threadId,
       });
       setMessages(fetchedMessages);
@@ -79,7 +79,7 @@ export function useMessageList({ threadId }: { threadId: string | null }) {
       try {
         setLoadingCreateMessage(true);
         // successful response is 201, None
-        await djangoAiAssistantCreateThreadMessage({
+        await aiCreateThreadMessage({
           threadId,
           requestBody: {
             content: messageTextValue,
@@ -107,7 +107,7 @@ export function useMessageList({ threadId }: { threadId: string | null }) {
 
       try {
         setLoadingDeleteMessage(true);
-        await djangoAiAssistantDeleteThreadMessage({
+        await aiDeleteThreadMessage({
           threadId,
           messageId,
         });

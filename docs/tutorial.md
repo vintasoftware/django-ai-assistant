@@ -18,7 +18,7 @@ You can also use other models, keep reading to learn more. Just make sure their 
 
 !!! note
     An easy way to set environment variables is to use a `.env` file in your project's root directory and use `python-dotenv` to load them.
-    Our [example project](https://github.com/vintasoftware/django-ai-assistant/tree/main/example) uses this approach.
+    Our [example project](https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme) uses this approach.
 
 ## What AI Assistants can do
 
@@ -237,8 +237,7 @@ urlpatterns = [
 ``` 
 
 The built-in API supports retrieval of Assistants info, as well as CRUD for Threads and Messages.
-It has a OpenAPI schema that you can explore at `ai-assistant/docs/`.
-
+It has a OpenAPI schema that you can explore at `http://localhost:8000/ai-assistant/docs`, when running your project locally.
 
 #### Configuring the API
 
@@ -309,6 +308,12 @@ def check_custom_message_permission(
     return ...
 ```
 
+## Frontend integration
+
+You can integrate Django AI Assistant with frontend frameworks like React or Vue.js. Please check the [frontend documentation](frontend.md).
+
+If you want to use traditional Django templates, you can try using HTMX to avoid page refreshes. Check the [example project](https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme), it includes a HTMX application.
+
 ## Advanced usage
 
 ### Using other AI models
@@ -364,7 +369,7 @@ class ComplexAssistant(AIAssistant):
         ]
 ```
 
-The `movies/ai_assistants.py` file in the [example project](https://github.com/vintasoftware/django-ai-assistant/tree/main/example)
+The `movies/ai_assistants.py` file in the [example project](https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme)
 shows an example of a composed AI Assistant that's able to recommend movies and manage the user's movie backlog.
 
 ### Retrieval Augmented Generation (RAG)
@@ -403,7 +408,7 @@ class DocsAssistant(AIAssistant):
         return ...  # use a Langchain Retriever here
 ```
 
-The `rag/ai_assistants.py` file in the [example project](https://github.com/vintasoftware/django-ai-assistant/tree/main/example)
+The `rag/ai_assistants.py` file in the [example project](https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme)
 shows an example of a RAG-powered AI Assistant that's able to answer questions about Django using the Django Documentation as context.
 
 ### Further configuration of AI Assistants

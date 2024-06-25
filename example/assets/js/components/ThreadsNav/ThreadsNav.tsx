@@ -10,7 +10,7 @@ import { useHover } from "@mantine/hooks";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
 import classes from "./ThreadsNav.module.css";
 
-import { ThreadSchema } from "django-ai-assistant-client";
+import { Thread } from "django-ai-assistant-client";
 
 export function ThreadsNav({
   threads,
@@ -19,13 +19,13 @@ export function ThreadsNav({
   createThread,
   deleteThread,
 }: {
-  threads: ThreadSchema[] | null;
+  threads: Thread[] | null;
   selectedThreadId: number | null | undefined;
-  selectThread: (thread: ThreadSchema | null) => void;
-  createThread: () => Promise<ThreadSchema>;
+  selectThread: (thread: Thread | null) => void;
+  createThread: () => Promise<Thread>;
   deleteThread: ({ threadId }: { threadId: string }) => Promise<void>;
 }) {
-  const ThreadNavLink = ({ thread }: { thread: ThreadSchema }) => {
+  const ThreadNavLink = ({ thread }: { thread: Thread }) => {
     const { hovered, ref } = useHover();
 
     return (

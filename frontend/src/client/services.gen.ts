@@ -3,14 +3,14 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { DjangoAiAssistantListAssistantsResponse, DjangoAiAssistantGetAssistantData, DjangoAiAssistantGetAssistantResponse, DjangoAiAssistantListThreadsResponse, DjangoAiAssistantCreateThreadData, DjangoAiAssistantCreateThreadResponse, DjangoAiAssistantGetThreadData, DjangoAiAssistantGetThreadResponse, DjangoAiAssistantUpdateThreadData, DjangoAiAssistantUpdateThreadResponse, DjangoAiAssistantDeleteThreadData, DjangoAiAssistantDeleteThreadResponse, DjangoAiAssistantListThreadMessagesData, DjangoAiAssistantListThreadMessagesResponse, DjangoAiAssistantCreateThreadMessageData, DjangoAiAssistantCreateThreadMessageResponse, DjangoAiAssistantDeleteThreadMessageData, DjangoAiAssistantDeleteThreadMessageResponse } from './types.gen';
+import type { AiListAssistantsResponse, AiGetAssistantData, AiGetAssistantResponse, AiListThreadsResponse, AiCreateThreadData, AiCreateThreadResponse, AiGetThreadData, AiGetThreadResponse, AiUpdateThreadData, AiUpdateThreadResponse, AiDeleteThreadData, AiDeleteThreadResponse, AiListThreadMessagesData, AiListThreadMessagesResponse, AiCreateThreadMessageData, AiCreateThreadMessageResponse, AiDeleteThreadMessageData, AiDeleteThreadMessageResponse } from './types.gen';
 
 /**
  * List Assistants
- * @returns AssistantSchema OK
+ * @returns Assistant OK
  * @throws ApiError
  */
-export const djangoAiAssistantListAssistants = (): CancelablePromise<DjangoAiAssistantListAssistantsResponse> => { return __request(OpenAPI, {
+export const aiListAssistants = (): CancelablePromise<AiListAssistantsResponse> => { return __request(OpenAPI, {
     method: 'GET',
     url: '/assistants/'
 }); };
@@ -19,10 +19,10 @@ export const djangoAiAssistantListAssistants = (): CancelablePromise<DjangoAiAss
  * Get Assistant
  * @param data The data for the request.
  * @param data.assistantId
- * @returns AssistantSchema OK
+ * @returns Assistant OK
  * @throws ApiError
  */
-export const djangoAiAssistantGetAssistant = (data: DjangoAiAssistantGetAssistantData): CancelablePromise<DjangoAiAssistantGetAssistantResponse> => { return __request(OpenAPI, {
+export const aiGetAssistant = (data: AiGetAssistantData): CancelablePromise<AiGetAssistantResponse> => { return __request(OpenAPI, {
     method: 'GET',
     url: '/assistants/{assistant_id}/',
     path: {
@@ -32,10 +32,10 @@ export const djangoAiAssistantGetAssistant = (data: DjangoAiAssistantGetAssistan
 
 /**
  * List Threads
- * @returns ThreadSchema OK
+ * @returns Thread OK
  * @throws ApiError
  */
-export const djangoAiAssistantListThreads = (): CancelablePromise<DjangoAiAssistantListThreadsResponse> => { return __request(OpenAPI, {
+export const aiListThreads = (): CancelablePromise<AiListThreadsResponse> => { return __request(OpenAPI, {
     method: 'GET',
     url: '/threads/'
 }); };
@@ -44,10 +44,10 @@ export const djangoAiAssistantListThreads = (): CancelablePromise<DjangoAiAssist
  * Create Thread
  * @param data The data for the request.
  * @param data.requestBody
- * @returns ThreadSchema OK
+ * @returns Thread OK
  * @throws ApiError
  */
-export const djangoAiAssistantCreateThread = (data: DjangoAiAssistantCreateThreadData): CancelablePromise<DjangoAiAssistantCreateThreadResponse> => { return __request(OpenAPI, {
+export const aiCreateThread = (data: AiCreateThreadData): CancelablePromise<AiCreateThreadResponse> => { return __request(OpenAPI, {
     method: 'POST',
     url: '/threads/',
     body: data.requestBody,
@@ -58,10 +58,10 @@ export const djangoAiAssistantCreateThread = (data: DjangoAiAssistantCreateThrea
  * Get Thread
  * @param data The data for the request.
  * @param data.threadId
- * @returns ThreadSchema OK
+ * @returns Thread OK
  * @throws ApiError
  */
-export const djangoAiAssistantGetThread = (data: DjangoAiAssistantGetThreadData): CancelablePromise<DjangoAiAssistantGetThreadResponse> => { return __request(OpenAPI, {
+export const aiGetThread = (data: AiGetThreadData): CancelablePromise<AiGetThreadResponse> => { return __request(OpenAPI, {
     method: 'GET',
     url: '/threads/{thread_id}/',
     path: {
@@ -74,10 +74,10 @@ export const djangoAiAssistantGetThread = (data: DjangoAiAssistantGetThreadData)
  * @param data The data for the request.
  * @param data.threadId
  * @param data.requestBody
- * @returns ThreadSchema OK
+ * @returns Thread OK
  * @throws ApiError
  */
-export const djangoAiAssistantUpdateThread = (data: DjangoAiAssistantUpdateThreadData): CancelablePromise<DjangoAiAssistantUpdateThreadResponse> => { return __request(OpenAPI, {
+export const aiUpdateThread = (data: AiUpdateThreadData): CancelablePromise<AiUpdateThreadResponse> => { return __request(OpenAPI, {
     method: 'PATCH',
     url: '/threads/{thread_id}/',
     path: {
@@ -94,7 +94,7 @@ export const djangoAiAssistantUpdateThread = (data: DjangoAiAssistantUpdateThrea
  * @returns void No Content
  * @throws ApiError
  */
-export const djangoAiAssistantDeleteThread = (data: DjangoAiAssistantDeleteThreadData): CancelablePromise<DjangoAiAssistantDeleteThreadResponse> => { return __request(OpenAPI, {
+export const aiDeleteThread = (data: AiDeleteThreadData): CancelablePromise<AiDeleteThreadResponse> => { return __request(OpenAPI, {
     method: 'DELETE',
     url: '/threads/{thread_id}/',
     path: {
@@ -106,10 +106,10 @@ export const djangoAiAssistantDeleteThread = (data: DjangoAiAssistantDeleteThrea
  * List Thread Messages
  * @param data The data for the request.
  * @param data.threadId
- * @returns ThreadMessagesSchemaOut OK
+ * @returns ThreadMessage OK
  * @throws ApiError
  */
-export const djangoAiAssistantListThreadMessages = (data: DjangoAiAssistantListThreadMessagesData): CancelablePromise<DjangoAiAssistantListThreadMessagesResponse> => { return __request(OpenAPI, {
+export const aiListThreadMessages = (data: AiListThreadMessagesData): CancelablePromise<AiListThreadMessagesResponse> => { return __request(OpenAPI, {
     method: 'GET',
     url: '/threads/{thread_id}/messages/',
     path: {
@@ -125,7 +125,7 @@ export const djangoAiAssistantListThreadMessages = (data: DjangoAiAssistantListT
  * @returns unknown Created
  * @throws ApiError
  */
-export const djangoAiAssistantCreateThreadMessage = (data: DjangoAiAssistantCreateThreadMessageData): CancelablePromise<DjangoAiAssistantCreateThreadMessageResponse> => { return __request(OpenAPI, {
+export const aiCreateThreadMessage = (data: AiCreateThreadMessageData): CancelablePromise<AiCreateThreadMessageResponse> => { return __request(OpenAPI, {
     method: 'POST',
     url: '/threads/{thread_id}/messages/',
     path: {
@@ -143,7 +143,7 @@ export const djangoAiAssistantCreateThreadMessage = (data: DjangoAiAssistantCrea
  * @returns void No Content
  * @throws ApiError
  */
-export const djangoAiAssistantDeleteThreadMessage = (data: DjangoAiAssistantDeleteThreadMessageData): CancelablePromise<DjangoAiAssistantDeleteThreadMessageResponse> => { return __request(OpenAPI, {
+export const aiDeleteThreadMessage = (data: AiDeleteThreadMessageData): CancelablePromise<AiDeleteThreadMessageResponse> => { return __request(OpenAPI, {
     method: 'DELETE',
     url: '/threads/{thread_id}/messages/{message_id}/',
     path: {

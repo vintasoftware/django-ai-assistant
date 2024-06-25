@@ -10,23 +10,24 @@ from ninja.security import django_auth
 
 from django_ai_assistant import PACKAGE_NAME, VERSION
 from django_ai_assistant.api.schemas import (
-    AssistantSchema,
-    ThreadMessagesSchemaIn,
-    ThreadMessagesSchemaOut,
-    ThreadSchema,
-    ThreadSchemaIn,
+    Assistant,
+    Thread,
+    ThreadIn,
+    ThreadMessage,
+    ThreadMessageIn,
 )
 from django_ai_assistant.conf import app_settings
 from django_ai_assistant.exceptions import AIAssistantNotDefinedError, AIUserNotAllowedError
 from django_ai_assistant.helpers import use_cases
-from django_ai_assistant.models import Message, Thread
+from django_ai_assistant.models import Message as MessageModel
+from django_ai_assistant.models import Thread as ThreadModel
 
 
 class API(NinjaAPI):
-    # Force "operationId" to be like "django_ai_assistant_delete_thread"
+    # Force "operationId" to be like "ai_delete_thread"
     def get_openapi_operation_id(self, operation: Operation) -> str:
         name = operation.view_func.__name__
-        return (PACKAGE_NAME + "_" + name).replace(".", "_")
+        return ("ai_" + name).replace(".", "_")
 
 
 def init_api():
@@ -61,61 +62,61 @@ def ai_assistant_not_defined_handler(request, exc):
     )
 
 
-@api.get("assistants/", response=List[AssistantSchema], url_name="assistants_list")
+@api.get("assistants/", response=List[Assistant], url_name="assistants_list")
 def list_assistants(request):
     return list(use_cases.get_assistants_info(user=request.user, request=request))
 
 
-@api.get("assistants/{assistant_id}/", response=AssistantSchema, url_name="assistant_detail")
+@api.get("assistants/{assistant_id}/", response=Assistant, url_name="assistant_detail")
 def get_assistant(request, assistant_id: str):
     return use_cases.get_single_assistant_info(
         assistant_id=assistant_id, user=request.user, request=request
     )
 
 
-@api.get("threads/", response=List[ThreadSchema], url_name="threads_list_create")
+@api.get("threads/", response=List[Thread], url_name="threads_list_create")
 def list_threads(request):
     return list(use_cases.get_threads(user=request.user))
 
 
-@api.post("threads/", response=ThreadSchema, url_name="threads_list_create")
-def create_thread(request, payload: ThreadSchemaIn):
+@api.post("threads/", response=Thread, url_name="threads_list_create")
+def create_thread(request, payload: ThreadIn):
     name = payload.name
     return use_cases.create_thread(name=name, user=request.user, request=request)
 
 
-@api.get("threads/{thread_id}/", response=ThreadSchema, url_name="thread_detail_update_delete")
+@api.get("threads/{thread_id}/", response=Thread, url_name="thread_detail_update_delete")
 def get_thread(request, thread_id: str):
     try:
         thread = use_cases.get_single_thread(
             thread_id=thread_id, user=request.user, request=request
         )
-    except Thread.DoesNotExist:
+    except ThreadModel.DoesNotExist:
         raise Http404(f"No Thread with id={thread_id} found") from None
     return thread
 
 
-@api.patch("threads/{thread_id}/", response=ThreadSchema, url_name="thread_detail_update_delete")
-def update_thread(request, thread_id: str, payload: ThreadSchemaIn):
-    thread = get_object_or_404(Thread, id=thread_id)
+@api.patch("threads/{thread_id}/", response=Thread, url_name="thread_detail_update_delete")
+def update_thread(request, thread_id: str, payload: ThreadIn):
+    thread = get_object_or_404(ThreadModel, id=thread_id)
     name = payload.name
     return use_cases.update_thread(thread=thread, name=name, user=request.user, request=request)
 
 
 @api.delete("threads/{thread_id}/", response={204: None}, url_name="thread_detail_update_delete")
 def delete_thread(request, thread_id: str):
-    thread = get_object_or_404(Thread, id=thread_id)
+    thread = get_object_or_404(ThreadModel, id=thread_id)
     use_cases.delete_thread(thread=thread, user=request.user, request=request)
     return 204, None
 
 
 @api.get(
     "threads/{thread_id}/messages/",
-    response=List[ThreadMessagesSchemaOut],
+    response=List[ThreadMessage],
     url_name="messages_list_create",
 )
 def list_thread_messages(request, thread_id: str):
-    thread = get_object_or_404(Thread, id=thread_id)
+    thread = get_object_or_404(ThreadModel, id=thread_id)
     messages = use_cases.get_thread_messages(thread=thread, user=request.user, request=request)
     return [message_to_dict(m)["data"] for m in messages]
 
@@ -126,8 +127,8 @@ def list_thread_messages(request, thread_id: str):
     response={201: None},
     url_name="messages_list_create",
 )
-def create_thread_message(request, thread_id: str, payload: ThreadMessagesSchemaIn):
-    thread = Thread.objects.get(id=thread_id)
+def create_thread_message(request, thread_id: str, payload: ThreadMessageIn):
+    thread = ThreadModel.objects.get(id=thread_id)
 
     use_cases.create_message(
         assistant_id=payload.assistant_id,
@@ -143,7 +144,7 @@ def create_thread_message(request, thread_id: str, payload: ThreadMessagesSchema
     "threads/{thread_id}/messages/{message_id}/", response={204: None}, url_name="messages_delete"
 )
 def delete_thread_message(request, thread_id: str, message_id: str):
-    message = get_object_or_404(Message, id=message_id, thread_id=thread_id)
+    message = get_object_or_404(MessageModel, id=message_id, thread_id=thread_id)
     use_cases.delete_message(
         message=message,
         user=request.user,
