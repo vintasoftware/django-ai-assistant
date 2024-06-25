@@ -46,40 +46,40 @@ export type DjangoAiAssistantCreateThreadData = {
 export type DjangoAiAssistantCreateThreadResponse = ThreadSchema;
 
 export type DjangoAiAssistantGetThreadData = {
-    threadId: string;
+    threadId: unknown;
 };
 
 export type DjangoAiAssistantGetThreadResponse = ThreadSchema;
 
 export type DjangoAiAssistantUpdateThreadData = {
     requestBody: ThreadSchemaIn;
-    threadId: string;
+    threadId: unknown;
 };
 
 export type DjangoAiAssistantUpdateThreadResponse = ThreadSchema;
 
 export type DjangoAiAssistantDeleteThreadData = {
-    threadId: string;
+    threadId: unknown;
 };
 
 export type DjangoAiAssistantDeleteThreadResponse = void;
 
 export type DjangoAiAssistantListThreadMessagesData = {
-    threadId: string;
+    threadId: unknown;
 };
 
 export type DjangoAiAssistantListThreadMessagesResponse = Array<ThreadMessagesSchemaOut>;
 
 export type DjangoAiAssistantCreateThreadMessageData = {
     requestBody: ThreadMessagesSchemaIn;
-    threadId: string;
+    threadId: unknown;
 };
 
 export type DjangoAiAssistantCreateThreadMessageResponse = unknown;
 
 export type DjangoAiAssistantDeleteThreadMessageData = {
-    messageId: string;
-    threadId: string;
+    messageId: unknown;
+    threadId: unknown;
 };
 
 export type DjangoAiAssistantDeleteThreadMessageResponse = void;

@@ -164,7 +164,7 @@ def create_thread(
 
 
 def get_single_thread(
-    thread_id: str,
+    thread_id: Any,
     user: Any,
     request: HttpRequest | None = None,
 ) -> Thread:
@@ -287,4 +287,6 @@ def delete_message(
     if not can_delete_message(message=message, user=user, request=request):
         raise AIUserNotAllowedError("User is not allowed to delete this message")
 
-    return DjangoChatMessageHistory(thread_id=message.thread_id).remove_messages([str(message.id)])
+    return DjangoChatMessageHistory(thread_id=message.thread_id).remove_messages(
+        message_ids=[str(message.id)]
+    )

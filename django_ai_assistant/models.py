@@ -1,4 +1,5 @@
 import json
+from typing import Any
 
 from django.conf import settings
 from django.db import models
@@ -9,7 +10,6 @@ class Thread(models.Model):
     """Thread model. A thread is a collection of messages between a user and the AI assistant.
     Also called conversation or session."""
 
-    id: int  # noqa: A003
     messages: Manager["Message"]
     name = models.CharField(max_length=255, blank=True)
     """Name of the thread. Can be blank."""
@@ -47,10 +47,9 @@ class Message(models.Model):
     A message can be sent by a user or the AI assistant.\n
     The message data is stored as a JSON field called `message`."""
 
-    id: int  # noqa: A003
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE, related_name="messages")
     """Thread to which the message belongs."""
-    thread_id: int  # noqa: A003
+    thread_id: Any  # noqa: A003
     message = models.JSONField()
     """Message content. This is a serialized Langchain `BaseMessage` that was serialized
     with `message_to_dict` and can be deserialized with `messages_from_dict`."""
