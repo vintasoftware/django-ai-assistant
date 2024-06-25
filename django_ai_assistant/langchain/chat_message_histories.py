@@ -14,6 +14,7 @@ from django.db import transaction
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.messages import BaseMessage, message_to_dict, messages_from_dict
 
+from django_ai_assistant.decorators import with_cast_id
 from django_ai_assistant.models import Message
 
 
@@ -21,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class DjangoChatMessageHistory(BaseChatMessageHistory):
+    @with_cast_id
     def __init__(
         self,
         thread_id: Any,
@@ -103,7 +105,8 @@ class DjangoChatMessageHistory(BaseChatMessageHistory):
 
         await Message.objects.abulk_update(created_messages, ["message"])
 
-    def remove_messages(self, message_ids: List[str]) -> None:
+    @with_cast_id
+    def remove_messages(self, message_ids: List[Any]) -> None:
         """Remove messages from the chat thread.
 
         Args:
@@ -111,7 +114,8 @@ class DjangoChatMessageHistory(BaseChatMessageHistory):
         """
         Message.objects.filter(id__in=message_ids).delete()
 
-    async def aremove_messages(self, message_ids: List[str]) -> None:
+    @with_cast_id
+    async def aremove_messages(self, message_ids: List[Any]) -> None:
         """Remove messages from the chat thread.
 
         Args:

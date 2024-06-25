@@ -46,40 +46,40 @@ export type AiCreateThreadData = {
 export type AiCreateThreadResponse = Thread;
 
 export type AiGetThreadData = {
-    threadId: string;
+    threadId: unknown;
 };
 
 export type AiGetThreadResponse = Thread;
 
 export type AiUpdateThreadData = {
     requestBody: ThreadIn;
-    threadId: string;
+    threadId: unknown;
 };
 
 export type AiUpdateThreadResponse = Thread;
 
 export type AiDeleteThreadData = {
-    threadId: string;
+    threadId: unknown;
 };
 
 export type AiDeleteThreadResponse = void;
 
 export type AiListThreadMessagesData = {
-    threadId: string;
+    threadId: unknown;
 };
 
 export type AiListThreadMessagesResponse = Array<ThreadMessage>;
 
 export type AiCreateThreadMessageData = {
     requestBody: ThreadMessageIn;
-    threadId: string;
+    threadId: unknown;
 };
 
 export type AiCreateThreadMessageResponse = unknown;
 
 export type AiDeleteThreadMessageData = {
-    messageId: string;
-    threadId: string;
+    messageId: unknown;
+    threadId: unknown;
 };
 
 export type AiDeleteThreadMessageResponse = void;
