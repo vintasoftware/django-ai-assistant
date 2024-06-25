@@ -1,20 +1,20 @@
 import { act, renderHook } from "@testing-library/react";
 import { useMessageList } from "../src/hooks";
 import {
-  djangoAiAssistantCreateThreadMessage,
-  djangoAiAssistantDeleteThreadMessage,
-  djangoAiAssistantListThreadMessages,
-  ThreadMessagesSchemaOut,
+  aiCreateThreadMessage,
+  aiDeleteThreadMessage,
+  aiListThreadMessages,
+  ThreadMessage,
 } from "../src/client";
 
 jest.mock("../src/client", () => ({
-  djangoAiAssistantCreateThreadMessage: jest
+  aiCreateThreadMessage: jest
     .fn()
     .mockImplementation(() => Promise.resolve()),
-  djangoAiAssistantListThreadMessages: jest
+  aiListThreadMessages: jest
     .fn()
     .mockImplementation(() => Promise.resolve()),
-  djangoAiAssistantDeleteThreadMessage: jest
+  aiDeleteThreadMessage: jest
     .fn()
     .mockImplementation(() => Promise.resolve()),
 }));
@@ -24,7 +24,7 @@ describe("useMessageList", () => {
     jest.clearAllMocks();
   });
 
-  const mockMessages: ThreadMessagesSchemaOut[] = [
+  const mockMessages: ThreadMessage[] = [
     {
       id: "1",
       type: "human",
@@ -47,7 +47,7 @@ describe("useMessageList", () => {
 
   describe("fetchMessages", () => {
     it("should not fetch messages if threadId is null", async () => {
-      const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+      const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => { });
 
       const { result } = renderHook(() => useMessageList({ threadId: null }));
 
@@ -69,7 +69,7 @@ describe("useMessageList", () => {
     });
 
     it("should fetch messages and update state correctly", async () => {
-      (djangoAiAssistantListThreadMessages as jest.Mock).mockResolvedValue(
+      (aiListThreadMessages as jest.Mock).mockResolvedValue(
         mockMessages
       );
 
@@ -87,7 +87,7 @@ describe("useMessageList", () => {
     });
 
     it("should set loading to false if fetch fails", async () => {
-      (djangoAiAssistantListThreadMessages as jest.Mock).mockRejectedValue(
+      (aiListThreadMessages as jest.Mock).mockRejectedValue(
         new Error("Failed to fetch")
       );
 
@@ -109,7 +109,7 @@ describe("useMessageList", () => {
 
   describe("createMessage", () => {
     it("should not create message if threadId is null", async () => {
-      const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+      const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => { });
 
       const { result } = renderHook(() => useMessageList({ threadId: null }));
 
@@ -146,10 +146,10 @@ describe("useMessageList", () => {
           content: "The current temperature in Recife is 30°C.",
         },
       ];
-      (djangoAiAssistantCreateThreadMessage as jest.Mock).mockResolvedValue(
+      (aiCreateThreadMessage as jest.Mock).mockResolvedValue(
         null
       );
-      (djangoAiAssistantListThreadMessages as jest.Mock).mockResolvedValue([
+      (aiListThreadMessages as jest.Mock).mockResolvedValue([
         ...mockMessages,
         ...mockNewMessages,
       ]);
@@ -176,7 +176,7 @@ describe("useMessageList", () => {
     });
 
     it("should set loading to false if create fails", async () => {
-      (djangoAiAssistantCreateThreadMessage as jest.Mock).mockRejectedValue(
+      (aiCreateThreadMessage as jest.Mock).mockRejectedValue(
         new Error("Failed to create")
       );
 
@@ -201,7 +201,7 @@ describe("useMessageList", () => {
 
   describe("deleteMessage", () => {
     it("should not delete message if threadId is null", async () => {
-      const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+      const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => { });
 
       const { result } = renderHook(() => useMessageList({ threadId: null }));
 
@@ -228,7 +228,7 @@ describe("useMessageList", () => {
 
     it("should delete a message and update state correctly", async () => {
       const deletedMessageId = mockMessages[0].id;
-      (djangoAiAssistantListThreadMessages as jest.Mock).mockResolvedValue(
+      (aiListThreadMessages as jest.Mock).mockResolvedValue(
         mockMessages.filter((message) => message.id !== deletedMessageId)
       );
 
@@ -253,10 +253,10 @@ describe("useMessageList", () => {
 
     it("should set loading to false if delete fails", async () => {
       const deletedMessageId = mockMessages[0].id;
-      (djangoAiAssistantListThreadMessages as jest.Mock).mockResolvedValue(
+      (aiListThreadMessages as jest.Mock).mockResolvedValue(
         mockMessages.filter((message) => message.id !== deletedMessageId)
       );
-      (djangoAiAssistantDeleteThreadMessage as jest.Mock).mockRejectedValue(
+      (aiDeleteThreadMessage as jest.Mock).mockRejectedValue(
         new Error("Failed to delete")
       );
 

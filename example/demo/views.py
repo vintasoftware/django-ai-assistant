@@ -6,8 +6,8 @@ from pydantic import ValidationError
 from weather.ai_assistants import WeatherAIAssistant
 
 from django_ai_assistant.api.schemas import (
-    ThreadMessagesSchemaIn,
-    ThreadSchemaIn,
+    ThreadIn,
+    ThreadMessageIn,
 )
 from django_ai_assistant.helpers.use_cases import (
     create_message,
@@ -45,7 +45,7 @@ class AIAssistantChatHomeView(BaseAIAssistantView):
     # POST to create thread:
     def post(self, request, *args, **kwargs):
         try:
-            thread_data = ThreadSchemaIn(**request.POST)
+            thread_data = ThreadIn(**request.POST)
         except ValidationError:
             messages.error(request, "Invalid thread data")
             return redirect("chat_home")
@@ -86,7 +86,7 @@ class AIAssistantChatThreadView(BaseAIAssistantView):
         thread = get_object_or_404(Thread, id=thread_id)
 
         try:
-            message = ThreadMessagesSchemaIn(
+            message = ThreadMessageIn(
                 assistant_id=assistant_id,
                 content=request.POST.get("content") or None,
             )
