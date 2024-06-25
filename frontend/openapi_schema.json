@@ -1,0 +1,477 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "django_ai_assistant",
+    "version": "0.0.1",
+    "description": ""
+  },
+  "paths": {
+    "/assistants/": {
+      "get": {
+        "operationId": "django_ai_assistant_list_assistants",
+        "summary": "List Assistants",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AssistantSchema"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
+      }
+    },
+    "/assistants/{assistant_id}/": {
+      "get": {
+        "operationId": "django_ai_assistant_get_assistant",
+        "summary": "Get Assistant",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assistant_id",
+            "schema": {
+              "title": "Assistant Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssistantSchema"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
+      }
+    },
+    "/threads/": {
+      "get": {
+        "operationId": "django_ai_assistant_list_threads",
+        "summary": "List Threads",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ThreadSchema"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "django_ai_assistant_create_thread",
+        "summary": "Create Thread",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThreadSchema"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThreadSchemaIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
+      }
+    },
+    "/threads/{thread_id}/": {
+      "get": {
+        "operationId": "django_ai_assistant_get_thread",
+        "summary": "Get Thread",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "thread_id",
+            "schema": {
+              "title": "Thread Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThreadSchema"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "django_ai_assistant_update_thread",
+        "summary": "Update Thread",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "thread_id",
+            "schema": {
+              "title": "Thread Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThreadSchema"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThreadSchemaIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "django_ai_assistant_delete_thread",
+        "summary": "Delete Thread",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "thread_id",
+            "schema": {
+              "title": "Thread Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
+      }
+    },
+    "/threads/{thread_id}/messages/": {
+      "get": {
+        "operationId": "django_ai_assistant_list_thread_messages",
+        "summary": "List Thread Messages",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "thread_id",
+            "schema": {
+              "title": "Thread Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ThreadMessagesSchemaOut"
+                  },
+                  "title": "Response",
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "django_ai_assistant_create_thread_message",
+        "summary": "Create Thread Message",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "thread_id",
+            "schema": {
+              "title": "Thread Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThreadMessagesSchemaIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
+      }
+    },
+    "/threads/{thread_id}/messages/{message_id}/": {
+      "delete": {
+        "operationId": "django_ai_assistant_delete_thread_message",
+        "summary": "Delete Thread Message",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "thread_id",
+            "schema": {
+              "title": "Thread Id",
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "message_id",
+            "schema": {
+              "title": "Message Id",
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "security": [
+          {
+            "SessionAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AssistantSchema": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "AssistantSchema",
+        "type": "object"
+      },
+      "ThreadSchema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "ID"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ThreadSchema",
+        "type": "object"
+      },
+      "ThreadSchemaIn": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "title": "ThreadSchemaIn",
+        "type": "object"
+      },
+      "ThreadMessageTypeEnum": {
+        "enum": [
+          "human",
+          "ai",
+          "generic",
+          "system",
+          "function",
+          "tool"
+        ],
+        "title": "ThreadMessageTypeEnum",
+        "type": "string"
+      },
+      "ThreadMessagesSchemaOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ThreadMessageTypeEnum"
+          },
+          "content": {
+            "title": "Content",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "content"
+        ],
+        "title": "ThreadMessagesSchemaOut",
+        "type": "object"
+      },
+      "ThreadMessagesSchemaIn": {
+        "properties": {
+          "assistant_id": {
+            "title": "Assistant Id",
+            "type": "string"
+          },
+          "content": {
+            "title": "Content",
+            "type": "string"
+          }
+        },
+        "required": [
+          "assistant_id",
+          "content"
+        ],
+        "title": "ThreadMessagesSchemaIn",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "SessionAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "sessionid"
+      }
+    }
+  },
+  "servers": []
+}

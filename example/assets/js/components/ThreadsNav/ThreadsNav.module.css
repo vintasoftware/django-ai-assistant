@@ -1,0 +1,44 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  background-color: var(--mantine-color-body);
+  width: rem(250px);
+  padding: var(--mantine-spacing-md);
+  padding-top: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: rem(1px) solid
+    light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+}
+
+.section {
+  margin-left: calc(var(--mantine-spacing-md) * -1);
+  margin-right: calc(var(--mantine-spacing-md) * -1);
+  margin-bottom: var(--mantine-spacing-md);
+
+  &:not(:last-of-type) {
+    border-bottom: rem(1px) solid
+      light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  }
+}
+
+.threads {
+  padding-left: calc(var(--mantine-spacing-md) - rem(6px));
+  padding-right: calc(var(--mantine-spacing-md) - rem(6px));
+  padding-bottom: var(--mantine-spacing-md);
+}
+
+.threadsHeader {
+  padding-left: calc(var(--mantine-spacing-md) + rem(2px));
+  padding-right: var(--mantine-spacing-md);
+  margin-top: 1rem;
+  margin-bottom: rem(5px);
+}
+
+.threadLinkInfo {
+  padding: rem(8px) var(--mantine-spacing-xs);
+  font-size: var(--mantine-font-size-sm);
+}

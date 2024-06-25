@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from . import views
+from demo import views
 
 
 urlpatterns = [
@@ -11,5 +11,7 @@ urlpatterns = [
         views.AIAssistantChatThreadView.as_view(),
         name="chat_thread",
     ),
-    path("", views.react_index, name="react_index"),
+    # Catch all for react app:
+    path("", views.react_index, {"resource": ""}),
+    path("<path:resource>", views.react_index),
 ]

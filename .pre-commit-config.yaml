@@ -1,4 +1,5 @@
 fail_fast: true
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
@@ -15,21 +16,51 @@ repos:
       - id: check-symlinks
       - id: debug-statements
       - id: detect-private-key
+
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: v0.1.6
+    rev: v0.1.8
     hooks:
       # Run the linter.
       - id: ruff
         args: [--fix]
       # Run the formatter.
       - id: ruff-format
+
   - repo: local
     hooks:
+      - id: frontend-lint
+        name: run frontend lint
+        entry: sh -c 'cd frontend && npm run lint'
+        language: system
+        types: [file]
+        files: ^frontend/.*\.(js|jsx|ts|tsx)$
+        pass_filenames: true
+      - id: frontend-tsc
+        name: run frontend tsc
+        entry: sh -c 'cd frontend && npm run tsc'
+        language: system
+        types: [file]
+        files: ^frontend/.*\.(ts|tsx)$
+        pass_filenames: false
       - id: missing-migrations
-        name: missing-migrations-local
-        entry: poetry run python example/manage.py makemigrations --check
+        name: check missing migrations
+        entry: poetry run python manage.py makemigrations --check
         language: system
         # Only run missing migration check if migration-generating files have changed:
         files: (.*/?(settings|migrations|models)/.+|.+models\.py|.+constants\.py|.+choices\.py|.+pyproject\.toml)
+        pass_filenames: false
+      - id: generate-openapi-schema
+        name: generate OpenAPI schema
+        entry: poetry run python manage.py generate_openapi_schema --output frontend/openapi_schema.json
+        language: system
+        # Only run OpenAPI schema generation if views.py has changed:
+        files: views\.py$
+        pass_filenames: false
+      - id: generate-frontend-client
+        name: generate frontend client
+        entry: sh -c 'cd frontend && npm run generate-client'
+        language: system
+        # Only run frontend client generation if frontend files have changed:
+        files: openapi_schema\.json$
         pass_filenames: false

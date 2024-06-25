@@ -1,0 +1,104 @@
+name: CI
+
+on: [push, pull_request]
+
+env:
+  COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+  COVERALLS_PARALLEL: true
+  COVERALLS_SERVICE_NAME: "github-actions"
+
+jobs:
+  build-django:
+    name: Django CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+
+      - name: Check docs build
+        run: |
+          poetry run mkdocs build
+
+      - name: Run tests
+        run: |
+          poetry run coverage run -m pytest
+          poetry run coveralls
+        env:
+          OPENAI_API_KEY: "sk-fake-test-key-123"
+
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel: true
+          flag-name: django-coverage
+          allow-empty: true
+
+  build-frontend:
+    name: Frontend CI
+    runs-on: ubuntu-latest
+    # Wait for Django to finish before starting due to Coveralls parallel
+    # Source: https://docs.coveralls.io/parallel-builds
+    needs: build-django
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: |
+          npm install
+
+      - name: Run ci
+        working-directory: ./frontend
+        run: |
+          npm ci
+
+      - name: Run build
+        working-directory: ./frontend
+        run: |
+          npm run build
+
+      - name: Run tests
+        working-directory: ./frontend
+        run: |
+          npm run coveralls
+
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel: true
+          flag-name: node-coverage
+          allow-empty: true
+
+  finish:
+    name: Coveralls
+    needs: [build-django, build-frontend]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
+          carryforward: "django-coverage,node-coverage"

@@ -12,7 +12,6 @@ module.exports = {
     publicPath: "http://localhost:3000/webpack_bundles/",
     filename: "[name]-[contenthash].js",
   },
-
   devtool: "source-map",
   devServer: {
     hot: true,
@@ -61,6 +60,8 @@ module.exports = {
     extensions: [".js", ".ts", ".jsx", ".tsx"],
     alias: {
       "@": path.resolve(__dirname, "assets/js"),
+      // Necessary to deduplicate React due to npm link:
+      react: path.resolve("./node_modules/react"),
     },
   },
 };

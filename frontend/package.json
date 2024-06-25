@@ -1,0 +1,77 @@
+{
+  "name": "django-ai-assistant-client",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "module": "./dist/django-ai-assistant-client.js",
+  "main": "./dist/django-ai-assistant-client.umd.cjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/django-ai-assistant-client.js",
+      "require": "./dist/django-ai-assistant-client.umd.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "engines": {
+    "node": ">=20 <21"
+  },
+  "version": "0.0.1",
+  "description": "",
+  "homepage": "https://github.com/vintasoftware/django-ai-assistant",
+  "bugs": "https://github.com/vintasoftware/django-ai-assistant/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vintasoftware/django-ai-assistant.git"
+  },
+  "license": "MIT",
+  "author": "Vinta Software",
+  "scripts": {
+    "build": "vite build",
+    "build:watch": "vite build --watch",
+    "test": "jest",
+    "test:cov": "jest --coverage",
+    "test:watch": "jest --watch",
+    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "tsc": "tsc",
+    "generate-client": "openapi-ts"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "cookie": "^0.6.0"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@hey-api/openapi-ts": "^0.46.3",
+    "@testing-library/dom": "^10.1.0",
+    "@testing-library/react": "^16.0.0",
+    "@types/cookie": "^0.6.0",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.14.1",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "@typescript-eslint/parser": "^7.2.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "coveralls": "^3.1.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "ts-jest": "^29.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0",
+    "vite-plugin-dts": "^3.9.1"
+  }
+}

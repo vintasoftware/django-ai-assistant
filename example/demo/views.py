@@ -3,23 +3,22 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic.base import TemplateView
 
 from pydantic import ValidationError
+from weather.ai_assistants import WeatherAIAssistant
 
-from django_ai_assistant.helpers.assistants import (
+from django_ai_assistant.api.schemas import (
+    ThreadMessagesSchemaIn,
+    ThreadSchemaIn,
+)
+from django_ai_assistant.helpers.use_cases import (
     create_message,
     create_thread,
     get_thread_messages,
     get_threads,
 )
 from django_ai_assistant.models import Thread
-from django_ai_assistant.schemas import (
-    ThreadMessagesSchemaIn,
-    ThreadSchemaIn,
-)
-
-from .ai_assistants import WeatherAIAssistant
 
 
-def react_index(request):
+def react_index(request, **kwargs):
     return render(request, "demo/react_index.html")
 
 
@@ -30,7 +29,7 @@ class BaseAIAssistantView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        threads = list(get_threads(user=self.request.user, request=self.request, view=None))
+        threads = list(get_threads(user=self.request.user))
         context.update(
             {
                 "assistant_id": self.get_assistant_id(**kwargs),
@@ -51,7 +50,11 @@ class AIAssistantChatHomeView(BaseAIAssistantView):
             messages.error(request, "Invalid thread data")
             return redirect("chat_home")
 
-        thread = create_thread(name=thread_data.name, user=request.user, request=request, view=None)
+        thread = create_thread(
+            name=thread_data.name,
+            user=request.user,
+            request=request,
+        )
         return redirect("chat_thread", thread_id=thread.id)
 
 
@@ -60,12 +63,13 @@ class AIAssistantChatThreadView(BaseAIAssistantView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        thread_id = self.kwargs["thread_id"]
+        thread = get_object_or_404(Thread, id=thread_id)
 
         thread_messages = get_thread_messages(
-            thread_id=self.kwargs["thread_id"],
+            thread=thread,
             user=self.request.user,
             request=self.request,
-            view=None,
         )
         context.update(
             {
@@ -96,6 +100,5 @@ class AIAssistantChatThreadView(BaseAIAssistantView):
             user=request.user,
             content=message.content,
             request=request,
-            view=None,
         )
         return redirect("chat_thread", thread_id=thread_id)

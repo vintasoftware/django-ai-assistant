@@ -1,0 +1,100 @@
+site_name: django-ai-assistant
+site_description: Implement powerful AI assistants using Django
+site_url: https://vintasoftware.github.io/django-ai-assistant/
+
+repo_name: vintasoftware/django-ai-assistant
+repo_url: https://github.com/vintasoftware/django-ai-assistant/
+edit_uri: blob/main/docs/
+
+copyright: From <a href="https://www.vintasoftware.com">Vinta Software</a> to the community with 💙
+
+theme:
+  name: material
+  icon:
+    logo: material/robot-happy-outline
+  favicon: images/robot-happy-outline.svg
+  features:
+    - navigation.footer
+    - navigation.indexes
+    - navigation.sections
+    - navigation.tabs
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      use_pygments: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.snippets:
+      check_paths: true
+  - toc:
+      permalink: true
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - Home: index.md
+  - Get Started: get-started.md
+  - Tutorial: tutorial.md
+  - Reference:
+    - reference/index.md
+    - helpers.use_cases: reference/use-cases-ref.md
+    - helpers.assistants: reference/assistants-ref.md
+    - models: reference/models-ref.md
+  - Contributing: contributing.md
+  - Support: support.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true
+            show_root_members_full_path: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            members_order: source
+            modernize_annotations: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/vintasoftware/django-ai-assistant/
+      name: Django AI Assistant GitHub
+    - icon: fontawesome/brands/x-twitter
+      link: https://x.com/vintasoftware
+      name: Vinta Software X
+    - icon: fontawesome/brands/linkedin
+      link: https://linkedin.com/company/vintasoftware
+      name: Vinta Software LinkedIn
+  version:
+    provider: mike

@@ -7,7 +7,8 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+# <3.13 set due to coveralls version solving
+python = ">=3.12,<3.13"
 Django = "^5.0"
 openai = "^1.30.1"
 pydantic = "^2.7.1"
@@ -20,16 +21,30 @@ coverage = "^7.2.7"
 pre-commit = "^3.3.3"
 ruff = "^0.1.8"
 python-dotenv = "^1.0.1"
-django-webpack-loader = "^3.1.0"
-requests = "^2.32.2"
 pytest-django = "^4.8.0"
-openai-responses = "^0.5.0"
 ipython = "^8.24.0"
 pytest-asyncio = "^0.23.7"
+pytest-recording = "^0.13.1"
+coveralls = "^4.0.1"
+mkdocs = "^1.6.0"
+mkdocs-material = "^9.5.27"
+pymdown-extensions = "^10.8.1"
+markdown = "^3.6"
+pygments = "^2.18.0"
+model-bakery = "^1.18.1"
+pytest-cov = "^5.0.0"
+mkdocstrings = {extras = ["python"], version = "^0.25.1"}
+mike = "^2.1.1"
+
+[tool.poetry.group.example.dependencies]
+django-webpack-loader = "^3.1.0"
+requests = "^2.32.2"
 lxml = "^5.2.2"
 firecrawl-py = "^0.0.12"
 wikipedia = "^1.4.0"
 langchain-community = "^0.2.4"
+gitpython = "^3.1.43"
+scikit-learn = "^1.5.0"
 
 [build-system]
 requires = ["poetry-core>=1.2.0"]
@@ -62,7 +77,7 @@ select = [
     # flake8-no-pep420
     "INP",
     # Ruff-specific rules
-    "RUF"
+    "RUF",
 ]
 exclude = [
     ".bzr",
@@ -87,35 +102,36 @@ exclude = [
     "node_modules",
     "venv",
     "virtualenvs",
+    "*/migrations/*",
 ]
 ignore = [
-  # Disable eradicate (commented code removal)
-  "ERA001",
-  # Disable Conflicting lint rules,
-  # see https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
-  "W191",
-  "E501",
-  "E111",
-  "E117",
-  "D206",
-  "D300",
-  "Q000",
-  "Q001",
-  "Q002",
-  "Q003",
-  "COM812",
-  "COM819",
-  "ISC001",
-  "ISC002",
-  # Allow `except Exception`:
-  "BLE001",
-  # Disable unused `noqa` directive
-  "RUF100",
-  # Disable pyupgrade UP rules that conflict with django-ninja
-  "UP006",
-  "UP035",
-  "UP037",
-  "UP040",
+    # Disable eradicate (commented code removal)
+    "ERA001",
+    # Disable Conflicting lint rules,
+    # see https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+    "W191",
+    "E501",
+    "E111",
+    "E117",
+    "D206",
+    "D300",
+    "Q000",
+    "Q001",
+    "Q002",
+    "Q003",
+    "COM812",
+    "COM819",
+    "ISC001",
+    "ISC002",
+    # Allow `except Exception`:
+    "BLE001",
+    # Disable unused `noqa` directive
+    "RUF100",
+    # Disable pyupgrade UP rules that conflict with django-ninja
+    "UP006",
+    "UP035",
+    "UP037",
+    "UP040",
 ]
 line-length = 100
 indent-width = 4
@@ -127,7 +143,14 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 ignore-overlong-task-comments = true
 
 [tool.ruff.lint.isort]
-section-order = ["future", "standard-library", "django", "third-party", "first-party", "local-folder"]
+section-order = [
+    "future",
+    "standard-library",
+    "django",
+    "third-party",
+    "first-party",
+    "local-folder",
+]
 lines-after-imports = 2
 
 [tool.ruff.lint.isort.sections]
@@ -147,7 +170,15 @@ lines-after-imports = 2
 [tool.coverage.run]
 branch = true
 source = ["backend"]
-omit = ["**/venv/*", "**/env/*", "**/virtualenvs/*", "**/node_modules/*", "**/migrations/*", "**/settings/*", "**/tests/*"]
+omit = [
+    "**/venv/*",
+    "**/env/*",
+    "**/virtualenvs/*",
+    "**/node_modules/*",
+    "**/migrations/*",
+    "**/settings/*",
+    "**/tests/*",
+]
 
 [tool.pyright]
 pythonVersion = "3.12"
