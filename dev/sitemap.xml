@@ -11,6 +11,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://vintasoftware.github.io/django-ai-assistant/dev/frontend/</loc>
+         <lastmod>2024-06-25</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://vintasoftware.github.io/django-ai-assistant/dev/get-started/</loc>
          <lastmod>2024-06-25</lastmod>
          <changefreq>daily</changefreq>
