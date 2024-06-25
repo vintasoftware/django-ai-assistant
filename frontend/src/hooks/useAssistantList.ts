@@ -1,15 +1,15 @@
 import { useCallback } from "react";
 import { useState } from "react";
 import {
-  AssistantSchema,
-  djangoAiAssistantListAssistants,
+  Assistant,
+  aiListAssistants,
 } from "../client";
 
 /**
  * React hook to manage the list of Assistants.
  */
 export function useAssistantList() {
-  const [assistants, setAssistants] = useState<AssistantSchema[] | null>(null);
+  const [assistants, setAssistants] = useState<Assistant[] | null>(null);
   const [loadingFetchAssistants, setLoadingFetchAssistants] =
     useState<boolean>(false);
 
@@ -18,10 +18,10 @@ export function useAssistantList() {
    *
    * @returns A promise that resolves with the fetched list of AI assistants.
    */
-  const fetchAssistants = useCallback(async (): Promise<AssistantSchema[]> => {
+  const fetchAssistants = useCallback(async (): Promise<Assistant[]> => {
     try {
       setLoadingFetchAssistants(true);
-      const fetchedAssistants = await djangoAiAssistantListAssistants();
+      const fetchedAssistants = await aiListAssistants();
       setAssistants(fetchedAssistants);
       return fetchedAssistants;
     } finally {

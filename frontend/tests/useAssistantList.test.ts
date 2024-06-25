@@ -1,9 +1,9 @@
 import { act, renderHook } from "@testing-library/react";
 import { useAssistantList } from "../src/hooks";
-import { djangoAiAssistantListAssistants } from "../src/client";
+import { aiListAssistants } from "../src/client";
 
 jest.mock("../src/client", () => ({
-  djangoAiAssistantListAssistants: jest
+  aiListAssistants: jest
     .fn()
     .mockImplementation(() => Promise.resolve()),
 }));
@@ -26,7 +26,7 @@ describe("useAssistantList", () => {
         { id: 1, name: "Assistant 1" },
         { id: 2, name: "Assistant 2" },
       ];
-      (djangoAiAssistantListAssistants as jest.Mock).mockResolvedValue(
+      (aiListAssistants as jest.Mock).mockResolvedValue(
         mockAssistants
       );
 
@@ -44,7 +44,7 @@ describe("useAssistantList", () => {
     });
 
     it("should set loading to false if fetch fails", async () => {
-      (djangoAiAssistantListAssistants as jest.Mock).mockRejectedValue(
+      (aiListAssistants as jest.Mock).mockRejectedValue(
         new Error("Failed to fetch")
       );
 

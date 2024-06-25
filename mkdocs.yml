@@ -64,6 +64,7 @@ nav:
   - Home: index.md
   - Get Started: get-started.md
   - Tutorial: tutorial.md
+  - Frontend: frontend.md
   - Reference:
     - reference/index.md
     - helpers.use_cases: reference/use-cases-ref.md

@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { useState } from "react";
 import {
-  AssistantSchema,
-  djangoAiAssistantGetAssistant,
+  Assistant,
+  aiGetAssistant,
 } from "../client";
 
 /**
@@ -11,7 +11,7 @@ import {
 export function useAssistant({ assistantId }: {
   assistantId: string;
 }) {
-  const [assistant, setAssistant] = useState<AssistantSchema | null>(null);
+  const [assistant, setAssistant] = useState<Assistant | null>(null);
   const [loadingFetchAssistant, setLoadingFetchAssistant] =
     useState<boolean>(false);
 
@@ -20,10 +20,10 @@ export function useAssistant({ assistantId }: {
    *
    * @returns A promise that resolves with the fetched AI assistant.
    */
-  const fetchAssistant = useCallback(async (): Promise<AssistantSchema> => {
+  const fetchAssistant = useCallback(async (): Promise<Assistant> => {
     try {
       setLoadingFetchAssistant(true);
-      const fetchedAssistant = await djangoAiAssistantGetAssistant({ assistantId });
+      const fetchedAssistant = await aiGetAssistant({ assistantId });
       setAssistant(fetchedAssistant);
       return fetchedAssistant;
     } finally {

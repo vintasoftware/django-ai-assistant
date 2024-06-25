@@ -7,12 +7,12 @@ from ninja import Field, ModelSchema, Schema
 from django_ai_assistant.models import Thread
 
 
-class AssistantSchema(Schema):
+class Assistant(Schema):
     id: str  # noqa: A003
     name: str
 
 
-class ThreadSchema(ModelSchema):
+class Thread(ModelSchema):
     class Meta:
         model = Thread
         fields = (
@@ -23,11 +23,11 @@ class ThreadSchema(ModelSchema):
         )
 
 
-class ThreadSchemaIn(Schema):
+class ThreadIn(Schema):
     name: str = Field(default_factory=lambda: timezone.now().strftime("%Y-%m-%d %H:%M"))
 
 
-class ThreadMessagesSchemaIn(Schema):
+class ThreadMessageIn(Schema):
     assistant_id: str
     content: str
 
@@ -41,7 +41,7 @@ class ThreadMessageTypeEnum(str, Enum):
     tool = "tool"
 
 
-class ThreadMessagesSchemaOut(Schema):
+class ThreadMessage(Schema):
     id: str  # noqa: A003
     type: ThreadMessageTypeEnum  # noqa: A003
     content: str

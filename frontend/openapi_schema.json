@@ -8,7 +8,7 @@
   "paths": {
     "/assistants/": {
       "get": {
-        "operationId": "django_ai_assistant_list_assistants",
+        "operationId": "ai_list_assistants",
         "summary": "List Assistants",
         "parameters": [],
         "responses": {
@@ -18,7 +18,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/AssistantSchema"
+                    "$ref": "#/components/schemas/Assistant"
                   },
                   "title": "Response",
                   "type": "array"
@@ -36,7 +36,7 @@
     },
     "/assistants/{assistant_id}/": {
       "get": {
-        "operationId": "django_ai_assistant_get_assistant",
+        "operationId": "ai_get_assistant",
         "summary": "Get Assistant",
         "parameters": [
           {
@@ -55,7 +55,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AssistantSchema"
+                  "$ref": "#/components/schemas/Assistant"
                 }
               }
             }
@@ -70,7 +70,7 @@
     },
     "/threads/": {
       "get": {
-        "operationId": "django_ai_assistant_list_threads",
+        "operationId": "ai_list_threads",
         "summary": "List Threads",
         "parameters": [],
         "responses": {
@@ -80,7 +80,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/ThreadSchema"
+                    "$ref": "#/components/schemas/Thread"
                   },
                   "title": "Response",
                   "type": "array"
@@ -96,7 +96,7 @@
         ]
       },
       "post": {
-        "operationId": "django_ai_assistant_create_thread",
+        "operationId": "ai_create_thread",
         "summary": "Create Thread",
         "parameters": [],
         "responses": {
@@ -105,7 +105,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ThreadSchema"
+                  "$ref": "#/components/schemas/Thread"
                 }
               }
             }
@@ -115,7 +115,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ThreadSchemaIn"
+                "$ref": "#/components/schemas/ThreadIn"
               }
             }
           },
@@ -130,7 +130,7 @@
     },
     "/threads/{thread_id}/": {
       "get": {
-        "operationId": "django_ai_assistant_get_thread",
+        "operationId": "ai_get_thread",
         "summary": "Get Thread",
         "parameters": [
           {
@@ -149,7 +149,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ThreadSchema"
+                  "$ref": "#/components/schemas/Thread"
                 }
               }
             }
@@ -162,7 +162,7 @@
         ]
       },
       "patch": {
-        "operationId": "django_ai_assistant_update_thread",
+        "operationId": "ai_update_thread",
         "summary": "Update Thread",
         "parameters": [
           {
@@ -181,7 +181,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ThreadSchema"
+                  "$ref": "#/components/schemas/Thread"
                 }
               }
             }
@@ -191,7 +191,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ThreadSchemaIn"
+                "$ref": "#/components/schemas/ThreadIn"
               }
             }
           },
@@ -204,7 +204,7 @@
         ]
       },
       "delete": {
-        "operationId": "django_ai_assistant_delete_thread",
+        "operationId": "ai_delete_thread",
         "summary": "Delete Thread",
         "parameters": [
           {
@@ -231,7 +231,7 @@
     },
     "/threads/{thread_id}/messages/": {
       "get": {
-        "operationId": "django_ai_assistant_list_thread_messages",
+        "operationId": "ai_list_thread_messages",
         "summary": "List Thread Messages",
         "parameters": [
           {
@@ -251,7 +251,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/ThreadMessagesSchemaOut"
+                    "$ref": "#/components/schemas/ThreadMessage"
                   },
                   "title": "Response",
                   "type": "array"
@@ -267,7 +267,7 @@
         ]
       },
       "post": {
-        "operationId": "django_ai_assistant_create_thread_message",
+        "operationId": "ai_create_thread_message",
         "summary": "Create Thread Message",
         "parameters": [
           {
@@ -289,7 +289,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ThreadMessagesSchemaIn"
+                "$ref": "#/components/schemas/ThreadMessageIn"
               }
             }
           },
@@ -304,7 +304,7 @@
     },
     "/threads/{thread_id}/messages/{message_id}/": {
       "delete": {
-        "operationId": "django_ai_assistant_delete_thread_message",
+        "operationId": "ai_delete_thread_message",
         "summary": "Delete Thread Message",
         "parameters": [
           {
@@ -341,7 +341,7 @@
   },
   "components": {
     "schemas": {
-      "AssistantSchema": {
+      "Assistant": {
         "properties": {
           "id": {
             "title": "Id",
@@ -356,10 +356,10 @@
           "id",
           "name"
         ],
-        "title": "AssistantSchema",
+        "title": "Assistant",
         "type": "object"
       },
-      "ThreadSchema": {
+      "Thread": {
         "properties": {
           "id": {
             "anyOf": [
@@ -399,32 +399,20 @@
           "created_at",
           "updated_at"
         ],
-        "title": "ThreadSchema",
+        "title": "Thread",
         "type": "object"
       },
-      "ThreadSchemaIn": {
+      "ThreadIn": {
         "properties": {
           "name": {
             "title": "Name",
             "type": "string"
           }
         },
-        "title": "ThreadSchemaIn",
+        "title": "ThreadIn",
         "type": "object"
       },
-      "ThreadMessageTypeEnum": {
-        "enum": [
-          "human",
-          "ai",
-          "generic",
-          "system",
-          "function",
-          "tool"
-        ],
-        "title": "ThreadMessageTypeEnum",
-        "type": "string"
-      },
-      "ThreadMessagesSchemaOut": {
+      "ThreadMessage": {
         "properties": {
           "id": {
             "title": "Id",
@@ -443,10 +431,22 @@
           "type",
           "content"
         ],
-        "title": "ThreadMessagesSchemaOut",
+        "title": "ThreadMessage",
         "type": "object"
       },
-      "ThreadMessagesSchemaIn": {
+      "ThreadMessageTypeEnum": {
+        "enum": [
+          "human",
+          "ai",
+          "generic",
+          "system",
+          "function",
+          "tool"
+        ],
+        "title": "ThreadMessageTypeEnum",
+        "type": "string"
+      },
+      "ThreadMessageIn": {
         "properties": {
           "assistant_id": {
             "title": "Assistant Id",
@@ -461,7 +461,7 @@
           "assistant_id",
           "content"
         ],
-        "title": "ThreadMessagesSchemaIn",
+        "title": "ThreadMessageIn",
         "type": "object"
       }
     },
