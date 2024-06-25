@@ -23,8 +23,8 @@ import { getHotkeyHandler } from "@mantine/hooks";
 import Markdown from "react-markdown";
 
 import {
-  ThreadMessagesSchemaOut,
-  ThreadSchema,
+  ThreadMessage,
+  Thread,
   useAssistant,
   useMessageList,
   useThreadList,
@@ -34,7 +34,7 @@ function ChatMessage({
   message,
   deleteMessage,
 }: {
-  message: ThreadMessagesSchemaOut;
+  message: ThreadMessage;
   deleteMessage: ({ messageId }: { messageId: string }) => Promise<void>;
 }) {
   const isUserMessage = message.type === "human";
@@ -92,7 +92,7 @@ function ChatMessageList({
   messages,
   deleteMessage,
 }: {
-  messages: ThreadMessagesSchemaOut[];
+  messages: ThreadMessage[];
   deleteMessage: ({ messageId }: { messageId: string }) => Promise<void>;
 }) {
   if (messages.length === 0) {
@@ -113,7 +113,7 @@ function ChatMessageList({
 }
 
 export function Chat({ assistantId }: { assistantId: string }) {
-  const [activeThread, setActiveThread] = useState<ThreadSchema | null>(null);
+  const [activeThread, setActiveThread] = useState<Thread | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
 
   const { fetchThreads, threads, createThread, deleteThread } = useThreadList();

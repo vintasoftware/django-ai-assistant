@@ -1,17 +1,17 @@
 import { useCallback } from "react";
 import { useState } from "react";
 import {
-  ThreadSchema,
-  djangoAiAssistantCreateThread,
-  djangoAiAssistantDeleteThread,
-  djangoAiAssistantListThreads,
+  Thread,
+  aiCreateThread,
+  aiDeleteThread,
+  aiListThreads,
 } from "../client";
 
 /**
  * React hook to manage the list, create, and delete of Threads.
  */
 export function useThreadList() {
-  const [threads, setThreads] = useState<ThreadSchema[] | null>(null);
+  const [threads, setThreads] = useState<Thread[] | null>(null);
   const [loadingFetchThreads, setLoadingFetchThreads] =
     useState<boolean>(false);
   const [loadingCreateThread, setLoadingCreateThread] =
@@ -24,10 +24,10 @@ export function useThreadList() {
    *
    * @returns A promise that resolves with the fetched list of threads.
    */
-  const fetchThreads = useCallback(async (): Promise<ThreadSchema[]> => {
+  const fetchThreads = useCallback(async (): Promise<Thread[]> => {
     try {
       setLoadingFetchThreads(true);
-      const fetchedThreads = await djangoAiAssistantListThreads();
+      const fetchedThreads = await aiListThreads();
       setThreads(fetchedThreads);
       return fetchedThreads;
     } finally {
@@ -41,10 +41,10 @@ export function useThreadList() {
    * @returns A promise that resolves with the created thread.
    */
   const createThread = useCallback(
-    async ({ name }: { name?: string } = {}): Promise<ThreadSchema> => {
+    async ({ name }: { name?: string } = {}): Promise<Thread> => {
       try {
         setLoadingCreateThread(true);
-        const thread = await djangoAiAssistantCreateThread({
+        const thread = await aiCreateThread({
           requestBody: { name: name },
         });
         await fetchThreads();
@@ -65,7 +65,7 @@ export function useThreadList() {
     async ({ threadId }: { threadId: string }): Promise<void> => {
       try {
         setLoadingDeleteThread(true);
-        await djangoAiAssistantDeleteThread({ threadId });
+        await aiDeleteThread({ threadId });
         await fetchThreads();
       } finally {
         setLoadingDeleteThread(false);
