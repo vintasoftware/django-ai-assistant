@@ -73,3 +73,17 @@ To run the documentation locally, you need to run:
 ```bash
 poetry run mkdocs serve
 ```
+
+## Release
+
+> [!IMPORTANT]
+> The backend and the frontend are versioned together, that is, they should have the same version number.
+
+To release and publish a new version, follow these steps:
+
+1. Update the version in `pyproject.toml` and `frontend/package.json`.
+2. Update the changelog in `CHANGELOG.md`.
+3. Open a PR with the changes.
+4. Once the PR is merged, run the [Release GitHub Action](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/release.yml) to create a draft release.
+5. Review the draft release, ensure the description has at least the associated changelog entry, and publish it.
+6. Once the review is publish, the [Publish GitHub Action](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/publish.yml) will automatically run to publish the new version to [PyPI](https://pypi.org/project/django-ai-assistant) and [npm](https://www.npmjs.com/package/django-ai-assistant-client). Check the logs to ensure the publication was successful.
