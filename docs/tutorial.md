@@ -93,6 +93,46 @@ AI: The weather in NYC is sunny with a temperature of 25°C.
     State of the art models such as gpt-4o can process JSON well.
     You can return a `json.dumps(api_output)` from a tool method and the model will be able to process it before responding the user.
 
+### Tool parameters
+
+It's possible to define more complex parameters for tools. As long as they're JSON serializable, the underlying LLM model should be able to call tools with the right arguments.
+
+In the `MovieRecommendationAIAssistant` from the [example project](https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme), we have a `reorder_backlog` tool method that receives a list of IMDb URLs that represent the user's movie backlog order. Note the `Sequence[str]` parameter:
+
+```{.python title="example/movies/ai_assistants.py" hl_lines="7"}
+from django_ai_assistant import AIAssistant, method_tool
+
+class MovieRecommendationAIAssistant(AIAssistant):
+    ...
+
+    @method_tool
+    def reorder_backlog(self, imdb_url_list: Sequence[str]) -> str:
+        """Reorder movies in user's backlog."""
+        ...
+```
+
+In `WeatherAIAssistant`, another assistant from the example project, we have a `fetch_forecast_weather` method tool with a `args_schema` parameter that defines a JSON schema for the tool arguments:
+
+```{.python title="example/weather/ai_assistants.py" hl_lines="6-8 10"}
+from django_ai_assistant import AIAssistant, method_tool, BaseModel, Field
+
+class WeatherAIAssistant(AIAssistant):
+    ...
+
+    class FetchForecastWeatherInput(BaseModel):
+        location: str = Field(description="Location to fetch the forecast weather for")
+        forecast_date: date = Field(description="Date in the format 'YYYY-MM-DD'")
+
+    @method_tool(args_schema=FetchForecastWeatherInput)
+    def fetch_forecast_weather(self, location, forecast_date) -> dict:
+        """Fetch the forecast weather data for a location"""
+        # forecast_date is a `date` object here
+        ...
+```
+
+!!! note
+    It's important to provide a `description` for each field from `args_schema`. This improves the LLM's understanding of the tool's arguments.
+
 ### Using Django logic in tools
 
 You have access to the current request user in tools:
