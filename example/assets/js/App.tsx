@@ -68,6 +68,10 @@ const router = createBrowserRouter([
     path: "/htmx",
     element: <Redirect to="/htmx/" />,
   },
+  {
+    path: "/admin",
+    element: <Redirect to="/admin/" />,
+  },
 ]);
 
 const App = () => {
