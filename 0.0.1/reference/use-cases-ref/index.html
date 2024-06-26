@@ -289,6 +289,23 @@
         
   
   
+  
+    <li class="md-tabs__item">
+      <a href="../../frontend/" class="md-tabs__link">
+        
+  
+    
+  
+  Frontend
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
     
   
   
@@ -305,6 +322,23 @@
         </a>
       </li>
     
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../changelog/" class="md-tabs__link">
+        
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
   
 
       
@@ -451,6 +485,26 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../../frontend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Frontend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -483,7 +537,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           
@@ -499,14 +553,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             Reference
           </label>
@@ -728,6 +782,26 @@
           </ul>
         </nav>
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Changelog
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -1735,7 +1809,7 @@ Raises:
 <span class="normal">186</span>
 <span class="normal">187</span>
 <span class="normal">188</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_single_thread</span><span class="p">(</span>
-    <span class="n">thread_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">thread_id</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="n">user</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="n">request</span><span class="p">:</span> <span class="n">HttpRequest</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Thread</span><span class="p">:</span>
@@ -2309,7 +2383,9 @@ Raises:
 <span class="normal">287</span>
 <span class="normal">288</span>
 <span class="normal">289</span>
-<span class="normal">290</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">delete_message</span><span class="p">(</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">delete_message</span><span class="p">(</span>
     <span class="n">message</span><span class="p">:</span> <span class="n">Message</span><span class="p">,</span>
     <span class="n">user</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="n">request</span><span class="p">:</span> <span class="n">HttpRequest</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2327,7 +2403,9 @@ Raises:
     <span class="k">if</span> <span class="ow">not</span> <span class="n">can_delete_message</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">request</span><span class="o">=</span><span class="n">request</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">AIUserNotAllowedError</span><span class="p">(</span><span class="s2">&quot;User is not allowed to delete this message&quot;</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">DjangoChatMessageHistory</span><span class="p">(</span><span class="n">thread_id</span><span class="o">=</span><span class="n">message</span><span class="o">.</span><span class="n">thread_id</span><span class="p">)</span><span class="o">.</span><span class="n">remove_messages</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">id</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">DjangoChatMessageHistory</span><span class="p">(</span><span class="n">thread_id</span><span class="o">=</span><span class="n">message</span><span class="o">.</span><span class="n">thread_id</span><span class="p">)</span><span class="o">.</span><span class="n">remove_messages</span><span class="p">(</span>
+        <span class="n">message_ids</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">id</span><span class="p">)]</span>
+    <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
