@@ -1,7 +1,7 @@
 [![CI](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/vintasoftware/django-ai-assistant/badge.svg?branch=main)](https://coveralls.io/github/vintasoftware/django-ai-assistant?branch=main)
 
-# django-ai-assistant ![docs/images/robot-happy-outline.svg]
+# django-ai-assistant <img src="docs/images/robot-happy-outline.svg" width="20" alt="robot lego">
 
 Combine the power of LLMs with Django's productivity to build intelligent applications.
 Let AI Assistants call methods from Django's side and do anything your users need!
