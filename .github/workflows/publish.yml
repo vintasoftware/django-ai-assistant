@@ -1,0 +1,75 @@
+name: Publish packages (PyPI, npm)
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish-pypi:
+    name: Publish django-ai-assistant to PyPI
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install --with dev --no-interaction
+
+      - name: Build package
+        run: |
+          poetry build
+          poetry run twine check dist/*
+
+      - name: Publish package distributions to PyPI
+        run: |
+          poetry run twine upload dist/*
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+
+  publish-npm:
+    name: Publish django-ai-assistant-client to npm
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: |
+          npm install
+
+      - name: Run ci
+        working-directory: ./frontend
+        run: |
+          npm ci
+
+      - name: Build package
+        working-directory: ./frontend
+        run: |
+          npm run build
+
+      - name: Publish package distributions to npm
+        working-directory: ./frontend
+        run: |
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_API_TOKEN }}
