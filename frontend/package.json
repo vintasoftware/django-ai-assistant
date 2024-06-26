@@ -21,8 +21,9 @@
     "node": ">=20 <21"
   },
   "version": "0.0.1",
-  "description": "",
+  "description": "TypeScript client to facilitate the integration with the Django AI Assistant backend.",
   "homepage": "https://github.com/vintasoftware/django-ai-assistant",
+  "documentation": "https://vintasoftware.github.io/django-ai-assistant",
   "bugs": "https://github.com/vintasoftware/django-ai-assistant/issues",
   "repository": {
     "type": "git",
@@ -30,6 +31,16 @@
   },
   "license": "MIT",
   "author": "Vinta Software",
+  "keywords": [
+    "ai-agent",
+    "ai-assistant",
+    "ai",
+    "chatgpt",
+    "django",
+    "gpt",
+    "langchain",
+    "openai"
+  ],
   "scripts": {
     "build": "vite build",
     "build:watch": "vite build --watch",
