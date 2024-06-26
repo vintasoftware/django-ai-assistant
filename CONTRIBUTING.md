@@ -76,8 +76,8 @@ poetry run mkdocs serve
 
 ## Release
 
-> [!IMPORTANT]
-> The backend and the frontend are versioned together, that is, they should have the same version number.
+!!! info
+    The backend and the frontend are versioned together, that is, they should have the same version number.
 
 To release and publish a new version, follow these steps:
 
