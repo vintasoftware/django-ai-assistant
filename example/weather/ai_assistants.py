@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.conf import settings
 from django.utils import timezone
 
@@ -37,11 +39,11 @@ class WeatherAIAssistant(AIAssistant):
         return response.json()
 
     class FetchForecastWeatherInput(BaseModel):
-        location: str
-        dt_str: str = Field(description="Date in the format 'YYYY-MM-DD'")
+        location: str = Field(description="Location to fetch the forecast weather for")
+        forecast_date: date = Field(description="Date in the format 'YYYY-MM-DD'")
 
     @method_tool(args_schema=FetchForecastWeatherInput)
-    def fetch_forecast_weather(self, location: str, dt_str: str) -> dict:
+    def fetch_forecast_weather(self, location, forecast_date) -> dict:
         """Fetch the forecast weather data for a location"""
 
         response = requests.get(
@@ -50,7 +52,7 @@ class WeatherAIAssistant(AIAssistant):
                 "key": settings.WEATHER_API_KEY,
                 "q": location,
                 "days": 14,
-                "dt": dt_str,
+                "dt": forecast_date.isoformat(),
             },
             timeout=TIMEOUT,
         )
