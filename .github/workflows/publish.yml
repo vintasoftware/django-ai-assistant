@@ -30,7 +30,7 @@ jobs:
           poetry build
           poetry run twine check dist/*
 
-      - name: Publish package
+      - name: Publish package distributions to PyPI
         run: |
           poetry run twine upload dist/*
         env:
