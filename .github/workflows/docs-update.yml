@@ -52,12 +52,12 @@ jobs:
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
       - name: Deploy on push to main
-        if: github.ref == 'refs/heads/main'
+        if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           poetry run mike deploy -b gh-pages dev --push
 
       - name: Check version
-        if: github.ref == 'refs/heads/docs-update' || startsWith(github.ref, 'refs/tags/')
+        if: ${{ github.ref == 'refs/heads/docs-update' || startsWith(github.ref, 'refs/tags/') }}
         id: check-version
         uses: samuelcolvin/check-python-version@v4.1
         with:
@@ -65,6 +65,6 @@ jobs:
           skip_env_check: true
 
       - name: Deploy on push to docs-update branch or tag push
-        if: (github.ref == 'refs/heads/docs-update' || startsWith(github.ref, 'refs/tags/')) && !fromJSON(steps.check-version.outputs.IS_PRERELEASE)
+        if: ${{ (github.ref == 'refs/heads/docs-update' || startsWith(github.ref, 'refs/tags/')) && !fromJSON(steps.check-version.outputs.IS_PRERELEASE) }}
         run: |
           poetry run mike deploy -b gh-pages ${{ steps.check-version.outputs.VERSION_MAJOR_MINOR }} latest --update-aliases --push
