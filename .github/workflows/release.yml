@@ -1,0 +1,66 @@
+name: Release draft creation
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version of the release"
+        required: true
+        type: number
+
+jobs:
+  release:
+    name: Release
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract changelog for version
+        id: changelog
+        run: |
+          VERSION=${{ github.event.inputs.version }}
+
+          # Extract changelog for version
+          CHANGELOG=$(awk -v version="$VERSION" 'BEGIN{RS="## "; FS="\n"} $0 ~ version {print "## "$0}' CHANGELOG.md)
+
+          # Remove the first line (version title)
+          CHANGELOG=$(echo "$CHANGELOG" | sed '1d')
+
+          # Verify if changelog was found
+          if [ -z "$CHANGELOG" ]; then
+            echo "Changelog for version $VERSION not found"
+            exit 1
+          fi
+
+          # Set output
+          echo "CHANGELOG<<EOF" >> $GITHUB_ENV
+          echo "$CHANGELOG" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Print changelog
+        run: |
+          echo "Output is ${{ env.CHANGELOG }}"
+
+      - name: Create GitHub Release Draft
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          name: ${{ github.event.inputs.version }}
+          body: ${{ env.CHANGELOG }}
+          draft: true
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summary
+        run: |
+          echo "## 🚀 Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "Release draft created for version ${{ github.event.inputs.version }}." >> $GITHUB_STEP_SUMMARY
+          echo "Visit the [Releases section](https://github.com/vintasoftware/django-ai-assistant/releases) to review and publish the release." >> $GITHUB_STEP_SUMMARY
+          echo "Once the draft is published, another action will automatically be triggered to publish the packages." >> $GITHUB_STEP_SUMMARY

@@ -70,6 +70,7 @@ nav:
     - helpers.use_cases: reference/use-cases-ref.md
     - helpers.assistants: reference/assistants-ref.md
     - models: reference/models-ref.md
+  - Changelog: changelog.md
   - Contributing: contributing.md
   - Support: support.md
 
