@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - main
-      - docs-update
-    tags:
-      - '**'
+  release:
+    types: [published]
 
 env:
   COLUMNS: 150
@@ -51,15 +50,20 @@ jobs:
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
-      - run: poetry run mike deploy -b gh-pages dev --push
-        if: "github.ref == 'refs/heads/main'"
+      - name: Deploy on push to main
+        if: github.ref == 'refs/heads/main'
+        run: |
+          poetry run mike deploy -b gh-pages dev --push
 
-      - if: "github.ref == 'refs/heads/docs-update' || startsWith(github.ref, 'refs/tags/')"
+      - name: Check version
+        if: github.event_name == 'release'
         id: check-version
         uses: samuelcolvin/check-python-version@v4.1
         with:
-          version_file_path: 'django_ai_assistant/__init__.py'
+          version_file_path: "django_ai_assistant/__init__.py"
           skip_env_check: true
 
-      - run: poetry run mike deploy -b gh-pages ${{ steps.check-version.outputs.VERSION_MAJOR_MINOR }} latest --update-aliases --push
-        if: "(github.ref == 'refs/heads/docs-update' || startsWith(github.ref, 'refs/tags/')) && !fromJSON(steps.check-version.outputs.IS_PRERELEASE)"
+      - name: Deploy on release published
+        if: github.event_name == 'release' && !fromJSON(steps.check-version.outputs.IS_PRERELEASE)
+        run: |
+          poetry run mike deploy -b gh-pages ${{ steps.check-version.outputs.VERSION_MAJOR_MINOR }} latest --update-aliases --push
