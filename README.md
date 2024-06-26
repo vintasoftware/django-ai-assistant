@@ -1,7 +1,9 @@
 [![CI](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/vintasoftware/django-ai-assistant/badge.svg?branch=main)](https://coveralls.io/github/vintasoftware/django-ai-assistant?branch=main)
 
-# django-ai-assistant <img src="docs/images/robot-happy-outline.svg" width="20" alt="robot lego">
+<!-- The image URL must be an external link to work both on GitHub and PyPI -->
+
+# django-ai-assistant <img src="https://github.com/vintasoftware/django-ai-assistant/blob/main/docs/images/robot-happy-outline.svg?raw=True" width="20" alt="robot lego">
 
 Combine the power of LLMs with Django's productivity to build intelligent applications.
 Let AI Assistants call methods from Django's side and do anything your users need!
@@ -14,7 +16,7 @@ Please check the documentation: [https://vintasoftware.github.io/django-ai-assis
 
 ## Contributing
 
-You're welcome to contribute with Django AI Assistant! Please feel free to tackle existing [issues](https://github.com/vintasoftware/django-ai-assistant/issues). If you have a new idea, please create a thread on [Discussions](https://github.com/vintasoftware/django-ai-assistant/discussions). 
+You're welcome to contribute with Django AI Assistant! Please feel free to tackle existing [issues](https://github.com/vintasoftware/django-ai-assistant/issues). If you have a new idea, please create a thread on [Discussions](https://github.com/vintasoftware/django-ai-assistant/discussions).
 
 Check our [contributing guide](CONTRIBUTING.md) to learn more about how to develop and test the project locally, before opening a pull request.
 
