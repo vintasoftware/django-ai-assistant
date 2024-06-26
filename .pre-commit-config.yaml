@@ -50,6 +50,11 @@ repos:
         # Only run missing migration check if migration-generating files have changed:
         files: (.*/?(settings|migrations|models)/.+|.+models\.py|.+constants\.py|.+choices\.py|.+pyproject\.toml)
         pass_filenames: false
+      - id: check-packages-versions
+        name: check packages versions
+        entry: ./scripts/check_packages_versions.sh
+        language: script
+        files: ^(pyproject\.toml|frontend/package\.json)$
       - id: generate-openapi-schema
         name: generate OpenAPI schema
         entry: poetry run python manage.py generate_openapi_schema --output frontend/openapi_schema.json
