@@ -59,8 +59,8 @@ repos:
         name: generate OpenAPI schema
         entry: poetry run python manage.py generate_openapi_schema --output frontend/openapi_schema.json
         language: system
-        # Only run OpenAPI schema generation if views.py has changed:
-        files: views\.py$
+        # Only run OpenAPI schema generation if views.py or package version have changed:
+        files: (views\.py$|pyproject\.toml)
         pass_filenames: false
       - id: generate-frontend-client
         name: generate frontend client
