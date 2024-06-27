@@ -1,7 +1,8 @@
 import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
 
+import React, { useEffect, useState } from "react";
 import {
-  Alert,
   Container,
   createTheme,
   List,
@@ -10,10 +11,10 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
+import { Notifications, notifications } from "@mantine/notifications";
 import {
   IconBrandDjango,
   IconCloud,
-  IconInfoCircle,
   IconXboxX,
   IconMovie,
 } from "@tabler/icons-react";
@@ -24,7 +25,6 @@ import {
   configAIAssistant,
   useAssistantList,
 } from "django-ai-assistant-client";
-import React, { useEffect } from "react";
 
 const theme = createTheme({});
 
@@ -33,7 +33,8 @@ const theme = createTheme({});
 configAIAssistant({ BASE: "ai-assistant" });
 
 const ExampleIndex = () => {
-  const [showLoginAlert, setShowLoginAlert] = React.useState<boolean>(false);
+  const [showLoginNotification, setShowLoginNotification] =
+    useState<boolean>(false);
 
   const { fetchAssistants } = useAssistantList();
 
@@ -45,38 +46,32 @@ const ExampleIndex = () => {
         await fetchAssistants();
       } catch (error: ApiError) {
         if (error.status === 401) {
-          setShowLoginAlert(true);
+          setShowLoginNotification(true);
         }
       }
     }
+
     checkUserIsAuthenticated();
-  }, [fetchAssistants, setShowLoginAlert]);
+  }, [fetchAssistants, setShowLoginNotification]);
+
+  useEffect(() => {
+    if (!showLoginNotification) return;
+
+    notifications.show({
+      title: "Login Required",
+      message:
+        "You must be logged in to engage with the examples. Please log in to continue.",
+      color: "red",
+      autoClose: 5000,
+      withCloseButton: true,
+    });
+  }, [showLoginNotification]);
 
   return (
     <Container>
       <Title order={1} my="md">
         Examples
       </Title>
-
-      {showLoginAlert ? (
-        <Alert
-          variant="light"
-          color="orange"
-          title="Login Required"
-          icon={<IconInfoCircle />}
-          withCloseButton
-          closeButtonLabel="Dismiss"
-          onClose={() => setShowLoginAlert(false)}
-          maw={600}
-          mb="md"
-        >
-          You must be logged in to engage with the examples. Please{" "}
-          <Link to="/admin" target="_blank">
-            log in
-          </Link>{" "}
-          to continue.
-        </Alert>
-      ) : null}
 
       <List spacing="sm" size="md" center>
         <List.Item
@@ -155,6 +150,7 @@ const router = createBrowserRouter([
 const App = () => {
   return (
     <MantineProvider theme={theme}>
+      <Notifications position="top-right" />
       <React.StrictMode>
         <RouterProvider router={router} />
       </React.StrictMode>
