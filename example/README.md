@@ -9,6 +9,7 @@ Most examples are inside a React frontend, but there is also a HTMX example.
 Go to the example project, install its Node dependencies, and run the example Webpack devserver to build the React frontend:
 
 ```bash
+# in example directory
 cd example
 pnpm install
 pnpm run start
