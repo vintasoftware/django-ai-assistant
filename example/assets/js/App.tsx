@@ -33,25 +33,24 @@ const theme = createTheme({});
 configAIAssistant({ BASE: "ai-assistant" });
 
 const ExampleIndex = () => {
-  const [showAlert, setShowAlert] = React.useState<boolean>(false);
+  const [showLoginAlert, setShowLoginAlert] = React.useState<boolean>(false);
 
   const { fetchAssistants } = useAssistantList();
 
   useEffect(() => {
     // NOTE: In a real application, you should use a more robust
     // authentication check strategy than this.
-    async function checkUserAuthenticated() {
+    async function checkUserIsAuthenticated() {
       try {
         await fetchAssistants();
       } catch (error: ApiError) {
         if (error.status === 401) {
-          console.log({ error });
-          setShowAlert(true);
+          setShowLoginAlert(true);
         }
       }
     }
-    checkUserAuthenticated();
-  }, [fetchAssistants, setShowAlert]);
+    checkUserIsAuthenticated();
+  }, [fetchAssistants, setShowLoginAlert]);
 
   return (
     <Container>
@@ -59,7 +58,7 @@ const ExampleIndex = () => {
         Examples
       </Title>
 
-      {showAlert ? (
+      {showLoginAlert ? (
         <Alert
           variant="light"
           color="orange"
@@ -67,7 +66,7 @@ const ExampleIndex = () => {
           icon={<IconInfoCircle />}
           withCloseButton
           closeButtonLabel="Dismiss"
-          onClose={() => setShowAlert(false)}
+          onClose={() => setShowLoginAlert(false)}
           maw={600}
           mb="md"
         >
