@@ -1004,26 +1004,38 @@
 <p>Please follow this guide to learn more about how to develop and test the project locally, before opening a pull request.</p>
 <h2 id="local-dev-setup">Local Dev Setup<a class="headerlink" href="#local-dev-setup" title="Permanent link">&para;</a></h2>
 <h3 id="clone-the-repo">Clone the repo<a class="headerlink" href="#clone-the-repo" title="Permanent link">&para;</a></h3>
-<p><code>git clone git@github.com:vintasoftware/django-ai-assistant.git</code></p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:vintasoftware/django-ai-assistant.git
+</code></pre></div>
 <h3 id="set-up-a-virtualenv-optionally-set-up-nvm-and-activate-your-environments">Set up a virtualenv, optionally set up nvm, and activate your environment(s)<a class="headerlink" href="#set-up-a-virtualenv-optionally-set-up-nvm-and-activate-your-environments" title="Permanent link">&para;</a></h3>
 <p>You can use <a href="https://github.com/pyenv/pyenv">pyenv</a>, <a href="https://github.com/pypa/pipenv/blob/main/docs/installation.md">pipenv</a>, vanilla venvs or the tool of your choice.</p>
 <p>For installing Node, we recommend <a href="https://github.com/nvm-sh/nvm">NVM</a>.</p>
 <h3 id="install-dependencies">Install dependencies<a class="headerlink" href="#install-dependencies" title="Permanent link">&para;</a></h3>
 <h4 id="backend">Backend<a class="headerlink" href="#backend" title="Permanent link">&para;</a></h4>
-<p><code>poetry install</code></p>
+<p>Go to the project root and install the Python dependencies:</p>
+<div class="highlight"><pre><span></span><code>poetry<span class="w"> </span>install
+</code></pre></div>
 <h4 id="frontend">Frontend<a class="headerlink" href="#frontend" title="Permanent link">&para;</a></h4>
+<p>Go to the frontend directory and install the Node dependencies:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>frontend
-npm<span class="w"> </span>install
+pnpm<span class="w"> </span>install
 </code></pre></div>
 <h3 id="install-pre-commit-hooks">Install pre-commit hooks<a class="headerlink" href="#install-pre-commit-hooks" title="Permanent link">&para;</a></h3>
-<p><code>pre-commit install</code></p>
+<div class="highlight"><pre><span></span><code>pre-commit<span class="w"> </span>install
+</code></pre></div>
 <p>It's critical to run the pre-commit hooks before pushing your code to follow the project's code style, and avoid linting errors.</p>
 <h3 id="developing-with-the-example-project">Developing with the example project<a class="headerlink" href="#developing-with-the-example-project" title="Permanent link">&para;</a></h3>
-<p>Run the frontend project in build:watch mode:</p>
+<p>Run the frontend project in <code>build:watch</code> mode:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>frontend
-npm<span class="w"> </span>run<span class="w"> </span>build:watch
+pnpm<span class="w"> </span>run<span class="w"> </span>build:watch
 </code></pre></div>
-<p>Then follow the instructions in the <a href="https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme">example README</a>.</p>
+<p>Go to the example project, install the dependencies, and link the frontend project:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>..<span class="w">  </span><span class="c1"># back to project root directory</span>
+<span class="nb">cd</span><span class="w"> </span>example
+pnpm<span class="w"> </span>install
+pnpm<span class="w"> </span>remove<span class="w"> </span>django-ai-assistant-client<span class="w">  </span><span class="c1"># remove the distributed package to use the local one</span>
+pnpm<span class="w"> </span>link<span class="w"> </span>../frontend
+</code></pre></div>
+<p>Then follow the instructions in the <a href="https://github.com/vintasoftware/django-ai-assistant/tree/main/example#running">example README</a> to run the example project.</p>
 <h2 id="tests">Tests<a class="headerlink" href="#tests" title="Permanent link">&para;</a></h2>
 <p>Run tests with:</p>
 <div class="highlight"><pre><span></span><code>poetry<span class="w"> </span>run<span class="w"> </span>pytest
