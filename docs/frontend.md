@@ -9,10 +9,10 @@ Django AI Assistant has a frontend TypeScript client to facilitate the integrati
 
 ## Installation
 
-Install the frontend client using npm:
+Install the frontend client using pnpm:
 
 ```bash
-npm install django-ai-assistant-client
+pnpm install django-ai-assistant-client
 ```
 
 ## Client Configuration
