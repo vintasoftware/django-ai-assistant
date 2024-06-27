@@ -14,6 +14,7 @@ import {
   Title,
   Tooltip,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { ThreadsNav } from "../ThreadsNav/ThreadsNav";
 
 import classes from "./Chat.module.css";
@@ -23,8 +24,9 @@ import { getHotkeyHandler } from "@mantine/hooks";
 import Markdown from "react-markdown";
 
 import {
-  ThreadMessage,
+  ApiError,
   Thread,
+  ThreadMessage,
   useAssistant,
   useMessageList,
   useThreadList,
@@ -113,6 +115,8 @@ function ChatMessageList({
 }
 
 export function Chat({ assistantId }: { assistantId: string }) {
+  const [showLoginNotification, setShowLoginNotification] =
+    useState<boolean>(false);
   const [activeThread, setActiveThread] = useState<Thread | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
 
@@ -152,9 +156,32 @@ export function Chat({ assistantId }: { assistantId: string }) {
 
   // Load threads and assistant details when component mounts:
   useEffect(() => {
-    fetchThreads();
-    fetchAssistant();
+    async function loadAssistantAndThreads() {
+      try {
+        await fetchAssistant();
+        await fetchThreads();
+      } catch (error: ApiError) {
+        if (error.status === 401) {
+          setShowLoginNotification(true);
+        }
+      }
+    }
+
+    loadAssistantAndThreads();
   }, [fetchThreads, fetchAssistant]);
+
+  useEffect(() => {
+    if (!showLoginNotification) return;
+
+    notifications.show({
+      title: "Login Required",
+      message:
+        "You must be logged in to engage with the examples. Please log in to continue.",
+      color: "red",
+      autoClose: 5000,
+      withCloseButton: true,
+    });
+  }, [showLoginNotification]);
 
   // Load messages when threadId changes:
   useEffect(() => {
