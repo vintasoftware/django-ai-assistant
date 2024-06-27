@@ -54,20 +54,14 @@ cd frontend
 pnpm run build:watch
 ```
 
-Then use `pnpm link` to link the frontend library to the example project:
-
-```bash
-cd frontend
-pnpm link
-```
-
-Go to the example project to finish the link with the frontend library:
+Go to the example project, install the dependencies, and link the frontend project:
 
 ```bash
 cd ..  # back to project root directory
 cd example
 pnpm install
-pnpm link django-ai-assistant-client
+pnpm remove django-ai-assistant-client  # remove the distributed package to use the local one
+pnpm link ../frontend
 ```
 
 Then follow the instructions in the [example README](https://github.com/vintasoftware/django-ai-assistant/tree/main/example#running) to run the example project.
