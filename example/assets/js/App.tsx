@@ -1,12 +1,22 @@
 import "@mantine/core/styles.css";
 
 import {
+  Alert,
   Container,
   createTheme,
   List,
   MantineProvider,
+  rem,
+  ThemeIcon,
   Title,
 } from "@mantine/core";
+import {
+  IconBrandDjango,
+  IconCloud,
+  IconInfoCircle,
+  IconXboxX,
+  IconMovie,
+} from "@tabler/icons-react";
 import { Chat } from "@/components";
 import { createBrowserRouter, Link, RouterProvider } from "react-router-dom";
 import { configAIAssistant } from "django-ai-assistant-client";
@@ -19,22 +29,69 @@ const theme = createTheme({});
 configAIAssistant({ BASE: "ai-assistant" });
 
 const ExampleIndex = () => {
+  const [showAlert, setShowAlert] = React.useState<boolean>(true);
+
   return (
     <Container>
       <Title order={1} my="md">
         Examples
       </Title>
-      <List>
-        <List.Item>
+
+      {showAlert ? (
+        <Alert
+          variant="light"
+          color="orange"
+          title="Login Required"
+          icon={<IconInfoCircle />}
+          withCloseButton
+          closeButtonLabel="Dismiss"
+          onClose={() => setShowAlert(false)}
+          maw={600}
+          mb="md"
+        >
+          You must be logged in to engage with the examples. Please{" "}
+          <Link to="/admin" target="_blank">
+            log in
+          </Link>{" "}
+          to continue.
+        </Alert>
+      ) : null}
+
+      <List spacing="sm" size="md" center>
+        <List.Item
+          icon={
+            <ThemeIcon color="blue" size={28} radius="xl">
+              <IconCloud style={{ width: rem(18), height: rem(18) }} />
+            </ThemeIcon>
+          }
+        >
           <Link to="/weather-chat">Weather Chat</Link>
         </List.Item>
-        <List.Item>
+        <List.Item
+          icon={
+            <ThemeIcon color="blue" size={28} radius="xl">
+              <IconMovie style={{ width: rem(18), height: rem(18) }} />
+            </ThemeIcon>
+          }
+        >
           <Link to="/movies-chat">Movie Recommendation Chat</Link>
         </List.Item>
-        <List.Item>
+        <List.Item
+          icon={
+            <ThemeIcon color="blue" size={28} radius="xl">
+              <IconBrandDjango style={{ width: rem(18), height: rem(18) }} />
+            </ThemeIcon>
+          }
+        >
           <Link to="/rag-chat">Django Docs RAG Chat</Link>
         </List.Item>
-        <List.Item>
+        <List.Item
+          icon={
+            <ThemeIcon color="blue" size={28} radius="xl">
+              <IconXboxX style={{ width: rem(18), height: rem(18) }} />
+            </ThemeIcon>
+          }
+        >
           <Link to="/htmx">HTMX demo (no React)</Link>
         </List.Item>
       </List>
