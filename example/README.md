@@ -6,36 +6,13 @@ Most examples are inside a React frontend, but there is also a HTMX example.
 
 ## Installation
 
-Go to project root, then frontend dir and build the frontend library:
-
-```bash
-cd ..  # back to project root directory
-cd frontend
-npm install
-npm run build
-```
-
-Then use `npm link` to link the frontend library to the example project:
-
-```bash
-cd frontend
-npm link
-```
-
-Go to the example project to finish the link with the frontend library:
-
-```bash
-cd ..  # back to project root directory
-cd example
-npm install
-npm link django-ai-assistant-client
-```
-
-Run the example Webpack devserver to build the React frontend:
+Go to the example project, install its Node dependencies, and run the example Webpack devserver to build the React frontend:
 
 ```bash
 # in example directory
-npm run start
+cd example
+pnpm install
+pnpm run start
 ```
 
 Install the example project Python dependencies:
@@ -85,4 +62,3 @@ Access the Django admin at `http://localhost:8000/admin/` and log in with the su
 ## Usage
 
 Access the example project at `http://localhost:8000/`.
-

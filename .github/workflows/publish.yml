@@ -46,6 +46,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -55,21 +61,16 @@ jobs:
       - name: Install dependencies
         working-directory: ./frontend
         run: |
-          npm install
-
-      - name: Run ci
-        working-directory: ./frontend
-        run: |
-          npm ci
+          pnpm install
 
       - name: Build package
         working-directory: ./frontend
         run: |
-          npm run build
+          pnpm run build
 
       - name: Publish package distributions to npm
         working-directory: ./frontend
         run: |
-          npm publish
+          pnpm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_API_TOKEN }}

@@ -8,7 +8,9 @@ Please follow this guide to learn more about how to develop and test the project
 
 ### Clone the repo
 
-`git clone git@github.com:vintasoftware/django-ai-assistant.git`
+```bash
+git clone git@github.com:vintasoftware/django-ai-assistant.git
+```
 
 ### Set up a virtualenv, optionally set up nvm, and activate your environment(s)
 
@@ -20,31 +22,49 @@ For installing Node, we recommend [NVM](https://github.com/nvm-sh/nvm).
 
 #### Backend
 
-`poetry install`
+Go to the project root and install the Python dependencies:
+
+```bash
+poetry install
+```
 
 #### Frontend
 
+Go to the frontend directory and install the Node dependencies:
+
 ```bash
 cd frontend
-npm install
+pnpm install
 ```
 
 ### Install pre-commit hooks
 
-`pre-commit install`
+```bash
+pre-commit install
+```
 
 It's critical to run the pre-commit hooks before pushing your code to follow the project's code style, and avoid linting errors.
 
 ### Developing with the example project
 
-Run the frontend project in build:watch mode:
+Run the frontend project in `build:watch` mode:
 
 ```bash
 cd frontend
-npm run build:watch
+pnpm run build:watch
 ```
 
-Then follow the instructions in the [example README](https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme).
+Go to the example project, install the dependencies, and link the frontend project:
+
+```bash
+cd ..  # back to project root directory
+cd example
+pnpm install
+pnpm remove django-ai-assistant-client  # remove the distributed package to use the local one
+pnpm link ../frontend
+```
+
+Then follow the instructions in the [example README](https://github.com/vintasoftware/django-ai-assistant/tree/main/example#running) to run the example project.
 
 ## Tests
 
