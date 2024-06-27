@@ -3,6 +3,7 @@ import "@mantine/notifications/styles.css";
 
 import React, { useEffect, useState } from "react";
 import {
+  Button,
   Container,
   createTheme,
   List,
@@ -32,6 +33,17 @@ const theme = createTheme({});
 // which can be found at example/demo/urls.py)
 configAIAssistant({ BASE: "ai-assistant" });
 
+const PageWrapper = ({ children }: { children: React.ReactNode }) => {
+  // This component allows to use react-router-dom's Link component
+  // in the children components.
+  return (
+    <>
+      <Notifications position="top-right" />
+      {children}
+    </>
+  );
+};
+
 const ExampleIndex = () => {
   const [showLoginNotification, setShowLoginNotification] =
     useState<boolean>(false);
@@ -59,8 +71,15 @@ const ExampleIndex = () => {
 
     notifications.show({
       title: "Login Required",
-      message:
-        "You must be logged in to engage with the examples. Please log in to continue.",
+      message: (
+        <>
+          You must be logged in to engage with the examples. Please{" "}
+          <Link to="admin/" target="_blank">
+            log in
+          </Link>{" "}
+          to continue.
+        </>
+      ),
       color: "red",
       autoClose: 5000,
       withCloseButton: true,
@@ -123,34 +142,57 @@ const Redirect = ({ to }: { to: string }) => {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <ExampleIndex />,
+    element: (
+      <PageWrapper>
+        <ExampleIndex />
+      </PageWrapper>
+    ),
   },
   {
     path: "/weather-chat",
-    element: <Chat assistantId="weather_assistant" />,
+    element: (
+      <PageWrapper>
+        <Chat assistantId="weather_assistant" />
+      </PageWrapper>
+    ),
   },
   {
     path: "/movies-chat",
-    element: <Chat assistantId="movie_recommendation_assistant" />,
+    element: (
+      <PageWrapper>
+        <Chat assistantId="movie_recommendation_assistant" />
+      </PageWrapper>
+    ),
   },
   {
     path: "/rag-chat",
-    element: <Chat assistantId="django_docs_assistant" />,
+    element: (
+      <PageWrapper>
+        <Chat assistantId="django_docs_assistant" />
+      </PageWrapper>
+    ),
   },
   {
     path: "/htmx",
-    element: <Redirect to="/htmx/" />,
+    element: (
+      <PageWrapper>
+        <Redirect to="/htmx/" />
+      </PageWrapper>
+    ),
   },
   {
     path: "/admin",
-    element: <Redirect to="/admin/" />,
+    element: (
+      <PageWrapper>
+        <Redirect to="/admin/" />
+      </PageWrapper>
+    ),
   },
 ]);
 
 const App = () => {
   return (
     <MantineProvider theme={theme}>
-      <Notifications position="top-right" />
       <React.StrictMode>
         <RouterProvider router={router} />
       </React.StrictMode>
