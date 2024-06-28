@@ -62,3 +62,16 @@ Access the Django admin at `http://localhost:8000/admin/` and log in with the su
 ## Usage
 
 Access the example project at `http://localhost:8000/`.
+
+## VSCode
+
+Fix the Python path in your `<project-root>/.vscode/settings.json` to fix the Python import linting:
+
+```json
+{
+    // ...
+    "python.analysis.extraPaths": [
+        "example/"
+    ]
+}
+```
