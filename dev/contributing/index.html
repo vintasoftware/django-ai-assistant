@@ -1059,6 +1059,8 @@ Check the files in the <code>docs</code> directory.</p>
 <p>To release and publish a new version, follow these steps:</p>
 <ol>
 <li>Update the version in <code>pyproject.toml</code> and <code>frontend/package.json</code>.</li>
+<li>In the project root, run <code>poetry run python manage.py generate_openapi_schema --output frontend/openapi_schema.json</code> to update the OpenAPI schema.</li>
+<li>In the frontend directory, run <code>pnpm run generate-client</code> to update the TypeScript client with the new OpenAPI schema.</li>
 <li>Update the changelog in <code>CHANGELOG.md</code>.</li>
 <li>Open a PR with the changes.</li>
 <li>Once the PR is merged, run the <a href="https://github.com/vintasoftware/django-ai-assistant/actions/workflows/release.yml">Release GitHub Action</a> to create a draft release.</li>
