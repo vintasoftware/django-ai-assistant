@@ -2,11 +2,6 @@ name: CI
 
 on: [push, pull_request]
 
-env:
-  COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-  COVERALLS_PARALLEL: true
-  COVERALLS_SERVICE_NAME: "github-actions"
-
 jobs:
   build-django:
     name: Django CI (Python ${{ matrix.python-version }})
@@ -36,20 +31,21 @@ jobs:
         run: |
           poetry run mkdocs build
 
-      - name: Run tests with tox and coverage
+      - name: Run tests
         run: |
           poetry run tox
         env:
           OPENAI_API_KEY: "sk-fake-test-key-123"
 
       - name: Coveralls Parallel
-        if: ${{ matrix.python-version == '3.12' }}
-        uses: coverallsapp/github-action@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          parallel: true
-          flag-name: django-coverage
-          allow-empty: true
+        run: |
+          poetry run coveralls
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_SERVICE_NAME: "github-actions"
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          COVERALLS_FLAG_NAME: django-coverage-${{ matrix.python-version }}
+          COVERALLS_PARALLEL: true
 
   build-frontend:
     name: Frontend CI
@@ -88,6 +84,12 @@ jobs:
         working-directory: ./frontend
         run: |
           pnpm run coveralls
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_SERVICE_NAME: "github-actions"
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          COVERALLS_FLAG_NAME: node-coverage
+          COVERALLS_PARALLEL: true
 
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@v2
@@ -96,16 +98,25 @@ jobs:
           parallel: true
           flag-name: node-coverage
           allow-empty: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_SERVICE_NAME: "github-actions"
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          COVERALLS_FLAG_NAME: node-coverage
+          COVERALLS_PARALLEL: true
 
-  finish:
+  coveralls:
     name: Coveralls
+
+    # Wait for Django and Frontend to finish before starting due to Coveralls parallel
     needs: [build-django, build-frontend]
-    if: ${{ always() }}
+
     runs-on: ubuntu-latest
+
     steps:
       - name: Coveralls Finished
         uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           parallel-finished: true
-          carryforward: "django-coverage,node-coverage"
+          carryforward: "django-coverage-3.10,django-coverage-3.11,django-coverage-3.12,node-coverage"
