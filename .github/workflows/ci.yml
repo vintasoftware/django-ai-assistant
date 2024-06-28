@@ -9,17 +9,22 @@ env:
 
 jobs:
   build-django:
-    name: Django CI
+    name: Django CI (Python ${{ matrix.python-version }})
+
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
@@ -31,14 +36,14 @@ jobs:
         run: |
           poetry run mkdocs build
 
-      - name: Run tests
+      - name: Run tests with tox and coverage
         run: |
-          poetry run coverage run -m pytest
-          poetry run coveralls
+          poetry run tox
         env:
           OPENAI_API_KEY: "sk-fake-test-key-123"
 
       - name: Coveralls Parallel
+        if: ${{ matrix.python-version == '3.12' }}
         uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -48,10 +53,11 @@ jobs:
 
   build-frontend:
     name: Frontend CI
-    runs-on: ubuntu-latest
     # Wait for Django to finish before starting due to Coveralls parallel
     # Source: https://docs.coveralls.io/parallel-builds
     needs: build-django
+
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
