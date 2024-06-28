@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "weather",
     "movies",
     "rag",
+    "issue_tracker",
 ]
 
 MIDDLEWARE = [
