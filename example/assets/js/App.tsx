@@ -18,6 +18,7 @@ import {
   IconCloud,
   IconXboxX,
   IconMovie,
+  IconChecklist,
 } from "@tabler/icons-react";
 import { Chat } from "@/components";
 import { createBrowserRouter, Link, RouterProvider } from "react-router-dom";
@@ -114,6 +115,15 @@ const ExampleIndex = () => {
         <List.Item
           icon={
             <ThemeIcon color="blue" size={28} radius="xl">
+              <IconChecklist style={{ width: rem(18), height: rem(18) }} />
+            </ThemeIcon>
+          }
+        >
+          <Link to="/issue-tracker-chat">Issue Tracker Chat</Link>
+        </List.Item>
+        <List.Item
+          icon={
+            <ThemeIcon color="blue" size={28} radius="xl">
               <IconBrandDjango style={{ width: rem(18), height: rem(18) }} />
             </ThemeIcon>
           }
@@ -161,6 +171,14 @@ const router = createBrowserRouter([
     element: (
       <PageWrapper>
         <Chat assistantId="movie_recommendation_assistant" />
+      </PageWrapper>
+    ),
+  },
+  {
+    path: "/issue-tracker-chat",
+    element: (
+      <PageWrapper>
+        <Chat assistantId="issue_tracker_assistant" />
       </PageWrapper>
     ),
   },
