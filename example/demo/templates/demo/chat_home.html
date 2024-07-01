@@ -28,8 +28,8 @@
               class="btn btn-primary mt-3"
               hx-post='{% url "chat_home" %}'
               hx-target="#threads-container"
-              hx-select="#messages-container"
-              hx-select-oob="#messages-container"
+              hx-select="#messages-list"
+              hx-select-oob="#messages-list"
               hx-push-url="true"
               data-loading-disable
             >
