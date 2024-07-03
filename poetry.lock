@@ -2298,6 +2298,20 @@ files = [
 ]
 
 [[package]]
+name = "osmapi"
+version = "4.1.0"
+description = "Python wrapper for the OSM API"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "osmapi-4.1.0-py3-none-any.whl", hash = "sha256:3d50f1e469a23d6a7855edc604c233b7019c89762111b9f8f92a1757aa500720"},
+    {file = "osmapi-4.1.0.tar.gz", hash = "sha256:7b51804f8d0da953376cdfb6f9cfcb79b501312e535b31c654d213d9b46f0270"},
+]
+
+[package.dependencies]
+requests = "*"
+
+[[package]]
 name = "packaging"
 version = "24.1"
 description = "Core utilities for Python packages"
@@ -3897,4 +3911,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "e5a78c3a532295d2a099fda693801334694416c8748f7274d64a5dfa779f5518"
+content-hash = "343656c8ce163fd6c8092db61cbfced093550345c61d6a399cb8107d732cc18e"
