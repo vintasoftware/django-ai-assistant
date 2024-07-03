@@ -51,6 +51,7 @@ pydantic = "^2.7.1"
 django-ninja = "^1.1.0"
 langchain = "^0.2.1"
 langchain-openai = "^0.1.8"
+osmapi = "^4.1.0"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.2.7"

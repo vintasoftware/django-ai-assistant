@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "movies",
     "rag",
     "issue_tracker",
+    "tour_guide",
 ]
 
 MIDDLEWARE = [

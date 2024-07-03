@@ -20,7 +20,7 @@ import {
   IconMovie,
   IconChecklist,
 } from "@tabler/icons-react";
-import { Chat } from "@/components";
+import { Chat, ResultsPage } from "@/components";
 import { createBrowserRouter, Link, RouterProvider } from "react-router-dom";
 import {
   ApiError,
@@ -139,6 +139,9 @@ const ExampleIndex = () => {
         >
           <Link to="/htmx">HTMX demo (no React)</Link>
         </List.Item>
+        <List.Item>
+          <Link to="/tour-guide">Tour Guide Assistant</Link>
+        </List.Item>
       </List>
     </Container>
   );
@@ -197,6 +200,10 @@ const router = createBrowserRouter([
         <Redirect to="/htmx/" />
       </PageWrapper>
     ),
+  },
+  {
+    path: "/tour-guide",
+    element: (<PageWrapper><ResultsPage assistantId="tour_guide_assistant" /></PageWrapper>),
   },
   {
     path: "/admin",
