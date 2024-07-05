@@ -1057,7 +1057,13 @@ Check the files in the <code>docs</code> directory.</p>
 <p>To release and publish a new version, follow these steps:</p>
 <ol>
 <li>Update the version in <code>pyproject.toml</code> and <code>frontend/package.json</code>.</li>
+<li>Re-install the local version of the Python project: <code>poetry install</code></li>
 <li>In the project root, run <code>poetry run python manage.py generate_openapi_schema --output frontend/openapi_schema.json</code> to update the OpenAPI schema.</li>
+<li>Re-install the local version of the frontend project:
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>frontend
+pnpm<span class="w"> </span>install
+pnpm<span class="w"> </span>run<span class="w"> </span>build
+</code></pre></div></li>
 <li>In the frontend directory, run <code>pnpm run generate-client</code> to update the TypeScript client with the new OpenAPI schema.</li>
 <li>Update the changelog in <code>CHANGELOG.md</code>.</li>
 <li>Open a PR with the changes.</li>
