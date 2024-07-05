@@ -10,6 +10,11 @@ Use AI Tool Calling and RAG with Django to easily build state of the art AI Assi
 
 Please check the documentation: [https://vintasoftware.github.io/django-ai-assistant/](https://vintasoftware.github.io/django-ai-assistant/)
 
+## 5 minute demo
+https://github.com/vintasoftware/django-ai-assistant/assets/397989/715d7608-e657-4dce-a7be-2909679f814b
+
+
+
 ## Contributing
 
 You're welcome to contribute with Django AI Assistant! Please feel free to tackle existing [issues](https://github.com/vintasoftware/django-ai-assistant/issues). If you have a new idea, please create a thread on [Discussions](https://github.com/vintasoftware/django-ai-assistant/discussions). 
