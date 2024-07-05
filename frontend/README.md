@@ -7,8 +7,6 @@ TypeScript client to facilitate the integration with the Django AI Assistant bac
 
 Please check the documentation: [https://vintasoftware.github.io/django-ai-assistant/](https://vintasoftware.github.io/django-ai-assistant/)
 
-⚠️ Under heavy development. Not publicly launched yet!
-
 ## Contributing
 
 You're welcome to contribute with Django AI Assistant! Please feel free to tackle existing [issues](https://github.com/vintasoftware/django-ai-assistant/issues). If you have a new idea, please create a thread on [Discussions](https://github.com/vintasoftware/django-ai-assistant/discussions).
