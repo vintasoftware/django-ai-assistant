@@ -8,8 +8,6 @@ Let AI Assistants call methods from Django's side and do anything your users nee
 
 Use AI Tool Calling and RAG with Django to easily build state of the art AI Assistants.
 
-⚠️ Under heavy development. Not publicly launched yet!
-
 Please check the documentation: [https://vintasoftware.github.io/django-ai-assistant/](https://vintasoftware.github.io/django-ai-assistant/)
 
 ## Contributing
