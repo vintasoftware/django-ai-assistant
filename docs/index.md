@@ -1,7 +1,4 @@
-# Django AI Assistant
-
-![robot logo](https://raw.githubusercontent.com/vintasoftware/django-ai-assistant/main/docs/images/logo-black-transparent-bg.svg#only-light)
-![robot logo](https://raw.githubusercontent.com/vintasoftware/django-ai-assistant/main/docs/images/logo-white-transparent-bg.svg#only-dark)
+# ![robot logo](https://raw.githubusercontent.com/vintasoftware/django-ai-assistant/main/docs/images/logo-black-transparent-bg.svg#only-light){ width="50" style="vertical-align: bottom" } ![robot logo](https://raw.githubusercontent.com/vintasoftware/django-ai-assistant/main/docs/images/logo-white-transparent-bg.svg#only-dark){ width="50" style="vertical-align: bottom" } Django AI Assistant
 
 Combine the power of Large Language Models with Django's productivity to build intelligent applications.
 
