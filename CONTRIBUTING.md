@@ -102,10 +102,17 @@ poetry run mkdocs serve
 To release and publish a new version, follow these steps:
 
 1. Update the version in `pyproject.toml` and `frontend/package.json`.
-2. In the project root, run `poetry run python manage.py generate_openapi_schema --output frontend/openapi_schema.json` to update the OpenAPI schema.
-3. In the frontend directory, run `pnpm run generate-client` to update the TypeScript client with the new OpenAPI schema.
-4. Update the changelog in `CHANGELOG.md`.
-5. Open a PR with the changes.
-6. Once the PR is merged, run the [Release GitHub Action](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/release.yml) to create a draft release.
-7. Review the draft release, ensure the description has at least the associated changelog entry, and publish it.
-8. Once the review is publish, the [Publish GitHub Action](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/publish.yml) will automatically run to publish the new version to [PyPI](https://pypi.org/project/django-ai-assistant) and [npm](https://www.npmjs.com/package/django-ai-assistant-client). Check the logs to ensure the publication was successful.
+2. Re-install the local version of the Python project: `poetry install`
+3. In the project root, run `poetry run python manage.py generate_openapi_schema --output frontend/openapi_schema.json` to update the OpenAPI schema.
+4. Re-install the local version of the frontend project:
+```bash
+cd frontend
+pnpm install
+pnpm run build
+```
+5. In the frontend directory, run `pnpm run generate-client` to update the TypeScript client with the new OpenAPI schema.
+6. Update the changelog in `CHANGELOG.md`.
+7. Open a PR with the changes.
+8. Once the PR is merged, run the [Release GitHub Action](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/release.yml) to create a draft release.
+9. Review the draft release, ensure the description has at least the associated changelog entry, and publish it.
+10. Once the review is publish, the [Publish GitHub Action](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/publish.yml) will automatically run to publish the new version to [PyPI](https://pypi.org/project/django-ai-assistant) and [npm](https://www.npmjs.com/package/django-ai-assistant-client). Check the logs to ensure the publication was successful.
