@@ -20,7 +20,7 @@
   "engines": {
     "node": ">=20 <21"
   },
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "TypeScript client to facilitate the integration with the Django AI Assistant backend.",
   "homepage": "https://github.com/vintasoftware/django-ai-assistant",
   "documentation": "https://vintasoftware.github.io/django-ai-assistant",
