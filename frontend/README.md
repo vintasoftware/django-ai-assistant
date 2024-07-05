@@ -1,7 +1,7 @@
 [![CI](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/vintasoftware/django-ai-assistant/badge.svg?branch=main)](https://coveralls.io/github/vintasoftware/django-ai-assistant?branch=main)
 
-# django-ai-assistant-client <img src="https://raw.githubusercontent.com/vintasoftware/django-ai-assistant/main/docs/images/robot-happy-outline.svg" width="20" alt="robot logo">
+# django-ai-assistant-client
 
 TypeScript client to facilitate the integration with the Django AI Assistant backend.
 

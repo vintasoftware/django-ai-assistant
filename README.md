@@ -1,7 +1,9 @@
 [![CI](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/vintasoftware/django-ai-assistant/badge.svg?branch=main)](https://coveralls.io/github/vintasoftware/django-ai-assistant?branch=main)
 
-# django-ai-assistant <img src="https://raw.githubusercontent.com/vintasoftware/django-ai-assistant/main/docs/images/robot-happy-outline.svg" width="20" alt="robot logo">
+# django-ai-assistant
+
+<img src="https://raw.githubusercontent.com/vintasoftware/django-ai-assistant/main/docs/images/logo-black-transparent-bg.svg" width="20" alt="robot logo">
 
 Combine the power of LLMs with Django's productivity to build intelligent applications.
 Let AI Assistants call methods from Django's side and do anything your users need!
@@ -11,9 +13,8 @@ Use AI Tool Calling and RAG with Django to easily build state of the art AI Assi
 Please check the documentation: [https://vintasoftware.github.io/django-ai-assistant/](https://vintasoftware.github.io/django-ai-assistant/)
 
 ## 5 minute demo
+
 https://github.com/vintasoftware/django-ai-assistant/assets/397989/715d7608-e657-4dce-a7be-2909679f814b
-
-
 
 ## Contributing
 
