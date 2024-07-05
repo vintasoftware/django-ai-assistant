@@ -115,4 +115,4 @@ pnpm run build
 7. Open a PR with the changes.
 8. Once the PR is merged, run the [Release GitHub Action](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/release.yml) to create a draft release.
 9. Review the draft release, ensure the description has at least the associated changelog entry, and publish it.
-10. Once the review is publish, the [Publish GitHub Action](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/publish.yml) will automatically run to publish the new version to [PyPI](https://pypi.org/project/django-ai-assistant) and [npm](https://www.npmjs.com/package/django-ai-assistant-client). Check the logs to ensure the publication was successful.
+10. Once the review is published, the [Publish GitHub Action](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/publish.yml) will automatically run to publish the new version to [PyPI](https://pypi.org/project/django-ai-assistant) and [npm](https://www.npmjs.com/package/django-ai-assistant-client). Check the logs to ensure the publication was successful.
