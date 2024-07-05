@@ -3,7 +3,7 @@
 
 # django-ai-assistant
 
-<img align="left" src="https://raw.githubusercontent.com/vintasoftware/django-ai-assistant/main/docs/images/logo-black-transparent-bg.svg" height="120" alt="robot logo">
+<img align="left" src="https://raw.githubusercontent.com/vintasoftware/django-ai-assistant/main/docs/images/favicon.svg" height="120" alt="robot logo">
 
 Combine the power of LLMs with Django's productivity to build intelligent applications.
 Let AI Assistants call methods from Django's side and do anything your users need!
