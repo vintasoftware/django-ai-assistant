@@ -23,6 +23,8 @@ def react_index(request, **kwargs):
 
 
 class BaseAIAssistantView(TemplateView):
+    throttle_scope = "high"
+
     def get_assistant_id(self, **kwargs):
         """Returns the WeatherAIAssistant. Replace this with your own logic."""
         return WeatherAIAssistant.id
@@ -40,6 +42,7 @@ class BaseAIAssistantView(TemplateView):
 
 
 class AIAssistantChatHomeView(BaseAIAssistantView):
+    throttle_scope = "high"
     template_name = "demo/chat_home.html"
 
     # POST to create thread:
@@ -59,6 +62,7 @@ class AIAssistantChatHomeView(BaseAIAssistantView):
 
 
 class AIAssistantChatThreadView(BaseAIAssistantView):
+    throttle_scope = "high"
     template_name = "demo/chat_thread.html"
 
     def get_context_data(self, **kwargs):

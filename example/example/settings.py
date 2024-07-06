@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "webpack_loader",
     "django_ai_assistant",
+    "rest_framework",
     "demo",  # contains the views
     "weather",
     "movies",
@@ -173,3 +174,28 @@ AI_ASSISTANT_CAN_RUN_ASSISTANT = "django_ai_assistant.permissions.allow_all"
 
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")  # get for free at https://www.weatherapi.com/
 DJANGO_DOCS_BRANCH = "stable/5.0.x"
+
+
+# REST FRAMEWORK Throttling Settings
+REST_FRAMEWORK = {
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {"anon": "2/min", "user": "4/min"},
+}
+
+# Multiple user rate throttle
+REST_FRAMEWORK = {
+    "DEFAULT_THROTTLE_CLASSES": [
+        "demo.throttles.HighRateThrottle",
+        "demo.throttles.LowRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {"high": "30/minute", "low": "4/minute"},
+}
+
+# Scoped rate throttle
+REST_FRAMEWORK = {
+    "DEFAULT_THROTTLE_CLASSES": ["rest_framework.throttling.ScopedRateThrottle"],
+    "DEFAULT_THROTTLE_RATES": {"high": "30/day", "low": "4/day"},
+}
