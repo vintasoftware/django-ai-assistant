@@ -1,5 +1,6 @@
 [![CI](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/vintasoftware/django-ai-assistant/badge.svg?branch=main)](https://coveralls.io/github/vintasoftware/django-ai-assistant?branch=main)
+[![Discord Server](https://img.shields.io/discord/1260577482122203206)](https://discord.gg/mqdubnPb)
 
 # django-ai-assistant
 
@@ -15,6 +16,10 @@ Please check the documentation: [https://vintasoftware.github.io/django-ai-assis
 ## 5 minute demo
 
 https://github.com/vintasoftware/django-ai-assistant/assets/397989/715d7608-e657-4dce-a7be-2909679f814b
+
+## Community
+
+Feel free to ask questions and share your work on our [Discord Server](https://discord.gg/mqdubnPb)!
 
 ## Contributing
 
