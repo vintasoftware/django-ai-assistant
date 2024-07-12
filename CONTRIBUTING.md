@@ -16,7 +16,7 @@ git clone git@github.com:vintasoftware/django-ai-assistant.git
 
 This project uses [Poetry](https://python-poetry.org/docs/) for dependency and virtual environment management.
 
-If you need to install the version of Python recommented for the project, you can use [Pyenv](https://github.com/pyenv/pyenv).
+If you need to install the version of Python recommended for the project, you can use [Pyenv](https://github.com/pyenv/pyenv).
 
 For installing Node, we recommend [NVM](https://github.com/nvm-sh/nvm).
 
