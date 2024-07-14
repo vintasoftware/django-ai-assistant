@@ -1,4 +1,5 @@
 from typing import List
+from unittest.mock import patch
 
 import pytest
 from langchain_core.documents import Document
@@ -125,6 +126,18 @@ def test_AIAssistant_invoke():
     )
 
 
+@pytest.mark.django_db(transaction=True)
+def test_AIAssistant_run_handles_optional_thread_id_param():
+    assistant = AIAssistant.get_cls("temperature_assistant")()
+
+    with patch.object(assistant, "invoke") as invoke_spy:
+        assistant.run("What is the temperature today in Recife?")
+
+        invoke_spy.assert_called_once_with(
+            {"input": "What is the temperature today in Recife?"}, thread_id=None
+        )
+
+
 class SequentialRetriever(BaseRetriever):
     sequential_responses: List[List[Document]]
     response_index: int = 0
@@ -222,4 +235,9 @@ def test_AIAssistant_tool_order_same_as_declaration():
     assistant = FooAssistant()
 
     assert hasattr(assistant, "_method_tools")
-    assert [t.name for t in assistant._method_tools] == ["tool_d", "tool_c", "tool_b", "tool_a"]
+    assert [t.name for t in assistant._method_tools] == [
+        "tool_d",
+        "tool_c",
+        "tool_b",
+        "tool_a",
+    ]
