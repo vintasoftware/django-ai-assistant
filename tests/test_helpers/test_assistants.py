@@ -126,7 +126,6 @@ def test_AIAssistant_invoke():
     )
 
 
-@pytest.mark.django_db(transaction=True)
 def test_AIAssistant_run_handles_optional_thread_id_param():
     assistant = AIAssistant.get_cls("temperature_assistant")()
 
