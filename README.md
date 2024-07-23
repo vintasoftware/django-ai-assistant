@@ -19,7 +19,7 @@ https://github.com/vintasoftware/django-ai-assistant/assets/397989/715d7608-e657
 
 ## Community
 
-Feel free to ask questions and share your work on our [Discord Server](https://discord.gg/mqdubnPb)!
+Feel free to ask questions and share your work on our [Discord Server](https://discord.gg/fQfH9PkJM6)!
 
 ## Contributing
 
