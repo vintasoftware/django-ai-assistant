@@ -1035,12 +1035,15 @@ pnpm<span class="w"> </span>link<span class="w"> </span>../frontend
 </code></pre></div>
 <p>Then follow the instructions in the <a href="https://github.com/vintasoftware/django-ai-assistant/tree/main/example#running">example README</a> to run the example project.</p>
 <h2 id="tests">Tests<a class="headerlink" href="#tests" title="Permanent link">&para;</a></h2>
+<p>Before running tests copy the <code>.env.example</code> file to <code>.env.tests</code>.</p>
+<div class="highlight"><pre><span></span><code>cp<span class="w"> </span>.env.example<span class="w"> </span>.env.tests
+</code></pre></div>
 <p>Run tests with:</p>
 <div class="highlight"><pre><span></span><code>poetry<span class="w"> </span>run<span class="w"> </span>pytest
 </code></pre></div>
 <p>The tests use <code>pytest-vcr</code> to record and replay HTTP requests to AI models.</p>
-<p>If you're implementing a new test that needs to call a real AI model, you need to set the <code>OPENAI_API_KEY</code> environment variable on root <code>.env</code> file.
-Then, you will run the tests in record mode:</p>
+<p>If you're implementing a new test that needs to call a real AI model, you need to set the <code>OPENAI_API_KEY</code> environment variable with a real API key in the <code>.env.tests</code> file.</p>
+<p>Then, you will run the tests in record mode:</p>
 <div class="highlight"><pre><span></span><code>poetry<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>--record-mode<span class="o">=</span>once
 </code></pre></div>
 <h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h2>
@@ -1059,11 +1062,13 @@ Check the files in the <code>docs</code> directory.</p>
 <li>Update the version in <code>pyproject.toml</code> and <code>frontend/package.json</code>.</li>
 <li>Re-install the local version of the Python project: <code>poetry install</code></li>
 <li>In the project root, run <code>poetry run python manage.py generate_openapi_schema --output frontend/openapi_schema.json</code> to update the OpenAPI schema.</li>
-<li>Re-install the local version of the frontend project:
+<li>Re-install the local version of the frontend project:</li>
+</ol>
 <div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>frontend
 pnpm<span class="w"> </span>install
 pnpm<span class="w"> </span>run<span class="w"> </span>build
-</code></pre></div></li>
+</code></pre></div>
+<ol>
 <li>In the frontend directory, run <code>pnpm run generate-client</code> to update the TypeScript client with the new OpenAPI schema.</li>
 <li>Update the changelog in <code>CHANGELOG.md</code>.</li>
 <li>Open a PR with the changes.</li>

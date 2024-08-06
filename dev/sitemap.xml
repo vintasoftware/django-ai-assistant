@@ -2,57 +2,57 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://vintasoftware.github.io/django-ai-assistant/dev/</loc>
-         <lastmod>2024-07-23</lastmod>
+         <lastmod>2024-08-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://vintasoftware.github.io/django-ai-assistant/dev/changelog/</loc>
-         <lastmod>2024-07-23</lastmod>
+         <lastmod>2024-08-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://vintasoftware.github.io/django-ai-assistant/dev/contributing/</loc>
-         <lastmod>2024-07-23</lastmod>
+         <lastmod>2024-08-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://vintasoftware.github.io/django-ai-assistant/dev/frontend/</loc>
-         <lastmod>2024-07-23</lastmod>
+         <lastmod>2024-08-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://vintasoftware.github.io/django-ai-assistant/dev/get-started/</loc>
-         <lastmod>2024-07-23</lastmod>
+         <lastmod>2024-08-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://vintasoftware.github.io/django-ai-assistant/dev/support/</loc>
-         <lastmod>2024-07-23</lastmod>
+         <lastmod>2024-08-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://vintasoftware.github.io/django-ai-assistant/dev/tutorial/</loc>
-         <lastmod>2024-07-23</lastmod>
+         <lastmod>2024-08-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://vintasoftware.github.io/django-ai-assistant/dev/reference/</loc>
-         <lastmod>2024-07-23</lastmod>
+         <lastmod>2024-08-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://vintasoftware.github.io/django-ai-assistant/dev/reference/assistants-ref/</loc>
-         <lastmod>2024-07-23</lastmod>
+         <lastmod>2024-08-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://vintasoftware.github.io/django-ai-assistant/dev/reference/models-ref/</loc>
-         <lastmod>2024-07-23</lastmod>
+         <lastmod>2024-08-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://vintasoftware.github.io/django-ai-assistant/dev/reference/use-cases-ref/</loc>
-         <lastmod>2024-07-23</lastmod>
+         <lastmod>2024-08-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
