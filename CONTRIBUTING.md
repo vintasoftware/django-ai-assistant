@@ -68,6 +68,12 @@ Then follow the instructions in the [example README](https://github.com/vintasof
 
 ## Tests
 
+Before running tests copy the `.env.example` file to `.env.tests`.
+
+```bash
+cp .env.example .env.tests
+```
+
 Run tests with:
 
 ```bash
@@ -76,7 +82,8 @@ poetry run pytest
 
 The tests use `pytest-vcr` to record and replay HTTP requests to AI models.
 
-If you're implementing a new test that needs to call a real AI model, you need to set the `OPENAI_API_KEY` environment variable on root `.env` file.
+If you're implementing a new test that needs to call a real AI model, you need to set the `OPENAI_API_KEY` environment variable with a real API key in the `.env.tests` file.
+
 Then, you will run the tests in record mode:
 
 ```bash
@@ -97,7 +104,7 @@ poetry run mkdocs serve
 ## Release
 
 !!! info
-    The backend and the frontend are versioned together, that is, they should have the same version number.
+The backend and the frontend are versioned together, that is, they should have the same version number.
 
 To release and publish a new version, follow these steps:
 
@@ -105,11 +112,13 @@ To release and publish a new version, follow these steps:
 2. Re-install the local version of the Python project: `poetry install`
 3. In the project root, run `poetry run python manage.py generate_openapi_schema --output frontend/openapi_schema.json` to update the OpenAPI schema.
 4. Re-install the local version of the frontend project:
+
 ```bash
 cd frontend
 pnpm install
 pnpm run build
 ```
+
 5. In the frontend directory, run `pnpm run generate-client` to update the TypeScript client with the new OpenAPI schema.
 6. Update the changelog in `CHANGELOG.md`.
 7. Open a PR with the changes.
