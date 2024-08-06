@@ -12,7 +12,10 @@ from langchain.chains.combine_documents.base import (
     DEFAULT_DOCUMENT_PROMPT,
     DEFAULT_DOCUMENT_SEPARATOR,
 )
-from langchain_core.chat_history import BaseChatMessageHistory, InMemoryChatMessageHistory
+from langchain_core.chat_history import (
+    BaseChatMessageHistory,
+    InMemoryChatMessageHistory,
+)
 from langchain_core.language_models import BaseChatModel
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import (
@@ -295,7 +298,9 @@ class AIAssistant(abc.ABC):  # noqa: F821
         """
 
         # DjangoChatMessageHistory must be here because Django may not be loaded yet elsewhere:
-        from django_ai_assistant.langchain.chat_message_histories import DjangoChatMessageHistory
+        from django_ai_assistant.langchain.chat_message_histories import (
+            DjangoChatMessageHistory,
+        )
 
         if thread_id is None:
             return InMemoryChatMessageHistory()
@@ -538,7 +543,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         return chain.invoke(*args, **kwargs)
 
     @with_cast_id
-    def run(self, message: str, thread_id: Any | None, **kwargs: Any) -> str:
+    def run(self, message: str, thread_id: Any | None = None, **kwargs: Any) -> str:
         """Run the assistant with the given message and thread ID.\n
         This is the higher-level method to run the assistant.\n
 
