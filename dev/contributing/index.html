@@ -723,9 +723,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#set-up-a-virtualenv-optionally-set-up-nvm-and-activate-your-environments" class="md-nav__link">
+  <a href="#install-development-tools" class="md-nav__link">
     <span class="md-ellipsis">
-      Set up a virtualenv, optionally set up nvm, and activate your environment(s)
+      Install development tools
     </span>
   </a>
   
@@ -888,9 +888,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#set-up-a-virtualenv-optionally-set-up-nvm-and-activate-your-environments" class="md-nav__link">
+  <a href="#install-development-tools" class="md-nav__link">
     <span class="md-ellipsis">
-      Set up a virtualenv, optionally set up nvm, and activate your environment(s)
+      Install development tools
     </span>
   </a>
   
@@ -1004,13 +1004,20 @@
 <h3 id="clone-the-repo">Clone the repo<a class="headerlink" href="#clone-the-repo" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:vintasoftware/django-ai-assistant.git
 </code></pre></div>
-<h3 id="set-up-a-virtualenv-optionally-set-up-nvm-and-activate-your-environments">Set up a virtualenv, optionally set up nvm, and activate your environment(s)<a class="headerlink" href="#set-up-a-virtualenv-optionally-set-up-nvm-and-activate-your-environments" title="Permanent link">&para;</a></h3>
-<p>You can use <a href="https://github.com/pyenv/pyenv">pyenv</a>, <a href="https://github.com/pypa/pipenv/blob/main/docs/installation.md">pipenv</a>, vanilla venvs or the tool of your choice.</p>
+<h3 id="install-development-tools">Install development tools<a class="headerlink" href="#install-development-tools" title="Permanent link">&para;</a></h3>
+<p>This project uses <a href="https://python-poetry.org/docs/">Poetry</a> for dependency and virtual environment management.</p>
+<p>If you need to install the version of Python recommended for the project, you can use <a href="https://github.com/pyenv/pyenv">Pyenv</a>.</p>
 <p>For installing Node, we recommend <a href="https://github.com/nvm-sh/nvm">NVM</a>.</p>
 <h3 id="install-dependencies">Install dependencies<a class="headerlink" href="#install-dependencies" title="Permanent link">&para;</a></h3>
 <h4 id="backend">Backend<a class="headerlink" href="#backend" title="Permanent link">&para;</a></h4>
-<p>Go to the project root and install the Python dependencies:</p>
+<p>Go to the project root. To instantiate the virtual environment, run</p>
+<div class="highlight"><pre><span></span><code>poetry<span class="w"> </span>shell
+</code></pre></div>
+<p>Install the Python dependencies:</p>
 <div class="highlight"><pre><span></span><code>poetry<span class="w"> </span>install
+</code></pre></div>
+<p>If you encounter an error regarding the Python version required for the project, you can use pyenv to install the appropriate version based on <a href=".python-version">.python-version</a>:</p>
+<div class="highlight"><pre><span></span><code>pyenv<span class="w"> </span>install
 </code></pre></div>
 <h4 id="frontend">Frontend<a class="headerlink" href="#frontend" title="Permanent link">&para;</a></h4>
 <p>Go to the frontend directory and install the Node dependencies:</p>
