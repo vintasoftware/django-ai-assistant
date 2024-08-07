@@ -12,9 +12,11 @@ Please follow this guide to learn more about how to develop and test the project
 git clone git@github.com:vintasoftware/django-ai-assistant.git
 ```
 
-### Set up a virtualenv, optionally set up nvm, and activate your environment(s)
+### Install development tools
 
-You can use [pyenv](https://github.com/pyenv/pyenv), [pipenv](https://github.com/pypa/pipenv/blob/main/docs/installation.md), vanilla venvs or the tool of your choice.
+This project uses [Poetry](https://python-poetry.org/docs/) for dependency and virtual environment management.
+
+If you need to install the version of Python recommended for the project, you can use [Pyenv](https://github.com/pyenv/pyenv).
 
 For installing Node, we recommend [NVM](https://github.com/nvm-sh/nvm).
 
@@ -22,11 +24,24 @@ For installing Node, we recommend [NVM](https://github.com/nvm-sh/nvm).
 
 #### Backend
 
-Go to the project root and install the Python dependencies:
+Go to the project root. To instantiate the virtual environment, run
+
+```bash
+poetry shell
+```
+
+Install the Python dependencies:
 
 ```bash
 poetry install
 ```
+
+If you encounter an error regarding the Python version required for the project, you can use pyenv to install the appropriate version based on [.python-version](.python-version):
+
+```bash
+pyenv install
+```
+
 
 #### Frontend
 
