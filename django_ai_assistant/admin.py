@@ -1,4 +1,4 @@
-from typing import ClassVar
+from typing import ClassVar, List, Type
 
 from django.contrib import admin
 from django.contrib.admin.options import InlineModelAdmin
@@ -33,9 +33,7 @@ class MessageInline(admin.TabularInline):
             ),
             obj.pk,
         )
-        if display_text:
-            return mark_safe(display_text)  # noqa: S308
-        return "-"
+        return mark_safe(display_text)  # noqa: S308
 
     def message_type(self, obj):
         return obj.message.get("type") if obj.message else None
@@ -59,7 +57,7 @@ class ThreadAdmin(admin.ModelAdmin):
     search_fields = ("name",)
     list_filter = ("created_at", "updated_at")
     raw_id_fields = ("created_by",)
-    inlines: ClassVar[InlineModelAdmin] = [MessageInline]
+    inlines: ClassVar[List[Type[InlineModelAdmin]]] = [MessageInline]
 
 
 @admin.register(Message)
