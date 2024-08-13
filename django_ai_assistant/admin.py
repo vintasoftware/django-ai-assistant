@@ -8,18 +8,8 @@ from django.utils.safestring import mark_safe
 from django_ai_assistant.models import Message, Thread
 
 
-class MessageProxy(Message):
-    class Meta:
-        proxy = True
-        verbose_name = Message._meta.verbose_name
-        verbose_name_plural = Message._meta.verbose_name_plural
-
-    def __str__(self) -> str:
-        return self.__repr__()
-
-
 class MessageInline(admin.TabularInline):
-    model = MessageProxy
+    model = Message
     extra = 0
     fields = ("pk", "message_type", "content", "created_at")
     readonly_fields = fields
