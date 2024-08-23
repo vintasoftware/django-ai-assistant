@@ -1,23 +1,45 @@
-from requests_oauth2client import OAuth2Client
-import osmapi
-from django.conf import settings
+from typing import List
+
+import requests
 
 
-client_id = settings.OPEN_STREET_MAPS_CLIENT_ID
-client_secret = settings.OPEN_STREET_MAPS_CLIENT_SECRET
+def fetch_points_of_interest(
+    latitude: float, longitude: float, tags: List[str], radius: int = 500
+) -> dict:
+    """
+    Fetch points of interest from OpenStreetMap using Overpass API.
 
-# special value for redirect_uri for non-web applications
-redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
+    :param latitude: Latitude of the center point.
+    :param longitude: Longitude of the center point.
+    :param radius: Radius in meters to search for POIs around the center point.
+    :param tags: A list of OpenStreetMap tags to filter the POIs (e.g., ["amenity", "tourism"]).
+    :return: A list of POIs with their details.
+    """
+    # Base URL for the Overpass API
+    overpass_url = "http://overpass-api.de/api/interpreter"
 
-authorization_base_url = "https://master.apis.dev.openstreetmap.org/oauth2/authorize"
-token_url = "https://master.apis.dev.openstreetmap.org/oauth2/token"
+    # Construct the Overpass QL (query language) query
+    pois_query = "".join(
+        [
+            (
+                f"node[{tag}](around:{radius},{latitude},{longitude});"
+                f"way[{tag}](around:{radius},{latitude},{longitude});"
+            )
+            for tag in tags
+        ]
+    )
 
-oauth2client = OAuth2Client(
-    token_endpoint=token_url,
-    authorization_endpoint=authorization_base_url,
-    redirect_uri=redirect_uri,
-    auth=(client_id, client_secret),
-    code_challenge_method=None,
-)
+    query = f"""
+    [out:json];
+    (
+        {pois_query}
+    );
+    out tags;
+    """
 
-api = osmapi.OsmApi(api="https://api06.dev.openstreetmap.org")
+    response = requests.get(overpass_url, params={"data": query}, timeout=10)
+
+    response.raise_for_status()
+
+    data = response.json()
+    return data["elements"]

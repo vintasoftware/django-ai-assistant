@@ -1,8 +1,14 @@
+import json
+
 from django.contrib import messages
+from django.contrib.auth.models import User
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views import View
 from django.views.generic.base import TemplateView
 
 from pydantic import ValidationError
+from tour_guide.ai_assistants import TourGuideAIAssistant
 from weather.ai_assistants import WeatherAIAssistant
 
 from django_ai_assistant.api.schemas import (
@@ -102,3 +108,19 @@ class AIAssistantChatThreadView(BaseAIAssistantView):
             request=request,
         )
         return redirect("chat_thread", thread_id=thread_id)
+
+
+class TourGuideAssistantView(View):
+    def get(self, request, *args, **kwargs):
+        coordinates = request.GET.get("coordinate")
+
+        if not coordinates:
+            return JsonResponse({})
+
+        thread = create_thread(name="Tour Guide Chat", user=User.objects.first())
+
+        a = TourGuideAIAssistant()
+        data = a.run(f"My coordinates are: ({coordinates})", thread.id)
+        print(data)
+
+        return JsonResponse(json.loads(data))
