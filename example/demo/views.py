@@ -121,6 +121,5 @@ class TourGuideAssistantView(View):
 
         a = TourGuideAIAssistant()
         data = a.run(f"My coordinates are: ({coordinates})", thread.id)
-        print(data)
 
         return JsonResponse(json.loads(data))

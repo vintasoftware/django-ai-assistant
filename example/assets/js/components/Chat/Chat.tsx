@@ -1,7 +1,6 @@
 import {
   ActionIcon,
   Avatar,
-  Box,
   Button,
   Container,
   Group,

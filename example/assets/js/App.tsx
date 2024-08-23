@@ -20,7 +20,7 @@ import {
   IconMovie,
   IconChecklist,
 } from "@tabler/icons-react";
-import { Chat, ResultsPage } from "@/components";
+import { Chat, TourGuide } from "@/components";
 import { createBrowserRouter, Link, RouterProvider } from "react-router-dom";
 import {
   ApiError,
@@ -203,7 +203,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/tour-guide",
-    element: (<PageWrapper><ResultsPage assistantId="tour_guide_assistant" /></PageWrapper>),
+    element: (<PageWrapper><TourGuide assistantId="tour_guide_assistant" /></PageWrapper>),
   },
   {
     path: "/admin",
