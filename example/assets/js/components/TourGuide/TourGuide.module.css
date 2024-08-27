@@ -1,9 +1,0 @@
-.searchBar {
-  .inputBlock{
-    display: inline-block;
-    margin-right: 5px;
-  }
-  .coordinateInput {
-    width: 300px;
-  }
-}
