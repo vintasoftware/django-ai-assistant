@@ -1,9 +1,7 @@
 import "@mantine/core/styles.css";
-import { Container } from "@mantine/core";
-import axios from 'axios';
-import { useEffect, useState } from "react";
+import { Container, TextInput, Button } from "@mantine/core";
+import { useState } from "react";
 import classes from "./TourGuide.module.css";
-
 
 export function TourGuide() {
   const [latitude, setLatitude] = useState("");
@@ -11,46 +9,83 @@ export function TourGuide() {
   const [attractions, setAttractions] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  navigator.geolocation.getCurrentPosition((position: any) => {
-    if (latitude && longitude) {
-      return;
-    }
-    setLatitude(position.coords.latitude);
-    setLongitude(position.coords.longitude);
-  }, (error) => console.log(error));
+  navigator.geolocation.getCurrentPosition(
+    (position: any) => {
+      if (latitude && longitude) {
+        return;
+      }
+      setLatitude(position.coords.latitude);
+      setLongitude(position.coords.longitude);
+    },
+    (error) => console.log(error)
+  );
 
   function findAttractions() {
     if (!latitude || !longitude) {
       return;
     }
 
-    setLoading(true)
-    axios.get(`/tour-guide/?coordinate=${latitude},${longitude}`)
-      .then((response: any) => {
-        setAttractions(response.data.nearby_attractions)
-      }).finally(() => setLoading(false))
-  }
+    setLoading(true);
+    fetch(`/tour-guide/?coordinate=${latitude},${longitude}`)
+      .then((response) => response.json())
+      .then((data: any) => {
+        console.log(data);
 
-  console.log(attractions)
+        setAttractions(data.nearby_attractions);
+      })
+      .finally(() => setLoading(false));
+  }
 
   return (
     <Container>
       <div className={classes.searchBar}>
-        <span className={classes.searchItem}>Latitude: <input type="text" value={latitude} onChange={(e) => setLatitude(e.target.value)} /></span>
-        <span className={classes.searchItem}>Longitude: <input type="text" value={longitude} onChange={(e) => setLongitude(e.target.value)} /></span>
-        <button className={classes.searchItem} onClick={findAttractions}>Guide Me!</button>
+        <span className={classes.inputBlock}>
+          Latitude:
+          <TextInput
+            type="text"
+            value={latitude}
+            onChange={(e) => setLatitude(e.target.value)}
+            className={classes.coordinateInput}
+          />
+        </span>
+        <span className={classes.inputBlock}>
+          Longitude:
+          <TextInput
+            type="text"
+            value={longitude}
+            onChange={(e) => setLongitude(e.target.value)}
+            className={classes.coordinateInput}
+          />
+        </span>
+        <Button className={classes.inputBlock} onClick={findAttractions}>
+          Guide Me!
+        </Button>
       </div>
       {loading ? <h3>Loading</h3> : null}
       <div>
-        {attractions.map((item, i) =>
+        {attractions.map((item, i) => (
           <div key={i}>
-            <h2>{item.attraction_url ? <a href={item.attraction_url}>{item.attraction_name}</a> : item.attraction_name }</h2>
+            <h2>
+              {item.attraction_url ? (
+                <a href={item.attraction_url} target="_blank">
+                  {item.attraction_name}
+                </a>
+              ) : (
+                item.attraction_name
+              )}
+            </h2>
             <span>{item.attraction_description}</span>
-            <div><a href={`https://www.google.com/maps?q=${item.attraction_name}`} target="_blank">Open in Google Maps</a></div>
+            <div>
+              <a
+                href={`https://www.google.com/maps?q=${item.attraction_name}`}
+                target="_blank"
+              >
+                Open in Google Maps
+              </a>
+            </div>
           </div>
-        )}
+        ))}
       </div>
     </Container>
   );
-};
-
+}

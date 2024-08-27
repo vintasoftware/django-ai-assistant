@@ -20,9 +20,6 @@ importers:
       '@tabler/icons-react':
         specifier: ^3.7.0
         version: 3.7.0(react@18.3.1)
-      axios:
-        specifier: ^1.7.5
-        version: 1.7.5
       cookie:
         specifier: ^0.6.0
         version: 0.6.0

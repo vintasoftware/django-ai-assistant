@@ -1,6 +1,9 @@
 .searchBar {
-  padding: 10px 0 5px 0;
-  .searchItem {
-    padding-right: 5px;
+  .inputBlock{
+    display: inline-block;
+    margin-right: 5px;
+  }
+  .coordinateInput {
+    width: 300px;
   }
 }

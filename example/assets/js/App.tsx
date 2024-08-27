@@ -19,6 +19,7 @@ import {
   IconXboxX,
   IconMovie,
   IconChecklist,
+  IconPlane,
 } from "@tabler/icons-react";
 import { Chat, TourGuide } from "@/components";
 import { createBrowserRouter, Link, RouterProvider } from "react-router-dom";
@@ -139,7 +140,13 @@ const ExampleIndex = () => {
         >
           <Link to="/htmx">HTMX demo (no React)</Link>
         </List.Item>
-        <List.Item>
+        <List.Item
+          icon={
+            <ThemeIcon color="blue" size={28} radius="xl">
+              <IconPlane style={{ width: rem(18), height: rem(18) }} />
+            </ThemeIcon>
+          }
+        >
           <Link to="/tour-guide">Tour Guide Assistant</Link>
         </List.Item>
       </List>
@@ -203,7 +210,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/tour-guide",
-    element: (<PageWrapper><TourGuide assistantId="tour_guide_assistant" /></PageWrapper>),
+    element: (
+      <PageWrapper>
+        <TourGuide assistantId="tour_guide_assistant" />
+      </PageWrapper>
+    ),
   },
   {
     path: "/admin",

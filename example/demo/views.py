@@ -1,9 +1,9 @@
 import json
 
 from django.contrib import messages
-from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.views import View
 from django.views.generic.base import TemplateView
 
@@ -117,7 +117,9 @@ class TourGuideAssistantView(View):
         if not coordinates:
             return JsonResponse({})
 
-        thread = create_thread(name="Tour Guide Chat", user=User.objects.first())
+        thread = create_thread(
+            name=f"{timezone.now().isoformat()} - Tour Guide Chat", user=request.user
+        )
 
         a = TourGuideAIAssistant()
         data = a.run(f"My coordinates are: ({coordinates})", thread.id)
