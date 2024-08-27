@@ -36,6 +36,12 @@ Fill the `.env` file with the necessary API keys. You'll need accounts on:
 - [Tavily](https://app.tavily.com/)
 - [Firecrawl](https://www.firecrawl.dev/)
 
+Activate the poetry shell:
+    
+```bash
+poetry shell
+```
+
 Run Django migrations:
 
 ```bash

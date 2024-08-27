@@ -3,6 +3,7 @@ name: Publish packages (PyPI, npm)
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   publish-pypi:
@@ -71,6 +72,6 @@ jobs:
       - name: Publish package distributions to npm
         working-directory: ./frontend
         run: |
-          pnpm publish
+          pnpm publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_API_TOKEN }}

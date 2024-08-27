@@ -12,9 +12,11 @@ Please follow this guide to learn more about how to develop and test the project
 git clone git@github.com:vintasoftware/django-ai-assistant.git
 ```
 
-### Set up a virtualenv, optionally set up nvm, and activate your environment(s)
+### Install development tools
 
-You can use [pyenv](https://github.com/pyenv/pyenv), [pipenv](https://github.com/pypa/pipenv/blob/main/docs/installation.md), vanilla venvs or the tool of your choice.
+This project uses [Poetry](https://python-poetry.org/docs/) for dependency and virtual environment management.
+
+If you need to install the version of Python recommended for the project, you can use [Pyenv](https://github.com/pyenv/pyenv).
 
 For installing Node, we recommend [NVM](https://github.com/nvm-sh/nvm).
 
@@ -22,11 +24,24 @@ For installing Node, we recommend [NVM](https://github.com/nvm-sh/nvm).
 
 #### Backend
 
-Go to the project root and install the Python dependencies:
+Go to the project root. To instantiate the virtual environment, run
+
+```bash
+poetry shell
+```
+
+Install the Python dependencies:
 
 ```bash
 poetry install
 ```
+
+If you encounter an error regarding the Python version required for the project, you can use pyenv to install the appropriate version based on [.python-version](.python-version):
+
+```bash
+pyenv install
+```
+
 
 #### Frontend
 
@@ -68,6 +83,12 @@ Then follow the instructions in the [example README](https://github.com/vintasof
 
 ## Tests
 
+Before running tests copy the `.env.example` file to `.env.tests`.
+
+```bash
+cp .env.example .env.tests
+```
+
 Run tests with:
 
 ```bash
@@ -76,7 +97,8 @@ poetry run pytest
 
 The tests use `pytest-vcr` to record and replay HTTP requests to AI models.
 
-If you're implementing a new test that needs to call a real AI model, you need to set the `OPENAI_API_KEY` environment variable on root `.env` file.
+If you're implementing a new test that needs to call a real AI model, you need to set the `OPENAI_API_KEY` environment variable with a real API key in the `.env.tests` file.
+
 Then, you will run the tests in record mode:
 
 ```bash
@@ -102,10 +124,19 @@ poetry run mkdocs serve
 To release and publish a new version, follow these steps:
 
 1. Update the version in `pyproject.toml` and `frontend/package.json`.
-2. In the project root, run `poetry run python manage.py generate_openapi_schema --output frontend/openapi_schema.json` to update the OpenAPI schema.
-3. In the frontend directory, run `pnpm run generate-client` to update the TypeScript client with the new OpenAPI schema.
-4. Update the changelog in `CHANGELOG.md`.
-5. Open a PR with the changes.
-6. Once the PR is merged, run the [Release GitHub Action](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/release.yml) to create a draft release.
-7. Review the draft release, ensure the description has at least the associated changelog entry, and publish it.
-8. Once the review is publish, the [Publish GitHub Action](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/publish.yml) will automatically run to publish the new version to [PyPI](https://pypi.org/project/django-ai-assistant) and [npm](https://www.npmjs.com/package/django-ai-assistant-client). Check the logs to ensure the publication was successful.
+2. Re-install the local version of the Python project: `poetry install`
+3. In the project root, run `poetry run python manage.py generate_openapi_schema --output frontend/openapi_schema.json` to update the OpenAPI schema.
+4. Re-install the local version of the frontend project:
+
+```bash
+cd frontend
+pnpm install
+pnpm run build
+```
+
+5. In the frontend directory, run `pnpm run generate-client` to update the TypeScript client with the new OpenAPI schema.
+6. Update the changelog in `CHANGELOG.md`.
+7. Open a PR with the changes.
+8. Once the PR is merged, run the [Release GitHub Action](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/release.yml) to create a draft release.
+9. Review the draft release, ensure the description has at least the associated changelog entry, and publish it.
+10. Once the review is published, the [Publish GitHub Action](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/publish.yml) will automatically run to publish the new version to [PyPI](https://pypi.org/project/django-ai-assistant) and [npm](https://www.npmjs.com/package/django-ai-assistant-client). Check the logs to ensure the publication was successful.
