@@ -2,6 +2,7 @@ import "@mantine/core/styles.css";
 import { Container } from "@mantine/core";
 import axios from 'axios';
 import { useEffect, useState } from "react";
+import classes from "./TourGuide.module.css";
 
 
 export function TourGuide() {
@@ -34,16 +35,18 @@ export function TourGuide() {
 
   return (
     <Container>
-      Latitude: <input type="text" value={latitude} onChange={(e) => setLatitude(e.target.value)} />
-      Longitude: <input type="text" value={longitude} onChange={(e) => setLongitude(e.target.value)} />
-      <button onClick={findAttractions}>Guide Me!</button>
+      <div className={classes.searchBar}>
+        <span className={classes.searchItem}>Latitude: <input type="text" value={latitude} onChange={(e) => setLatitude(e.target.value)} /></span>
+        <span className={classes.searchItem}>Longitude: <input type="text" value={longitude} onChange={(e) => setLongitude(e.target.value)} /></span>
+        <button className={classes.searchItem} onClick={findAttractions}>Guide Me!</button>
+      </div>
       {loading ? <h3>Loading</h3> : null}
       <div>
         {attractions.map((item, i) =>
           <div key={i}>
             <h2>{item.attraction_url ? <a href={item.attraction_url}>{item.attraction_name}</a> : item.attraction_name }</h2>
             <span>{item.attraction_description}</span>
-
+            <div><a href={`https://www.google.com/maps?q=${item.attraction_name}`} target="_blank">Open in Google Maps</a></div>
           </div>
         )}
       </div>

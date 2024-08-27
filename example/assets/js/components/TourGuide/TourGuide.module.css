@@ -1,0 +1,6 @@
+.searchBar {
+  padding: 10px 0 5px 0;
+  .searchItem {
+    padding-right: 5px;
+  }
+}
