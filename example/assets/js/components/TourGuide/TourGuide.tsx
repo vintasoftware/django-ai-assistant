@@ -1,6 +1,6 @@
 import "@mantine/core/styles.css";
 import { Container, TextInput, Button } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import classes from "./TourGuide.module.css";
 
 export function TourGuide() {
@@ -9,16 +9,15 @@ export function TourGuide() {
   const [attractions, setAttractions] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  navigator.geolocation.getCurrentPosition(
-    (position: any) => {
-      if (latitude && longitude) {
-        return;
-      }
-      setLatitude(position.coords.latitude);
-      setLongitude(position.coords.longitude);
-    },
-    (error) => console.log(error)
-  );
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position: any) => {
+        setLatitude(position.coords.latitude);
+        setLongitude(position.coords.longitude);
+      },
+      (error) => console.log(error)
+    );
+  }, []);
 
   function findAttractions() {
     if (!latitude || !longitude) {
@@ -42,7 +41,6 @@ export function TourGuide() {
         <span className={classes.inputBlock}>
           Latitude:
           <TextInput
-            type="text"
             value={latitude}
             onChange={(e) => setLatitude(e.target.value)}
             className={classes.coordinateInput}
@@ -51,7 +49,6 @@ export function TourGuide() {
         <span className={classes.inputBlock}>
           Longitude:
           <TextInput
-            type="text"
             value={longitude}
             onChange={(e) => setLongitude(e.target.value)}
             className={classes.coordinateInput}
