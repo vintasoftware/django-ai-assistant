@@ -1,7 +1,6 @@
 import {
   ActionIcon,
   Avatar,
-  Box,
   Button,
   Container,
   Group,
@@ -31,6 +30,7 @@ import {
   useMessageList,
   useThreadList,
 } from "django-ai-assistant-client";
+import { Link } from "react-router-dom";
 
 function ChatMessage({
   message,
@@ -175,8 +175,15 @@ export function Chat({ assistantId }: { assistantId: string }) {
 
     notifications.show({
       title: "Login Required",
-      message:
-        "You must be logged in to engage with the examples. Please log in to continue.",
+      message: (
+        <>
+          You must be logged in to engage with the examples. Please{" "}
+          <Link to="/admin/" target="_blank">
+            log in
+          </Link>{" "}
+          to continue.
+        </>
+      ),
       color: "red",
       autoClose: 5000,
       withCloseButton: true,

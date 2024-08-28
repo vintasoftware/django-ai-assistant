@@ -3,7 +3,6 @@ import "@mantine/notifications/styles.css";
 
 import React, { useEffect, useState } from "react";
 import {
-  Button,
   Container,
   createTheme,
   List,
@@ -19,8 +18,9 @@ import {
   IconXboxX,
   IconMovie,
   IconChecklist,
+  IconPlane,
 } from "@tabler/icons-react";
-import { Chat } from "@/components";
+import { Chat, TourGuide } from "@/components";
 import { createBrowserRouter, Link, RouterProvider } from "react-router-dom";
 import {
   ApiError,
@@ -75,7 +75,7 @@ const ExampleIndex = () => {
       message: (
         <>
           You must be logged in to engage with the examples. Please{" "}
-          <Link to="admin/" target="_blank">
+          <Link to="/admin/" target="_blank">
             log in
           </Link>{" "}
           to continue.
@@ -139,6 +139,15 @@ const ExampleIndex = () => {
         >
           <Link to="/htmx">HTMX demo (no React)</Link>
         </List.Item>
+        <List.Item
+          icon={
+            <ThemeIcon color="blue" size={28} radius="xl">
+              <IconPlane style={{ width: rem(18), height: rem(18) }} />
+            </ThemeIcon>
+          }
+        >
+          <Link to="/tour-guide">Tour Guide Assistant</Link>
+        </List.Item>
       </List>
     </Container>
   );
@@ -195,6 +204,14 @@ const router = createBrowserRouter([
     element: (
       <PageWrapper>
         <Redirect to="/htmx/" />
+      </PageWrapper>
+    ),
+  },
+  {
+    path: "/tour-guide",
+    element: (
+      <PageWrapper>
+        <TourGuide assistantId="tour_guide_assistant" />
       </PageWrapper>
     ),
   },

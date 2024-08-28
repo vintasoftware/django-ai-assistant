@@ -11,6 +11,11 @@ urlpatterns = [
         views.AIAssistantChatThreadView.as_view(),
         name="chat_thread",
     ),
+    path(
+        "tour-guide/",
+        views.TourGuideAssistantView.as_view(),
+        name="tour_guide",
+    ),
     # Catch all for react app:
     path("", views.react_index, {"resource": ""}),
     path("<path:resource>", views.react_index),
