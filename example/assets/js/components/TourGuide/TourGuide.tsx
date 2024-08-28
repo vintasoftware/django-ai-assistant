@@ -7,8 +7,12 @@ import {
   Group,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
+import { notifications } from "@mantine/notifications";
+import { Link } from "react-router-dom";
 
 export function TourGuide() {
+  const [showLoginNotification, setShowLoginNotification] =
+    useState<boolean>(false);
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [attractions, setAttractions] = useState([]);
@@ -24,21 +28,41 @@ export function TourGuide() {
     );
   }, []);
 
-  function findAttractions() {
+  async function findAttractions() {
     if (!latitude || !longitude) {
       return;
     }
 
     setLoading(true);
-    fetch(`/tour-guide/?coordinate=${latitude},${longitude}`)
-      .then((response) => response.json())
-      .then((data: any) => {
-        console.log(data);
-
-        setAttractions(data.nearby_attractions);
-      })
-      .finally(() => setLoading(false));
+    const response = await fetch(`/tour-guide/?coordinate=${latitude},${longitude}`);
+    const data = await response.json();
+    if (data.error) {
+      setShowLoginNotification(true);
+    } else {
+      setAttractions(data.nearby_attractions);
+    }
+    setLoading(false)
   }
+
+  useEffect(() => {
+    if (!showLoginNotification) return;
+
+    notifications.show({
+      title: "Login Required",
+      message: (
+        <>
+          You must be logged in to engage with the examples. Please{" "}
+          <Link to="/admin/" target="_blank">
+            log in
+          </Link>{" "}
+          to continue.
+        </>
+      ),
+      color: "red",
+      autoClose: 5000,
+      withCloseButton: true,
+    });
+  }, [showLoginNotification]);
 
   return (
     <Container>

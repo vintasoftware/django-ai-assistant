@@ -75,7 +75,7 @@ const ExampleIndex = () => {
       message: (
         <>
           You must be logged in to engage with the examples. Please{" "}
-          <Link to="admin/" target="_blank">
+          <Link to="/admin/" target="_blank">
             log in
           </Link>{" "}
           to continue.

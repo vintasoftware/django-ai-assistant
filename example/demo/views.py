@@ -3,7 +3,6 @@ import json
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
 from django.views import View
 from django.views.generic.base import TemplateView
 
@@ -112,16 +111,15 @@ class AIAssistantChatThreadView(BaseAIAssistantView):
 
 class TourGuideAssistantView(View):
     def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return JsonResponse({"error": "You must be logged in to use this feature."}, status=401)
+
         coordinates = request.GET.get("coordinate")
 
         if not coordinates:
             return JsonResponse({})
 
-        thread = create_thread(
-            name=f"{timezone.now().isoformat()} - Tour Guide Chat", user=request.user
-        )
-
         a = TourGuideAIAssistant()
-        data = a.run(f"My coordinates are: ({coordinates})", thread.id)
+        data = a.run(f"My coordinates are: ({coordinates})")
 
         return JsonResponse(json.loads(data))
