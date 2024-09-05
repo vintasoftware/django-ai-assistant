@@ -37,6 +37,7 @@ from langchain_core.runnables import (
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.tools import BaseTool
 from langchain_openai import ChatOpenAI
+from langgraph.graph import MessagesState
 
 from django_ai_assistant.decorators import with_cast_id
 from django_ai_assistant.exceptions import (
@@ -436,6 +437,70 @@ class AIAssistant(abc.ABC):  # noqa: F821
             # If chat history, then we pass inputs to LLM chain, then to retriever
             prompt | llm | StrOutputParser() | retriever,
         )
+
+    @with_cast_id
+    def as_graph(self, thread_id: Any | None = None) -> Runnable[dict, dict]:
+        from langchain_core.messages import AIMessage
+        from langgraph.graph import END, StateGraph
+        from langgraph.prebuilt import ToolNode
+
+        class AgentState(MessagesState):
+            response: str
+
+        llm = self.get_llm()
+        tools = self.get_tools()
+        if tools:
+            llm_with_tools = llm.bind_tools(tools)
+        else:
+            llm_with_tools = llm
+
+        def agent(state: AgentState):
+            prompt_template = ChatPromptTemplate.from_messages(
+                [
+                    ("system", self.instructions),
+                    MessagesPlaceholder(variable_name="history"),
+                ]
+            )
+            message_history = self.get_message_history(thread_id)
+            prompt = prompt_template.format(
+                history=message_history.messages + state["messages"],
+            )
+
+            response = llm_with_tools.invoke(prompt)
+
+            return {"messages": [response]}
+
+        def tool_selector(state: AgentState):
+            messages = state["messages"]
+            last_message = messages[-1]
+
+            if isinstance(last_message, AIMessage) and len(last_message.tool_calls) > 0:
+                return "call_tool"
+
+            return "continue"
+
+        def record_response(state: AgentState):
+            return {"response": state["messages"][-1].content}
+
+        workflow = StateGraph(AgentState)
+
+        workflow.add_node("agent", agent)
+        workflow.add_node("tools", ToolNode(tools))
+        workflow.add_node("respond", record_response)
+
+        workflow.set_entry_point("agent")
+        workflow.add_edge("tools", "agent")
+        workflow.add_conditional_edges(
+            "agent",
+            tool_selector,
+            {
+                "call_tool": "tools",
+                "continue": "respond",
+            },
+        )
+        workflow.add_edge("respond", END)
+
+        return workflow.compile()
 
     @with_cast_id
     def as_chain(self, thread_id: Any | None) -> Runnable[dict, dict]:
