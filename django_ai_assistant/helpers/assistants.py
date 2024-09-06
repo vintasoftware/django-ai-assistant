@@ -17,6 +17,7 @@ from langchain_core.chat_history import (
     InMemoryChatMessageHistory,
 )
 from langchain_core.language_models import BaseChatModel
+from langchain_core.messages import AIMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import (
     ChatPromptTemplate,
@@ -37,7 +38,8 @@ from langchain_core.runnables import (
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.tools import BaseTool
 from langchain_openai import ChatOpenAI
-from langgraph.graph import MessagesState
+from langgraph.graph import END, MessagesState, StateGraph
+from langgraph.prebuilt import ToolNode
 
 from django_ai_assistant.decorators import with_cast_id
 from django_ai_assistant.exceptions import (
@@ -440,19 +442,30 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
     @with_cast_id
     def as_graph(self, thread_id: Any | None = None) -> Runnable[dict, dict]:
-        from langchain_core.messages import AIMessage
-        from langgraph.graph import END, StateGraph
-        from langgraph.prebuilt import ToolNode
-
         class AgentState(MessagesState):
-            response: str
+            input: str  # noqa: A003
+            context: str
+            output: str
 
         llm = self.get_llm()
         tools = self.get_tools()
-        if tools:
-            llm_with_tools = llm.bind_tools(tools)
-        else:
-            llm_with_tools = llm
+        llm_with_tools = llm.bind_tools(tools) if tools else llm
+
+        def retriever(state: AgentState):
+            if not self.has_rag:
+                return
+
+            retriever = self.get_history_aware_retriever()
+            docs = retriever.invoke({"input": state["input"], "history": state["messages"][:-1]})
+
+            document_separator = self.get_document_separator()
+            document_prompt = self.get_document_prompt()
+
+            formatted_docs = document_separator.join(
+                format_document(doc, document_prompt) for doc in docs
+            )
+
+            return {"messages": [state["input"]], "context": formatted_docs}
 
         def agent(state: AgentState):
             prompt_template = ChatPromptTemplate.from_messages(
@@ -461,11 +474,17 @@ class AIAssistant(abc.ABC):  # noqa: F821
                     MessagesPlaceholder(variable_name="history"),
                 ]
             )
-            message_history = self.get_message_history(thread_id)
-            prompt = prompt_template.format(
-                history=message_history.messages + state["messages"],
-            )
 
+            message_history = self.get_message_history(thread_id)
+            prompt_variables: dict[str, Any] = {
+                "history": message_history.messages + state["messages"]
+            }
+
+            if self.has_rag:
+                context_placeholder = self.get_context_placeholder()
+                prompt_variables[context_placeholder] = state.get("context", "")
+
+            prompt = prompt_template.format(**prompt_variables)
             response = llm_with_tools.invoke(prompt)
 
             return {"messages": [response]}
@@ -474,22 +493,23 @@ class AIAssistant(abc.ABC):  # noqa: F821
             messages = state["messages"]
             last_message = messages[-1]
 
-            if isinstance(last_message, AIMessage) and len(last_message.tool_calls) > 0:
+            if isinstance(last_message, AIMessage) and last_message.tool_calls:
                 return "call_tool"
 
             return "continue"
 
         def record_response(state: AgentState):
-            return {"response": state["messages"][-1].content}
+            return {"output": state["messages"][-1].content}
 
         workflow = StateGraph(AgentState)
 
+        workflow.add_node("retriever", retriever)
         workflow.add_node("agent", agent)
         workflow.add_node("tools", ToolNode(tools))
         workflow.add_node("respond", record_response)
 
-        workflow.set_entry_point("agent")
-        workflow.add_edge("tools", "agent")
+        workflow.set_entry_point("retriever")
+        workflow.add_edge("retriever", "agent")
         workflow.add_conditional_edges(
             "agent",
             tool_selector,
@@ -498,6 +518,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
                 "continue": "respond",
             },
         )
+        workflow.add_edge("tools", "agent")
         workflow.add_edge("respond", END)
 
         return workflow.compile()
