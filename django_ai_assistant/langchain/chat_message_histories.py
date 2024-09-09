@@ -12,7 +12,11 @@ from typing import Any, List, Sequence, cast
 from django.db import transaction
 
 from langchain_core.chat_history import BaseChatMessageHistory
-from langchain_core.messages import BaseMessage, message_to_dict, messages_from_dict
+from langchain_core.messages import (
+    BaseMessage,
+    message_to_dict,
+    messages_from_dict,
+)
 
 from django_ai_assistant.decorators import with_cast_id
 from django_ai_assistant.models import Message
@@ -73,8 +77,14 @@ class DjangoChatMessageHistory(BaseChatMessageHistory):
             messages: A list of BaseMessage objects to store.
         """
         with transaction.atomic():
+            existing_messages = self.messages
+
             created_messages = Message.objects.bulk_create(
-                [Message(thread_id=self._thread_id, message=dict()) for message in messages]
+                [
+                    Message(thread_id=self._thread_id, message=dict())
+                    for message in messages
+                    if message not in existing_messages
+                ]
             )
 
             # Update langchain message IDs with Django message IDs

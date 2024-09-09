@@ -1,7 +1,7 @@
 import abc
 import inspect
 import re
-from typing import Any, ClassVar, Sequence, cast
+from typing import Annotated, Any, ClassVar, Sequence, TypedDict, cast
 
 from langchain.agents import AgentExecutor
 from langchain.agents.format_scratchpad.tools import (
@@ -17,7 +17,7 @@ from langchain_core.chat_history import (
     InMemoryChatMessageHistory,
 )
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import AIMessage
+from langchain_core.messages import AIMessage, AnyMessage, BaseMessage, HumanMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import (
     ChatPromptTemplate,
@@ -38,7 +38,8 @@ from langchain_core.runnables import (
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.tools import BaseTool
 from langchain_openai import ChatOpenAI
-from langgraph.graph import END, MessagesState, StateGraph
+from langgraph.graph import END, StateGraph
+from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
 
 from django_ai_assistant.decorators import with_cast_id
@@ -442,7 +443,19 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
     @with_cast_id
     def as_graph(self, thread_id: Any | None = None) -> Runnable[dict, dict]:
-        class AgentState(MessagesState):
+        message_history = self.get_message_history(thread_id)
+
+        def custom_add_messages(left: list[BaseMessage], right: list[BaseMessage]):
+            if thread_id is None:
+                return add_messages(left, right)
+
+            message_history.add_messages(right)
+            messages = message_history.messages
+
+            return messages
+
+        class AgentState(TypedDict):
+            messages: Annotated[list[AnyMessage], custom_add_messages]
             input: str  # noqa: A003
             context: str
             output: str
@@ -451,12 +464,15 @@ class AIAssistant(abc.ABC):  # noqa: F821
         tools = self.get_tools()
         llm_with_tools = llm.bind_tools(tools) if tools else llm
 
+        def setup(state: AgentState):
+            return {"messages": [HumanMessage(content=state["input"])]}
+
         def retriever(state: AgentState):
             if not self.has_rag:
                 return
 
             retriever = self.get_history_aware_retriever()
-            docs = retriever.invoke({"input": state["input"], "history": state["messages"][:-1]})
+            docs = retriever.invoke({"input": state["input"], "history": state["messages"]})
 
             document_separator = self.get_document_separator()
             document_prompt = self.get_document_prompt()
@@ -465,33 +481,30 @@ class AIAssistant(abc.ABC):  # noqa: F821
                 format_document(doc, document_prompt) for doc in docs
             )
 
-            return {"messages": [state["input"]], "context": formatted_docs}
+            return {"context": formatted_docs}
 
         def agent(state: AgentState):
             prompt_template = ChatPromptTemplate.from_messages(
                 [
-                    ("system", self.instructions),
+                    ("system", self.get_instructions()),
                     MessagesPlaceholder(variable_name="history"),
                 ]
             )
 
-            message_history = self.get_message_history(thread_id)
-            prompt_variables: dict[str, Any] = {
-                "history": message_history.messages + state["messages"]
-            }
+            prompt_variables: dict[str, Any] = {"history": state["messages"]}
 
             if self.has_rag:
                 context_placeholder = self.get_context_placeholder()
                 prompt_variables[context_placeholder] = state.get("context", "")
 
             prompt = prompt_template.format(**prompt_variables)
+
             response = llm_with_tools.invoke(prompt)
 
             return {"messages": [response]}
 
         def tool_selector(state: AgentState):
-            messages = state["messages"]
-            last_message = messages[-1]
+            last_message = state["messages"][-1]
 
             if isinstance(last_message, AIMessage) and last_message.tool_calls:
                 return "call_tool"
@@ -503,12 +516,14 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
         workflow = StateGraph(AgentState)
 
+        workflow.add_node("setup", setup)
         workflow.add_node("retriever", retriever)
         workflow.add_node("agent", agent)
         workflow.add_node("tools", ToolNode(tools))
         workflow.add_node("respond", record_response)
 
-        workflow.set_entry_point("retriever")
+        workflow.set_entry_point("setup")
+        workflow.add_edge("setup", "retriever")
         workflow.add_edge("retriever", "agent")
         workflow.add_conditional_edges(
             "agent",
@@ -625,7 +640,8 @@ class AIAssistant(abc.ABC):  # noqa: F821
             dict: The output of the assistant chain,
                 structured like `{"output": "assistant response", "history": ...}`.
         """
-        chain = self.as_chain(thread_id)
+        # chain = self.as_chain(thread_id)
+        chain = self.as_graph(thread_id)
         return chain.invoke(*args, **kwargs)
 
     @with_cast_id
