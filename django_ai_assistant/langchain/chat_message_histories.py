@@ -99,15 +99,19 @@ class DjangoChatMessageHistory(BaseChatMessageHistory):
         Args:
             messages: A list of BaseMessage objects to store.
         """
+        existing_messages = self.messages
+
+        messages_to_create = [m for m in messages if m not in existing_messages]
+
         # NOTE: This method does not use transactions because it do not yet work in async mode.
         # Source: https://docs.djangoproject.com/en/5.0/topics/async/#queries-the-orm
         created_messages = await Message.objects.abulk_create(
-            [Message(thread_id=self._thread_id, message=dict()) for message in messages]
+            [Message(thread_id=self._thread_id, message=dict()) for _ in messages_to_create]
         )
 
         # Update langchain message IDs with Django message IDs
         for idx, created_message in enumerate(created_messages):
-            message_with_id = messages[idx]
+            message_with_id = messages_to_create[idx]
             message_with_id.id = str(created_message.id)
             created_message.message = message_to_dict(message_with_id)
 

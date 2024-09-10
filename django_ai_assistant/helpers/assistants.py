@@ -17,7 +17,7 @@ from langchain_core.chat_history import (
     InMemoryChatMessageHistory,
 )
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import AIMessage, AnyMessage, BaseMessage, HumanMessage
+from langchain_core.messages import AIMessage, AnyMessage, BaseMessage, ChatMessage, HumanMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import (
     ChatPromptTemplate,
@@ -446,13 +446,19 @@ class AIAssistant(abc.ABC):  # noqa: F821
         message_history = self.get_message_history(thread_id)
 
         def custom_add_messages(left: list[BaseMessage], right: list[BaseMessage]):
-            if thread_id is None:
-                return add_messages(left, right)
+            result = add_messages(left, right)
 
-            message_history.add_messages(right)
-            messages = message_history.messages
+            if thread_id:
+                # We only want to store human and ai messages that are not tool calls
+                messages_to_store = [
+                    m
+                    for m in result
+                    if isinstance(m, HumanMessage | ChatMessage)
+                    or (isinstance(m, AIMessage) and not m.tool_calls)
+                ]
+                message_history.add_messages(messages_to_store)
 
-            return messages
+            return result
 
         class AgentState(TypedDict):
             messages: Annotated[list[AnyMessage], custom_add_messages]
