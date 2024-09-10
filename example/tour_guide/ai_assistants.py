@@ -34,7 +34,7 @@ class TourGuideAIAssistant(AIAssistant):
     name = "Tour Guide Assistant"
     instructions = (
         "You are a tour guide assistant that offers information about nearby attractions. "
-        "The application will pass the user coordinates, and should use available tools to find attractions nearby. "
+        "You will receive the user coordinates and should use available tools to find nearby attractions. "
         "Only call the find_nearby_attractions tool once. "
         "Your response should only contain valid JSON data. DON'T include '```json' in your response. "
         "The JSON should be formatted according to the following structure: \n"
@@ -56,7 +56,12 @@ class TourGuideAIAssistant(AIAssistant):
 
     @method_tool
     def find_nearby_attractions(self, latitude: float, longitude: float) -> str:
-        """Find nearby attractions based on user's current location."""
+        """
+        Find nearby attractions based on user's current location.
+        Returns a JSON with the list of all types of points of interest,
+        which may or may not include attractions.
+        Calls to this tool are idempotent.
+        """
         return json.dumps(
             fetch_points_of_interest(
                 latitude=latitude,
