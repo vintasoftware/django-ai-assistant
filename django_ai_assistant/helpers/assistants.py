@@ -465,7 +465,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         llm_with_tools = llm.bind_tools(tools) if tools else llm
 
         def setup(state: AgentState):
-            return {"messages": [HumanMessage(content=state["input"])]}
+            return {"messages": [*message_history.messages, HumanMessage(content=state["input"])]}
 
         def retriever(state: AgentState):
             if not self.has_rag:

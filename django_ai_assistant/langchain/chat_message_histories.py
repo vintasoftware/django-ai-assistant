@@ -79,17 +79,15 @@ class DjangoChatMessageHistory(BaseChatMessageHistory):
         with transaction.atomic():
             existing_messages = self.messages
 
+            messages_to_create = [m for m in messages if m not in existing_messages]
+
             created_messages = Message.objects.bulk_create(
-                [
-                    Message(thread_id=self._thread_id, message=dict())
-                    for message in messages
-                    if message not in existing_messages
-                ]
+                [Message(thread_id=self._thread_id, message=dict()) for _ in messages_to_create]
             )
 
             # Update langchain message IDs with Django message IDs
             for idx, created_message in enumerate(created_messages):
-                message_with_id = messages[idx]
+                message_with_id = messages_to_create[idx]
                 message_with_id.id = str(created_message.id)
                 created_message.message = message_to_dict(message_with_id)
 
