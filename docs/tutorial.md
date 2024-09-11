@@ -1,6 +1,6 @@
 ---
 search:
-  boost: 2 
+    boost: 2
 ---
 
 # Tutorial
@@ -17,8 +17,8 @@ The tutorial below uses OpenAI's gpt-4o model, so make sure you have `OPENAI_API
 You can also use other models, keep reading to learn more. Just make sure their keys are properly set.
 
 !!! note
-    An easy way to set environment variables is to use a `.env` file in your project's root directory and use `python-dotenv` to load them.
-    Our [example project](https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme) uses this approach.
+An easy way to set environment variables is to use a `.env` file in your project's root directory and use `python-dotenv` to load them.
+Our [example project](https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme) uses this approach.
 
 ## What AI Assistants can do
 
@@ -90,8 +90,8 @@ AI: The weather in NYC is sunny with a temperature of 25°C.
 ```
 
 !!! note
-    State of the art models such as gpt-4o can process JSON well.
-    You can return a `json.dumps(api_output)` from a tool method and the model will be able to process it before responding the user.
+State of the art models such as gpt-4o can process JSON well.
+You can return a `json.dumps(api_output)` from a tool method and the model will be able to process it before responding the user.
 
 ### Tool parameters
 
@@ -131,7 +131,7 @@ class WeatherAIAssistant(AIAssistant):
 ```
 
 !!! note
-    It's important to provide a `description` for each field from `args_schema`. This improves the LLM's understanding of the tool's arguments.
+It's important to provide a `description` for each field from `args_schema`. This improves the LLM's understanding of the tool's arguments.
 
 ### Using Django logic in tools
 
@@ -173,8 +173,8 @@ class IssueManagementAIAssistant(AIAssistant):
 ```
 
 !!! warning
-    Make sure you only return to the LLM what the user can see, considering permissions and privacy.
-    Code the tools as if they were Django views.
+Make sure you only return to the LLM what the user can see, considering permissions and privacy.
+Code the tools as if they were Django views.
 
 ### Using pre-implemented tools
 
@@ -219,8 +219,8 @@ class MovieSearchAIAssistant(AIAssistant):
 ```
 
 !!! note
-    As of now, Django AI Assistant is powered by [LangChain](https://python.langchain.com/v0.2/docs/introduction/),
-    but previous knowledge on LangChain is NOT necessary to use this library, at least for the main use cases.
+As of now, Django AI Assistant is powered by [LangChain](https://python.langchain.com/v0.2/docs/introduction/),
+but previous knowledge on LangChain is NOT necessary to use this library, at least for the main use cases.
 
 ## Using an AI Assistant
 
@@ -274,7 +274,7 @@ urlpatterns = [
     path("ai-assistant/", include("django_ai_assistant.urls")),
     ...
 ]
-``` 
+```
 
 The built-in API supports retrieval of Assistants info, as well as CRUD for Threads and Messages.
 It has a OpenAPI schema that you can explore at `http://localhost:8000/ai-assistant/docs`, when running your project locally.
@@ -415,15 +415,13 @@ shows an example of a composed AI Assistant that's able to recommend movies and 
 ### Retrieval Augmented Generation (RAG)
 
 You can use RAG in your AI Assistants. RAG means using a retriever to fetch chunks of textual data from a pre-existing DB to give
-context to the LLM. This context goes into the `{context}` placeholder in the `instructions` string, namely the system prompt.
-This means the LLM will have access to a context your retriever logic provides when generating the response,
+context to the LLM. This means the LLM will have access to a context your retriever logic provides when generating the response,
 thereby improving the quality of the response by avoiding generic or off-topic answers.
 
 For this to work, your must do the following in your AI Assistant:
 
-1. Add a `{context}` placeholder in the `instructions` string;
-2. Add `has_rag = True` as a class attribute;
-3. Override the `get_retriever` method to return a [Langchain Retriever](https://python.langchain.com/v0.2/docs/how_to/#retrievers).
+1. Add `has_rag = True` as a class attribute;
+2. Override the `get_retriever` method to return a [Langchain Retriever](https://python.langchain.com/v0.2/docs/how_to/#retrievers).
 
 For example:
 
@@ -436,10 +434,6 @@ class DocsAssistant(AIAssistant):
     instructions = (
         "You are an assistant for answering questions related to the provided context. "
         "Use the following pieces of retrieved context to answer the user's question. "
-        "\n\n"
-        "---START OF CONTEXT---\n"
-        "{context}"
-        "---END OF CONTEXT---\n"
     )
     model = "gpt-4o"
     has_rag = True

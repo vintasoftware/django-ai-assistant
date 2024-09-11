@@ -8,10 +8,6 @@ from langchain.chains.combine_documents.base import (
     DEFAULT_DOCUMENT_SEPARATOR,
 )
 from langchain.tools import StructuredTool
-from langchain_core.chat_history import (
-    BaseChatMessageHistory,
-    InMemoryChatMessageHistory,
-)
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import (
     AIMessage,
@@ -81,8 +77,6 @@ class AIAssistant(abc.ABC):  # noqa: F821
     """Whether the assistant uses RAG (Retrieval-Augmented Generation) or not.\n
     Defaults to `False`.
     When True, the assistant will use a retriever to get documents to provide as context to the LLM.
-    For this to work, the `instructions` should contain a placeholder for the context,
-    which is `{context}` by default.
     Additionally, the assistant class should implement the `get_retriever` method to return
     the retriever to use."""
     _user: Any | None
@@ -257,58 +251,6 @@ class AIAssistant(abc.ABC):  # noqa: F821
         """
         return {}
 
-    def get_prompt_template(self) -> ChatPromptTemplate:
-        """Get the `ChatPromptTemplate` for the Langchain chain to use.\n
-        The system prompt comes from the `get_instructions` method.\n
-        The template includes placeholders for the instructions, chat `{history}`, user `{input}`,
-        and `{agent_scratchpad}`, all which are necessary for the chain to work properly.\n
-        The chat history is filled by the chain using the message history from `get_message_history`.\n
-        If the assistant uses RAG, the instructions should contain a placeholder
-        for the context, which is `{context}` by default, defined by the `get_context_placeholder` method.
-
-        Returns:
-            ChatPromptTemplate: The chat prompt template for the Langchain chain.
-        """
-        instructions = self.get_instructions()
-        context_placeholder = self.get_context_placeholder()
-        if self.has_rag and f"{context_placeholder}" not in instructions:
-            raise AIAssistantMisconfiguredError(
-                f"{self.__class__.__name__} has_rag=True"
-                f"but does not have a {{{context_placeholder}}} placeholder in instructions."
-            )
-
-        return ChatPromptTemplate.from_messages(
-            [
-                ("system", instructions),
-                MessagesPlaceholder(variable_name="history"),
-                ("human", "{input}"),
-                ("placeholder", "{agent_scratchpad}"),
-            ]
-        )
-
-    @with_cast_id
-    def get_message_history(self, thread_id: Any | None) -> BaseChatMessageHistory:
-        """Get the chat message history instance for the given `thread_id`.\n
-        The Langchain chain uses the return of this method to get the thread messages
-        for the assistant, filling the `history` placeholder in the `get_prompt_template`.\n
-
-        Args:
-            thread_id (Any | None): The thread ID for the chat message history.
-                If `None`, an in-memory chat message history is used.
-
-        Returns:
-            BaseChatMessageHistory: The chat message history instance for the given `thread_id`.
-        """
-
-        # DjangoChatMessageHistory must be here because Django may not be loaded yet elsewhere:
-        from django_ai_assistant.langchain.chat_message_histories import (
-            DjangoChatMessageHistory,
-        )
-
-        if thread_id is None:
-            return InMemoryChatMessageHistory()
-        return DjangoChatMessageHistory(thread_id)
-
     def get_llm(self) -> BaseChatModel:
         """Get the Langchain LLM instance for the assistant.
         By default, this uses the OpenAI implementation.\n
@@ -358,15 +300,6 @@ class AIAssistant(abc.ABC):  # noqa: F821
             PromptTemplate: a prompt template for RAG documents.
         """
         return DEFAULT_DOCUMENT_PROMPT
-
-    def get_context_placeholder(self) -> str:
-        """Get the RAG context placeholder to use in the prompt when `has_rag=True`.\n
-        Defaults to `"context"`. Override this method to use a different placeholder.
-
-        Returns:
-            str: the RAG context placeholder to use in the prompt.
-        """
-        return "context"
 
     def get_retriever(self) -> BaseRetriever:
         """Get the RAG retriever to use for fetching documents.\n
@@ -455,15 +388,23 @@ class AIAssistant(abc.ABC):  # noqa: F821
         Returns:
             the compiled graph
         """
+        # DjangoChatMessageHistory must be here because Django may not be loaded yet elsewhere.
+        # DjangoChatMessageHistory was used in the context of langchain, now that we are using
+        # langgraph this can be further simplified by just porting the add_messages logic.
+        from django_ai_assistant.langchain.chat_message_histories import (
+            DjangoChatMessageHistory,
+        )
+
+        message_history = DjangoChatMessageHistory(thread_id) if thread_id else None
+
         llm = self.get_llm()
         tools = self.get_tools()
         llm_with_tools = llm.bind_tools(tools) if tools else llm
-        message_history = self.get_message_history(thread_id)
 
         def custom_add_messages(left: list[BaseMessage], right: list[BaseMessage]):
             result = add_messages(left, right)
 
-            if thread_id:
+            if message_history:
                 messages_to_store = [
                     m
                     for m in result
@@ -504,7 +445,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
             }
 
         def history(state: AgentState):
-            history = message_history.messages if thread_id else []
+            history = message_history.messages if message_history else []
             return {"messages": [*history, HumanMessage(content=state["input"])]}
 
         def agent(state: AgentState):
@@ -551,23 +492,23 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
     @with_cast_id
     def invoke(self, *args: Any, thread_id: Any | None, **kwargs: Any) -> dict:
-        """Invoke the assistant Langchain chain with the given arguments and keyword arguments.\n
+        """Invoke the assistant Langchain graph with the given arguments and keyword arguments.\n
         This is the lower-level method to run the assistant.\n
-        The chain is created by the `as_graph` method.\n
+        The graph is created by the `as_graph` method.\n
 
         Args:
-            *args: Positional arguments to pass to the chain.
+            *args: Positional arguments to pass to the graph.
                 Make sure to include a `dict` like `{"input": "user message"}`.
             thread_id (Any | None): The thread ID for the chat message history.
                 If `None`, an in-memory chat message history is used.
-            **kwargs: Keyword arguments to pass to the chain.
+            **kwargs: Keyword arguments to pass to the graph.
 
         Returns:
-            dict: The output of the assistant chain,
+            dict: The output of the assistant graph,
                 structured like `{"output": "assistant response", "history": ...}`.
         """
-        chain = self.as_graph(thread_id)
-        return chain.invoke(*args, **kwargs)
+        graph = self.as_graph(thread_id)
+        return graph.invoke(*args, **kwargs)
 
     @with_cast_id
     def run(self, message: str, thread_id: Any | None = None, **kwargs: Any) -> str:
@@ -578,7 +519,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
             message (str): The user message to pass to the assistant.
             thread_id (Any | None): The thread ID for the chat message history.
                 If `None`, an in-memory chat message history is used.
-            **kwargs: Additional keyword arguments to pass to the chain.
+            **kwargs: Additional keyword arguments to pass to the graph.
 
         Returns:
             str: The assistant response to the user message.
