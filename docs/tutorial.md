@@ -173,8 +173,8 @@ class IssueManagementAIAssistant(AIAssistant):
 ```
 
 !!! warning
-Make sure you only return to the LLM what the user can see, considering permissions and privacy.
-Code the tools as if they were Django views.
+    Make sure you only return to the LLM what the user can see, considering permissions and privacy.
+    Code the tools as if they were Django views.
 
 ### Using pre-implemented tools
 
