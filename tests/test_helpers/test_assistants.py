@@ -50,10 +50,6 @@ def setup_assistants():
             "If there are no interesting attractions nearby, "
             "tell the user there's nothing to see where they're at. "
             "Use three sentences maximum and keep your suggestions concise."
-            "\n\n"
-            "---START OF CONTEXT---\n"
-            "{context}"
-            "---END OF CONTEXT---\n"
         )
         model = "gpt-4o"
         has_rag = True
@@ -176,17 +172,16 @@ def test_AIAssistant_with_rag_invoke():
 
     assert response_0["input"] == "I'm at Central Park W & 79st, New York, NY 10024, United States."
     assert response_0["output"] == (
-        "You can visit the American Museum of Natural History, which is located "
-        "right next to Central Park. It's a short walk and offers fascinating exhibits "
-        "on a wide range of natural science topics. Enjoy both the park's natural beauty "
-        "and the museum's educational wonders."
+        "You're right by Central Park, perfect for a scenic walk or picnic. Just across the "
+        "street, you can visit the American Museum of Natural History, which offers fascinating "
+        "exhibits on everything from dinosaurs to outer space. Enjoy your time!"
     )
     assert response_1["input"] == "11 W 53rd St, New York, NY 10019, United States."
     assert response_1["output"] == (
-        "You're right by the Museum of Modern Art (MoMA). It's a world-renowned "
-        "museum featuring an extensive collection of contemporary and modern art. "
-        "Enjoy exploring iconic works from famous artists like Van Gogh, "
-        "Picasso, and Warhol."
+        "You're near the Museum of Modern Art (MoMA), which features an impressive collection "
+        "of contemporary and modern art. Additionally, you're close to Rockefeller Center, "
+        "where you can enjoy shops, dining, and the observation deck for incredible city "
+        "views. Both attractions are must-sees!"
     )
 
     expected_messages = messages_to_dict(

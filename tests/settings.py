@@ -107,7 +107,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # django-ai-assistant
 
 # NOTE: set a OPENAI_API_KEY on .env.tests file at root when updating the VCRs.
-AI_ASSISTANT_USE_LANGGRAPH = True
 AI_ASSISTANT_INIT_API_FN = "django_ai_assistant.api.views.init_api"
 AI_ASSISTANT_CAN_CREATE_THREAD_FN = "django_ai_assistant.permissions.allow_all"
 AI_ASSISTANT_CAN_VIEW_THREAD_FN = "django_ai_assistant.permissions.owns_thread"

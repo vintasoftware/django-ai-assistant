@@ -1,6 +1,6 @@
 ---
 search:
-  boost: 2 
+    boost: 2
 ---
 
 # Tutorial
@@ -274,7 +274,7 @@ urlpatterns = [
     path("ai-assistant/", include("django_ai_assistant.urls")),
     ...
 ]
-``` 
+```
 
 The built-in API supports retrieval of Assistants info, as well as CRUD for Threads and Messages.
 It has a OpenAPI schema that you can explore at `http://localhost:8000/ai-assistant/docs`, when running your project locally.
@@ -415,15 +415,13 @@ shows an example of a composed AI Assistant that's able to recommend movies and 
 ### Retrieval Augmented Generation (RAG)
 
 You can use RAG in your AI Assistants. RAG means using a retriever to fetch chunks of textual data from a pre-existing DB to give
-context to the LLM. This context goes into the `{context}` placeholder in the `instructions` string, namely the system prompt.
-This means the LLM will have access to a context your retriever logic provides when generating the response,
+context to the LLM. This means the LLM will have access to a context your retriever logic provides when generating the response,
 thereby improving the quality of the response by avoiding generic or off-topic answers.
 
 For this to work, your must do the following in your AI Assistant:
 
-1. Add a `{context}` placeholder in the `instructions` string;
-2. Add `has_rag = True` as a class attribute;
-3. Override the `get_retriever` method to return a [Langchain Retriever](https://python.langchain.com/v0.2/docs/how_to/#retrievers).
+1. Add `has_rag = True` as a class attribute;
+2. Override the `get_retriever` method to return a [Langchain Retriever](https://python.langchain.com/v0.2/docs/how_to/#retrievers).
 
 For example:
 
@@ -436,10 +434,6 @@ class DocsAssistant(AIAssistant):
     instructions = (
         "You are an assistant for answering questions related to the provided context. "
         "Use the following pieces of retrieved context to answer the user's question. "
-        "\n\n"
-        "---START OF CONTEXT---\n"
-        "{context}"
-        "---END OF CONTEXT---\n"
     )
     model = "gpt-4o"
     has_rag = True

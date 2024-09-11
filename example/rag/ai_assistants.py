@@ -14,10 +14,6 @@ class DjangoDocsAssistant(AIAssistant):
         "Use the following pieces of retrieved context from Django's documentation to answer "
         "the user's question. If you don't know the answer, say that you don't know. "
         "Use three sentences maximum and keep the answer concise."
-        "\n\n"
-        "---START OF CONTEXT---\n"
-        "{context}"
-        "---END OF CONTEXT---\n"
     )
     model = "gpt-4o"
     has_rag = True

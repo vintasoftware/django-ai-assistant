@@ -120,7 +120,7 @@ def create_message(
         content (Any): Message content, usually a string
         request (HttpRequest | None): Current request, if any
     Returns:
-        dict: The output of the assistant chain,
+        dict: The output of the assistant,
             structured like `{"output": "assistant response", "history": ...}`
     Raises:
         AIUserNotAllowedError: If user is not allowed to create messages in the thread
