@@ -1499,7 +1499,7 @@ and returns only the ones the user can see.</p>
       </tbody>
     </table>
       <p>Returns:
-    dict: The output of the assistant chain,
+    dict: The output of the assistant,
         structured like <code>{"output": "assistant response", "history": ...}</code>
 Raises:
     AIUserNotAllowedError: If user is not allowed to create messages in the thread</p>
@@ -1558,7 +1558,7 @@ Raises:
 <span class="sd">        content (Any): Message content, usually a string</span>
 <span class="sd">        request (HttpRequest | None): Current request, if any</span>
 <span class="sd">    Returns:</span>
-<span class="sd">        dict: The output of the assistant chain,</span>
+<span class="sd">        dict: The output of the assistant,</span>
 <span class="sd">            structured like `{&quot;output&quot;: &quot;assistant response&quot;, &quot;history&quot;: ...}`</span>
 <span class="sd">    Raises:</span>
 <span class="sd">        AIUserNotAllowedError: If user is not allowed to create messages in the thread</span>

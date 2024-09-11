@@ -1538,12 +1538,10 @@ Use the <code>as_tool</code> method for that:</p>
 shows an example of a composed AI Assistant that's able to recommend movies and manage the user's movie backlog.</p>
 <h3 id="retrieval-augmented-generation-rag">Retrieval Augmented Generation (RAG)<a class="headerlink" href="#retrieval-augmented-generation-rag" title="Permanent link">&para;</a></h3>
 <p>You can use RAG in your AI Assistants. RAG means using a retriever to fetch chunks of textual data from a pre-existing DB to give
-context to the LLM. This context goes into the <code>{context}</code> placeholder in the <code>instructions</code> string, namely the system prompt.
-This means the LLM will have access to a context your retriever logic provides when generating the response,
+context to the LLM. This means the LLM will have access to a context your retriever logic provides when generating the response,
 thereby improving the quality of the response by avoiding generic or off-topic answers.</p>
 <p>For this to work, your must do the following in your AI Assistant:</p>
 <ol>
-<li>Add a <code>{context}</code> placeholder in the <code>instructions</code> string;</li>
 <li>Add <code>has_rag = True</code> as a class attribute;</li>
 <li>Override the <code>get_retriever</code> method to return a <a href="https://python.langchain.com/v0.2/docs/how_to/#retrievers">Langchain Retriever</a>.</li>
 </ol>
@@ -1556,16 +1554,12 @@ thereby improving the quality of the response by avoiding generic or off-topic a
     <span class="n">instructions</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s2">&quot;You are an assistant for answering questions related to the provided context. &quot;</span>
         <span class="s2">&quot;Use the following pieces of retrieved context to answer the user&#39;s question. &quot;</span>
-        <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;---START OF CONTEXT---</span><span class="se">\n</span><span class="s2">&quot;</span>
-<span class="hll">        <span class="s2">&quot;</span><span class="si">{context}</span><span class="s2">&quot;</span>
-</span>        <span class="s2">&quot;---END OF CONTEXT---</span><span class="se">\n</span><span class="s2">&quot;</span>
     <span class="p">)</span>
     <span class="n">model</span> <span class="o">=</span> <span class="s2">&quot;gpt-4o&quot;</span>
 <span class="hll">    <span class="n">has_rag</span> <span class="o">=</span> <span class="kc">True</span>
 </span>
-<span class="hll">    <span class="k">def</span> <span class="nf">get_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseRetriever</span><span class="p">:</span>
-</span>        <span class="k">return</span> <span class="o">...</span>  <span class="c1"># use a Langchain Retriever here</span>
+    <span class="k">def</span> <span class="nf">get_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseRetriever</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">...</span>  <span class="c1"># use a Langchain Retriever here</span>
 </code></pre></div>
 <p>The <code>rag/ai_assistants.py</code> file in the <a href="https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme">example project</a>
 shows an example of a RAG-powered AI Assistant that's able to answer questions about Django using the Django Documentation as context.</p>
