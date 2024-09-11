@@ -77,9 +77,9 @@ class DjangoChatMessageHistory(BaseChatMessageHistory):
             messages: A list of BaseMessage objects to store.
         """
         with transaction.atomic():
-            existing_messages = self.get_messages()
+            existing_message_ids = [m.id for m in self.get_messages()]
 
-            messages_to_create = [m for m in messages if m not in existing_messages]
+            messages_to_create = [m for m in messages if m.id not in existing_message_ids]
 
             created_messages = Message.objects.bulk_create(
                 [Message(thread_id=self._thread_id, message=dict()) for _ in messages_to_create]
@@ -99,9 +99,9 @@ class DjangoChatMessageHistory(BaseChatMessageHistory):
         Args:
             messages: A list of BaseMessage objects to store.
         """
-        existing_messages = await self.aget_messages()
+        existing_message_ids = [m.id for m in await self.aget_messages()]
 
-        messages_to_create = [m for m in messages if m not in existing_messages]
+        messages_to_create = [m for m in messages if m.id not in existing_message_ids]
 
         # NOTE: This method does not use transactions because it do not yet work in async mode.
         # Source: https://docs.djangoproject.com/en/5.0/topics/async/#queries-the-orm
