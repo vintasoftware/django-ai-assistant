@@ -159,6 +159,7 @@ WEBPACK_LOADER = {
 
 # django-ai-assistant
 
+AI_ASSISTANT_USE_LANGGRAPH = True
 AI_ASSISTANT_INIT_API_FN = "django_ai_assistant.api.views.init_api"
 AI_ASSISTANT_CAN_CREATE_THREAD_FN = "django_ai_assistant.permissions.allow_all"
 AI_ASSISTANT_CAN_VIEW_THREAD_FN = "django_ai_assistant.permissions.owns_thread"
