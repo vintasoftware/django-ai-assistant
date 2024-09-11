@@ -17,8 +17,8 @@ The tutorial below uses OpenAI's gpt-4o model, so make sure you have `OPENAI_API
 You can also use other models, keep reading to learn more. Just make sure their keys are properly set.
 
 !!! note
-An easy way to set environment variables is to use a `.env` file in your project's root directory and use `python-dotenv` to load them.
-Our [example project](https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme) uses this approach.
+    An easy way to set environment variables is to use a `.env` file in your project's root directory and use `python-dotenv` to load them.
+    Our [example project](https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme) uses this approach.
 
 ## What AI Assistants can do
 
@@ -90,8 +90,8 @@ AI: The weather in NYC is sunny with a temperature of 25°C.
 ```
 
 !!! note
-State of the art models such as gpt-4o can process JSON well.
-You can return a `json.dumps(api_output)` from a tool method and the model will be able to process it before responding the user.
+    State of the art models such as gpt-4o can process JSON well.
+    You can return a `json.dumps(api_output)` from a tool method and the model will be able to process it before responding the user.
 
 ### Tool parameters
 
@@ -131,7 +131,7 @@ class WeatherAIAssistant(AIAssistant):
 ```
 
 !!! note
-It's important to provide a `description` for each field from `args_schema`. This improves the LLM's understanding of the tool's arguments.
+    It's important to provide a `description` for each field from `args_schema`. This improves the LLM's understanding of the tool's arguments.
 
 ### Using Django logic in tools
 
@@ -219,8 +219,8 @@ class MovieSearchAIAssistant(AIAssistant):
 ```
 
 !!! note
-As of now, Django AI Assistant is powered by [LangChain](https://python.langchain.com/v0.2/docs/introduction/),
-but previous knowledge on LangChain is NOT necessary to use this library, at least for the main use cases.
+    As of now, Django AI Assistant is powered by [LangChain](https://python.langchain.com/v0.2/docs/introduction/),
+    but previous knowledge on LangChain is NOT necessary to use this library, at least for the main use cases.
 
 ## Using an AI Assistant
 
