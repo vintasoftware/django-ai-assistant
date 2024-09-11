@@ -151,11 +151,11 @@ def test_create_message():
         "Hello, will I have to use my umbrella in Lisbon tomorrow?",
     )
 
-    assert response == {
-        "input": "Hello, will I have to use my umbrella in Lisbon tomorrow?",
-        "history": [],
-        "output": "The forecast for Lisbon tomorrow is 35°C, which is quite warm and unlikely to involve rain. You probably won't need an umbrella.",
-    }
+    assert response["input"] == "Hello, will I have to use my umbrella in Lisbon tomorrow?"
+    assert response["output"] == (
+        "The forecast for Lisbon tomorrow is hot with a temperature of 35 degrees Celsius, "
+        "and it doesn't suggest rain. Therefore, you probably won't need to use your umbrella."
+    )
 
 
 @pytest.mark.django_db(transaction=True)

@@ -193,4 +193,129 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: '{"messages": [{"content": "You are a temperature bot. Today is 2024-06-09.",
+      "role": "system"}, {"content": "Hello, what is the temperature in SF right now?",
+      "role": "user"}], "model": "gpt-4o", "n": 1, "stream": false, "temperature":
+      1.0, "tools": [{"type": "function", "function": {"name": "fetch_current_temperature",
+      "description": "Fetch the current temperature data for a location", "parameters":
+      {"type": "object", "properties": {"location": {"type": "string"}}, "required":
+      ["location"]}}}, {"type": "function", "function": {"name": "fetch_forecast_temperature",
+      "description": "Fetch the forecast temperature data for a location", "parameters":
+      {"type": "object", "properties": {"location": {"type": "string"}, "dt_str":
+      {"description": "Date in the format ''YYYY-MM-DD''", "type": "string"}}, "required":
+      ["location", "dt_str"]}}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - DUMMY
+      connection:
+      - keep-alive
+      content-length:
+      - '841'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - OpenAI/Python
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAwAAAP//bFJNj5swFLzzK6x3DhWQwO5yS3eXrdRLtZWqqE2FXpwHofVXbVOVRvnv
+        FR9J2KgcLGuGmXke+xgwBs0ecgb8gJ5LI8J19iH6+LXT6lVEu/i56Db1+91v3CR32UbAolfo3Q/i
+        /qx6x7U0gnyj1UhzS+ipd43vkixK77OHbCCk3pPoZbXx4UqHSZSswigN4+UkPOiGk4OcfQsYY+w4
+        rP2Iak9/IGfR4oxIcg5rgvzyE2NgtegRQOca51F5WFxJrpUn1U+tWiFmhNdalByFuAaP33G2v/aE
+        QpTpy6sqvsju+Qn1g335Zf4ma1N8KmZ5o3VnhoGqVvFLPzP+guc3YYyBQjlqyfNDyVtrSfnSkzRk
+        0beWbswYA7R1K0n5/iBw3ILQHHv7LeRb+IyKFRYVbxzXC/a43sIJ3jicgv/tv8+qslS1DsXU4YSf
+        LpcidG2s3rmbjqFqVOMOpSV0w1nnlQfntCEH2je3CsZqaXzp9U9SvW0cr0ZXuD66GXs/kV57FDN8
+        mQTTnOA650mWVaNqssY2w4uAypRJmiUrpCWmEJyCfwAAAP//AwDHlhryGgMAAA==
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date: Sun, 09 Jun 2024 23:39:08 GMT
+      Server: DUMMY
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "You are a temperature bot. Today is 2024-06-09.",
+      "role": "system"}, {"content": "Hello, what is the temperature in SF right now?",
+      "role": "user"}, {"content": null, "role": "assistant", "tool_calls": [{"type":
+      "function", "id": "call_5GRnFVmyEDao9rGqpz2ApFPF", "function": {"name": "fetch_current_temperature",
+      "arguments": "{\"location\": \"San Francisco, CA\"}"}}]}, {"content": "32 degrees
+      Celsius", "role": "tool", "tool_call_id": "call_5GRnFVmyEDao9rGqpz2ApFPF"}],
+      "model": "gpt-4o", "n": 1, "stream": false, "temperature": 1.0, "tools": [{"type":
+      "function", "function": {"name": "fetch_current_temperature", "description":
+      "Fetch the current temperature data for a location", "parameters": {"type":
+      "object", "properties": {"location": {"type": "string"}}, "required": ["location"]}}},
+      {"type": "function", "function": {"name": "fetch_forecast_temperature", "description":
+      "Fetch the forecast temperature data for a location", "parameters": {"type":
+      "object", "properties": {"location": {"type": "string"}, "dt_str": {"description":
+      "Date in the format ''YYYY-MM-DD''", "type": "string"}}, "required": ["location",
+      "dt_str"]}}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - DUMMY
+      connection:
+      - keep-alive
+      content-length:
+      - '1163'
+      content-type:
+      - application/json
+      cookie:
+      - DUMMY
+      host:
+      - api.openai.com
+      user-agent:
+      - OpenAI/Python
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAwAAAP//VJDNbsIwEITveYqVzwkKIQHKjaK2VOJQFW5VhYzZELeJ17I3EgjxTn2G
+        PlmVEH568WE+z2h2jgGA0FsxAaEKyaqyZTQdzuPF5mWVL5ZyeiiyVZzu5evj0+GN3ucibBy0+ULF
+        F1dPUWVLZE3mjJVDydik9kfJMM7Gw4dRCyraYtnYdpajlKIkTtIozqL+oDMWpBV6MYGPAADg2L5N
+        RbPFvZhAHF6UCr2XOxST6ycA4ahsFCG9156lYRHeoCLDaNrWqwJB1c6hYWCsLDrJtUPQBpbSwLOT
+        RmmvKITZFLSHQfL7M+vdhznMay+bW0xdlp1+urYraWcdbXzHr3qujfbF2qH0ZJomnsmKlp4CgM92
+        hfrfYcI6qiyvmb7RNIH9ND3nidvu97SDTCzLOz0bB11D4Q+esVrn2uzQWafPo+R2nWTDJJU4kJkI
+        TsEfAAAA//8DAFmF1AcdAgAA
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date: Sun, 09 Jun 2024 23:39:08 GMT
+      Server: DUMMY
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+    status:
+      code: 200
+      message: OK
 version: 1

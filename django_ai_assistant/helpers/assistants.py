@@ -1,7 +1,7 @@
 import abc
 import inspect
 import re
-from typing import Any, ClassVar, Sequence, cast
+from typing import Annotated, Any, ClassVar, Sequence, TypedDict, cast
 
 from langchain.agents import AgentExecutor
 from langchain.agents.format_scratchpad.tools import (
@@ -12,11 +12,20 @@ from langchain.chains.combine_documents.base import (
     DEFAULT_DOCUMENT_PROMPT,
     DEFAULT_DOCUMENT_SEPARATOR,
 )
+from langchain.tools import StructuredTool
 from langchain_core.chat_history import (
     BaseChatMessageHistory,
     InMemoryChatMessageHistory,
 )
 from langchain_core.language_models import BaseChatModel
+from langchain_core.messages import (
+    AIMessage,
+    AnyMessage,
+    BaseMessage,
+    ChatMessage,
+    HumanMessage,
+    SystemMessage,
+)
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import (
     ChatPromptTemplate,
@@ -37,12 +46,15 @@ from langchain_core.runnables import (
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.tools import BaseTool
 from langchain_openai import ChatOpenAI
+from langgraph.graph import END, StateGraph
+from langgraph.graph.message import add_messages
+from langgraph.prebuilt import ToolNode
 
+from django_ai_assistant.conf import app_settings
 from django_ai_assistant.decorators import with_cast_id
 from django_ai_assistant.exceptions import (
     AIAssistantMisconfiguredError,
 )
-from django_ai_assistant.langchain.tools import Tool
 from django_ai_assistant.langchain.tools import tool as tool_decorator
 
 
@@ -438,6 +450,115 @@ class AIAssistant(abc.ABC):  # noqa: F821
         )
 
     @with_cast_id
+    def as_graph(self, thread_id: Any | None = None) -> Runnable[dict, dict]:
+        """Create the Langchain graph for the assistant.\n
+        This graph is an agent that supports chat history, tool calling, and RAG (if `has_rag=True`).\n
+        `as_graph` uses many other methods to create the graph for the assistant.
+        Prefer to override the other methods to customize the graph for the assistant.
+        Only override this method if you need to customize the graph at a lower level.
+
+        Args:
+            thread_id (Any | None): The thread ID for the chat message history.
+                If `None`, an in-memory chat message history is used.
+
+        Returns:
+            the compiled graph
+        """
+        llm = self.get_llm()
+        tools = self.get_tools()
+        llm_with_tools = llm.bind_tools(tools) if tools else llm
+        message_history = self.get_message_history(thread_id)
+
+        def custom_add_messages(left: list[BaseMessage], right: list[BaseMessage]):
+            result = add_messages(left, right)
+
+            if thread_id:
+                messages_to_store = [
+                    m
+                    for m in result
+                    if isinstance(m, HumanMessage | ChatMessage)
+                    or (isinstance(m, AIMessage) and not m.tool_calls)
+                ]
+                message_history.add_messages(messages_to_store)
+
+            return result
+
+        class AgentState(TypedDict):
+            messages: Annotated[list[AnyMessage], custom_add_messages]
+            input: str  # noqa: A003
+            context: str
+            output: str
+
+        def setup(state: AgentState):
+            return {"messages": [SystemMessage(content=self.get_instructions())]}
+
+        def retriever(state: AgentState):
+            if not self.has_rag:
+                return
+
+            retriever = self.get_history_aware_retriever()
+            docs = retriever.invoke({"input": state["input"], "history": state["messages"]})
+
+            document_separator = self.get_document_separator()
+            document_prompt = self.get_document_prompt()
+
+            formatted_docs = document_separator.join(
+                format_document(doc, document_prompt) for doc in docs
+            )
+
+            return {
+                "messages": SystemMessage(
+                    content=f"---START OF CONTEXT---\n{formatted_docs}---END OF CONTEXT---\n"
+                )
+            }
+
+        def history(state: AgentState):
+            history = message_history.messages if thread_id else []
+            return {"messages": [*history, HumanMessage(content=state["input"])]}
+
+        def agent(state: AgentState):
+            response = llm_with_tools.invoke(state["messages"])
+
+            return {"messages": [response]}
+
+        def tool_selector(state: AgentState):
+            last_message = state["messages"][-1]
+
+            if isinstance(last_message, AIMessage) and last_message.tool_calls:
+                return "call_tool"
+
+            return "continue"
+
+        def record_response(state: AgentState):
+            return {"output": state["messages"][-1].content}
+
+        workflow = StateGraph(AgentState)
+
+        workflow.add_node("setup", setup)
+        workflow.add_node("retriever", retriever)
+        workflow.add_node("history", history)
+        workflow.add_node("agent", agent)
+        workflow.add_node("tools", ToolNode(tools))
+        workflow.add_node("respond", record_response)
+
+        workflow.set_entry_point("setup")
+        workflow.add_edge("setup", "retriever")
+        workflow.add_edge("retriever", "history")
+        workflow.add_edge("history", "agent")
+        workflow.add_conditional_edges(
+            "agent",
+            tool_selector,
+            {
+                "call_tool": "tools",
+                "continue": "respond",
+            },
+        )
+        workflow.add_edge("tools", "agent")
+        workflow.add_edge("respond", END)
+
+        return workflow.compile()
+
+    @with_cast_id
     def as_chain(self, thread_id: Any | None) -> Runnable[dict, dict]:
         """Create the Langchain chain for the assistant.\n
         This chain is an agent that supports chat history, tool calling, and RAG (if `has_rag=True`).\n
@@ -539,7 +660,10 @@ class AIAssistant(abc.ABC):  # noqa: F821
             dict: The output of the assistant chain,
                 structured like `{"output": "assistant response", "history": ...}`.
         """
-        chain = self.as_chain(thread_id)
+        if app_settings.USE_LANGGRAPH:
+            chain = self.as_graph(thread_id)
+        else:
+            chain = self.as_chain(thread_id)
         return chain.invoke(*args, **kwargs)
 
     @with_cast_id
@@ -577,7 +701,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         Returns:
             BaseTool: A tool that runs the assistant. The tool name is this assistant's id.
         """
-        return Tool.from_function(
+        return StructuredTool.from_function(
             func=self._run_as_tool,
             name=self.id,
             description=description,

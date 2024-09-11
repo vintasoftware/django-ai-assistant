@@ -301,7 +301,7 @@ def test_create_thread_message(authenticated_client):
     )
     assert (
         ai_message.message["data"]["content"]
-        == "The current temperature in San Francisco, CA is 32 degrees Celsius."
+        == "The current temperature in San Francisco, CA is 32°C."
     )
 
 

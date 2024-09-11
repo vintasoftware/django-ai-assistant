@@ -183,4 +183,130 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: '{"messages": [{"content": "You are a temperature bot. Today is 2024-06-09.",
+      "role": "system"}, {"content": "Hello, will I have to use my umbrella in Lisbon
+      tomorrow?", "role": "user"}], "model": "gpt-4o", "n": 1, "stream": false, "temperature":
+      1.0, "tools": [{"type": "function", "function": {"name": "fetch_current_temperature",
+      "description": "Fetch the current temperature data for a location", "parameters":
+      {"type": "object", "properties": {"location": {"type": "string"}}, "required":
+      ["location"]}}}, {"type": "function", "function": {"name": "fetch_forecast_temperature",
+      "description": "Fetch the forecast temperature data for a location", "parameters":
+      {"type": "object", "properties": {"location": {"type": "string"}, "dt_str":
+      {"description": "Date in the format ''YYYY-MM-DD''", "type": "string"}}, "required":
+      ["location", "dt_str"]}}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - DUMMY
+      connection:
+      - keep-alive
+      content-length:
+      - '851'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - OpenAI/Python
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA2xSy47TQBC8+ytGfY6R7djexLcFDrCLWBASCAiyxpP2YzMPa6YtiKL8O/IjsTda
+        H0atKld1T/WcPMag2UPGQNSchGqlf59+CD5Gn5/+fnswP+zmp3vkYfFrs7Xuvd7CqleY4hkFXVRv
+        hFGtRGqMHmlhkRP2ruFdlAbJJt3GA6HMHmUvq1ryY+NHQRT7QeKH60lYm0agg4z99hhj7DSc/Yh6
+        j/8gY8Hqgih0jlcI2fUnxsAa2SPAnWsccU2wmklhNKHup9adlAuCjJG54FLOjcfvtKjnnLiU+VFV
+        3ePhKdHfpXlXfxGH54e3h69Fueg3Wh/bYaCy0+Kaz4K/4tlNM8ZAczVqkUSdl8ai4I5yQtWi5dRZ
+        vHFjDLitOoWa+pvAaQfSCN777yDbwafGFX252sGeckd2QMcdpH4Y7OAMLwzP3mv1n0V0FsvOcTll
+        OuHn65KkqVprCneTOZSNblydW+RuuPtyBd6l29AHuhdbhtYa1VJO5oC6tw3DdHSF+RHObHQ3kWSI
+        y4UqXnvTnOCOjlDlZaMrtK1thhcCZZtHSRrFHNc8Ae/s/QcAAP//AwB9Z52QKgMAAA==
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date: Sun, 09 Jun 2024 23:39:08 GMT
+      Server: DUMMY
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "You are a temperature bot. Today is 2024-06-09.",
+      "role": "system"}, {"content": "Hello, will I have to use my umbrella in Lisbon
+      tomorrow?", "role": "user"}, {"content": null, "role": "assistant", "tool_calls":
+      [{"type": "function", "id": "call_ymguKkO5nVloChPckjJBkQbf", "function": {"name":
+      "fetch_forecast_temperature", "arguments": "{\"location\": \"Lisbon\", \"dt_str\":
+      \"2024-06-10\"}"}}]}, {"content": "35 degrees Celsius", "role": "tool", "tool_call_id":
+      "call_ymguKkO5nVloChPckjJBkQbf"}], "model": "gpt-4o", "n": 1, "stream": false,
+      "temperature": 1.0, "tools": [{"type": "function", "function": {"name": "fetch_current_temperature",
+      "description": "Fetch the current temperature data for a location", "parameters":
+      {"type": "object", "properties": {"location": {"type": "string"}}, "required":
+      ["location"]}}}, {"type": "function", "function": {"name": "fetch_forecast_temperature",
+      "description": "Fetch the forecast temperature data for a location", "parameters":
+      {"type": "object", "properties": {"location": {"type": "string"}, "dt_str":
+      {"description": "Date in the format ''YYYY-MM-DD''", "type": "string"}}, "required":
+      ["location", "dt_str"]}}}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - DUMMY
+      connection:
+      - keep-alive
+      content-length:
+      - '1191'
+      content-type:
+      - application/json
+      cookie:
+      - DUMMY
+      host:
+      - api.openai.com
+      user-agent:
+      - OpenAI/Python
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAwAAAP//VFHRitswEHz3Vyx66YsTHCd2c3krpTSUtIVyhUIpQbbXtnqyVmjXpOmR
+        fy9yfMn1RYiZndFo9jkBUKZRO1B1r6UevF28K/fZp/G7/dJ/Y3c4/9jvP/RfP37228P275NKo4Kq
+        31jLi2pZ0+AtiiF3peuAWjC6rt7mZVZsy4diIgZq0EZZ52WxoUWe5ZtFVixW61nYk6mR1Q5+JgAA
+        z9MZI7oG/6gdZOkLMiCz7lDtbkMAKpCNiNLMhkU7UemdrMkJuin1Y4/QUsBas8QLHAxX5EBooBDo
+        BIahJ4GTkR40CA4eg5YxIFAL6wIa7AIiw3u0bEZOQbsGjEBDyO6NAI9dhywQtHFLeOwxYHwvhTON
+        4ANVurJnOFGcdYgNCMHIGOkA41AFtFYvX6cP2I6sY3lutHbGL7c6LHXRlmf+hrfGGe6PATWTi19n
+        Ia8m9pIA/JpqH/9rUvlAg5ej0BO6aLgqyqufui/6zq43Mykk2r5SPWTJnFDxmQWHY2tch8EHc91C
+        6495UeYbjWtdqOSS/AMAAP//AwCgU4uTjgIAAA==
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date: Sun, 09 Jun 2024 23:39:08 GMT
+      Server: DUMMY
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+    status:
+      code: 200
+      message: OK
 version: 1
