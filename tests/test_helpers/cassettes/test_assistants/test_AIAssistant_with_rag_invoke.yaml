@@ -776,4 +776,252 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: '{"messages": [{"content": "Given a chat history and the latest user question
+      which might reference context in the chat history, formulate a standalone question
+      which can be understood without the chat history. Do NOT answer the question,
+      just reformulate it if needed and otherwise return it as is.", "role": "system"},
+      {"content": "You are a tour guide assistant offers information about nearby
+      attractions. The user is at a location and wants to know what to learn about
+      nearby attractions. Use the following pieces of context to suggest nearby attractions
+      to the user. If there are no interesting attractions nearby, tell the user there''s
+      nothing to see where they''re at. Use three sentences maximum and keep your
+      suggestions concise.\n\n---START OF CONTEXT---\n{context}---END OF CONTEXT---\n",
+      "role": "system"}, {"content": "I''m at Central Park W & 79st, New York, NY
+      10024, United States.", "role": "user"}], "model": "gpt-4o", "n": 1, "stream":
+      false, "temperature": 1.0}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - DUMMY
+      connection:
+      - keep-alive
+      content-length:
+      - '979'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - OpenAI/Python
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAwAAAP//VJFPS8NAEMXv+RTDnhtJ0z/aXkSrWEGLoFCKSJgm02btZneZnaJF+t0l
+        aWzrZQ/vt2/2vdmfCEDpQo1B5SVKXnkT3wynyT2zJLcvyWy7mBb3u7cn//D8eDc1C9WpHW75Sbn8
+        uS5yV3lDop094JwJheqp3ct0mAyuhqOkAZUryNS2tZe47+I0SftxMoi7vdZYOp1TUGN4jwAAfpqz
+        jmgL+lZjaMY0SkUh4JrU+HgJQLEztaIwBB0ErajOCebOCtkm9bxEAWQCKQksIS93gCKMeV0iAApM
+        yAqjgRfkDcwpCKAt4HIkJbwKEwloCzP6goXjDUy07K7PH2NabQPWXe3WmFbfH9Mbt/bslqHlR32l
+        rQ5lxoTB2TppEOdVQ/cRwEezpe2/4sqzq7xk4jZkQ7Pz3mGeOv3LGR21UJygOdfTqE2owi4IVdlK
+        2zWxZ31Y2spn6WCY9pF6OFDRPvoFAAD//wMA3v8QVz0CAAA=
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date: Sun, 09 Jun 2024 23:39:08 GMT
+      Server: DUMMY
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "You are a tour guide assistant offers information
+      about nearby attractions. The user is at a location and wants to know what to
+      learn about nearby attractions. Use the following pieces of context to suggest
+      nearby attractions to the user. If there are no interesting attractions nearby,
+      tell the user there''s nothing to see where they''re at. Use three sentences
+      maximum and keep your suggestions concise.\n\n---START OF CONTEXT---\n{context}---END
+      OF CONTEXT---\n", "role": "system"}, {"content": "---START OF CONTEXT---\nCentral
+      Park\n\nAmerican Museum of Natural History---END OF CONTEXT---\n", "role": "system"},
+      {"content": "I''m at Central Park W & 79st, New York, NY 10024, United States.",
+      "role": "user"}], "model": "gpt-4o", "n": 1, "stream": false, "temperature":
+      1.0}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - DUMMY
+      connection:
+      - keep-alive
+      content-length:
+      - '804'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - OpenAI/Python
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAwAAAP//VFLLbtswELz7Kxa8+GIbfrfxLUiDJkBbtIcegqIw1tRKYkxxVe7KshH4
+        3wvKqp1eeJjZGQ53+DYAMC4zGzC2RLVV7cf366fpY/1lt2g/83763OY/FocqOxQ/P5V/HswoKXj3
+        Slb/qSaWq9qTOg4X2kZCpeQ6+zBfT1cf13fTjqg4I59kRa3jJY/n0/lyPF2NZ4teWLKzJGYDvwYA
+        AG/dmSKGjI5mA51Nh1QkggWZzXUIwET2CTEo4kQxqBndSMtBKXSpX7gBiwEOTpyClgT3FUWXoK+N
+        UFMB5/ANtYno4cmJcjyNoC2dLcEJeLbpfRBdUSoEOioowwMFTfPfMe4n8KxDAQQpOSq06PeAIQPO
+        c4oCOYp1AdWFAuhYup1TAQ6A0LqMIGIoKEUIfQSxjoIlUK6dlQk8hlc+wY617MLXGPdDuU7vCBs9
+        dfcltupeNBSgrLGYWkIPLYeMokzeLyhS3gimfkLjfY+frxv3XNSRd9LzVzx3wUm5jYTCIW1XlGvT
+        secBwO+u2ea/skwduap1q7ynkAxny8XFz9z+0o1d9bUbZUX/TnW3GPQJjZxEqdrmLhQU6+guRef1
+        dr5az5dIC1yZwXnwFwAA//8DADpH7jTxAgAA
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date: Sun, 09 Jun 2024 23:39:08 GMT
+      Server: DUMMY
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "Given a chat history and the latest user question
+      which might reference context in the chat history, formulate a standalone question
+      which can be understood without the chat history. Do NOT answer the question,
+      just reformulate it if needed and otherwise return it as is.", "role": "system"},
+      {"content": "You are a tour guide assistant offers information about nearby
+      attractions. The user is at a location and wants to know what to learn about
+      nearby attractions. Use the following pieces of context to suggest nearby attractions
+      to the user. If there are no interesting attractions nearby, tell the user there''s
+      nothing to see where they''re at. Use three sentences maximum and keep your
+      suggestions concise.\n\n---START OF CONTEXT---\n{context}---END OF CONTEXT---\n",
+      "role": "system"}, {"content": "11 W 53rd St, New York, NY 10019, United States.",
+      "role": "user"}], "model": "gpt-4o", "n": 1, "stream": false, "temperature":
+      1.0}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - DUMMY
+      connection:
+      - keep-alive
+      content-length:
+      - '963'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - OpenAI/Python
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAwAAAP//VJHNbtswEITveooFz1IhyZYT+1IEMJD24h6aIj9FYayllc1a4hLcFVoj
+        8LsXVBQ7vfAw3w45O3xNAIxtzApMfUCte99ld4sv+X319O20Htbt7fHpZr5+ePj60gyN25BJo4N3
+        v6nWd9enmnvfkVp2b7gOhErx1uKmXOTV7WJZjqDnhrpo23vN5pyVeTnP8iorZpPxwLYmMSv4mQAA
+        vI5njOga+mtWkKfvSk8iuCezugwBmMBdVAyKWFF0atIrrNkpuTH14wEVMBAI9wSOMOxOgKoB67iF
+        ACoUBTxCNQsNfNcUNvQHnjkcU9g8Q5HnxTKFH84qRYxK8vnjU4HaQTBu6oaum/TzJXvHex94JxO/
+        6K11Vg7bQCjsYk5R9mak5wTg19jR8N/axgfuvW6Vj+RkbHzqyFx/5UrLaoLKit0H17JKpoRGTqLU
+        b1vr9hR8sG+VtX5bVotyjjTDyiTn5B8AAAD//wMAtwpy5zsCAAA=
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date: Sun, 09 Jun 2024 23:39:08 GMT
+      Server: DUMMY
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "You are a tour guide assistant offers information
+      about nearby attractions. The user is at a location and wants to know what to
+      learn about nearby attractions. Use the following pieces of context to suggest
+      nearby attractions to the user. If there are no interesting attractions nearby,
+      tell the user there''s nothing to see where they''re at. Use three sentences
+      maximum and keep your suggestions concise.\n\n---START OF CONTEXT---\n{context}---END
+      OF CONTEXT---\n", "role": "system"}, {"content": "---START OF CONTEXT---\nCentral
+      Park\n\nAmerican Museum of Natural History---END OF CONTEXT---\n", "role": "system"},
+      {"content": "I''m at Central Park W & 79st, New York, NY 10024, United States.",
+      "role": "user"}, {"content": "You can visit the American Museum of Natural History,
+      which is located right next to Central Park. It''s a short walk and offers fascinating
+      exhibits on a wide range of natural science topics. Enjoy both the park''s natural
+      beauty and the museum''s educational wonders.", "role": "assistant"}, {"content":
+      "11 W 53rd St, New York, NY 10019, United States.", "role": "user"}], "model":
+      "gpt-4o", "n": 1, "stream": false, "temperature": 1.0}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - DUMMY
+      connection:
+      - keep-alive
+      content-length:
+      - '1189'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - OpenAI/Python
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAwAAAP//VFJNb9swDL37VxC6dAPiIHE+1uaWw7AWQ4ABBbYVwxAoMm2rkURPpPOB
+        ov+9kJMm3UWH9/geyUe9ZADKlmoByjRajG9dvpzfj+5v97vxb12yfdjJ4XEbnw7lv/L75FENkoI2
+        z2jkXTU05FuHYimcaBNRCybX8ZdiPprdzu8mPeGpRJdkdSv5lPJiVEzz0SwfT87ChqxBVgv4kwEA
+        vPRvGjGUeFALGA3eEY/Muka1uBQBqEguIUozWxYdRA2upKEgGPqpn6i7iQjR1o3A5gjSIKw6xs4D
+        VbCiEmOAZRT4tKLV8vMQHuSGQcOeoivziIH2AUvwJ0mFWrpoQw06AB4EA9sdgiHn0KRUkmnf3bcU
+        dTyCDiX4UxcdZQhfwzMdAQ+to97HGgrWpHZbhiqSh0p76jhVWxYGZ7cIP3WAb1Q3A/hhjWamQW/8
+        S8eG3PDj6hGrjnVKPnTOnfHXS5aO6jbShs/8Ba9ssNysI2qmkHJjoVb17GsG8Le/WfffGVQbybey
+        FtpiSIbF+O7kp66/5MpOp2dSSLT7oJpPsvOEio8s6NeVDTXGNtrTCat2XczmxVTjRM9U9pq9AQAA
+        //8DAMCLIMDLAgAA
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date: Sun, 09 Jun 2024 23:39:08 GMT
+      Server: DUMMY
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+    status:
+      code: 200
+      message: OK
 version: 1
