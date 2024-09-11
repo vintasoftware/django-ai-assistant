@@ -450,13 +450,28 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
     @with_cast_id
     def as_graph(self, thread_id: Any | None = None) -> Runnable[dict, dict]:
+        """Create the Langchain graph for the assistant.\n
+        This graph is an agent that supports chat history, tool calling, and RAG (if `has_rag=True`).\n
+        `as_graph` uses many other methods to create the graph for the assistant.
+        Prefer to override the other methods to customize the graph for the assistant.
+        Only override this method if you need to customize the graph at a lower level.
+
+        Args:
+            thread_id (Any | None): The thread ID for the chat message history.
+                If `None`, an in-memory chat message history is used.
+
+        Returns:
+            the compiled graph
+        """
+        llm = self.get_llm()
+        tools = self.get_tools()
+        llm_with_tools = llm.bind_tools(tools) if tools else llm
         message_history = self.get_message_history(thread_id)
 
         def custom_add_messages(left: list[BaseMessage], right: list[BaseMessage]):
             result = add_messages(left, right)
 
             if thread_id:
-                # We only want to store human and ai messages that are not tool calls
                 messages_to_store = [
                     m
                     for m in result
@@ -472,10 +487,6 @@ class AIAssistant(abc.ABC):  # noqa: F821
             input: str  # noqa: A003
             context: str
             output: str
-
-        llm = self.get_llm()
-        tools = self.get_tools()
-        llm_with_tools = llm.bind_tools(tools) if tools else llm
 
         def setup(state: AgentState):
             return {"messages": [SystemMessage(content=self.get_instructions())]}
@@ -501,7 +512,8 @@ class AIAssistant(abc.ABC):  # noqa: F821
             }
 
         def history(state: AgentState):
-            return {"messages": [*message_history.messages, HumanMessage(content=state["input"])]}
+            history = message_history.messages if thread_id else []
+            return {"messages": [*history, HumanMessage(content=state["input"])]}
 
         def agent(state: AgentState):
             response = llm_with_tools.invoke(state["messages"])
