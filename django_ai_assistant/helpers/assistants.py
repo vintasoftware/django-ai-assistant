@@ -50,6 +50,7 @@ from langgraph.graph import END, StateGraph
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
 
+from django_ai_assistant.conf import app_settings
 from django_ai_assistant.decorators import with_cast_id
 from django_ai_assistant.exceptions import (
     AIAssistantMisconfiguredError,
@@ -659,8 +660,10 @@ class AIAssistant(abc.ABC):  # noqa: F821
             dict: The output of the assistant chain,
                 structured like `{"output": "assistant response", "history": ...}`.
         """
-        # chain = self.as_chain(thread_id)
-        chain = self.as_graph(thread_id)
+        if app_settings.USE_LANGGRAPH:
+            chain = self.as_graph(thread_id)
+        else:
+            chain = self.as_chain(thread_id)
         return chain.invoke(*args, **kwargs)
 
     @with_cast_id
