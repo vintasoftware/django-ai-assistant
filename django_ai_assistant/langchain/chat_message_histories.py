@@ -77,7 +77,9 @@ class DjangoChatMessageHistory(BaseChatMessageHistory):
             messages: A list of BaseMessage objects to store.
         """
         with transaction.atomic():
-            existing_message_ids = [m.id for m in self.get_messages()]
+            existing_message_ids = [
+                str(i) for i in self._get_messages_qs().values_list("id", flat=True)
+            ]
 
             messages_to_create = [m for m in messages if m.id not in existing_message_ids]
 
@@ -99,7 +101,9 @@ class DjangoChatMessageHistory(BaseChatMessageHistory):
         Args:
             messages: A list of BaseMessage objects to store.
         """
-        existing_message_ids = [m.id for m in await self.aget_messages()]
+        existing_message_ids = [
+            str(i) async for i in self._get_messages_qs().values_list("id", flat=True)
+        ]
 
         messages_to_create = [m for m in messages if m.id not in existing_message_ids]
 
