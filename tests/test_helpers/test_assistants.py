@@ -238,7 +238,6 @@ def test_AIAssistant_tool_order_same_as_declaration():
     ]
 
 
-@pytest.mark.django_db(transaction=True)
 @pytest.mark.vcr
 def test_AIAssistant_pydantic_structured_output():
     from pydantic import BaseModel
@@ -265,7 +264,6 @@ def test_AIAssistant_pydantic_structured_output():
     assert result.is_student is False
 
 
-@pytest.mark.django_db(transaction=True)
 @pytest.mark.vcr
 def test_AIAssistant_typeddict_structured_output():
     class OutputSchema(TypedDict):
