@@ -1,0 +1,189 @@
+interactions:
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant that provides information
+      about people.", "role": "system"}, {"content": "In the last step of this chat
+      you will be asked to respond in JSON. Gather information using tools. Don''t
+      generate JSON until you are explicitly told to. ", "role": "system"}, {"content":
+      "Tell me about John who is 30 years old and not a student.", "role": "user"}],
+      "model": "gpt-4o-2024-08-06", "n": 1, "stream": false, "temperature": 1.0}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - DUMMY
+      connection:
+      - keep-alive
+      content-length:
+      - '470'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - OpenAI/Python
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA1RSwW7bMAy9+ysInZ0iTlyny2XoZQOG7rChQA/rECgybWmVRU2km2ZF/32Q4ybb
+        RRDeI58e9fhaACjXqi0oY7WYIfrFbeO+fzK3rglPvx/oW/Xn7u7rYWUflk19/KzK3EH7X2jkvevK
+        0BA9iqNwok1CLZhVq82qqZq6ul5PxEAt+tzWR1nUtFgtV/ViebNYNnOjJWeQ1RZ+FAAAr9OZLYYW
+        X9QWluU7MiCz7lFtz0UAKpHPiNLMjkUHUeWFNBQEw+T6niAmenYtwpFGODixkNDjsw4CLnSUBp3H
+        Ab2nUeAL2VCCodG3U330qBmBrU4IAyWEFkU7z0AJpmdeBBL2OrUu9HCwzljgiMZ1zsCjynqPapLK
+        Cgk7TClXCn2Ee4sJJ3zQ4QgRKXo8WRSrBYIesAQmyKxuW5eNan+2wKOxoBmsYyBjxjhNUoInM98o
+        gQuCCVkYDtNUFn0E43Vy3XH2GzExhcnkgDpc/fuVCbuRdU4yjN7P+Ns5G099TLTnmT/jnQuO7S6h
+        Zgo5BxaKamLfCoCf0w6M/8WqYqIhyk7oCUMW3KxPcuqydBfyejOTQqL9Ba/Wy2I2qPjIgsOuc6HH
+        FJM7bUQXd1W93u9v6g8ro4q34i8AAAD//wMA5g4c6BoDAAA=
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date: Sun, 09 Jun 2024 23:39:08 GMT
+      Server: DUMMY
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant that provides information
+      about people.", "role": "system"}, {"content": "In the last step of this chat
+      you will be asked to respond in JSON. JSON will have the following schema:\n\n{\"properties\":
+      {\"name\": {\"title\": \"Name\", \"type\": \"string\"}, \"age\": {\"title\":
+      \"Age\", \"type\": \"integer\"}, \"is_student\": {\"title\": \"Is Student\",
+      \"type\": \"boolean\"}}, \"required\": [\"name\", \"age\", \"is_student\"],
+      \"title\": \"OutputSchema\", \"type\": \"object\"}\n\nGather information using
+      tools. Don''t generate JSON until you are explicitly told to. ", "role": "system"},
+      {"content": "Tell me about John who is 30 years old and not a student.", "role":
+      "user"}], "model": "gpt-4o-2024-08-06", "n": 1, "stream": false, "temperature":
+      1.0}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - DUMMY
+      connection:
+      - keep-alive
+      content-length:
+      - '811'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - OpenAI/Python
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA1RSy27bMBC86ysWvPQiB5LiR+tLUaSXBL0ELdoAQWHQ5FpiTXFZ7iquEfjfC8qK
+        3V54mOHMDnf4WgAoZ9UalOm0mD762ael+/rFfj/Yav94d9f2WD+F1cP9D//4lFiVWUHbX2jkTXVj
+        qI8exVE40yahFsyu9apZ1st509Qj0ZNFn2VtlNmcZk3VzGfV+1m1nIQdOYOs1vBcAAC8jmeOGCz+
+        UWuoyjekR2bdolpfLgGoRD4jSjM7Fh1ElVfSUBAMY+pvBDHRi7MIRxrg4KQD6RAS/h6QBS24sKPU
+        6/ymEu7feQ+tlg4TWBTtPIPe0iCgIWJiChB0jxYeqAtw6Agcw20FR9SJgbwFHSwEyvdZBotBbuAz
+        jbM7/YKgwxE4onE7Z2CM4Cgw0HXcGFMHASHYBzpM86VzPE4tgQfTgWbICBkzxCm8C4IJWbjMfp7M
+        iH/8dzMJdwPrXEwYvJ/w02XVntqYaMsTf8F3LjjuNgk1U8hrZaGoRvZUAPwcKx3+a0nFRH2UjdAe
+        QzasF6uzn7p+oiu7uJ1IIdH+ijd1VUwJFR9ZsN/sXGgxxeTODe/i5gPWC2PsUs9VcSr+AgAA//8D
+        AEEAD0DqAgAA
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date: Sun, 09 Jun 2024 23:39:08 GMT
+      Server: DUMMY
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant that provides information
+      about people.", "role": "system"}, {"content": "In the last step of this chat
+      you will be asked to respond in JSON. JSON will have the following schema:\n\n{\"properties\":
+      {\"name\": {\"title\": \"Name\", \"type\": \"string\"}, \"age\": {\"title\":
+      \"Age\", \"type\": \"integer\"}, \"is_student\": {\"title\": \"Is Student\",
+      \"type\": \"boolean\"}}, \"required\": [\"name\", \"age\", \"is_student\"],
+      \"title\": \"OutputSchema\", \"type\": \"object\"}\n\nGather information using
+      tools. Don''t generate JSON until you are explicitly told to. ", "role": "system"},
+      {"content": "Tell me about John who is 30 years old and not a student.", "role":
+      "user"}, {"content": "To provide you with the requested information, I''ll gather
+      details about a person named John who is 30 years old and not a student. Do
+      you have any specific questions or details you want to know about this John,
+      such as his occupation, interests, or location?", "role": "assistant"}, {"content":
+      "Use the information gathered in the conversation to answer.", "role": "system"}],
+      "model": "gpt-4o-2024-08-06", "n": 1, "response_format": {"type": "json_schema",
+      "json_schema": {"schema": {"properties": {"name": {"title": "Name", "type":
+      "string"}, "age": {"title": "Age", "type": "integer"}, "is_student": {"title":
+      "Is Student", "type": "boolean"}}, "required": ["name", "age", "is_student"],
+      "title": "OutputSchema", "type": "object", "additionalProperties": false}, "name":
+      "OutputSchema", "strict": true}}, "temperature": 1.0}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - DUMMY
+      connection:
+      - keep-alive
+      content-length:
+      - '1578'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - OpenAI/Python
+      x-stainless-helper-method:
+      - beta.chat.completions.parse
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA1SQwU+DMBjF7/wVzXcGA4zhxs3ExLgYPajxIIaU8gHdStvQEmcW/ndTxoZeeni/
+        vpf3vZNHCPAKMgKspZZ1WgR3KX99KYfmvi3l80O6e/z4Xh9xfyjl+9Mb+M6hyj0ye3HdMNVpgZYr
+        ecasR2rRpUa3cRqlSRwnE+hUhcLZGm2DRAVxGCdBuAnCdDa2ijM0kJFPjxBCTtPrKsoKj5CR0L8o
+        HRpDG4Ts+okQ6JVwClBjuLFUWvAXyJS0KKfWpxwk7TCHLIedamUOfg60ccIq9HPgpjB2qFDaHLKa
+        CoPj36Qe68FQd4gchJj18VpNqEb3qjQzv+o1l9y0RY/UKOlqGKs0THT0CPmaJhj+XQW6V522hVUH
+        lC4w3kbnPFhGX2iUzNAqS8Wir8K1NzcE82MsdkXNZYO97vl5kVoXUbIqy02yjRl4o/cLAAD//wMA
+        b8XsohoCAAA=
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date: Sun, 09 Jun 2024 23:39:08 GMT
+      Server: DUMMY
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+    status:
+      code: 200
+      message: OK
+version: 1

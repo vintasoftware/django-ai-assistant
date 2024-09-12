@@ -1,7 +1,8 @@
 import abc
 import inspect
+import json
 import re
-from typing import Annotated, Any, ClassVar, Sequence, TypedDict, cast
+from typing import Annotated, Any, ClassVar, Dict, Sequence, Type, TypedDict, cast
 
 from langchain.chains.combine_documents.base import (
     DEFAULT_DOCUMENT_PROMPT,
@@ -37,6 +38,7 @@ from langchain_openai import ChatOpenAI
 from langgraph.graph import END, StateGraph
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
+from pydantic import BaseModel
 
 from django_ai_assistant.decorators import with_cast_id
 from django_ai_assistant.exceptions import (
@@ -79,6 +81,12 @@ class AIAssistant(abc.ABC):  # noqa: F821
     When True, the assistant will use a retriever to get documents to provide as context to the LLM.
     Additionally, the assistant class should implement the `get_retriever` method to return
     the retriever to use."""
+    structured_output: Dict[str, Any] | Type[BaseModel] | Type | None = None
+    """Structured output to use for the assistant.\n
+    Defaults to `None`.
+    When not `None`, the assistant will return a structured output in the provided format.
+    See https://python.langchain.com/v0.2/docs/how_to/structured_output/ for the available formats.
+    """
     _user: Any | None
     """The current user the assistant is helping. A model instance.\n
     Set by the constructor.
@@ -269,6 +277,27 @@ class AIAssistant(abc.ABC):  # noqa: F821
             model_kwargs=model_kwargs,
         )
 
+    def get_structured_output_llm(self) -> Runnable:
+        """Get the LLM model to use for the structured output.
+        By default, this is the `get_llm` method.
+
+        Returns:
+            BaseChatModel: The LLM model to use for the structured output.
+        """
+        if not self.structured_output:
+            raise ValueError("structured_output is not defined")
+
+        llm = self.get_llm()
+
+        method = "json_mode"
+        if isinstance(llm, ChatOpenAI):
+            # When using ChatOpenAI, it's better to use json_schema method
+            # because it enables strict mode.
+            # https://platform.openai.com/docs/guides/structured-outputs
+            method = "json_schema"
+
+        return llm.with_structured_output(self.structured_output, method=method)
+
     def get_tools(self) -> Sequence[BaseTool]:
         """Get the list of method tools the assistant can use.
         By default, this is the `_method_tools` attribute, which are all `@method_tool`s.\n
@@ -422,7 +451,36 @@ class AIAssistant(abc.ABC):  # noqa: F821
             output: str
 
         def setup(state: AgentState):
-            return {"messages": [SystemMessage(content=self.get_instructions())]}
+            messages = [SystemMessage(content=self.get_instructions())]
+
+            if self.structured_output:
+                schema = None
+
+                # If Pydantic
+                if inspect.isclass(self.structured_output) and issubclass(
+                    self.structured_output, BaseModel
+                ):
+                    schema = json.dumps(self.structured_output.model_json_schema())
+
+                schema_information = ""
+                if schema:
+                    schema_information = f"JSON will have the following schema:\n\n{schema}\n\n"
+
+                # The assistant won't have access to the schema of the structured output before
+                # the last step of the chat. This message gives visibility about what fields the
+                # response should have so it can gather the necessary information by using tools.
+                messages.append(
+                    SystemMessage(
+                        content=(
+                            "In the last step of this chat you will be asked to respond in JSON. "
+                            + schema_information
+                            + "Gather information using tools. "
+                            "Don't generate JSON until you are explicitly told to. "
+                        )
+                    )
+                )
+
+            return {"messages": messages}
 
         def retriever(state: AgentState):
             if not self.has_rag:
@@ -462,7 +520,20 @@ class AIAssistant(abc.ABC):  # noqa: F821
             return "continue"
 
         def record_response(state: AgentState):
-            return {"output": state["messages"][-1].content}
+            if self.structured_output:
+                llm_with_structured_output = self.get_structured_output_llm()
+                response = llm_with_structured_output.invoke(
+                    [
+                        *state["messages"],
+                        SystemMessage(
+                            content="Use the information gathered in the conversation to answer."
+                        ),
+                    ]
+                )
+            else:
+                response = state["messages"][-1].content
+
+            return {"output": response}
 
         workflow = StateGraph(AgentState)
 

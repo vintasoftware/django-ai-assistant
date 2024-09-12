@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, TypedDict
 from unittest.mock import patch
 
 import pytest
@@ -236,3 +236,58 @@ def test_AIAssistant_tool_order_same_as_declaration():
         "tool_b",
         "tool_a",
     ]
+
+
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.vcr
+def test_AIAssistant_pydantic_structured_output():
+    from pydantic import BaseModel
+
+    class OutputSchema(BaseModel):
+        name: str
+        age: int
+        is_student: bool
+
+    class StructuredOutputAssistant(AIAssistant):
+        id = "structured_output_assistant"  # noqa: A003
+        name = "Structured Output Assistant"
+        instructions = "You are a helpful assistant that provides information about people."
+        model = "gpt-4o-2024-08-06"
+        structured_output = OutputSchema
+
+    assistant = StructuredOutputAssistant()
+
+    # Test invoking the assistant with structured output
+    result = assistant.run("Tell me about John who is 30 years old and not a student.")
+    assert isinstance(result, OutputSchema)
+    assert result.name == "John"
+    assert result.age == 30
+    assert result.is_student is False
+
+
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.vcr
+def test_AIAssistant_typeddict_structured_output():
+    class OutputSchema(TypedDict):
+        title: str
+        year: int
+        genres: List[str]
+
+    class DictStructuredOutputAssistant(AIAssistant):
+        id = "dict_structured_output_assistant"  # noqa: A003
+        name = "Dict Structured Output Assistant"
+        instructions = "You are a helpful assistant that provides information about movies."
+        model = "gpt-4o-2024-08-06"
+        structured_output = OutputSchema
+
+    assistant = DictStructuredOutputAssistant()
+
+    # Test invoking the assistant with dict structured output
+    result = assistant.run(
+        "Provide information about the movie Shrek. "
+        "It was released in 2001 and is an animation and comedy movie."
+    )
+
+    assert result["title"] == "Shrek"
+    assert result["year"] == 2001
+    assert result["genres"] == ["Animation", "Comedy"]
