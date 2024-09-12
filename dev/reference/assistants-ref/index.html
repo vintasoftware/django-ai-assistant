@@ -1938,7 +1938,8 @@
 <span class="normal">549</span>
 <span class="normal">550</span>
 <span class="normal">551</span>
-<span class="normal">552</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">AIAssistant</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>  <span class="c1"># noqa: F821</span>
+<span class="normal">552</span>
+<span class="normal">553</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">AIAssistant</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>  <span class="c1"># noqa: F821</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for AI Assistants. Subclasses must define at least the following attributes:</span>
 
 <span class="sd">    * id: str</span>
@@ -2317,12 +2318,17 @@
         <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">AgentState</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">SystemMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_instructions</span><span class="p">())]}</span>
 
+        <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">AgentState</span><span class="p">):</span>
+            <span class="n">history</span> <span class="o">=</span> <span class="n">message_history</span><span class="o">.</span><span class="n">messages</span> <span class="k">if</span> <span class="n">message_history</span> <span class="k">else</span> <span class="p">[]</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">*</span><span class="n">history</span><span class="p">,</span> <span class="n">HumanMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">])]}</span>
+
         <span class="k">def</span> <span class="nf">retriever</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">AgentState</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_rag</span><span class="p">:</span>
                 <span class="k">return</span>
 
             <span class="n">retriever</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_history_aware_retriever</span><span class="p">()</span>
-            <span class="n">docs</span> <span class="o">=</span> <span class="n">retriever</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">],</span> <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">]})</span>
+            <span class="n">messages_without_input</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">docs</span> <span class="o">=</span> <span class="n">retriever</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">],</span> <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="n">messages_without_input</span><span class="p">})</span>
 
             <span class="n">document_separator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_document_separator</span><span class="p">()</span>
             <span class="n">document_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_document_prompt</span><span class="p">()</span>
@@ -2336,10 +2342,6 @@
                     <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;---START OF CONTEXT---</span><span class="se">\n</span><span class="si">{</span><span class="n">formatted_docs</span><span class="si">}</span><span class="s2">---END OF CONTEXT---</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
             <span class="p">}</span>
-
-        <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">AgentState</span><span class="p">):</span>
-            <span class="n">history</span> <span class="o">=</span> <span class="n">message_history</span><span class="o">.</span><span class="n">messages</span> <span class="k">if</span> <span class="n">message_history</span> <span class="k">else</span> <span class="p">[]</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">*</span><span class="n">history</span><span class="p">,</span> <span class="n">HumanMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">])]}</span>
 
         <span class="k">def</span> <span class="nf">agent</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">AgentState</span><span class="p">):</span>
             <span class="n">response</span> <span class="o">=</span> <span class="n">llm_with_tools</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">])</span>
@@ -2360,16 +2362,16 @@
         <span class="n">workflow</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">AgentState</span><span class="p">)</span>
 
         <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;setup&quot;</span><span class="p">,</span> <span class="n">setup</span><span class="p">)</span>
-        <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;retriever&quot;</span><span class="p">,</span> <span class="n">retriever</span><span class="p">)</span>
         <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;history&quot;</span><span class="p">,</span> <span class="n">history</span><span class="p">)</span>
+        <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;retriever&quot;</span><span class="p">,</span> <span class="n">retriever</span><span class="p">)</span>
         <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;agent&quot;</span><span class="p">,</span> <span class="n">agent</span><span class="p">)</span>
         <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;tools&quot;</span><span class="p">,</span> <span class="n">ToolNode</span><span class="p">(</span><span class="n">tools</span><span class="p">))</span>
         <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;respond&quot;</span><span class="p">,</span> <span class="n">record_response</span><span class="p">)</span>
 
         <span class="n">workflow</span><span class="o">.</span><span class="n">set_entry_point</span><span class="p">(</span><span class="s2">&quot;setup&quot;</span><span class="p">)</span>
-        <span class="n">workflow</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;setup&quot;</span><span class="p">,</span> <span class="s2">&quot;retriever&quot;</span><span class="p">)</span>
-        <span class="n">workflow</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;retriever&quot;</span><span class="p">,</span> <span class="s2">&quot;history&quot;</span><span class="p">)</span>
-        <span class="n">workflow</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;history&quot;</span><span class="p">,</span> <span class="s2">&quot;agent&quot;</span><span class="p">)</span>
+        <span class="n">workflow</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;setup&quot;</span><span class="p">,</span> <span class="s2">&quot;history&quot;</span><span class="p">)</span>
+        <span class="n">workflow</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;history&quot;</span><span class="p">,</span> <span class="s2">&quot;retriever&quot;</span><span class="p">)</span>
+        <span class="n">workflow</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;retriever&quot;</span><span class="p">,</span> <span class="s2">&quot;agent&quot;</span><span class="p">)</span>
         <span class="n">workflow</span><span class="o">.</span><span class="n">add_conditional_edges</span><span class="p">(</span>
             <span class="s2">&quot;agent&quot;</span><span class="p">,</span>
             <span class="n">tool_selector</span><span class="p">,</span>
@@ -4040,7 +4042,8 @@ If <code>None</code>, an in-memory chat message history is used.</p>
 <span class="normal">488</span>
 <span class="normal">489</span>
 <span class="normal">490</span>
-<span class="normal">491</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@with_cast_id</span>
+<span class="normal">491</span>
+<span class="normal">492</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@with_cast_id</span>
 <span class="k">def</span> <span class="nf">as_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Runnable</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create the Langchain graph for the assistant.\n</span>
 <span class="sd">    This graph is an agent that supports chat history, tool calling, and RAG (if `has_rag=True`).\n</span>
@@ -4091,12 +4094,17 @@ If <code>None</code>, an in-memory chat message history is used.</p>
     <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">AgentState</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">SystemMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_instructions</span><span class="p">())]}</span>
 
+    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">AgentState</span><span class="p">):</span>
+        <span class="n">history</span> <span class="o">=</span> <span class="n">message_history</span><span class="o">.</span><span class="n">messages</span> <span class="k">if</span> <span class="n">message_history</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">*</span><span class="n">history</span><span class="p">,</span> <span class="n">HumanMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">])]}</span>
+
     <span class="k">def</span> <span class="nf">retriever</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">AgentState</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_rag</span><span class="p">:</span>
             <span class="k">return</span>
 
         <span class="n">retriever</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_history_aware_retriever</span><span class="p">()</span>
-        <span class="n">docs</span> <span class="o">=</span> <span class="n">retriever</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">],</span> <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">]})</span>
+        <span class="n">messages_without_input</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">docs</span> <span class="o">=</span> <span class="n">retriever</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">],</span> <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="n">messages_without_input</span><span class="p">})</span>
 
         <span class="n">document_separator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_document_separator</span><span class="p">()</span>
         <span class="n">document_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_document_prompt</span><span class="p">()</span>
@@ -4110,10 +4118,6 @@ If <code>None</code>, an in-memory chat message history is used.</p>
                 <span class="n">content</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;---START OF CONTEXT---</span><span class="se">\n</span><span class="si">{</span><span class="n">formatted_docs</span><span class="si">}</span><span class="s2">---END OF CONTEXT---</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="p">}</span>
-
-    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">AgentState</span><span class="p">):</span>
-        <span class="n">history</span> <span class="o">=</span> <span class="n">message_history</span><span class="o">.</span><span class="n">messages</span> <span class="k">if</span> <span class="n">message_history</span> <span class="k">else</span> <span class="p">[]</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">*</span><span class="n">history</span><span class="p">,</span> <span class="n">HumanMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">])]}</span>
 
     <span class="k">def</span> <span class="nf">agent</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">AgentState</span><span class="p">):</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">llm_with_tools</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">])</span>
@@ -4134,16 +4138,16 @@ If <code>None</code>, an in-memory chat message history is used.</p>
     <span class="n">workflow</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">AgentState</span><span class="p">)</span>
 
     <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;setup&quot;</span><span class="p">,</span> <span class="n">setup</span><span class="p">)</span>
-    <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;retriever&quot;</span><span class="p">,</span> <span class="n">retriever</span><span class="p">)</span>
     <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;history&quot;</span><span class="p">,</span> <span class="n">history</span><span class="p">)</span>
+    <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;retriever&quot;</span><span class="p">,</span> <span class="n">retriever</span><span class="p">)</span>
     <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;agent&quot;</span><span class="p">,</span> <span class="n">agent</span><span class="p">)</span>
     <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;tools&quot;</span><span class="p">,</span> <span class="n">ToolNode</span><span class="p">(</span><span class="n">tools</span><span class="p">))</span>
     <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;respond&quot;</span><span class="p">,</span> <span class="n">record_response</span><span class="p">)</span>
 
     <span class="n">workflow</span><span class="o">.</span><span class="n">set_entry_point</span><span class="p">(</span><span class="s2">&quot;setup&quot;</span><span class="p">)</span>
-    <span class="n">workflow</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;setup&quot;</span><span class="p">,</span> <span class="s2">&quot;retriever&quot;</span><span class="p">)</span>
-    <span class="n">workflow</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;retriever&quot;</span><span class="p">,</span> <span class="s2">&quot;history&quot;</span><span class="p">)</span>
-    <span class="n">workflow</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;history&quot;</span><span class="p">,</span> <span class="s2">&quot;agent&quot;</span><span class="p">)</span>
+    <span class="n">workflow</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;setup&quot;</span><span class="p">,</span> <span class="s2">&quot;history&quot;</span><span class="p">)</span>
+    <span class="n">workflow</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;history&quot;</span><span class="p">,</span> <span class="s2">&quot;retriever&quot;</span><span class="p">)</span>
+    <span class="n">workflow</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;retriever&quot;</span><span class="p">,</span> <span class="s2">&quot;agent&quot;</span><span class="p">)</span>
     <span class="n">workflow</span><span class="o">.</span><span class="n">add_conditional_edges</span><span class="p">(</span>
         <span class="s2">&quot;agent&quot;</span><span class="p">,</span>
         <span class="n">tool_selector</span><span class="p">,</span>
@@ -4262,8 +4266,7 @@ structured like <code>{"output": "assistant response", "history": ...}</code>.</
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">493</span>
-<span class="normal">494</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">494</span>
 <span class="normal">495</span>
 <span class="normal">496</span>
 <span class="normal">497</span>
@@ -4280,7 +4283,8 @@ structured like <code>{"output": "assistant response", "history": ...}</code>.</
 <span class="normal">508</span>
 <span class="normal">509</span>
 <span class="normal">510</span>
-<span class="normal">511</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@with_cast_id</span>
+<span class="normal">511</span>
+<span class="normal">512</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@with_cast_id</span>
 <span class="k">def</span> <span class="nf">invoke</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Invoke the assistant Langchain graph with the given arguments and keyword arguments.\n</span>
 <span class="sd">    This is the lower-level method to run the assistant.\n</span>
@@ -4402,8 +4406,7 @@ If <code>None</code>, an in-memory chat message history is used.</p>
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">513</span>
-<span class="normal">514</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">514</span>
 <span class="normal">515</span>
 <span class="normal">516</span>
 <span class="normal">517</span>
@@ -4422,7 +4425,8 @@ If <code>None</code>, an in-memory chat message history is used.</p>
 <span class="normal">530</span>
 <span class="normal">531</span>
 <span class="normal">532</span>
-<span class="normal">533</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@with_cast_id</span>
+<span class="normal">533</span>
+<span class="normal">534</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@with_cast_id</span>
 <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the assistant with the given message and thread ID.\n</span>
 <span class="sd">    This is the higher-level method to run the assistant.\n</span>
@@ -4517,8 +4521,7 @@ If <code>None</code>, an in-memory chat message history is used.</p>
 
             <details class="quote">
               <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">538</span>
-<span class="normal">539</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">539</span>
 <span class="normal">540</span>
 <span class="normal">541</span>
 <span class="normal">542</span>
@@ -4531,7 +4534,8 @@ If <code>None</code>, an in-memory chat message history is used.</p>
 <span class="normal">549</span>
 <span class="normal">550</span>
 <span class="normal">551</span>
-<span class="normal">552</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">as_tool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseTool</span><span class="p">:</span>
+<span class="normal">552</span>
+<span class="normal">553</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">as_tool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseTool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a tool from the assistant.\n</span>
 <span class="sd">    This is useful to compose assistants.\n</span>
 
