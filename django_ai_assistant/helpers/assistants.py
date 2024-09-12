@@ -279,7 +279,6 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
     def get_structured_output_llm(self) -> Runnable:
         """Get the LLM model to use for the structured output.
-        By default, this is the `get_llm` method.
 
         Returns:
             BaseChatModel: The LLM model to use for the structured output.
