@@ -1,5 +1,3 @@
-import json
-
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -122,4 +120,4 @@ class TourGuideAssistantView(View):
         a = TourGuideAIAssistant()
         data = a.run(f"My coordinates are: ({coordinates})")
 
-        return JsonResponse(json.loads(data))
+        return JsonResponse(data.model_dump())

@@ -2,31 +2,24 @@ import json
 
 from django.utils import timezone
 
+from pydantic import BaseModel, Field
+
 from django_ai_assistant import AIAssistant, method_tool
 from tour_guide.integrations import fetch_points_of_interest
 
 
-def _tour_guide_example_json():
-    return json.dumps(
-        {
-            "nearby_attractions": [
-                {
-                    "attraction_name": f"<attraction-{i}-name-here>",
-                    "attraction_description": f"<attraction-{i}-description-here>",
-                    "attraction_url": f"<attraction-{i}-imdb-page-url-here>",
-                }
-                for i in range(1, 6)
-            ]
-        },
-        indent=2,
-    ).translate(  # Necessary due to ChatPromptTemplate
-        str.maketrans(
-            {
-                "{": "{{",
-                "}": "}}",
-            }
-        )
+class Attraction(BaseModel):
+    attraction_name: str = Field(description="The name of the attraction in english")
+    attraction_description: str = Field(
+        description="The description of the attraction, provide information in an entertaining way"
     )
+    attraction_url: str = Field(
+        description="The URL of the attraction, keep empty if you don't have this information"
+    )
+
+
+class TourGuide(BaseModel):
+    nearby_attractions: list[Attraction] = Field(description="The list of nearby attractions")
 
 
 class TourGuideAIAssistant(AIAssistant):
@@ -35,16 +28,11 @@ class TourGuideAIAssistant(AIAssistant):
     instructions = (
         "You are a tour guide assistant that offers information about nearby attractions. "
         "You will receive the user coordinates and should use available tools to find nearby attractions. "
+        "Only include in your response the items that are relevant to a tourist visiting the area. "
         "Only call the find_nearby_attractions tool once. "
-        "Your response should only contain valid JSON data. DON'T include '```json' in your response. "
-        "The JSON should be formatted according to the following structure: \n"
-        f"\n\n{_tour_guide_example_json()}\n\n\n"
-        "In the 'attraction_name' field provide the name of the attraction in english. "
-        "In the 'attraction_description' field generate an overview about the attraction with the most important information, "
-        "curiosities and interesting facts. "
-        "Only include a value for the 'attraction_url' field if you find a real value in the provided data otherwise keep it empty. "
     )
     model = "gpt-4o-2024-08-06"
+    structured_output = TourGuide
 
     def get_instructions(self):
         # Warning: this will use the server's timezone

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, TypedDict
 from unittest.mock import patch
 
 import pytest
@@ -172,18 +172,13 @@ def test_AIAssistant_with_rag_invoke():
 
     assert response_0["input"] == "I'm at Central Park W & 79st, New York, NY 10024, United States."
     assert response_0["output"] == (
-        "You're right by Central Park, perfect for a scenic walk or a visit to its famous landmarks. "
-        "Just across the street, you can explore the American Museum of Natural History, "
-        "home to fascinating exhibits on human cultures, the natural world, and the universe. "
-        "Both offer a rich experience in nature and history."
+        "You're in a fantastic spot! Right nearby is the American Museum of Natural History, where you "
+        "can explore fascinating exhibits on dinosaurs, space, and much more. Enjoy your day!"
     )
     assert response_1["input"] == "11 W 53rd St, New York, NY 10019, United States."
     assert response_1["output"] == (
-        "You're right near the Museum of Modern Art (MoMA), "
-        "which houses an impressive collection of modern and contemporary art. "
-        "Additionally, Rockefeller Center is just a short walk away, "
-        "featuring shops, restaurants, and the Top of the Rock observation deck for stunning city views. "
-        "Both locations provide enriching cultural and sightseeing opportunities."
+        "You're very close to the Museum of Modern Art (MoMA), which features an extensive collection of "
+        "contemporary and modern art. It's a must-visit for art enthusiasts!"
     )
 
     expected_messages = messages_to_dict(
@@ -238,3 +233,56 @@ def test_AIAssistant_tool_order_same_as_declaration():
         "tool_b",
         "tool_a",
     ]
+
+
+@pytest.mark.vcr
+def test_AIAssistant_pydantic_structured_output():
+    from pydantic import BaseModel
+
+    class OutputSchema(BaseModel):
+        name: str
+        age: int
+        is_student: bool
+
+    class StructuredOutputAssistant(AIAssistant):
+        id = "structured_output_assistant"  # noqa: A003
+        name = "Structured Output Assistant"
+        instructions = "You are a helpful assistant that provides information about people."
+        model = "gpt-4o-2024-08-06"
+        structured_output = OutputSchema
+
+    assistant = StructuredOutputAssistant()
+
+    # Test invoking the assistant with structured output
+    result = assistant.run("Tell me about John who is 30 years old and not a student.")
+    assert isinstance(result, OutputSchema)
+    assert result.name == "John"
+    assert result.age == 30
+    assert result.is_student is False
+
+
+@pytest.mark.vcr
+def test_AIAssistant_typeddict_structured_output():
+    class OutputSchema(TypedDict):
+        title: str
+        year: int
+        genres: List[str]
+
+    class DictStructuredOutputAssistant(AIAssistant):
+        id = "dict_structured_output_assistant"  # noqa: A003
+        name = "Dict Structured Output Assistant"
+        instructions = "You are a helpful assistant that provides information about movies."
+        model = "gpt-4o-2024-08-06"
+        structured_output = OutputSchema
+
+    assistant = DictStructuredOutputAssistant()
+
+    # Test invoking the assistant with dict structured output
+    result = assistant.run(
+        "Provide information about the movie Shrek. "
+        "It was released in 2001 and is an animation and comedy movie."
+    )
+
+    assert result["title"] == "Shrek"
+    assert result["year"] == 2001
+    assert result["genres"] == ["Animation", "Comedy"]
