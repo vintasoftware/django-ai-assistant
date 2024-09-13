@@ -164,4 +164,170 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant that provides information
+      about movies.", "role": "system"}, {"content": "In the last step of this chat
+      you will be asked to respond in JSON. Don''t generate JSON until you are explicitly
+      told to. ", "role": "user"}, {"content": "Provide information about the movie
+      Shrek. It was released in 2001 and is an animation and comedy movie.", "role":
+      "user"}], "model": "gpt-4o-2024-08-06", "n": 1, "stream": false, "temperature":
+      1.0}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - DUMMY
+      connection:
+      - keep-alive
+      content-length:
+      - '483'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - OpenAI/Python
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        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
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date: Sun, 09 Jun 2024 23:39:08 GMT
+      Server: DUMMY
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant that provides information
+      about movies.", "role": "system"}, {"content": "In the last step of this chat
+      you will be asked to respond in JSON. Don''t generate JSON until you are explicitly
+      told to. ", "role": "user"}, {"content": "Provide information about the movie
+      Shrek. It was released in 2001 and is an animation and comedy movie.", "role":
+      "user"}, {"content": "\"Shrek\" is a beloved animated comedy film that was released
+      on May 18, 2001. The film was produced by DreamWorks Animation and directed
+      by Andrew Adamson and Vicky Jenson. It is based on the 1990 fairy tale picture
+      book of the same name by William Steig.\n\n### Plot Summary\nThe story follows
+      Shrek, a reclusive and grumpy ogre who enjoys living in solitude in his swamp.
+      However, his peace is disturbed when a group of fairy-tale creatures, including
+      characters like the Three Blind Mice and the Big Bad Wolf, are dumped in his
+      swamp by the evil Lord Farquaad. To save his home, Shrek makes a deal with Farquaad
+      to rescue Princess Fiona, who is trapped in a tower guarded by a dragon. Throughout
+      his journey, Shrek is accompanied by a talkative and annoying donkey named Donkey.
+      Upon meeting Princess Fiona, Shrek discovers that she is not what she appears
+      to be, leading to unexpected twists and a heartwarming conclusion.\n\n### Voice
+      Cast\n- **Mike Myers** as Shrek\n- **Eddie Murphy** as Donkey\n- **Cameron Diaz**
+      as Princess Fiona\n- **John Lithgow** as Lord Farquaad\n\n### Notable Achievements\n-
+      \"Shrek\" was the first film to win the Academy Award for Best Animated Feature,
+      a category introduced in 2002.\n- It was also nominated for Best Adapted Screenplay.\n-
+      The movie was a critical and commercial success, leading to several sequels
+      and spin-offs.\n\n### Themes\n\"Shrek\" is known for its humor, satire, and
+      the unconventional approach to fairy-tale characters. It explores themes like
+      acceptance, friendship, and the idea that beauty is only skin deep.\n\n### Cultural
+      Impact\n\"Shrek\" is often praised for its appeal to both children and adults,
+      offering humor and moral lessons. It parodies traditional fairy tales and has
+      become a culturally significant film, spawning a franchise that includes multiple
+      sequels, such as \"Shrek 2,\" \"Shrek the Third,\" and \"Shrek Forever After,\"
+      as well as a successful stage musical.\n\nThe film''s unique blend of humor,
+      heart, and innovative animation techniques has cemented its legacy in the world
+      of animated films.", "role": "assistant"}, {"content": "Use the information
+      gathered in the conversation to answer.", "role": "user"}], "model": "gpt-4o-2024-08-06",
+      "n": 1, "response_format": {"type": "json_schema", "json_schema": {"name": "OutputSchema",
+      "description": "dict() -> new empty dictionary\ndict(mapping) -> new dictionary
+      initialized from a mapping object''s\n    (key, value) pairs\ndict(iterable)
+      -> new dictionary initialized as if via:\n    d = {}\n    for k, v in iterable:\n        d[k]
+      = v\ndict(**kwargs) -> new dictionary initialized with the name=value pairs\n    in
+      the keyword argument list.  For example:  dict(one=1, two=2)", "strict": true,
+      "schema": {"type": "object", "properties": {"title": {"type": "string"}, "year":
+      {"type": "integer"}, "genres": {"type": "array", "items": {"type": "string"}}},
+      "required": ["title", "year", "genres"], "additionalProperties": false}}}, "temperature":
+      1.0}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - DUMMY
+      connection:
+      - keep-alive
+      content-length:
+      - '3413'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - OpenAI/Python
+      x-stainless-helper-method:
+      - beta.chat.completions.parse
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA3RRPW/bMBTc9SuIN0sFTSu2oy1IinYMkiFAwkCgpSeZNkWy5DMQ1/B/Dyh/dujC
+        4e7d4e64zxgD3ULFoFkpagZvioc5/8Knn79nbave/iw6sQ6/1i92M7Pvz38hTwq3XGNDZ9WPxg3e
+        IGlnj3QTUBEm18lczMT0bnpXjsTgWjRJ1nsqSlcILsqCLwo+OwlXTjcYoWIfGWOM7cc3RbQtfkHF
+        eH5GBoxR9QjV5YgxCM4kBFSMOpKyBPmVbJwltGPqvQTSZFBCJeF1FXAjIZewQxUkVILzSS6hRxsw
+        Sqg+JDxYPahUcLx7dAO2Owmfh1v/gN02qlTPbo054YdLYON6H9wynvgL3mmr46oOqKKzKVwk52Fk
+        Dxljn+Mw23+6gg9u8FST26BNhnNeHv3g+hVXdrI4keRImRuVEP9T1S2S0ibezAvHhNr2Vwd+iTn2
+        hLiLhEPdadtj8EEf1+58PSmny+WivBcNZIfsGwAA//8DAFj9bIN2AgAA
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date: Sun, 09 Jun 2024 23:39:08 GMT
+      Server: DUMMY
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+    status:
+      code: 200
+      message: OK
 version: 1
