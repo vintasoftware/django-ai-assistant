@@ -482,12 +482,17 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
             return {"messages": messages}
 
+        def history(state: AgentState):
+            history = message_history.messages if message_history else []
+            return {"messages": [*history, HumanMessage(content=state["input"])]}
+
         def retriever(state: AgentState):
             if not self.has_rag:
                 return
 
             retriever = self.get_history_aware_retriever()
-            docs = retriever.invoke({"input": state["input"], "history": state["messages"]})
+            messages_without_input = state["messages"][:-1]
+            docs = retriever.invoke({"input": state["input"], "history": messages_without_input})
 
             document_separator = self.get_document_separator()
             document_prompt = self.get_document_prompt()
@@ -500,10 +505,6 @@ class AIAssistant(abc.ABC):  # noqa: F821
             system_message.content += (
                 f"\n\n---START OF CONTEXT---\n{formatted_docs}---END OF CONTEXT---\n\n"
             )
-
-        def history(state: AgentState):
-            history = message_history.messages if message_history else []
-            return {"messages": [*history, HumanMessage(content=state["input"])]}
 
         def agent(state: AgentState):
             response = llm_with_tools.invoke(state["messages"])
@@ -537,16 +538,16 @@ class AIAssistant(abc.ABC):  # noqa: F821
         workflow = StateGraph(AgentState)
 
         workflow.add_node("setup", setup)
-        workflow.add_node("retriever", retriever)
         workflow.add_node("history", history)
+        workflow.add_node("retriever", retriever)
         workflow.add_node("agent", agent)
         workflow.add_node("tools", ToolNode(tools))
         workflow.add_node("respond", record_response)
 
         workflow.set_entry_point("setup")
-        workflow.add_edge("setup", "retriever")
-        workflow.add_edge("retriever", "history")
-        workflow.add_edge("history", "agent")
+        workflow.add_edge("setup", "history")
+        workflow.add_edge("history", "retriever")
+        workflow.add_edge("retriever", "agent")
         workflow.add_conditional_edges(
             "agent",
             tool_selector,

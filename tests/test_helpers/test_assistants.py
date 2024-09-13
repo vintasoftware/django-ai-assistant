@@ -172,16 +172,18 @@ def test_AIAssistant_with_rag_invoke():
 
     assert response_0["input"] == "I'm at Central Park W & 79st, New York, NY 10024, United States."
     assert response_0["output"] == (
-        "You're right by Central Park, perfect for a scenic walk or picnic. Just across the "
-        "street, you can visit the American Museum of Natural History, which offers fascinating "
-        "exhibits on everything from dinosaurs to outer space. Enjoy your time!"
+        "You're right by Central Park, perfect for a scenic walk or a visit to its famous landmarks. "
+        "Just across the street, you can explore the American Museum of Natural History, "
+        "home to fascinating exhibits on human cultures, the natural world, and the universe. "
+        "Both offer a rich experience in nature and history."
     )
     assert response_1["input"] == "11 W 53rd St, New York, NY 10019, United States."
     assert response_1["output"] == (
-        "You're near the Museum of Modern Art (MoMA), which features an impressive collection "
-        "of contemporary and modern art. Additionally, you're close to Rockefeller Center, "
-        "where you can enjoy shops, dining, and the observation deck for incredible city "
-        "views. Both attractions are must-sees!"
+        "You're right near the Museum of Modern Art (MoMA), "
+        "which houses an impressive collection of modern and contemporary art. "
+        "Additionally, Rockefeller Center is just a short walk away, "
+        "featuring shops, restaurants, and the Top of the Rock observation deck for stunning city views. "
+        "Both locations provide enriching cultural and sightseeing opportunities."
     )
 
     expected_messages = messages_to_dict(
