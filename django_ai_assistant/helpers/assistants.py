@@ -450,7 +450,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
             output: str
 
         def setup(state: AgentState):
-            messages = [SystemMessage(content=self.get_instructions())]
+            messages: list[AnyMessage] = [SystemMessage(content=self.get_instructions())]
 
             if self.structured_output:
                 schema = None
@@ -461,20 +461,21 @@ class AIAssistant(abc.ABC):  # noqa: F821
                 ):
                     schema = json.dumps(self.structured_output.model_json_schema())
 
-                schema_information = ""
-                if schema:
-                    schema_information = f"JSON will have the following schema:\n\n{schema}\n\n"
+                schema_information = (
+                    f"JSON will have the following schema:\n\n{schema}\n\n" if schema else ""
+                )
+                tools_information = "Gather information using tools. " if tools else ""
 
                 # The assistant won't have access to the schema of the structured output before
                 # the last step of the chat. This message gives visibility about what fields the
                 # response should have so it can gather the necessary information by using tools.
                 messages.append(
-                    SystemMessage(
+                    HumanMessage(
                         content=(
                             "In the last step of this chat you will be asked to respond in JSON. "
                             + schema_information
-                            + "Gather information using tools. "
-                            "Don't generate JSON until you are explicitly told to. "
+                            + tools_information
+                            + "Don't generate JSON until you are explicitly told to. "
                         )
                     )
                 )
@@ -495,11 +496,10 @@ class AIAssistant(abc.ABC):  # noqa: F821
                 format_document(doc, document_prompt) for doc in docs
             )
 
-            return {
-                "messages": SystemMessage(
-                    content=f"---START OF CONTEXT---\n{formatted_docs}---END OF CONTEXT---\n"
-                )
-            }
+            system_message = state["messages"][0]
+            system_message.content += (
+                f"\n\n---START OF CONTEXT---\n{formatted_docs}---END OF CONTEXT---\n\n"
+            )
 
         def history(state: AgentState):
             history = message_history.messages if message_history else []
@@ -524,7 +524,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
                 response = llm_with_structured_output.invoke(
                     [
                         *state["messages"],
-                        SystemMessage(
+                        HumanMessage(
                             content="Use the information gathered in the conversation to answer."
                         ),
                     ]

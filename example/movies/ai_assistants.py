@@ -64,6 +64,24 @@ class MovieRecommendationAIAssistant(AIAssistant):
     name = "Movie Recommendation Assistant"
     model = "gpt-4o"
 
+    def get_llm(self):
+        """Get the Langchain LLM instance for the assistant.
+        By default, this uses the OpenAI implementation.\n
+        `get_model`, `get_temperature`, and `get_model_kwargs` are used to create the LLM instance.\n
+        Override this method to use a different LLM implementation.
+
+        Returns:
+            BaseChatModel: The LLM instance for the assistant.
+        """
+        from langchain_anthropic import ChatAnthropic
+
+        return ChatAnthropic(
+            model="claude-3-5-sonnet-20240620",
+            temperature=1,
+            timeout=None,
+            max_retries=2,
+        )
+
     def get_instructions(self):
         # Warning: this will use the server's timezone
         # See: https://docs.djangoproject.com/en/5.0/topics/i18n/timezones/#default-time-zone-and-current-time-zone
