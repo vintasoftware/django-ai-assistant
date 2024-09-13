@@ -491,7 +491,9 @@ class AIAssistant(abc.ABC):  # noqa: F821
                 return
 
             retriever = self.get_history_aware_retriever()
-            messages_without_input = state["messages"][:-1]
+            # Remove the initial instructions to prevent having two SystemMessages
+            # This is necessary for compatibility with Anthropic
+            messages_without_input = state["messages"][1:-1]
             docs = retriever.invoke({"input": state["input"], "history": messages_without_input})
 
             document_separator = self.get_document_separator()
