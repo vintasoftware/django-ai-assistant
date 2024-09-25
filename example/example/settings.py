@@ -75,6 +75,11 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
+        "OPTIONS": {
+            # Necessary to avoid "OperationalError: database is locked" errors
+            # on parallel tool calling:
+            "init_command": "PRAGMA journal_mode=WAL;",
+        },
     }
 }
 
