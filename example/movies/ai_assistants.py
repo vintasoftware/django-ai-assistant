@@ -3,6 +3,7 @@ from typing import Sequence
 from django.db.models import Max
 from django.utils import timezone
 
+from asgiref.sync import sync_to_async
 from firecrawl import FirecrawlApp
 from langchain_community.tools import WikipediaQueryRun
 from langchain_community.tools.tavily_search import TavilySearchResults
@@ -27,7 +28,7 @@ class IMDBURLFinderTool(AIAssistant):
         "Then check results and provide only the IMDB URL to the user."
     )
     name = "IMDB URL Finder"
-    model = "gpt-4o"
+    model = "gpt-4o-mini"
 
     def get_instructions(self):
         # Warning: this will use the server's timezone
@@ -48,21 +49,11 @@ class MovieRecommendationAIAssistant(AIAssistant):
     instructions = (
         "You're a helpful movie recommendation assistant. "
         "Help the user find movies to watch and manage their movie backlogs. "
-        "By using the provided tools, you can:\n"
-        "- Get the IMDB URL of a movie\n"
-        "- Visit the IMDB page of a movie to get its rating\n"
-        "- Research for upcoming movies\n"
-        "- Research for similar movies\n"
-        "- Research more information about movies\n"
-        "- Get what movies are on user's backlog\n"
-        "- Add a movie to user's backlog\n"
-        "- Remove a movie to user's backlog\n"
-        "- Reorder movies in user's backlog\n"
         "Ask the user if they want to add your recommended movies to their backlog, "
         "but only if the movie is not on the user's backlog yet."
     )
     name = "Movie Recommendation Assistant"
-    model = "gpt-4o"
+    model = "gpt-4o-mini"
 
     def get_instructions(self):
         # Warning: this will use the server's timezone
@@ -104,50 +95,53 @@ class MovieRecommendationAIAssistant(AIAssistant):
         return response["markdown"]
 
     @method_tool
-    def get_movies_backlog(self) -> str:
+    async def get_movies_backlog(self) -> str:
         """Get what movies are on user's backlog."""
 
         return (
             "\n".join(
                 [
                     f"{item.position} - [{item.movie_name}]({item.imdb_url}) - Rating {item.imdb_rating}"
-                    for item in MovieBacklogItem.objects.filter(user=self._user)
+                    async for item in MovieBacklogItem.objects.filter(user=self._user)
                 ]
             )
             or "Empty"
         )
 
     @method_tool
-    def add_movie_to_backlog(self, movie_name: str, imdb_url: str, imdb_rating: float) -> str:
+    async def add_movie_to_backlog(self, movie_name: str, imdb_url: str, imdb_rating: float) -> str:
         """Add a movie to user's backlog. Must pass the movie_name, imdb_url, and imdb_rating."""
 
-        MovieBacklogItem.objects.update_or_create(
+        await MovieBacklogItem.objects.aupdate_or_create(
             imdb_url=imdb_url.strip(),
             user=self._user,
             defaults={
                 "movie_name": movie_name.strip(),
                 "imdb_rating": imdb_rating,
-                "position": MovieBacklogItem.objects.filter(user=self._user).aggregate(
-                    Max("position", default=1)
-                )["position__max"],
+                "position": (
+                    await MovieBacklogItem.objects.filter(user=self._user).aaggregate(
+                        Max("position", default=1)
+                    )
+                )["position__max"]
+                + 1,
             },
         )
         return f"Added {movie_name} to backlog."
 
     @method_tool
-    def remove_movie_from_backlog(self, movie_name: str) -> str:
+    async def remove_movie_from_backlog(self, movie_name: str) -> str:
         """Remove a movie from user's backlog."""
 
-        MovieBacklogItem.objects.filter(
+        await MovieBacklogItem.objects.filter(
             user=self._user,
             movie_name=movie_name.strip(),
-        ).delete()
+        ).adelete()
         MovieBacklogItem.reorder_backlog(self._user)
         return f"Removed {movie_name} from backlog."
 
     @method_tool
-    def reorder_backlog(self, imdb_url_list: Sequence[str]) -> str:
+    async def reorder_backlog(self, imdb_url_list: Sequence[str]) -> str:
         """Reorder movies in user's backlog."""
 
-        MovieBacklogItem.reorder_backlog(self._user, imdb_url_list)
-        return "Reordered movies in backlog. New backlog: \n" + self.get_movies_backlog()
+        await sync_to_async(MovieBacklogItem.reorder_backlog)(self._user, imdb_url_list)
+        return "Reordered movies in backlog. New backlog: \n" + await self.get_movies_backlog()

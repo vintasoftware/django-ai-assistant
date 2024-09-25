@@ -17,7 +17,6 @@ def method_tool(*args, **kwargs):
 
     def decorator(decorated_method):
         decorated_method._is_tool = True
-        decorated_method._tool_maker_args = args
         decorated_method._tool_maker_kwargs = kwargs
         return decorated_method
 

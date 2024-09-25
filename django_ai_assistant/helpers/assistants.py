@@ -1,9 +1,11 @@
 import abc
+import functools
 import inspect
 import json
 import re
-from typing import Annotated, Any, ClassVar, Dict, Sequence, Type, TypedDict, cast
+from typing import Annotated, Any, ClassVar, Dict, Sequence, Type, TypedDict
 
+from asgiref.sync import async_to_sync, sync_to_async
 from langchain.chains.combine_documents.base import (
     DEFAULT_DOCUMENT_PROMPT,
     DEFAULT_DOCUMENT_SEPARATOR,
@@ -44,7 +46,6 @@ from django_ai_assistant.decorators import with_cast_id
 from django_ai_assistant.exceptions import (
     AIAssistantMisconfiguredError,
 )
-from django_ai_assistant.langchain.tools import tool as tool_decorator
 
 
 class AIAssistant(abc.ABC):  # noqa: F821
@@ -174,15 +175,22 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
         # Transform tool methods into tool objects:
         tools = []
-        for method in tool_methods:
-            if hasattr(method, "_tool_maker_args"):
-                tool = tool_decorator(
-                    *method._tool_maker_args,
-                    **method._tool_maker_kwargs,
-                )(method)
+        for m in tool_methods:
+            if inspect.iscoroutinefunction(m):
+                method = async_to_sync(m)
+                functools.update_wrapper(method, m)
+                amethod = m
             else:
-                tool = tool_decorator(method)
-            tools.append(cast(BaseTool, tool))
+                method = m
+                amethod = sync_to_async(m)
+                functools.update_wrapper(amethod, m)
+
+            tool = StructuredTool.from_function(
+                func=method,
+                coroutine=amethod,
+                **getattr(m, "_tool_maker_args", {}),
+            )
+            tools.append(tool)
 
         # Remove self from each tool args_schema:
         for tool in tools:
