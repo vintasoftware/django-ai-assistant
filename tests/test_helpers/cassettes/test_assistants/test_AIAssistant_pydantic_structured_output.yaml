@@ -320,4 +320,139 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant that provides information
+      about people.", "role": "system"}, {"content": "In the last step of this chat
+      you will be asked to respond in JSON. JSON will have the following schema:\n\n{\"properties\":
+      {\"name\": {\"title\": \"Name\", \"type\": \"string\"}, \"age\": {\"title\":
+      \"Age\", \"type\": \"integer\"}, \"is_student\": {\"title\": \"Is Student\",
+      \"type\": \"boolean\"}}, \"required\": [\"name\", \"age\", \"is_student\"],
+      \"title\": \"OutputSchema\", \"type\": \"object\"}\n\nDon''t generate JSON until
+      you are explicitly told to. ", "role": "user"}, {"content": "Tell me about John
+      who is 30 years old and not a student.", "role": "user"}], "model": "gpt-4o-2024-08-06",
+      "n": 1, "stream": false, "temperature": 1.0}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - DUMMY
+      connection:
+      - keep-alive
+      content-length:
+      - '777'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - OpenAI/Python
+      x-stainless-retry-count:
+      - '0'
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    content: "{\n  \"id\": \"chatcmpl-ABSmfWFBhsprRXk8GBn0KmGd4qn2F\",\n  \"object\":
+      \"chat.completion\",\n  \"created\": 1727295617,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+      \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
+      \"assistant\",\n        \"content\": \"John is a 30-year-old individual who
+      is not currently a student. This could imply that he might have completed his
+      formal education, or perhaps he chose a different path that did not involve
+      being a student at present. People of this age might be involved in various
+      professional endeavors, personal projects, or other pursuits. If there's more
+      specific information about John or areas you're interested in, feel free to
+      let me know!\",\n        \"refusal\": null\n      },\n      \"logprobs\": null,\n
+      \     \"finish_reason\": \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\":
+      152,\n    \"completion_tokens\": 83,\n    \"total_tokens\": 235,\n    \"completion_tokens_details\":
+      {\n      \"reasoning_tokens\": 0\n    }\n  },\n  \"system_fingerprint\": \"fp_7568d46099\"\n}\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date: Sun, 09 Jun 2024 23:39:08 GMT
+      Server: DUMMY
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant that provides information
+      about people.", "role": "system"}, {"content": "In the last step of this chat
+      you will be asked to respond in JSON. JSON will have the following schema:\n\n{\"properties\":
+      {\"name\": {\"title\": \"Name\", \"type\": \"string\"}, \"age\": {\"title\":
+      \"Age\", \"type\": \"integer\"}, \"is_student\": {\"title\": \"Is Student\",
+      \"type\": \"boolean\"}}, \"required\": [\"name\", \"age\", \"is_student\"],
+      \"title\": \"OutputSchema\", \"type\": \"object\"}\n\nDon''t generate JSON until
+      you are explicitly told to. ", "role": "user"}, {"content": "Tell me about John
+      who is 30 years old and not a student.", "role": "user"}, {"content": "John
+      is a 30-year-old individual who is not currently a student. This could imply
+      that he might have completed his formal education, or perhaps he chose a different
+      path that did not involve being a student at present. People of this age might
+      be involved in various professional endeavors, personal projects, or other pursuits.
+      If there''s more specific information about John or areas you''re interested
+      in, feel free to let me know!", "role": "assistant"}, {"content": "Use the information
+      gathered in the conversation to answer.", "role": "user"}], "model": "gpt-4o-2024-08-06",
+      "n": 1, "response_format": {"type": "json_schema", "json_schema": {"schema":
+      {"properties": {"name": {"title": "Name", "type": "string"}, "age": {"title":
+      "Age", "type": "integer"}, "is_student": {"title": "Is Student", "type": "boolean"}},
+      "required": ["name", "age", "is_student"], "title": "OutputSchema", "type":
+      "object", "additionalProperties": false}, "name": "OutputSchema", "strict":
+      true}}, "temperature": 1.0}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - DUMMY
+      connection:
+      - keep-alive
+      content-length:
+      - '1716'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - OpenAI/Python
+      x-stainless-helper-method:
+      - beta.chat.completions.parse
+      x-stainless-retry-count:
+      - '0'
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    content: "{\n  \"id\": \"chatcmpl-ABSmjxwWBw7Qsaodgl8ghIZ6qzSwB\",\n  \"object\":
+      \"chat.completion\",\n  \"created\": 1727295621,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+      \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
+      \"assistant\",\n        \"content\": \"{\\\"name\\\":\\\"John\\\",\\\"age\\\":30,\\\"is_student\\\":false}\",\n
+      \       \"refusal\": null\n      },\n      \"logprobs\": null,\n      \"finish_reason\":
+      \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 316,\n    \"completion_tokens\":
+      14,\n    \"total_tokens\": 330,\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
+      0\n    }\n  },\n  \"system_fingerprint\": \"fp_7568d46099\"\n}\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date: Sun, 09 Jun 2024 23:39:08 GMT
+      Server: DUMMY
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+    http_version: HTTP/1.1
+    status_code: 200
 version: 1

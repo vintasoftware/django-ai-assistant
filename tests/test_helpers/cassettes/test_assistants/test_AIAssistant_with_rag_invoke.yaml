@@ -431,4 +431,191 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: '{"messages": [{"content": "You are a tour guide assistant offers information
+      about nearby attractions. The user is at a location and wants to know what to
+      learn about nearby attractions. Use the following pieces of context to suggest
+      nearby attractions to the user. If there are no interesting attractions nearby,
+      tell the user there''s nothing to see where they''re at. Use three sentences
+      maximum and keep your suggestions concise.\n\n---START OF CONTEXT---\nCentral
+      Park\n\nAmerican Museum of Natural History---END OF CONTEXT---\n\n", "role":
+      "system"}, {"content": "I''m at Central Park W & 79st, New York, NY 10024, United
+      States.", "role": "user"}], "model": "gpt-4o", "n": 1, "stream": false, "temperature":
+      1.0}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - DUMMY
+      connection:
+      - keep-alive
+      content-length:
+      - '716'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - OpenAI/Python
+      x-stainless-retry-count:
+      - '0'
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    content: "{\n  \"id\": \"chatcmpl-ABSmTDemjarbXfNZaY8RJh7UocVAi\",\n  \"object\":
+      \"chat.completion\",\n  \"created\": 1727295605,\n  \"model\": \"gpt-4o-2024-05-13\",\n
+      \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
+      \"assistant\",\n        \"content\": \"You're in a great spot! Just a short
+      walk away is the American Museum of Natural History, where you can explore fascinating
+      exhibits on science, culture, and natural history. Inside Central Park itself,
+      don't miss out on the scenic Belvedere Castle and the tranquil Shakespeare Garden.\",\n
+      \       \"refusal\": null\n      },\n      \"logprobs\": null,\n      \"finish_reason\":
+      \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 124,\n    \"completion_tokens\":
+      55,\n    \"total_tokens\": 179,\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
+      0\n    }\n  },\n  \"system_fingerprint\": \"fp_e375328146\"\n}\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date: Sun, 09 Jun 2024 23:39:08 GMT
+      Server: DUMMY
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: '{"messages": [{"content": "Given a chat history and the latest user question
+      which might reference context in the chat history, formulate a standalone question
+      which can be understood without the chat history. Do NOT answer the question,
+      just reformulate it if needed and otherwise return it as is.", "role": "system"},
+      {"content": "I''m at Central Park W & 79st, New York, NY 10024, United States.",
+      "role": "user"}, {"content": "You''re in a great spot! Just a short walk away
+      is the American Museum of Natural History, where you can explore fascinating
+      exhibits on science, culture, and natural history. Inside Central Park itself,
+      don''t miss out on the scenic Belvedere Castle and the tranquil Shakespeare
+      Garden.", "role": "assistant"}, {"content": "11 W 53rd St, New York, NY 10019,
+      United States.", "role": "user"}], "model": "gpt-4o", "n": 1, "stream": false,
+      "temperature": 1.0}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - DUMMY
+      connection:
+      - keep-alive
+      content-length:
+      - '885'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - OpenAI/Python
+      x-stainless-retry-count:
+      - '0'
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    content: "{\n  \"id\": \"chatcmpl-ABSmWw8H4W1sT6HSuTjHSeSer9518\",\n  \"object\":
+      \"chat.completion\",\n  \"created\": 1727295608,\n  \"model\": \"gpt-4o-2024-05-13\",\n
+      \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
+      \"assistant\",\n        \"content\": \"What nearby attractions or points of
+      interest are located near 11 W 53rd St, New York, NY 10019, United States?\",\n
+      \       \"refusal\": null\n      },\n      \"logprobs\": null,\n      \"finish_reason\":
+      \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 163,\n    \"completion_tokens\":
+      29,\n    \"total_tokens\": 192,\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
+      0\n    }\n  },\n  \"system_fingerprint\": \"fp_52a7f40b0b\"\n}\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date: Sun, 09 Jun 2024 23:39:08 GMT
+      Server: DUMMY
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+    http_version: HTTP/1.1
+    status_code: 200
+- request:
+    body: '{"messages": [{"content": "You are a tour guide assistant offers information
+      about nearby attractions. The user is at a location and wants to know what to
+      learn about nearby attractions. Use the following pieces of context to suggest
+      nearby attractions to the user. If there are no interesting attractions nearby,
+      tell the user there''s nothing to see where they''re at. Use three sentences
+      maximum and keep your suggestions concise.\n\n---START OF CONTEXT---\nCentral
+      Park\n\nAmerican Museum of Natural History---END OF CONTEXT---\n\n", "role":
+      "system"}, {"content": "I''m at Central Park W & 79st, New York, NY 10024, United
+      States.", "role": "user"}, {"content": "You''re in a great spot! Just a short
+      walk away is the American Museum of Natural History, where you can explore fascinating
+      exhibits on science, culture, and natural history. Inside Central Park itself,
+      don''t miss out on the scenic Belvedere Castle and the tranquil Shakespeare
+      Garden.", "role": "assistant"}, {"content": "11 W 53rd St, New York, NY 10019,
+      United States.", "role": "user"}], "model": "gpt-4o", "n": 1, "stream": false,
+      "temperature": 1.0}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate
+      authorization:
+      - DUMMY
+      connection:
+      - keep-alive
+      content-length:
+      - '1120'
+      content-type:
+      - application/json
+      host:
+      - api.openai.com
+      user-agent:
+      - OpenAI/Python
+      x-stainless-retry-count:
+      - '0'
+    method: POST
+    uri: https://api.openai.com/v1/chat/completions
+  response:
+    content: "{\n  \"id\": \"chatcmpl-ABSmWUQj2eV0sYS4C3NNXW0PRqcpF\",\n  \"object\":
+      \"chat.completion\",\n  \"created\": 1727295608,\n  \"model\": \"gpt-4o-2024-05-13\",\n
+      \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
+      \"assistant\",\n        \"content\": \"You're right at the Museum of Modern
+      Art (MoMA), a premier spot for contemporary and modern art. Just a few blocks
+      away, you can also visit Rockefeller Center with its famous observation deck,
+      Top of the Rock.\",\n        \"refusal\": null\n      },\n      \"logprobs\":
+      null,\n      \"finish_reason\": \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\":
+      205,\n    \"completion_tokens\": 44,\n    \"total_tokens\": 249,\n    \"completion_tokens_details\":
+      {\n      \"reasoning_tokens\": 0\n    }\n  },\n  \"system_fingerprint\": \"fp_e375328146\"\n}\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json
+      Date: Sun, 09 Jun 2024 23:39:08 GMT
+      Server: DUMMY
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      access-control-expose-headers:
+      - X-Request-ID
+    http_version: HTTP/1.1
+    status_code: 200
 version: 1

@@ -89,11 +89,11 @@ def test_AIAssistant_invoke():
     messages_ids = thread.messages.order_by("created_at").values_list("id", flat=True)
 
     assert response_0["input"] == "What is the temperature today in Recife?"
-    assert response_0["output"] == "The current temperature in Recife today is 32 degrees Celsius."
+    assert response_0["output"] == "The current temperature today in Recife is 32 degrees Celsius."
     assert response_1["input"] == "What about tomorrow?"
     assert (
         response_1["output"]
-        == "The forecasted temperature for tomorrow in Recife is 35 degrees Celsius."
+        == "The forecasted temperature in Recife for tomorrow, June 10th, is 35 degrees Celsius."
     )
 
     question_message = response_1["messages"][1]
@@ -101,7 +101,7 @@ def test_AIAssistant_invoke():
     assert question_message.id == str(messages_ids[0])
     response_message = response_1["messages"][2]
     assert (
-        response_message.content == "The current temperature in Recife today is 32 degrees Celsius."
+        response_message.content == "The current temperature today in Recife is 32 degrees Celsius."
     )
     assert response_message.id == str(messages_ids[1])
 
@@ -109,12 +109,12 @@ def test_AIAssistant_invoke():
         [
             HumanMessage(content="What is the temperature today in Recife?", id=messages_ids[0]),
             AIMessage(
-                content="The current temperature in Recife today is 32 degrees Celsius.",
+                content="The current temperature today in Recife is 32 degrees Celsius.",
                 id=messages_ids[1],
             ),
             HumanMessage(content="What about tomorrow?", id=messages_ids[2]),
             AIMessage(
-                content="The forecasted temperature for tomorrow in Recife is 35 degrees Celsius.",
+                content="The forecasted temperature in Recife for tomorrow, June 10th, is 35 degrees Celsius.",
                 id=messages_ids[3],
             ),
         ]
@@ -172,13 +172,14 @@ def test_AIAssistant_with_rag_invoke():
 
     assert response_0["input"] == "I'm at Central Park W & 79st, New York, NY 10024, United States."
     assert response_0["output"] == (
-        "You're in a fantastic spot! Right nearby is the American Museum of Natural History, where you "
-        "can explore fascinating exhibits on dinosaurs, space, and much more. Enjoy your day!"
+        "You're in a great spot! Just a short walk away is the American Museum of Natural History, "
+        "where you can explore fascinating exhibits on science, culture, and natural history. "
+        "Inside Central Park itself, don't miss out on the scenic Belvedere Castle and the tranquil Shakespeare Garden."
     )
     assert response_1["input"] == "11 W 53rd St, New York, NY 10019, United States."
     assert response_1["output"] == (
-        "You're very close to the Museum of Modern Art (MoMA), which features an extensive collection of "
-        "contemporary and modern art. It's a must-visit for art enthusiasts!"
+        "You're right at the Museum of Modern Art (MoMA), a premier spot for contemporary and modern art. "
+        "Just a few blocks away, you can also visit Rockefeller Center with its famous observation deck, Top of the Rock."
     )
 
     expected_messages = messages_to_dict(
