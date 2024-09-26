@@ -92,15 +92,7 @@ class MovieRecommendationAIAssistant(AIAssistant):
         """Visit the provided website URL and return the content as markdown."""
 
         firecrawl_app = FirecrawlApp()
-        response = firecrawl_app.scrape_url(
-            url=url,
-            params={
-                "pageOptions": {
-                    "onlyMainContent": True,
-                    "waitFor": 1000,
-                },
-            },
-        )
+        response = firecrawl_app.scrape_url(url, params={"formats": ["markdown"]})
         return response["markdown"]
 
     @method_tool
