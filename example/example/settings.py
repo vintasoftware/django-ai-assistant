@@ -79,6 +79,8 @@ DATABASES = {
             # Necessary to avoid "OperationalError: database is locked" errors
             # on parallel tool calling:
             "init_command": "PRAGMA journal_mode=WAL;",
+            "transaction_mode": "IMMEDIATE",
+            "timeout": 20,
         },
     }
 }
