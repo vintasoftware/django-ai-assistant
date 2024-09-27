@@ -75,6 +75,8 @@ class AIAssistant(abc.ABC):  # noqa: F821
     """
     temperature: float = 1.0
     """Temperature to use for the assistant LLM model.\nDefaults to `1.0`."""
+    tool_max_concurrency: int = 1
+    """Maximum number of tools to run concurrently / in parallel.\nDefaults to `1` (no concurrency)."""
     has_rag: bool = False
     """Whether the assistant uses RAG (Retrieval-Augmented Generation) or not.\n
     Defaults to `False`.
@@ -430,7 +432,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         llm_with_tools = llm.bind_tools(tools) if tools else llm
 
         def custom_add_messages(left: list[BaseMessage], right: list[BaseMessage]):
-            result = add_messages(left, right)
+            result = add_messages(left, right)  # type: ignore
 
             if message_history:
                 messages_to_store = [
@@ -447,40 +449,30 @@ class AIAssistant(abc.ABC):  # noqa: F821
             messages: Annotated[list[AnyMessage], custom_add_messages]
             input: str  # noqa: A003
             context: str
-            output: str
+            output: Any
 
         def setup(state: AgentState):
-            messages: list[AnyMessage] = [SystemMessage(content=self.get_instructions())]
+            system_prompt = self.get_instructions()
 
             if self.structured_output:
-                schema = None
-
                 # If Pydantic
                 if inspect.isclass(self.structured_output) and issubclass(
                     self.structured_output, BaseModel
                 ):
                     schema = json.dumps(self.structured_output.model_json_schema())
-
-                schema_information = (
-                    f"JSON will have the following schema:\n\n{schema}\n\n" if schema else ""
-                )
-                tools_information = "Gather information using tools. " if tools else ""
-
-                # The assistant won't have access to the schema of the structured output before
-                # the last step of the chat. This message gives visibility about what fields the
-                # response should have so it can gather the necessary information by using tools.
-                messages.append(
-                    HumanMessage(
-                        content=(
-                            "In the last step of this chat you will be asked to respond in JSON. "
-                            + schema_information
-                            + tools_information
-                            + "Don't generate JSON until you are explicitly told to. "
-                        )
+                    schema_information = (
+                        f"Your JSON output must have the following schema:\n{schema}\n"
+                        if schema
+                        else ""
                     )
-                )
+                    json_info = (
+                        "In the last step of this chat you will be asked to respond in JSON. "
+                        + schema_information
+                        + "Don't generate JSON until you are explicitly told to. "
+                    )
+                    system_prompt += "\n" + json_info
 
-            return {"messages": messages}
+            return {"messages": [SystemMessage(content=system_prompt)]}
 
         def history(state: AgentState):
             history = message_history.messages if message_history else []
@@ -523,12 +515,14 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
         def record_response(state: AgentState):
             if self.structured_output:
+                # Structured output must happen in the end, to avoid disabling tool calling.
+                # Tool calling + structured output is not supported by OpenAI:
                 llm_with_structured_output = self.get_structured_output_llm()
                 response = llm_with_structured_output.invoke(
                     [
                         *state["messages"],
                         HumanMessage(
-                            content="Use the information gathered in the conversation to answer."
+                            content="Use the information gathered in the conversation to answer with JSON."
                         ),
                     ]
                 )
@@ -581,7 +575,9 @@ class AIAssistant(abc.ABC):  # noqa: F821
                 structured like `{"output": "assistant response", "history": ...}`.
         """
         graph = self.as_graph(thread_id)
-        return graph.invoke(*args, **kwargs)
+        config = kwargs.pop("config", {})
+        config["max_concurrency"] = config.pop("max_concurrency", self.tool_max_concurrency)
+        return graph.invoke(*args, config=config, **kwargs)
 
     @with_cast_id
     def run(self, message: str, thread_id: Any | None = None, **kwargs: Any) -> str:
