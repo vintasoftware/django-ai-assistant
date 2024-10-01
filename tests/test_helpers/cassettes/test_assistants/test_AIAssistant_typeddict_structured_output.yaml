@@ -27,41 +27,36 @@ interactions:
     method: POST
     uri: https://api.openai.com/v1/chat/completions
   response:
-    content: "{\n  \"id\": \"chatcmpl-ADHMu2BHeebjn5eFJBzts0kLqyTPz\",\n  \"object\":
-      \"chat.completion\",\n  \"created\": 1727728392,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+    content: "{\n  \"id\": \"chatcmpl-ADXKkgr6nyCVJHaCMMEpAmtUmykDo\",\n  \"object\":
+      \"chat.completion\",\n  \"created\": 1727789762,\n  \"model\": \"gpt-4o-2024-08-06\",\n
       \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
-      \"assistant\",\n        \"content\": \"\\\"Shrek\\\" is a 2001 animated fantasy-comedy
-      film produced by DreamWorks Animation and directed by Andrew Adamson and Vicky
-      Jenson. The film is loosely based on the 1990 fairy tale picture book of the
-      same name by William Steig.\\n\\n### Plot:\\nThe story follows Shrek, a reclusive
-      and grumpy ogre who lives in a swamp. His solitude is disrupted when numerous
-      fairy tale creatures are exiled to his swamp by the evil Lord Farquaad. In order
-      to regain his peaceful life, Shrek agrees to rescue the beautiful Princess Fiona
-      for Farquaad, who wants to marry her to become king. Shrek is accompanied by
-      a talkative donkey named Donkey, and as they venture to save the princess, Shrek
-      discovers that Fiona has a secret.\\n\\n### Characters:\\n- **Shrek (voiced
-      by Mike Myers)**: The main protagonist, a grouchy yet good-hearted ogre.\\n-
-      **Princess Fiona (voiced by Cameron Diaz)**: A princess with a mysterious secret,
-      whom Shrek is tasked to rescue.\\n- **Donkey (voiced by Eddie Murphy)**: A chatty
-      and energetic donkey who becomes Shrek's loyal sidekick.\\n- **Lord Farquaad
-      (voiced by John Lithgow)**: The main antagonist, a diminutive and tyrannical
-      ruler.\\n\\n### Themes:\\n\\\"Shrek\\\" is known for its subversion of traditional
-      fairy tale tropes and its humorous approach, offering a fresh take on the story
-      by blending parody with adventure. The film also addresses themes of acceptance,
-      love, and the importance of looking beyond appearances.\\n\\n### Reception:\\nUpon
-      its release, \\\"Shrek\\\" was praised for its animation, creativity, voice
-      performances, and humor. It was both a critical and commercial success. The
-      film won the first-ever Academy Award for Best Animated Feature and was also
-      nominated for Best Adapted Screenplay.\\n\\n### Legacy:\\n\\\"Shrek\\\" became
-      a cultural phenomenon and led to several sequels and spin-offs, including \\\"Shrek
-      2\\\" (2004), \\\"Shrek the Third\\\" (2007), and \\\"Shrek Forever After\\\"
-      (2010). The character of Shrek became iconic, and the film's success contributed
-      significantly to the popularity of DreamWorks Animation.\\n\\nOverall, \\\"Shrek\\\"
-      remains a beloved classic, known for its appeal to both children and adults,
-      due to its witty dialogue, memorable characters, and engaging story.\",\n        \"refusal\":
-      null\n      },\n      \"logprobs\": null,\n      \"finish_reason\": \"stop\"\n
-      \   }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 45,\n    \"completion_tokens\":
-      494,\n    \"total_tokens\": 539,\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
+      \"assistant\",\n        \"content\": \"\\\"Shrek\\\" is a 2001 American computer-animated
+      comedy film produced by DreamWorks Animation and directed by Andrew Adamson
+      and Vicky Jenson. The film is an adaptation of William Steig's 1990 fairy tale
+      picture book of the same name. \\n\\n### Plot Summary:\\nThe story follows Shrek,
+      a reclusive and grouchy green ogre who lives in a swamp. His solitude is disrupted
+      when numerous fairy tale creatures are banished there by the evil and short-tempered
+      Lord Farquaad. In order to reclaim his swamp, Shrek strikes a deal with Farquaad:
+      to rescue Princess Fiona from a dragon-guarded castle and bring her to Farquaad
+      so he can marry her. Shrek is joined by a talkative donkey named Donkey, and
+      together they embark on a comedic adventure.\\n\\n### Cast:\\n- **Mike Myers**
+      as Shrek\\n- **Eddie Murphy** as Donkey\\n- **Cameron Diaz** as Princess Fiona\\n-
+      **John Lithgow** as Lord Farquaad\\n\\n### Success:\\n\\\"Shrek\\\" was both
+      a critical and commercial success. It broke new ground in animation and was
+      praised for its animation quality, witty humor, and appealing to both children
+      and adults. The film also cleverly subverts traditional fairy tale tropes. \\n\\n###
+      Awards:\\nThe movie won the first-ever Academy Award for Best Animated Feature
+      and was also nominated for Best Adapted Screenplay. The film's success led to
+      a highly popular franchise, including several sequels and spin-offs.\\n\\n###
+      Cultural Impact:\\n\\\"Shrek\\\" has had a significant influence on animation
+      and popular culture, often credited with revitalizing animated films with its
+      unique storytelling, humor, and innovative use of computer animation. Its impact
+      extends beyond the movies, as Shrek has become an iconic character in his own
+      right.\\n\\nOverall, \\\"Shrek\\\" remains a beloved classic that continues
+      to entertain audiences with its blend of humor, heart, and fairy-tale magic.\",\n
+      \       \"refusal\": null\n      },\n      \"logprobs\": null,\n      \"finish_reason\":
+      \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 45,\n    \"completion_tokens\":
+      400,\n    \"total_tokens\": 445,\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
       0\n    }\n  },\n  \"system_fingerprint\": \"fp_e5e4913e83\"\n}\n"
     headers:
       Connection:
@@ -85,35 +80,31 @@ interactions:
       about movies.\nUse the chat history to produce a JSON output.", "role": "system"},
       {"content": "Provide information about the movie Shrek. It was released in 2001
       and is an animation and comedy movie.", "role": "user"}, {"content": "\"Shrek\"
-      is a 2001 animated fantasy-comedy film produced by DreamWorks Animation and
-      directed by Andrew Adamson and Vicky Jenson. The film is loosely based on the
-      1990 fairy tale picture book of the same name by William Steig.\n\n### Plot:\nThe
-      story follows Shrek, a reclusive and grumpy ogre who lives in a swamp. His solitude
-      is disrupted when numerous fairy tale creatures are exiled to his swamp by the
-      evil Lord Farquaad. In order to regain his peaceful life, Shrek agrees to rescue
-      the beautiful Princess Fiona for Farquaad, who wants to marry her to become
-      king. Shrek is accompanied by a talkative donkey named Donkey, and as they venture
-      to save the princess, Shrek discovers that Fiona has a secret.\n\n### Characters:\n-
-      **Shrek (voiced by Mike Myers)**: The main protagonist, a grouchy yet good-hearted
-      ogre.\n- **Princess Fiona (voiced by Cameron Diaz)**: A princess with a mysterious
-      secret, whom Shrek is tasked to rescue.\n- **Donkey (voiced by Eddie Murphy)**:
-      A chatty and energetic donkey who becomes Shrek''s loyal sidekick.\n- **Lord
-      Farquaad (voiced by John Lithgow)**: The main antagonist, a diminutive and tyrannical
-      ruler.\n\n### Themes:\n\"Shrek\" is known for its subversion of traditional
-      fairy tale tropes and its humorous approach, offering a fresh take on the story
-      by blending parody with adventure. The film also addresses themes of acceptance,
-      love, and the importance of looking beyond appearances.\n\n### Reception:\nUpon
-      its release, \"Shrek\" was praised for its animation, creativity, voice performances,
-      and humor. It was both a critical and commercial success. The film won the first-ever
+      is a 2001 American computer-animated comedy film produced by DreamWorks Animation
+      and directed by Andrew Adamson and Vicky Jenson. The film is an adaptation of
+      William Steig''s 1990 fairy tale picture book of the same name. \n\n### Plot
+      Summary:\nThe story follows Shrek, a reclusive and grouchy green ogre who lives
+      in a swamp. His solitude is disrupted when numerous fairy tale creatures are
+      banished there by the evil and short-tempered Lord Farquaad. In order to reclaim
+      his swamp, Shrek strikes a deal with Farquaad: to rescue Princess Fiona from
+      a dragon-guarded castle and bring her to Farquaad so he can marry her. Shrek
+      is joined by a talkative donkey named Donkey, and together they embark on a
+      comedic adventure.\n\n### Cast:\n- **Mike Myers** as Shrek\n- **Eddie Murphy**
+      as Donkey\n- **Cameron Diaz** as Princess Fiona\n- **John Lithgow** as Lord
+      Farquaad\n\n### Success:\n\"Shrek\" was both a critical and commercial success.
+      It broke new ground in animation and was praised for its animation quality,
+      witty humor, and appealing to both children and adults. The film also cleverly
+      subverts traditional fairy tale tropes. \n\n### Awards:\nThe movie won the first-ever
       Academy Award for Best Animated Feature and was also nominated for Best Adapted
-      Screenplay.\n\n### Legacy:\n\"Shrek\" became a cultural phenomenon and led to
-      several sequels and spin-offs, including \"Shrek 2\" (2004), \"Shrek the Third\"
-      (2007), and \"Shrek Forever After\" (2010). The character of Shrek became iconic,
-      and the film''s success contributed significantly to the popularity of DreamWorks
-      Animation.\n\nOverall, \"Shrek\" remains a beloved classic, known for its appeal
-      to both children and adults, due to its witty dialogue, memorable characters,
-      and engaging story.", "role": "assistant"}, {"content": "Use the chat history
-      to produce a JSON output.", "role": "user"}], "model": "gpt-4o-2024-08-06",
+      Screenplay. The film''s success led to a highly popular franchise, including
+      several sequels and spin-offs.\n\n### Cultural Impact:\n\"Shrek\" has had a
+      significant influence on animation and popular culture, often credited with
+      revitalizing animated films with its unique storytelling, humor, and innovative
+      use of computer animation. Its impact extends beyond the movies, as Shrek has
+      become an iconic character in his own right.\n\nOverall, \"Shrek\" remains a
+      beloved classic that continues to entertain audiences with its blend of humor,
+      heart, and fairy-tale magic.", "role": "assistant"}, {"content": "Use the chat
+      history to produce a JSON output.", "role": "user"}], "model": "gpt-4o-2024-08-06",
       "n": 1, "response_format": {"type": "json_schema", "json_schema": {"name": "OutputSchema",
       "description": "dict() -> new empty dictionary\ndict(mapping) -> new dictionary
       initialized from a mapping object''s\n    (key, value) pairs\ndict(iterable)
@@ -122,8 +113,8 @@ interactions:
       the keyword argument list.  For example:  dict(one=1, two=2)", "strict": true,
       "schema": {"type": "object", "properties": {"title": {"type": "string"}, "year":
       {"type": "integer"}, "genres": {"type": "array", "items": {"type": "string"}}},
-      "required": ["title", "year", "genres"], "additionalProperties": false}}}, "temperature":
-      1.0}'
+      "required": ["title", "year", "genres"], "additionalProperties": false}}}, "stream":
+      false, "temperature": 1.0}'
     headers:
       accept:
       - application/json
@@ -134,7 +125,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '3419'
+      - '3065'
       content-type:
       - application/json
       host:
@@ -148,14 +139,14 @@ interactions:
     method: POST
     uri: https://api.openai.com/v1/chat/completions
   response:
-    content: "{\n  \"id\": \"chatcmpl-ADHMzgFZirDNsMRyXRrSbmSijnKJg\",\n  \"object\":
-      \"chat.completion\",\n  \"created\": 1727728397,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+    content: "{\n  \"id\": \"chatcmpl-ADXKoApXH6ZJOtW4XKfKT4n5H35Kb\",\n  \"object\":
+      \"chat.completion\",\n  \"created\": 1727789766,\n  \"model\": \"gpt-4o-2024-08-06\",\n
       \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
       \"assistant\",\n        \"content\": \"{\\\"title\\\":\\\"Shrek\\\",\\\"year\\\":2001,\\\"genres\\\":[\\\"Animation\\\",\\\"Comedy\\\"]}\",\n
       \       \"refusal\": null\n      },\n      \"logprobs\": null,\n      \"finish_reason\":
-      \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 711,\n    \"completion_tokens\":
-      18,\n    \"total_tokens\": 729,\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
-      0\n    }\n  },\n  \"system_fingerprint\": \"fp_9e15ccd6a4\"\n}\n"
+      \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 617,\n    \"completion_tokens\":
+      18,\n    \"total_tokens\": 635,\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
+      0\n    }\n  },\n  \"system_fingerprint\": \"fp_143bb8492c\"\n}\n"
     headers:
       Connection:
       - keep-alive

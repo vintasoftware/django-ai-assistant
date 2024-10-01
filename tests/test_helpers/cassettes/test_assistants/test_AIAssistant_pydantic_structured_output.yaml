@@ -26,17 +26,20 @@ interactions:
     method: POST
     uri: https://api.openai.com/v1/chat/completions
   response:
-    content: "{\n  \"id\": \"chatcmpl-ADHMrJXkTdWFgNbRP8jvg4jQpHSsV\",\n  \"object\":
-      \"chat.completion\",\n  \"created\": 1727728389,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+    content: "{\n  \"id\": \"chatcmpl-ADXKhygvvNpK7CL2fFDyCw5Cv42DH\",\n  \"object\":
+      \"chat.completion\",\n  \"created\": 1727789759,\n  \"model\": \"gpt-4o-2024-08-06\",\n
       \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
-      \"assistant\",\n        \"content\": \"I'm sorry, but I need more specific information
-      to identify the person you're asking about. There are many people named John
-      who are 30 years old and not students. If you can provide more details, such
-      as a last name or other context, I might be able to offer some relevant information.\",\n
-      \       \"refusal\": null\n      },\n      \"logprobs\": null,\n      \"finish_reason\":
-      \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 37,\n    \"completion_tokens\":
-      59,\n    \"total_tokens\": 96,\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
-      0\n    }\n  },\n  \"system_fingerprint\": \"fp_143bb8492c\"\n}\n"
+      \"assistant\",\n        \"content\": \"I'm sorry, but I don't have any specific
+      information about a person named John who is 30 years old and not a student,
+      as your query is very general. John's name is quite common, and without more
+      specific details, it's challenging to provide any meaningful information. However,
+      I can try to answer questions or provide information on topics that might be
+      relevant to someone around that age if that would be helpful to you. Let me
+      know if there's anything else specific you'd like to know!\",\n        \"refusal\":
+      null\n      },\n      \"logprobs\": null,\n      \"finish_reason\": \"stop\"\n
+      \   }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 37,\n    \"completion_tokens\":
+      96,\n    \"total_tokens\": 133,\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
+      0\n    }\n  },\n  \"system_fingerprint\": \"fp_e5e4913e83\"\n}\n"
     headers:
       Connection:
       - keep-alive
@@ -58,17 +61,20 @@ interactions:
     body: '{"messages": [{"content": "You are a helpful assistant that provides information
       about people.\nUse the chat history to produce a JSON output.", "role": "system"},
       {"content": "Tell me about John who is 30 years old and not a student.", "role":
-      "user"}, {"content": "I''m sorry, but I need more specific information to identify
-      the person you''re asking about. There are many people named John who are 30
-      years old and not students. If you can provide more details, such as a last
-      name or other context, I might be able to offer some relevant information.",
-      "role": "assistant"}, {"content": "Use the chat history to produce a JSON output.",
-      "role": "user"}], "model": "gpt-4o-2024-08-06", "n": 1, "response_format": {"type":
-      "json_schema", "json_schema": {"schema": {"properties": {"name": {"title": "Name",
-      "type": "string"}, "age": {"title": "Age", "type": "integer"}, "is_student":
-      {"title": "Is Student", "type": "boolean"}}, "required": ["name", "age", "is_student"],
-      "title": "OutputSchema", "type": "object", "additionalProperties": false}, "name":
-      "OutputSchema", "strict": true}}, "temperature": 1.0}'
+      "user"}, {"content": "I''m sorry, but I don''t have any specific information
+      about a person named John who is 30 years old and not a student, as your query
+      is very general. John''s name is quite common, and without more specific details,
+      it''s challenging to provide any meaningful information. However, I can try
+      to answer questions or provide information on topics that might be relevant
+      to someone around that age if that would be helpful to you. Let me know if there''s
+      anything else specific you''d like to know!", "role": "assistant"}, {"content":
+      "Use the chat history to produce a JSON output.", "role": "user"}], "model":
+      "gpt-4o-2024-08-06", "n": 1, "response_format": {"type": "json_schema", "json_schema":
+      {"schema": {"properties": {"name": {"title": "Name", "type": "string"}, "age":
+      {"title": "Age", "type": "integer"}, "is_student": {"title": "Is Student", "type":
+      "boolean"}}, "required": ["name", "age", "is_student"], "title": "OutputSchema",
+      "type": "object", "additionalProperties": false}, "name": "OutputSchema", "strict":
+      true}}, "stream": false, "temperature": 1.0}'
     headers:
       accept:
       - application/json
@@ -79,7 +85,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '1108'
+      - '1328'
       content-type:
       - application/json
       host:
@@ -93,14 +99,14 @@ interactions:
     method: POST
     uri: https://api.openai.com/v1/chat/completions
   response:
-    content: "{\n  \"id\": \"chatcmpl-ADHMskYr2AxG7Ng82ynT2XhCG6Em0\",\n  \"object\":
-      \"chat.completion\",\n  \"created\": 1727728390,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+    content: "{\n  \"id\": \"chatcmpl-ADXKjIlmFBaKU78s6GU30fcO49VoO\",\n  \"object\":
+      \"chat.completion\",\n  \"created\": 1727789761,\n  \"model\": \"gpt-4o-2024-08-06\",\n
       \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
       \"assistant\",\n        \"content\": \"{\\\"name\\\":\\\"John\\\",\\\"age\\\":30,\\\"is_student\\\":false}\",\n
       \       \"refusal\": null\n      },\n      \"logprobs\": null,\n      \"finish_reason\":
-      \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 187,\n    \"completion_tokens\":
-      14,\n    \"total_tokens\": 201,\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
-      0\n    }\n  },\n  \"system_fingerprint\": \"fp_2f406b9113\"\n}\n"
+      \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 224,\n    \"completion_tokens\":
+      14,\n    \"total_tokens\": 238,\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
+      0\n    }\n  },\n  \"system_fingerprint\": \"fp_143bb8492c\"\n}\n"
     headers:
       Connection:
       - keep-alive
