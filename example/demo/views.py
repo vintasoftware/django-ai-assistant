@@ -119,5 +119,4 @@ class TourGuideAssistantView(View):
 
         a = TourGuideAIAssistant()
         data = a.run(f"My coordinates are: ({coordinates})")
-
         return JsonResponse(data.model_dump())

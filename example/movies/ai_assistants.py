@@ -1,33 +1,42 @@
 from typing import Sequence
 
+from django.conf import settings
+from django.db import transaction
 from django.db.models import Max
 from django.utils import timezone
 
-from firecrawl import FirecrawlApp
-from langchain_community.tools import WikipediaQueryRun
-from langchain_community.tools.tavily_search import TavilySearchResults
-from langchain_community.utilities import WikipediaAPIWrapper
+import requests
+from langchain_community.tools import BraveSearch
 from langchain_core.tools import BaseTool
+from pydantic import BaseModel
 
 from django_ai_assistant import AIAssistant, method_tool
 from movies.models import MovieBacklogItem
 
 
+class IMDbMovie(BaseModel):
+    imdb_url: str
+    imdb_rating: float
+    scrapped_imdb_page_markdown: str
+
+
 # Note this assistant is not registered, but we'll use it as a tool on the other.
 # This one shouldn't be used directly, as it does web searches and scraping.
-class IMDBURLFinderTool(AIAssistant):
-    id = "imdb_url_finder"  # noqa: A003
+class IMDbScraper(AIAssistant):
+    id = "imdb_scraper"  # noqa: A003
     instructions = (
-        "You're a tool to find the IMDB URL of a given movie. "
-        "Use the Tavily Search API to find the IMDB URL. "
+        "You're a function to find the IMDb URL of a given movie, "
+        "and scrape this URL to get the movie rating and other information.\n"
+        "Use the search function to find the IMDb URL. "
         "Make search queries like: \n"
-        "- IMDB page of The Matrix\n"
-        "- IMDB page of The Godfather\n"
-        "- IMDB page of The Shawshank Redemption\n"
-        "Then check results and provide only the IMDB URL to the user."
+        "- IMDb page of The Matrix\n"
+        "- IMDb page of The Godfather\n"
+        "- IMDb page of The Shawshank Redemption\n"
+        "Then check results, scape the IMDb URL, process the page, and produce a JSON output."
     )
-    name = "IMDB URL Finder"
-    model = "gpt-4o"
+    name = "IMDb Scraper"
+    model = "gpt-4o-mini"
+    structured_output = IMDbMovie
 
     def get_instructions(self):
         # Warning: this will use the server's timezone
@@ -36,9 +45,16 @@ class IMDBURLFinderTool(AIAssistant):
         current_date_str = timezone.now().date().isoformat()
         return f"{self.instructions} Today is: {current_date_str}."
 
+    @method_tool
+    def scrape_imdb_url(self, url: str) -> str:
+        """Scrape the IMDb URL and return the content as markdown."""
+        return requests.get("https://r.jina.ai/" + url, timeout=20).text[:10000]
+
     def get_tools(self) -> Sequence[BaseTool]:
         return [
-            TavilySearchResults(),
+            BraveSearch.from_api_key(
+                api_key=settings.BRAVE_SEARCH_API_KEY, search_kwargs={"count": 5}
+            ),
             *super().get_tools(),
         ]
 
@@ -48,21 +64,17 @@ class MovieRecommendationAIAssistant(AIAssistant):
     instructions = (
         "You're a helpful movie recommendation assistant. "
         "Help the user find movies to watch and manage their movie backlogs. "
-        "By using the provided tools, you can:\n"
-        "- Get the IMDB URL of a movie\n"
-        "- Visit the IMDB page of a movie to get its rating\n"
-        "- Research for upcoming movies\n"
-        "- Research for similar movies\n"
-        "- Research more information about movies\n"
-        "- Get what movies are on user's backlog\n"
-        "- Add a movie to user's backlog\n"
-        "- Remove a movie to user's backlog\n"
-        "- Reorder movies in user's backlog\n"
+        "Use the provided functions to answer questions and run operations.\n"
+        "Note the backlog is stored in a DB. "
+        "When managing the backlog, you must call the functions, to keep the sync with the DB. "
+        "The backlog has an order, and you should respect it. Call `reorder_backlog` when necessary.\n"
+        "Include the IMDb URL and rating of the movies when displaying the backlog. "
+        "You must use the IMDb Scraper to get the IMDb URL and rating of the movies. \n"
         "Ask the user if they want to add your recommended movies to their backlog, "
         "but only if the movie is not on the user's backlog yet."
     )
     name = "Movie Recommendation Assistant"
-    model = "gpt-4o"
+    model = "gpt-4o-mini"
 
     def get_instructions(self):
         # Warning: this will use the server's timezone
@@ -81,19 +93,12 @@ class MovieRecommendationAIAssistant(AIAssistant):
 
     def get_tools(self) -> Sequence[BaseTool]:
         return [
-            TavilySearchResults(),
-            WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper()),  # pyright: ignore[reportCallIssue]
-            IMDBURLFinderTool().as_tool(description="Tool to find the IMDB URL of a given movie."),
+            BraveSearch.from_api_key(
+                api_key=settings.BRAVE_SEARCH_API_KEY, search_kwargs={"count": 5}
+            ),
+            IMDbScraper().as_tool(description="IMDb Scraper to get the IMDb data a given movie."),
             *super().get_tools(),
         ]
-
-    @method_tool
-    def firecrawl_scrape_url(self, url: str) -> str:
-        """Visit the provided website URL and return the content as markdown."""
-
-        firecrawl_app = FirecrawlApp()
-        response = firecrawl_app.scrape_url(url, params={"formats": ["markdown"]})
-        return response["markdown"]
 
     @method_tool
     def get_movies_backlog(self) -> str:
@@ -102,7 +107,7 @@ class MovieRecommendationAIAssistant(AIAssistant):
         return (
             "\n".join(
                 [
-                    f"{item.position} - [{item.movie_name}]({item.imdb_url}) - Rating {item.imdb_rating}"
+                    f"{item.position} - [{item.movie_name}]({item.imdb_url}) - ⭐ {item.imdb_rating}"
                     for item in MovieBacklogItem.objects.filter(user=self._user)
                 ]
             )
@@ -113,28 +118,31 @@ class MovieRecommendationAIAssistant(AIAssistant):
     def add_movie_to_backlog(self, movie_name: str, imdb_url: str, imdb_rating: float) -> str:
         """Add a movie to user's backlog. Must pass the movie_name, imdb_url, and imdb_rating."""
 
-        MovieBacklogItem.objects.update_or_create(
-            imdb_url=imdb_url.strip(),
-            user=self._user,
-            defaults={
-                "movie_name": movie_name.strip(),
-                "imdb_rating": imdb_rating,
-                "position": MovieBacklogItem.objects.filter(user=self._user).aggregate(
-                    Max("position", default=1)
-                )["position__max"],
-            },
-        )
+        with transaction.atomic():
+            MovieBacklogItem.objects.update_or_create(
+                imdb_url=imdb_url.strip(),
+                user=self._user,
+                defaults={
+                    "movie_name": movie_name.strip(),
+                    "imdb_rating": imdb_rating,
+                    "position": MovieBacklogItem.objects.filter(user=self._user).aggregate(
+                        Max("position", default=0)
+                    )["position__max"]
+                    + 1,
+                },
+            )
         return f"Added {movie_name} to backlog."
 
     @method_tool
     def remove_movie_from_backlog(self, movie_name: str) -> str:
         """Remove a movie from user's backlog."""
 
-        MovieBacklogItem.objects.filter(
-            user=self._user,
-            movie_name=movie_name.strip(),
-        ).delete()
-        MovieBacklogItem.reorder_backlog(self._user)
+        with transaction.atomic():
+            MovieBacklogItem.objects.filter(
+                user=self._user,
+                movie_name=movie_name.strip(),
+            ).delete()
+            MovieBacklogItem.reorder_backlog(self._user)
         return f"Removed {movie_name} from backlog."
 
     @method_tool
