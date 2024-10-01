@@ -32,9 +32,8 @@ cp .env.example .env
 Fill the `.env` file with the necessary API keys. You'll need accounts on:
 
 - [OpenAI](https://platform.openai.com/)
-- [Weather](https://www.weatherapi.com/)
-- [Tavily](https://app.tavily.com/)
-- [Firecrawl](https://www.firecrawl.dev/)
+- [Weather API](https://www.weatherapi.com/)
+- [Brave Search API](https://app.tavily.com/)
 
 Activate the poetry shell:
     

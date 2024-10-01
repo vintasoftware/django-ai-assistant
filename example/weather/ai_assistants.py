@@ -15,7 +15,7 @@ TIMEOUT = 10
 class WeatherAIAssistant(AIAssistant):
     id = "weather_assistant"  # noqa: A003
     name = "Weather Assistant"
-    model = "gpt-4o"
+    model = "gpt-4o-mini"
 
     def get_instructions(self):
         # Warning: this will use the server's timezone

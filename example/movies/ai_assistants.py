@@ -25,9 +25,9 @@ class IMDbMovie(BaseModel):
 class IMDbScraper(AIAssistant):
     id = "imdb_scraper"  # noqa: A003
     instructions = (
-        "You're a tool to find the IMDb URL of a given movie, "
+        "You're a function to find the IMDb URL of a given movie, "
         "and scrape this URL to get the movie rating and other information.\n"
-        "Use the search tool to find the IMDb URL. "
+        "Use the search function to find the IMDb URL. "
         "Make search queries like: \n"
         "- IMDb page of The Matrix\n"
         "- IMDb page of The Godfather\n"
@@ -35,7 +35,7 @@ class IMDbScraper(AIAssistant):
         "Then check results, scape the IMDb URL, process the page, and produce a JSON output."
     )
     name = "IMDb Scraper"
-    model = "gpt-4o"
+    model = "gpt-4o-mini"
     structured_output = IMDbMovie
 
     def get_instructions(self):
@@ -64,16 +64,17 @@ class MovieRecommendationAIAssistant(AIAssistant):
     instructions = (
         "You're a helpful movie recommendation assistant. "
         "Help the user find movies to watch and manage their movie backlogs. "
-        "Use the provided tools for that.\n"
+        "Use the provided functions to answer questions and run operations.\n"
         "Note the backlog is stored in a DB. "
-        "When managing the backlog, you must call the tools, to keep the sync with the DB. "
+        "When managing the backlog, you must call the functions, to keep the sync with the DB. "
         "The backlog has an order, and you should respect it. Call `reorder_backlog` when necessary.\n"
-        "Include the IMDb URL and rating of the movies when displaying the backlog.\n"
+        "Include the IMDb URL and rating of the movies when displaying the backlog. "
+        "You must use the IMDb Scraper to get the IMDb URL and rating of the movies. \n"
         "Ask the user if they want to add your recommended movies to their backlog, "
         "but only if the movie is not on the user's backlog yet."
     )
     name = "Movie Recommendation Assistant"
-    model = "gpt-4o"
+    model = "gpt-4o-mini"
 
     def get_instructions(self):
         # Warning: this will use the server's timezone
@@ -95,7 +96,7 @@ class MovieRecommendationAIAssistant(AIAssistant):
             BraveSearch.from_api_key(
                 api_key=settings.BRAVE_SEARCH_API_KEY, search_kwargs={"count": 5}
             ),
-            IMDbScraper().as_tool(description="Tool to get the IMDb data a given movie."),
+            IMDbScraper().as_tool(description="IMDb Scraper to get the IMDb data a given movie."),
             *super().get_tools(),
         ]
 

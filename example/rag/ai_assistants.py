@@ -15,7 +15,7 @@ class DjangoDocsAssistant(AIAssistant):
         "the user's question. If you don't know the answer, say that you don't know. "
         "Use three sentences maximum and keep the answer concise."
     )
-    model = "gpt-4o"
+    model = "gpt-4o-mini"
     has_rag = True
 
     def get_retriever(self) -> BaseRetriever:

@@ -16,7 +16,7 @@ class IssueTrackerAIAssistant(AIAssistant):
         "Make sure to include issue IDs in your responses, "
         "to know which issue you or the user are referring to. "
     )
-    model = "gpt-4o"
+    model = "gpt-4o-mini"
     _user: User
 
     @method_tool
