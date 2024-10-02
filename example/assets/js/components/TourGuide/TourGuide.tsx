@@ -1,21 +1,30 @@
-import "@mantine/core/styles.css";
-import {
-  Container,
-  TextInput,
-  Button,
-  LoadingOverlay,
-  Group,
-} from "@mantine/core";
 import { useEffect, useState } from "react";
-import { notifications } from "@mantine/notifications";
 import { Link } from "react-router-dom";
+import {
+  Button,
+  Card,
+  Container,
+  Flex,
+  Group,
+  LoadingOverlay,
+  Text,
+  TextInput,
+  Title,
+} from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+
+interface Attraction {
+  attraction_name: string;
+  attraction_description: string;
+  attraction_url: string;
+}
 
 export function TourGuide() {
   const [showLoginNotification, setShowLoginNotification] =
     useState<boolean>(false);
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
-  const [attractions, setAttractions] = useState([]);
+  const [attractions, setAttractions] = useState<Attraction[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -34,14 +43,16 @@ export function TourGuide() {
     }
 
     setLoading(true);
-    const response = await fetch(`/tour-guide/?coordinate=${latitude},${longitude}`);
+    const response = await fetch(
+      `/tour-guide/?coordinate=${latitude},${longitude}`
+    );
     const data = await response.json();
     if (data.error) {
       setShowLoginNotification(true);
     } else {
       setAttractions(data.nearby_attractions);
     }
-    setLoading(false)
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -67,7 +78,12 @@ export function TourGuide() {
   return (
     <Container>
       <LoadingOverlay visible={loading} />
-      <Group justify="left" align="flex-end">
+
+      <Title mt="md" order={2}>
+        Tour Guide
+      </Title>
+
+      <Group justify="left" align="flex-end" my="lg">
         <TextInput
           required
           label="Latitude"
@@ -82,31 +98,42 @@ export function TourGuide() {
         />
         <Button onClick={findAttractions}>Guide Me!</Button>
       </Group>
-      {loading ? <h3>Loading</h3> : null}
-      <div>
-        {attractions.map((item, i) => (
-          <div key={i}>
-            <h2>
-              {item.attraction_url ? (
-                <a href={item.attraction_url} target="_blank">
-                  {item.attraction_name}
-                </a>
-              ) : (
-                item.attraction_name
-              )}
-            </h2>
-            <span>{item.attraction_description}</span>
-            <div>
-              <a
-                href={`https://www.google.com/maps?q=${item.attraction_name}`}
-                target="_blank"
-              >
-                Open in Google Maps
-              </a>
-            </div>
-          </div>
+
+      <Flex
+        gap="md"
+        justify="center"
+        align="flex-start"
+        direction="row"
+        wrap="wrap"
+        miw={460}
+      >
+        {attractions.map((attraction, index) => (
+          <Card
+            key={index}
+            w={280}
+            shadow="sm"
+            padding="lg"
+            radius="md"
+            withBorder
+          >
+            <Text fw={500} size="lg" mb="xs">
+              {attraction.attraction_name}
+            </Text>
+            <Text size="sm" c="dimmed" mb="md">
+              {attraction.attraction_description}
+            </Text>
+            <Button
+              component="a"
+              href={`https://www.google.com/maps/search/?api=1&query=${attraction.attraction_name}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="light"
+            >
+              View on Google Maps
+            </Button>
+          </Card>
         ))}
-      </div>
+      </Flex>
     </Container>
   );
 }
