@@ -34,6 +34,7 @@ Fill the `.env` file with the necessary API keys. You'll need accounts on:
 - [OpenAI](https://platform.openai.com/)
 - [Weather API](https://www.weatherapi.com/)
 - [Brave Search API](https://app.tavily.com/)
+- [Jina Reader API](https://jina.ai/)
 
 Activate the poetry shell:
     
