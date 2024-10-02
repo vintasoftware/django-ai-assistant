@@ -9,11 +9,11 @@ from tour_guide.integrations import fetch_points_of_interest
 
 
 class Attraction(BaseModel):
-    attraction_name: str = Field(description="The name of the attraction in english")
-    attraction_description: str = Field(
+    name: str = Field(description="The name of the attraction in english")
+    description: str = Field(
         description="The description of the attraction, provide information in an entertaining way"
     )
-    attraction_url: str = Field(
+    url: str = Field(
         description="The URL of the attraction, keep empty if you don't have this information"
     )
 
@@ -31,7 +31,7 @@ class TourGuideAIAssistant(AIAssistant):
         "Only include in your response the items that are relevant to a tourist visiting the area. "
         "Only call the find_nearby_attractions tool once. "
     )
-    model = "gpt-4o-2024-08-06"
+    model = "gpt-4o-mini"
     structured_output = TourGuide
 
     def get_instructions(self):

@@ -12,11 +12,12 @@ import {
   Title,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
+import { IconLocation, IconMap2 } from "@tabler/icons-react";
 
 interface Attraction {
-  attraction_name: string;
-  attraction_description: string;
-  attraction_url: string;
+  name: string;
+  description: string;
+  url: string;
 }
 
 export function TourGuide() {
@@ -83,7 +84,7 @@ export function TourGuide() {
         Tour Guide
       </Title>
 
-      <Group justify="left" align="flex-end" my="lg">
+      <Group justify="left" align="flex-end" mb="xl">
         <TextInput
           required
           label="Latitude"
@@ -96,17 +97,15 @@ export function TourGuide() {
           value={longitude}
           onChange={(e) => setLongitude(e.target.value)}
         />
-        <Button onClick={findAttractions}>Guide Me!</Button>
+        <Button
+          leftSection={<IconMap2 size={18} stroke={1.5} />}
+          onClick={findAttractions}
+        >
+          Guide Me!
+        </Button>
       </Group>
 
-      <Flex
-        gap="md"
-        justify="center"
-        align="flex-start"
-        direction="row"
-        wrap="wrap"
-        miw={460}
-      >
+      <Flex gap="md" align="flex-start" direction="row" wrap="wrap" miw={460}>
         {attractions.map((attraction, index) => (
           <Card
             key={index}
@@ -116,18 +115,19 @@ export function TourGuide() {
             radius="md"
             withBorder
           >
-            <Text fw={500} size="lg" mb="xs">
-              {attraction.attraction_name}
+            <Text fw={500} size="lg" mt="md" mb="xs">
+              {attraction.name}
             </Text>
             <Text size="sm" c="dimmed" mb="md">
-              {attraction.attraction_description}
+              {attraction.description}
             </Text>
             <Button
               component="a"
-              href={`https://www.google.com/maps/search/?api=1&query=${attraction.attraction_name}`}
+              href={`https://www.google.com/maps/search/?api=1&query=${attraction.name}`}
               target="_blank"
               rel="noopener noreferrer"
               variant="light"
+              leftSection={<IconLocation size={18} stroke={1.5} />}
             >
               View on Google Maps
             </Button>
