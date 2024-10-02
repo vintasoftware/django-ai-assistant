@@ -180,6 +180,7 @@ AI_ASSISTANT_CAN_RUN_ASSISTANT = "django_ai_assistant.permissions.allow_all"
 # Example specific settings:
 
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")  # get for free at https://www.weatherapi.com/
+JINA_API_KEY = os.getenv("JINA_API_KEY")  # get for free at https://jina.ai/
 BRAVE_SEARCH_API_KEY = os.getenv(
     "BRAVE_SEARCH_API_KEY"
 )  # get for free at https://brave.com/search/api/
