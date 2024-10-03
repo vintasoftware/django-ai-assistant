@@ -42,7 +42,6 @@ If you encounter an error regarding the Python version required for the project,
 pyenv install
 ```
 
-
 #### Frontend
 
 Go to the frontend directory and install the Node dependencies:
@@ -59,6 +58,15 @@ pre-commit install
 ```
 
 It's critical to run the pre-commit hooks before pushing your code to follow the project's code style, and avoid linting errors.
+
+### Updating the OpenAPI schema
+
+It's critical to update the OpenAPI schema when you make changes to the `django_ai_assistant/api/views.py` or related files:
+
+```bash
+poetry run python manage.py generate_openapi_schema --output frontend/openapi_schema.json
+sh -c 'cd frontend && pnpm run generate-client'
+```
 
 ### Developing with the example project
 
@@ -105,6 +113,13 @@ Then, you will run the tests in record mode:
 poetry run pytest --record-mode=once
 ```
 
+To run frontend tests:
+
+```bash
+cd frontend
+pnpm run test
+```
+
 ## Documentation
 
 We use [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) to generate the documentation from markdown files.
@@ -123,7 +138,7 @@ poetry run mkdocs serve
 
 To release and publish a new version, follow these steps:
 
-1. Update the version in `pyproject.toml` and `frontend/package.json`.
+1. Update the version in `pyproject.toml`, `frontend/package.json` and `example/package.json`.
 2. Re-install the local version of the Python project: `poetry install`
 3. In the project root, run `poetry run python manage.py generate_openapi_schema --output frontend/openapi_schema.json` to update the OpenAPI schema.
 4. Re-install the local version of the frontend project:

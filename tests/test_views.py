@@ -137,6 +137,22 @@ def test_list_threads_with_results(authenticated_client):
 
 
 @pytest.mark.django_db(transaction=True)
+def test_list_threads_with_assistant_id(authenticated_client):
+    user = User.objects.first()
+    assistant_id = "temperature_assistant"
+    baker.make(Thread, created_by=user, _quantity=2)
+    baker.make(Thread, created_by=user, assistant_id=assistant_id, _quantity=3)
+    response = authenticated_client.get(
+        reverse("django_ai_assistant:threads_list_create"),
+        data={"assistant_id": assistant_id},
+    )
+
+    assert response.status_code == HTTPStatus.OK
+    assert len(response.json()) == 3
+    assert all(thread["assistant_id"] == assistant_id for thread in response.json())
+
+
+@pytest.mark.django_db(transaction=True)
 def test_does_not_list_other_users_threads(authenticated_client):
     baker.make(Thread)
     response = authenticated_client.get(reverse("django_ai_assistant:threads_list_create"))
@@ -174,6 +190,23 @@ def test_create_thread(authenticated_client):
 
     assert response.status_code == HTTPStatus.OK
     assert response.json()["id"] == thread.id
+
+
+@pytest.mark.django_db(transaction=True)
+def test_create_thread_with_assistant_id(authenticated_client):
+    assistant_id = "temperature_assistant"
+    response = authenticated_client.post(
+        reverse("django_ai_assistant:threads_list_create"),
+        data={"assistant_id": assistant_id},
+        content_type="application/json",
+    )
+
+    thread = Thread.objects.first()
+
+    assert response.status_code == HTTPStatus.OK
+    response_data = response.json()
+    assert response_data["id"] == thread.id
+    assert response_data["assistant_id"] == assistant_id
 
 
 def test_cannot_create_thread_if_unauthorized():

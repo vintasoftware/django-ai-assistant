@@ -9,8 +9,9 @@ import {
 
 /**
  * React hook to manage the list, create, and delete of Threads.
+ * @param assistantId Optional assistant ID to filter threads
  */
-export function useThreadList() {
+export function useThreadList({ assistantId }: { assistantId?: string } = {}) {
   const [threads, setThreads] = useState<Thread[] | null>(null);
   const [loadingFetchThreads, setLoadingFetchThreads] =
     useState<boolean>(false);
@@ -27,13 +28,13 @@ export function useThreadList() {
   const fetchThreads = useCallback(async (): Promise<Thread[]> => {
     try {
       setLoadingFetchThreads(true);
-      const fetchedThreads = await aiListThreads();
+      const fetchedThreads = await aiListThreads({ assistantId });
       setThreads(fetchedThreads);
       return fetchedThreads;
     } finally {
       setLoadingFetchThreads(false);
     }
-  }, []);
+  }, [assistantId]);
 
   /**
    * Creates a new thread.
@@ -45,7 +46,7 @@ export function useThreadList() {
       try {
         setLoadingCreateThread(true);
         const thread = await aiCreateThread({
-          requestBody: { name: name },
+          requestBody: { name, assistant_id: assistantId },
         });
         await fetchThreads();
         return thread;
@@ -53,7 +54,7 @@ export function useThreadList() {
         setLoadingCreateThread(false);
       }
     },
-    [fetchThreads]
+    [fetchThreads, assistantId]
   );
 
   /**

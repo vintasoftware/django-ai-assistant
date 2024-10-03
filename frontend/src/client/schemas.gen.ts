@@ -41,6 +41,18 @@ export const $Thread = {
             ],
             title: 'Name'
         },
+        assistant_id: {
+            anyOf: [
+                {
+                    maxLength: 255,
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Assistant Id'
+        },
         created_at: {
             format: 'date-time',
             title: 'Created At',
@@ -62,6 +74,17 @@ export const $ThreadIn = {
         name: {
             title: 'Name',
             type: 'string'
+        },
+        assistant_id: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Assistant Id'
         }
     },
     title: 'ThreadIn',

@@ -184,6 +184,18 @@ def test_create_thread():
 
     assert response.name == "My thread"
     assert response.created_by == user
+    assert response.assistant_id == ""
+
+
+@pytest.mark.django_db(transaction=True)
+def test_create_thread_with_assistant_id():
+    user = baker.make(User)
+    assistant_id = "temperature_assistant"
+    response = use_cases.create_thread("My thread", user, assistant_id)
+
+    assert response.name == "My thread"
+    assert response.created_by == user
+    assert response.assistant_id == assistant_id
 
 
 @pytest.mark.django_db(transaction=True)
@@ -223,6 +235,18 @@ def test_get_threads():
     response = use_cases.get_threads(user)
 
     assert len(response) == 3
+
+
+@pytest.mark.django_db(transaction=True)
+def test_get_threads_with_assistant_id():
+    user = baker.make(User)
+    assistant_id = "temperature_assistant"
+    baker.make(Thread, created_by=user, _quantity=2)
+    baker.make(Thread, created_by=user, assistant_id=assistant_id, _quantity=3)
+    response = use_cases.get_threads(user, assistant_id)
+
+    assert len(response) == 3
+    assert all(thread.assistant_id == assistant_id for thread in response)
 
 
 @pytest.mark.django_db(transaction=True)

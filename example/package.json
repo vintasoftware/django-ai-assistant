@@ -44,7 +44,7 @@
     "@mantine/notifications": "^7.11.0",
     "@tabler/icons-react": "^3.7.0",
     "cookie": "^0.6.0",
-    "django-ai-assistant-client": "0.0.1",
+    "django-ai-assistant-client": "0.0.4",
     "modern-normalize": "^2.0.0",
     "react-markdown": "^9.0.1",
     "react-router-dom": "^6.24.0"

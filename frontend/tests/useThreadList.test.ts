@@ -33,6 +33,22 @@ describe("useThreadList", () => {
       updated_at: "2024-06-09T00:00:00Z",
     },
   ];
+  const mockThreadsWithAssistantId = [
+    {
+      id: 3,
+      name: "Thread 3",
+      created_at: "2024-06-11T00:00:00Z",
+      updated_at: "2024-06-11T00:00:00Z",
+      assistant_id: "test_assistant",
+    },
+    {
+      id: 4,
+      name: "Thread 4",
+      created_at: "2024-06-12T00:00:00Z",
+      updated_at: "2024-06-12T00:00:00Z",
+      assistant_id: "test_assistant",
+    },
+  ];
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -63,6 +79,20 @@ describe("useThreadList", () => {
 
       expect(result.current.threads).toEqual(mockThreads);
       expect(result.current.loadingFetchThreads).toBe(false);
+    });
+
+    it("should fetch threads with assistantId when provided", async () => {
+      const assistantId = "test_assistant";
+      (aiListThreads as jest.Mock).mockResolvedValue(mockThreadsWithAssistantId);
+
+      const { result } = renderHook(() => useThreadList({ assistantId }));
+
+      await act(async () => {
+        await result.current.fetchThreads();
+      });
+
+      expect(aiListThreads).toHaveBeenCalledWith({ assistantId });
+      expect(result.current.threads).toEqual(mockThreadsWithAssistantId);
     });
 
     it("should set loading to false if fetch fails", async () => {
@@ -111,6 +141,29 @@ describe("useThreadList", () => {
         const newThread = await result.current.createThread({
           name: "Thread 3",
         });
+        expect(newThread).toEqual(mockNewThread);
+      });
+
+      expect(result.current.threads).toEqual([mockNewThread, ...mockThreads]);
+      expect(result.current.loadingCreateThread).toBe(false);
+    });
+
+    it("should create a thread with assistantId when provided", async () => {
+      const assistantId = "test_assistant";
+      const mockNewThread = {
+        id: 3,
+        name: "Thread 3",
+        assistant_id: assistantId,
+        created_at: "2024-06-11T00:00:00Z",
+        updated_at: "2024-06-11T00:00:00Z",
+      };
+      (aiCreateThread as jest.Mock).mockResolvedValue(mockNewThread);
+      (aiListThreads as jest.Mock).mockResolvedValue([mockNewThread, ...mockThreads]);
+
+      const { result } = renderHook(() => useThreadList({ assistantId }));
+
+      await act(async () => {
+        const newThread = await result.current.createThread({ name: "Thread 3" });
         expect(newThread).toEqual(mockNewThread);
       });
 

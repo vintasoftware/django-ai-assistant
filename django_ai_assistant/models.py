@@ -20,6 +20,8 @@ class Thread(models.Model):
         null=True,
     )
     """User who created the thread. Can be null. Set to null/None when user is deleted."""
+    assistant_id = models.CharField(max_length=255, blank=True)
+    """Associated assistant ID. Can be empty."""
     created_at = models.DateTimeField(auto_now_add=True)
     """Date and time when the thread was created.
     Automatically set when the thread is created."""
