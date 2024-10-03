@@ -2,6 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { useThreadList } from "../src/hooks";
 import {
   aiCreateThread,
+  aiUpdateThread,
   aiDeleteThread,
   aiListThreads,
 } from "../src/client";
@@ -11,6 +12,9 @@ jest.mock("../src/client", () => ({
     .fn()
     .mockImplementation(() => Promise.resolve()),
   aiListThreads: jest
+    .fn()
+    .mockImplementation(() => Promise.resolve()),
+  aiUpdateThread: jest
     .fn()
     .mockImplementation(() => Promise.resolve()),
   aiDeleteThread: jest
@@ -218,6 +222,66 @@ describe("useThreadList", () => {
 
       expect(result.current.threads).toBeNull();
       expect(result.current.loadingCreateThread).toBe(false);
+    });
+  });
+
+  describe("updateThread", () => {
+    it("should update a thread and update state correctly", async () => {
+      const updatedThreadId = mockThreads[0].id;
+      const updatedThread = {
+        ...mockThreads[0],
+        name: "Updated Thread",
+      };
+      (aiListThreads as jest.Mock).mockResolvedValue([updatedThread, ...mockThreads.slice(1)]);
+      (aiUpdateThread as jest.Mock).mockResolvedValue(updatedThread);
+
+      const { result } = renderHook(() => useThreadList());
+
+      result.current.threads = mockThreads;
+
+      expect(result.current.threads).toEqual(mockThreads);
+      expect(result.current.loadingUpdateThread).toBe(false);
+
+      await act(async () => {
+        await result.current.updateThread({
+          threadId: updatedThreadId.toString(),
+          name: "Updated Thread",
+          shouldUpdateAssistantId: false,
+        });
+      });
+
+      expect(result.current.threads).toEqual([updatedThread, ...mockThreads.slice(1)]);
+      expect(result.current.loadingUpdateThread).toBe(false);
+    });
+
+    it("should update a thread with shouldUpdateAssistantId", async () => {
+      const assistantId = "test_assistant";
+      const updatedThreadId = mockThreads[0].id;
+      const updatedThread = {
+        ...mockThreads[0],
+        name: "Updated Thread",
+        assistant_id: "test_assistant",
+      };
+      (aiListThreads as jest.Mock).mockResolvedValue([updatedThread, ...mockThreads.slice(1)]);
+      (aiUpdateThread as jest.Mock).mockResolvedValue(updatedThread);
+
+      const { result } = renderHook(() => useThreadList({ assistantId: assistantId }));
+
+      result.current.threads = mockThreads;
+
+      expect(result.current.threads).toEqual(mockThreads);
+      expect(result.current.loadingUpdateThread).toBe(false);
+
+      await act(async () => {
+        await result.current.updateThread({
+          threadId: updatedThreadId.toString(),
+          name: "Updated Thread",
+          shouldUpdateAssistantId: true,
+        });
+      });
+
+      expect(result.current.threads).toEqual([updatedThread, ...mockThreads.slice(1)]);
+      expect(result.current.loadingUpdateThread).toBe(false);
     });
   });
 

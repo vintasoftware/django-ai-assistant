@@ -3,6 +3,7 @@ import { useState } from "react";
 import {
   Thread,
   aiCreateThread,
+  aiUpdateThread,
   aiDeleteThread,
   aiListThreads,
 } from "../client";
@@ -16,6 +17,8 @@ export function useThreadList({ assistantId }: { assistantId?: string } = {}) {
   const [loadingFetchThreads, setLoadingFetchThreads] =
     useState<boolean>(false);
   const [loadingCreateThread, setLoadingCreateThread] =
+    useState<boolean>(false);
+  const [loadingUpdateThread, setLoadingUpdateThread] =
     useState<boolean>(false);
   const [loadingDeleteThread, setLoadingDeleteThread] =
     useState<boolean>(false);
@@ -58,6 +61,33 @@ export function useThreadList({ assistantId }: { assistantId?: string } = {}) {
   );
 
   /**
+   * Updates a thread.
+   *
+   * @param threadId The ID of the thread to update.
+   * @param name The new name of the thread.
+   * @param shouldUpdateAssistantId If true, the assistant ID will be updated.
+   * @returns A promise that resolves with the updated thread.
+   */
+  const updateThread = useCallback(
+    async ({ threadId, name, shouldUpdateAssistantId }: { threadId: string, name: string, shouldUpdateAssistantId: boolean }): Promise<Thread> => {
+      try {
+        setLoadingUpdateThread(true);
+        const thread = await aiUpdateThread({
+          threadId, requestBody: {
+            name,
+            assistant_id: shouldUpdateAssistantId ? assistantId : undefined,
+          }
+        });
+        await fetchThreads();
+        return thread;
+      } finally {
+        setLoadingUpdateThread(false);
+      }
+    },
+    [fetchThreads, assistantId]
+  );
+
+  /**
    * Deletes a thread.
    *
    * @param threadId The ID of the thread to delete.
@@ -85,6 +115,10 @@ export function useThreadList({ assistantId }: { assistantId?: string } = {}) {
      */
     createThread,
     /**
+     * Function to update a thread.
+     */
+    updateThread,
+    /**
      * Function to delete a thread.
      */
     deleteThread,
@@ -100,6 +134,10 @@ export function useThreadList({ assistantId }: { assistantId?: string } = {}) {
      * Loading state of the create operation.
      */
     loadingCreateThread,
+    /**
+     * Loading state of the update operation.
+     */
+    loadingUpdateThread,
     /**
      * Loading state of the delete operation.
      */

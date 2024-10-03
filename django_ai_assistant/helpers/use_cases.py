@@ -206,7 +206,7 @@ def get_threads(
             If empty or None, all threads for the user are returned.
         request (HttpRequest | None): Current request, if any
     Returns:
-        list[Thread]: QuerySet of Thread model instances
+        list[Thread]: List of thread model instances
     """
     threads = Thread.objects.filter(created_by=user)
 
