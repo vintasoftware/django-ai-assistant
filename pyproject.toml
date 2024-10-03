@@ -85,6 +85,7 @@ langchain-anthropic = "^0.2.1"
 langchain-community = "^0.3.1"
 gitpython = "^3.1.43"
 scikit-learn = "^1.5.2"
+pycmarkgfm = "^1.2.1"
 
 [build-system]
 requires = ["poetry-core>=1.2.0"]

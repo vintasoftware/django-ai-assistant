@@ -10,3 +10,7 @@
 [data-loading] {
   display: none;
 }
+
+#messages-list li p {
+  margin-bottom: 0;
+}

@@ -2858,6 +2858,78 @@ files = [
 tests = ["pytest"]
 
 [[package]]
+name = "pycmarkgfm"
+version = "1.2.1"
+description = "Bindings to GitHub's Flavored Markdown (cmark-gfm), with enhanced support for task lists."
+optional = false
+python-versions = "*"
+files = [
+    {file = "pycmarkgfm-1.2.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:0269f5c098c8bd6a57ca086376b69c2294ef4ff19d2b1b9752889a06ec2651cf"},
+    {file = "pycmarkgfm-1.2.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:bd4cad3056b7ffd72b436dc194995f7b06970e89e527da490a4aa4ce5eee71ad"},
+    {file = "pycmarkgfm-1.2.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c10800a59e85e54deb8ce3a26517dc6d3d3f80fc8ec03860288ef37a8cf1b27f"},
+    {file = "pycmarkgfm-1.2.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:cdd2ca9a3da85cc34be77d8ed3cfdd7dbef956592f7e22c73c6ccdafc8925ca2"},
+    {file = "pycmarkgfm-1.2.1-cp310-cp310-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:c2da36606b1ae07159ad2d996e4af032e4e40a0169732eb8068af4354437dab0"},
+    {file = "pycmarkgfm-1.2.1-cp310-cp310-musllinux_1_1_aarch64.whl", hash = "sha256:27c08d6123e2afe72ad8ee980fca99c2ff431ea088f5ae65585b73d767845aed"},
+    {file = "pycmarkgfm-1.2.1-cp310-cp310-musllinux_1_1_i686.whl", hash = "sha256:f67ed420bfa2eec001c125d5cc49d78723fa9b5b329a311cf61f850fcf65ed36"},
+    {file = "pycmarkgfm-1.2.1-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:34b84b0750d324151ed398d3e6123984af33fb0f6e1404b7847bf8f8f8858821"},
+    {file = "pycmarkgfm-1.2.1-cp310-cp310-win32.whl", hash = "sha256:dd10b9ecd1e466f68eb2e974b9db97d9865704394ad39e7e2d7b1660e3b865dd"},
+    {file = "pycmarkgfm-1.2.1-cp310-cp310-win_amd64.whl", hash = "sha256:5cdca8f260e43c3d4c7cc031818c05dbb3d3d54bab309f99fa6247794771ee21"},
+    {file = "pycmarkgfm-1.2.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:bf83c75890e1b18e428bf8bf811c7a17aa2d20030c8a952afedbf028efbf37d9"},
+    {file = "pycmarkgfm-1.2.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:9189109fefc28fbb1763410d435f56815959df66e479992f4e845bf39861d6ee"},
+    {file = "pycmarkgfm-1.2.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:407baaf633391e77a23684e86cdd636ae58ed9d985577e9890e7509d610a0a6b"},
+    {file = "pycmarkgfm-1.2.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0998277e69999ad23c2ee69ec15bf0beedb6c47c08718883f71741ac9f00ae7a"},
+    {file = "pycmarkgfm-1.2.1-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:a3276a347b621389e2f27acabd66a993612ad64a34105ccdc060fa91b4db14a0"},
+    {file = "pycmarkgfm-1.2.1-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:b4e92de0733e1ec6f1a5704e874dea93211f4e9e52c7cb192085a4c6e7540403"},
+    {file = "pycmarkgfm-1.2.1-cp311-cp311-musllinux_1_1_i686.whl", hash = "sha256:4ceb250195c68f60bd76dd5ca498c4ec9026eeedb72bf1f5abcdb25e5bbe5353"},
+    {file = "pycmarkgfm-1.2.1-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:cd584bf73d6ff98648c642814ebc302adf9a2d31dec357deb42133cf3f8a7b81"},
+    {file = "pycmarkgfm-1.2.1-cp311-cp311-win32.whl", hash = "sha256:1c201121667fa35f9c31ad5033bfabf9b6d18e400f4ae01a7276025ea864472a"},
+    {file = "pycmarkgfm-1.2.1-cp311-cp311-win_amd64.whl", hash = "sha256:2fca88d5d347f405a2c2f14d43151411880d7f1e6b7277436e966effb0ea8df2"},
+    {file = "pycmarkgfm-1.2.1-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:8732b69f522173de80434df203b3eec88ac6aeb27f5b31ebac1ad65a053f75ca"},
+    {file = "pycmarkgfm-1.2.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:48cb1ba3d83936e442d2a84538314c8ea830fe8c8f345133c1d7f0d7b963b64d"},
+    {file = "pycmarkgfm-1.2.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:5476c4c0c4b9b7c33e06d866c64a5a46f23129d0c561dc08f996592d84c2c21e"},
+    {file = "pycmarkgfm-1.2.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c80df2e80bbcbd6389d8b07ff2b4e6129cef87891275055fb92fbe8fb9eef1ab"},
+    {file = "pycmarkgfm-1.2.1-cp312-cp312-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:52eae88a7817b1c5fac5e1c98fd51b38a8e4ab5a7fbd1b3c9b1dbf214b528916"},
+    {file = "pycmarkgfm-1.2.1-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:a2493abf1e32f958cc5ed5bf48a0ff9791081907ceed684fceaf231988d8923f"},
+    {file = "pycmarkgfm-1.2.1-cp312-cp312-musllinux_1_1_i686.whl", hash = "sha256:84085c333e865baf15a110a281ff35022c656b13f6e84c7dae55df9f7adacab6"},
+    {file = "pycmarkgfm-1.2.1-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:456f8ea93abd2f6384394425594e75158f20f9bb8c7e50c65df6cc9bda903a01"},
+    {file = "pycmarkgfm-1.2.1-cp312-cp312-win32.whl", hash = "sha256:cc78e01f1e6296b1b043ff88b9cb2d173f68db19704a7562debccbc006018136"},
+    {file = "pycmarkgfm-1.2.1-cp312-cp312-win_amd64.whl", hash = "sha256:f855f1c2e8b098e2dcbb246c1ee283d82b2c65141f75ae393800cbb0d7a489ba"},
+    {file = "pycmarkgfm-1.2.1-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:c67858cdba5cc994bf62d5a77863d7d1fa43c601853d50a34c2edaa820f03b86"},
+    {file = "pycmarkgfm-1.2.1-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ecea6943bc037cde6b6441f50b81bf3eeb41664bd22dd5cfc0a83bb8d484e77e"},
+    {file = "pycmarkgfm-1.2.1-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e6f6769f5ba06fa2f165118ad7faa1bd9a363763082c4a08fdbd757bc5f681b1"},
+    {file = "pycmarkgfm-1.2.1-cp37-cp37m-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:3ffb7ece182acd75d4a8d1234e57f819f6be6ed6cd1c3c691bad4e9538359c3c"},
+    {file = "pycmarkgfm-1.2.1-cp37-cp37m-musllinux_1_1_aarch64.whl", hash = "sha256:ae1b0f301e80aa9ef239c0d22af23b257e3cfca52b9eea6ba97bfd3c0d608a43"},
+    {file = "pycmarkgfm-1.2.1-cp37-cp37m-musllinux_1_1_i686.whl", hash = "sha256:65092caf1e979f6f89cb29275f679d4f014bbf88f817f6b4cab5a156f248ece1"},
+    {file = "pycmarkgfm-1.2.1-cp37-cp37m-musllinux_1_1_x86_64.whl", hash = "sha256:557504601ef4bbb54aba913f242bfdd539f0bfd478bb2d628ab72f091785887b"},
+    {file = "pycmarkgfm-1.2.1-cp37-cp37m-win32.whl", hash = "sha256:d6057d7e8e37cd6894949cc629a481084e0694f9bafcbeac20fbf542e199d09c"},
+    {file = "pycmarkgfm-1.2.1-cp37-cp37m-win_amd64.whl", hash = "sha256:2cb82820f0623f2de40e851027f537dfab0774f4dc5f7c2078df707df717908e"},
+    {file = "pycmarkgfm-1.2.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:2c8beb0a670677ce9d1c59dd4f6061f1fbcf565ea82962017e815c6479b072c5"},
+    {file = "pycmarkgfm-1.2.1-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:0d9d6b97c03403b914bc9eefc2cdbc461b2a7348e221cac7ccd4b51576b6ddd2"},
+    {file = "pycmarkgfm-1.2.1-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0c3b253b2ecd82aec3482028953ef744ac495adc9e942411a85c19a6b9d31b4e"},
+    {file = "pycmarkgfm-1.2.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9efa7000db97b9182f16a4e4715f76ded24dce4ed28c5efc7867c72a92c9a56f"},
+    {file = "pycmarkgfm-1.2.1-cp38-cp38-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:bac2a248dff083cbf0380568d4173aa0708f29f9ec9e3ef8b50bac5a21cc0cc7"},
+    {file = "pycmarkgfm-1.2.1-cp38-cp38-musllinux_1_1_aarch64.whl", hash = "sha256:36b2a87401936dd03770cb52253b1f54bbc66a30d183686372751df22b86cc24"},
+    {file = "pycmarkgfm-1.2.1-cp38-cp38-musllinux_1_1_i686.whl", hash = "sha256:d49eff0008abbe0d8dc6f6c7c0645e66f567f4b455280ab3bdf000ebcde4083b"},
+    {file = "pycmarkgfm-1.2.1-cp38-cp38-musllinux_1_1_x86_64.whl", hash = "sha256:a78bd27b5be186385fcaa9d1c43dfcf4b940faf4548868a835dfcd0db2c7dd4c"},
+    {file = "pycmarkgfm-1.2.1-cp38-cp38-win32.whl", hash = "sha256:481b135f6976033acb94257f32bb1b262d5843cf44d1b2cb4b22b611b5265330"},
+    {file = "pycmarkgfm-1.2.1-cp38-cp38-win_amd64.whl", hash = "sha256:1e2e3f0fe320bb267c51359adafef35f97db082a2899190f2050766a622c96f9"},
+    {file = "pycmarkgfm-1.2.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:e7ab9a62cd89176c01e917b54d48265157d5850cdaba4c91b6bb14948150823a"},
+    {file = "pycmarkgfm-1.2.1-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:6add3d300e15b6aa1d19854e1b9bae0bbb8d075d5ff15c8711a1ae729dd761e0"},
+    {file = "pycmarkgfm-1.2.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f868793f5675e047b3c028b914b36be169308bd52818416b10ed18a0a53d5b4f"},
+    {file = "pycmarkgfm-1.2.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a47dcfcca2c05af6fc895e06e9eaee0639b73e7142ec0d96f4305183e5b82d12"},
+    {file = "pycmarkgfm-1.2.1-cp39-cp39-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:bbe8e7c807ae65756c58ce8b319d08231d1c8874271a935980da43b4453e68c6"},
+    {file = "pycmarkgfm-1.2.1-cp39-cp39-musllinux_1_1_aarch64.whl", hash = "sha256:cac0b690dd07d660d3ca142c2c268ff64501795bf5fea3422aed5da859dfc010"},
+    {file = "pycmarkgfm-1.2.1-cp39-cp39-musllinux_1_1_i686.whl", hash = "sha256:47e19dd1b506fa0d3794ca302c5c4325a1efac5d11cca94c5a717d092d6dd31c"},
+    {file = "pycmarkgfm-1.2.1-cp39-cp39-musllinux_1_1_x86_64.whl", hash = "sha256:e31b16bc06ec8de30b739cdfc7ab9b8667e65c17d9d998603b569d1e54ae6922"},
+    {file = "pycmarkgfm-1.2.1-cp39-cp39-win32.whl", hash = "sha256:3310b709ec3d7be35cb9dab88cfe2238c56da3a4bff140f5ed5b79027ea21e33"},
+    {file = "pycmarkgfm-1.2.1-cp39-cp39-win_amd64.whl", hash = "sha256:51ec325f43292bd2facc4c2cd49fa168f63b8e7f0ed7634096409aa8883ba740"},
+    {file = "pycmarkgfm-1.2.1.tar.gz", hash = "sha256:a0f925081e786879f7ddec13892957831dfc4f44732eeadee4ecc6b85c2c2cda"},
+]
+
+[package.dependencies]
+cffi = ">=1.15.0"
+
+[[package]]
 name = "pycparser"
 version = "2.22"
 description = "C parser in Python"
@@ -4473,4 +4545,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "4e8d604e0039f5cece3c6eec4fda85075f37da8fac338ce090efce603384ef5a"
+content-hash = "105563740733f1041ab4e6300a824b1c0e7f82a42f40f8d6a70a4407f6d2f340"

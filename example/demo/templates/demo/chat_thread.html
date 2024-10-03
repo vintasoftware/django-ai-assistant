@@ -1,4 +1,5 @@
 {% extends "demo/chat_home.html" %}
+{% load markdown %}
 
 {% block message_list %}
   <div id="messages-container" class="d-flex flex-column">
@@ -19,7 +20,8 @@
               {% if message.type == "ai" %}AI{% else %}User{% endif %}
             </strong>
           </span>
-          <span>{{ message.content }}</span>
+
+          <span>{{ message.content|markdown }}</span>
         </div>
       {% endfor %}
     </div>
