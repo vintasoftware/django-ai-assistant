@@ -120,7 +120,7 @@ export function Chat({ assistantId }: { assistantId: string }) {
   const [activeThread, setActiveThread] = useState<Thread | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
 
-  const { fetchThreads, threads, createThread, deleteThread } = useThreadList();
+  const { fetchThreads, threads, createThread, deleteThread } = useThreadList({ assistantId });
   const {
     fetchMessages,
     messages,

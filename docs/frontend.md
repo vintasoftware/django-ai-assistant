@@ -106,7 +106,7 @@ Get a thread by ID.
 
 ### `aiUpdateThread`  
 Update a thread by ID.  
-**Param:** `{ threadId: string, requestBody: { name: string } }`  
+**Param:** `{ threadId: string, requestBody: { name: string, assistant_id: string } }`  
 **Return:** a `Promise` that resolves to a `Thread`.
 
 ### `aiDeleteThread`  
@@ -198,9 +198,11 @@ export function MyComponent() {
         threads,
         fetchThreads,
         createThread,
+        updateThread,
         deleteThread,
         loadingFetchThreads,
         loadingCreateThread,
+        loadingUpdateThread,
         loadingDeleteThread
     } = useThreadList();
     // ...

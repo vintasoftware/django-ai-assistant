@@ -142,6 +142,7 @@ def create_message(
 def create_thread(
     name: str,
     user: Any,
+    assistant_id: str | None = None,
     request: HttpRequest | None = None,
 ) -> Thread:
     """Create a thread.\n
@@ -149,6 +150,8 @@ def create_thread(
 
     Args:
         name (str): Thread name
+        assistant_id (str | None): Assistant ID to associate the thread with.
+            If empty or None, the thread is not associated with any assistant.
         user (Any): Current user
         request (HttpRequest | None): Current request, if any
     Returns:
@@ -159,7 +162,7 @@ def create_thread(
     if not can_create_thread(user=user, request=request):
         raise AIUserNotAllowedError("User is not allowed to create threads")
 
-    thread = Thread.objects.create(name=name, created_by=user)
+    thread = Thread.objects.create(name=name, created_by=user, assistant_id=assistant_id or "")
     return thread
 
 
@@ -188,15 +191,37 @@ def get_single_thread(
     return thread
 
 
-def get_threads(user: Any) -> list[Thread]:
-    """Get all user owned threads.\n
+def get_threads(
+    user: Any,
+    assistant_id: str | None = None,
+    request: HttpRequest | None = None,
+) -> list[Thread]:
+    """Get all threads for the user.\n
+    Uses `AI_ASSISTANT_CAN_VIEW_THREAD_FN` permission to check the threads the user can see,
+    and returns only the ones the user can see.
 
     Args:
         user (Any): Current user
+        assistant_id (str | None): Assistant ID to filter threads by.
+            If empty or None, all threads for the user are returned.
+        request (HttpRequest | None): Current request, if any
     Returns:
         list[Thread]: List of thread model instances
     """
-    return list(Thread.objects.filter(created_by=user))
+    threads = Thread.objects.filter(created_by=user)
+
+    if assistant_id:
+        threads = threads.filter(assistant_id=assistant_id)
+
+    return list(
+        threads.filter(
+            id__in=[
+                thread.id
+                for thread in threads
+                if can_view_thread(thread=thread, user=user, request=request)
+            ]
+        )
+    )
 
 
 def update_thread(

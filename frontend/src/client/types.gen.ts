@@ -8,12 +8,14 @@ export type Assistant = {
 export type Thread = {
     id?: number | null;
     name?: string | null;
+    assistant_id?: string | null;
     created_at: string;
     updated_at: string;
 };
 
 export type ThreadIn = {
     name?: string;
+    assistant_id?: string | null;
 };
 
 export type ThreadMessage = {
@@ -36,6 +38,10 @@ export type AiGetAssistantData = {
 };
 
 export type AiGetAssistantResponse = Assistant;
+
+export type AiListThreadsData = {
+    assistantId?: string | null;
+};
 
 export type AiListThreadsResponse = Array<Thread>;
 
@@ -108,6 +114,7 @@ export type $OpenApiTs = {
     };
     '/threads/': {
         get: {
+            req: AiListThreadsData;
             res: {
                 /**
                  * OK

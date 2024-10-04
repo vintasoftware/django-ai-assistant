@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { AiListAssistantsResponse, AiGetAssistantData, AiGetAssistantResponse, AiListThreadsResponse, AiCreateThreadData, AiCreateThreadResponse, AiGetThreadData, AiGetThreadResponse, AiUpdateThreadData, AiUpdateThreadResponse, AiDeleteThreadData, AiDeleteThreadResponse, AiListThreadMessagesData, AiListThreadMessagesResponse, AiCreateThreadMessageData, AiCreateThreadMessageResponse, AiDeleteThreadMessageData, AiDeleteThreadMessageResponse } from './types.gen';
+import type { AiListAssistantsResponse, AiGetAssistantData, AiGetAssistantResponse, AiListThreadsData, AiListThreadsResponse, AiCreateThreadData, AiCreateThreadResponse, AiGetThreadData, AiGetThreadResponse, AiUpdateThreadData, AiUpdateThreadResponse, AiDeleteThreadData, AiDeleteThreadResponse, AiListThreadMessagesData, AiListThreadMessagesResponse, AiCreateThreadMessageData, AiCreateThreadMessageResponse, AiDeleteThreadMessageData, AiDeleteThreadMessageResponse } from './types.gen';
 
 /**
  * List Assistants
@@ -32,12 +32,17 @@ export const aiGetAssistant = (data: AiGetAssistantData): CancelablePromise<AiGe
 
 /**
  * List Threads
+ * @param data The data for the request.
+ * @param data.assistantId
  * @returns Thread OK
  * @throws ApiError
  */
-export const aiListThreads = (): CancelablePromise<AiListThreadsResponse> => { return __request(OpenAPI, {
+export const aiListThreads = (data: AiListThreadsData = {}): CancelablePromise<AiListThreadsResponse> => { return __request(OpenAPI, {
     method: 'GET',
-    url: '/threads/'
+    url: '/threads/',
+    query: {
+        assistant_id: data.assistantId
+    }
 }); };
 
 /**

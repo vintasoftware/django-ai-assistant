@@ -18,6 +18,7 @@ class Thread(ModelSchema):
         fields = (
             "id",
             "name",
+            "assistant_id",
             "created_at",
             "updated_at",
         )
@@ -25,6 +26,7 @@ class Thread(ModelSchema):
 
 class ThreadIn(Schema):
     name: str = Field(default_factory=lambda: timezone.now().strftime("%Y-%m-%d %H:%M"))
+    assistant_id: str | None = None
 
 
 class ThreadMessageIn(Schema):

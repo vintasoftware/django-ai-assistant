@@ -76,14 +76,17 @@ def get_assistant(request, assistant_id: str):
 
 
 @api.get("threads/", response=List[Thread], url_name="threads_list_create")
-def list_threads(request):
-    return list(use_cases.get_threads(user=request.user))
+def list_threads(request, assistant_id: str | None = None):
+    return list(use_cases.get_threads(user=request.user, assistant_id=assistant_id))
 
 
 @api.post("threads/", response=Thread, url_name="threads_list_create")
 def create_thread(request, payload: ThreadIn):
     name = payload.name
-    return use_cases.create_thread(name=name, user=request.user, request=request)
+    assistant_id = payload.assistant_id
+    return use_cases.create_thread(
+        name=name, assistant_id=assistant_id, user=request.user, request=request
+    )
 
 
 @api.get("threads/{thread_id}/", response=Thread, url_name="thread_detail_update_delete")

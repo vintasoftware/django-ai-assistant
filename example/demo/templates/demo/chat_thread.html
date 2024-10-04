@@ -20,7 +20,6 @@
               {% if message.type == "ai" %}AI{% else %}User{% endif %}
             </strong>
           </span>
-
           <span>{{ message.content|markdown }}</span>
         </div>
       {% endfor %}
