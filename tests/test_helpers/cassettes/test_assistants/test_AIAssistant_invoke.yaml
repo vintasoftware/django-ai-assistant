@@ -2,705 +2,10 @@ interactions:
 - request:
     body: '{"messages": [{"content": "You are a temperature bot. Today is 2024-06-09.",
       "role": "system"}, {"content": "What is the temperature today in Recife?", "role":
-      "user"}], "model": "gpt-4o", "n": 1, "stream": true, "temperature": 1.0, "tools":
-      [{"type": "function", "function": {"name": "fetch_current_temperature", "description":
-      "Fetch the current temperature data for a location", "parameters": {"type":
-      "object", "properties": {"location": {"type": "string"}}, "required": ["location"]}}},
-      {"type": "function", "function": {"name": "fetch_forecast_temperature", "description":
-      "Fetch the forecast temperature data for a location", "parameters": {"type":
-      "object", "properties": {"location": {"type": "string"}, "dt_str": {"description":
-      "Date in the format ''YYYY-MM-DD''", "type": "string"}}, "required": ["location",
-      "dt_str"]}}}]}'
-    headers:
-      accept:
-      - application/json
-      accept-encoding:
-      - gzip, deflate
-      authorization:
-      - DUMMY
-      connection:
-      - keep-alive
-      content-length:
-      - '833'
-      content-type:
-      - application/json
-      host:
-      - api.openai.com
-      user-agent:
-      - OpenAI/Python
-    method: POST
-    uri: https://api.openai.com/v1/chat/completions
-  response:
-    body:
-      string: 'data: {"id":"chatcmpl-9YOjz2gX097iWZgi8QMItZDJyQYDg","object":"chat.completion.chunk","created":1717985283,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"role":"assistant","content":null,"tool_calls":[{"index":0,"id":"call_p1iKkCYSNSXthLj1YMlCCDCc","type":"function","function":{"name":"fetch_current_temperature","arguments":""}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOjz2gX097iWZgi8QMItZDJyQYDg","object":"chat.completion.chunk","created":1717985283,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"{\""}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOjz2gX097iWZgi8QMItZDJyQYDg","object":"chat.completion.chunk","created":1717985283,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"location"}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOjz2gX097iWZgi8QMItZDJyQYDg","object":"chat.completion.chunk","created":1717985283,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"\":\""}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOjz2gX097iWZgi8QMItZDJyQYDg","object":"chat.completion.chunk","created":1717985283,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"Rec"}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOjz2gX097iWZgi8QMItZDJyQYDg","object":"chat.completion.chunk","created":1717985283,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"ife"}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOjz2gX097iWZgi8QMItZDJyQYDg","object":"chat.completion.chunk","created":1717985283,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"\"}"}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOjz2gX097iWZgi8QMItZDJyQYDg","object":"chat.completion.chunk","created":1717985283,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{},"logprobs":null,"finish_reason":"tool_calls"}]}
-
-
-        data: [DONE]
-
-
-        '
-    headers:
-      Connection:
-      - keep-alive
-      Content-Type:
-      - text/event-stream; charset=utf-8
-      Date: Sun, 09 Jun 2024 23:39:08 GMT
-      Server: DUMMY
-      Transfer-Encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '{"messages": [{"content": "You are a temperature bot. Today is 2024-06-09.",
-      "role": "system"}, {"content": "What is the temperature today in Recife?", "role":
-      "user"}, {"content": null, "role": "assistant", "tool_calls": [{"type": "function",
-      "id": "call_p1iKkCYSNSXthLj1YMlCCDCc", "function": {"name": "fetch_current_temperature",
-      "arguments": "{\"location\": \"Recife\"}"}}]}, {"content": "32 degrees Celsius",
-      "role": "tool", "tool_call_id": "call_p1iKkCYSNSXthLj1YMlCCDCc"}], "model":
-      "gpt-4o", "n": 1, "stream": true, "temperature": 1.0, "tools": [{"type": "function",
-      "function": {"name": "fetch_current_temperature", "description": "Fetch the
-      current temperature data for a location", "parameters": {"type": "object", "properties":
-      {"location": {"type": "string"}}, "required": ["location"]}}}, {"type": "function",
-      "function": {"name": "fetch_forecast_temperature", "description": "Fetch the
-      forecast temperature data for a location", "parameters": {"type": "object",
-      "properties": {"location": {"type": "string"}, "dt_str": {"description": "Date
-      in the format ''YYYY-MM-DD''", "type": "string"}}, "required": ["location",
-      "dt_str"]}}}]}'
-    headers:
-      accept:
-      - application/json
-      accept-encoding:
-      - gzip, deflate
-      authorization:
-      - DUMMY
-      connection:
-      - keep-alive
-      content-length:
-      - '1144'
-      content-type:
-      - application/json
-      cookie:
-      - DUMMY
-      host:
-      - api.openai.com
-      user-agent:
-      - OpenAI/Python
-    method: POST
-    uri: https://api.openai.com/v1/chat/completions
-  response:
-    body:
-      string: 'data: {"id":"chatcmpl-9YOk0pFElCshyiVxhOyjImvJmpVsB","object":"chat.completion.chunk","created":1717985284,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"role":"assistant","content":""},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk0pFElCshyiVxhOyjImvJmpVsB","object":"chat.completion.chunk","created":1717985284,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"The"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk0pFElCshyiVxhOyjImvJmpVsB","object":"chat.completion.chunk","created":1717985284,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        current"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk0pFElCshyiVxhOyjImvJmpVsB","object":"chat.completion.chunk","created":1717985284,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        temperature"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk0pFElCshyiVxhOyjImvJmpVsB","object":"chat.completion.chunk","created":1717985284,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        in"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk0pFElCshyiVxhOyjImvJmpVsB","object":"chat.completion.chunk","created":1717985284,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        Recife"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk0pFElCshyiVxhOyjImvJmpVsB","object":"chat.completion.chunk","created":1717985284,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        today"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk0pFElCshyiVxhOyjImvJmpVsB","object":"chat.completion.chunk","created":1717985284,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        is"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk0pFElCshyiVxhOyjImvJmpVsB","object":"chat.completion.chunk","created":1717985284,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        "},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk0pFElCshyiVxhOyjImvJmpVsB","object":"chat.completion.chunk","created":1717985284,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"32"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk0pFElCshyiVxhOyjImvJmpVsB","object":"chat.completion.chunk","created":1717985284,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        degrees"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk0pFElCshyiVxhOyjImvJmpVsB","object":"chat.completion.chunk","created":1717985284,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        Celsius"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk0pFElCshyiVxhOyjImvJmpVsB","object":"chat.completion.chunk","created":1717985284,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"."},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk0pFElCshyiVxhOyjImvJmpVsB","object":"chat.completion.chunk","created":1717985284,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{},"logprobs":null,"finish_reason":"stop"}]}
-
-
-        data: [DONE]
-
-
-        '
-    headers:
-      Connection:
-      - keep-alive
-      Content-Type:
-      - text/event-stream; charset=utf-8
-      Date: Sun, 09 Jun 2024 23:39:08 GMT
-      Server: DUMMY
-      Transfer-Encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '{"messages": [{"content": "You are a temperature bot. Today is 2024-06-09.",
-      "role": "system"}, {"content": "What is the temperature today in Recife?", "role":
-      "user"}, {"content": "The current temperature in Recife today is 32 degrees
-      Celsius.", "role": "assistant"}, {"content": "What about tomorrow?", "role":
-      "user"}], "model": "gpt-4o", "n": 1, "stream": true, "temperature": 1.0, "tools":
-      [{"type": "function", "function": {"name": "fetch_current_temperature", "description":
-      "Fetch the current temperature data for a location", "parameters": {"type":
-      "object", "properties": {"location": {"type": "string"}}, "required": ["location"]}}},
-      {"type": "function", "function": {"name": "fetch_forecast_temperature", "description":
-      "Fetch the forecast temperature data for a location", "parameters": {"type":
-      "object", "properties": {"location": {"type": "string"}, "dt_str": {"description":
-      "Date in the format ''YYYY-MM-DD''", "type": "string"}}, "required": ["location",
-      "dt_str"]}}}]}'
-    headers:
-      accept:
-      - application/json
-      accept-encoding:
-      - gzip, deflate
-      authorization:
-      - DUMMY
-      connection:
-      - keep-alive
-      content-length:
-      - '986'
-      content-type:
-      - application/json
-      host:
-      - api.openai.com
-      user-agent:
-      - OpenAI/Python
-    method: POST
-    uri: https://api.openai.com/v1/chat/completions
-  response:
-    body:
-      string: 'data: {"id":"chatcmpl-9YOk1VCEHt1A3VthxEIOeoNPArziZ","object":"chat.completion.chunk","created":1717985285,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"role":"assistant","content":null,"tool_calls":[{"index":0,"id":"call_KSrcMaPkoxmg8dtWoD5E9HIt","type":"function","function":{"name":"fetch_forecast_temperature","arguments":""}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk1VCEHt1A3VthxEIOeoNPArziZ","object":"chat.completion.chunk","created":1717985285,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"{\""}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk1VCEHt1A3VthxEIOeoNPArziZ","object":"chat.completion.chunk","created":1717985285,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"location"}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk1VCEHt1A3VthxEIOeoNPArziZ","object":"chat.completion.chunk","created":1717985285,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"\":\""}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk1VCEHt1A3VthxEIOeoNPArziZ","object":"chat.completion.chunk","created":1717985285,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"Rec"}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk1VCEHt1A3VthxEIOeoNPArziZ","object":"chat.completion.chunk","created":1717985285,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"ife"}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk1VCEHt1A3VthxEIOeoNPArziZ","object":"chat.completion.chunk","created":1717985285,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"\",\""}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk1VCEHt1A3VthxEIOeoNPArziZ","object":"chat.completion.chunk","created":1717985285,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"dt"}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk1VCEHt1A3VthxEIOeoNPArziZ","object":"chat.completion.chunk","created":1717985285,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"_str"}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk1VCEHt1A3VthxEIOeoNPArziZ","object":"chat.completion.chunk","created":1717985285,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"\":\""}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk1VCEHt1A3VthxEIOeoNPArziZ","object":"chat.completion.chunk","created":1717985285,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"202"}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk1VCEHt1A3VthxEIOeoNPArziZ","object":"chat.completion.chunk","created":1717985285,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"4"}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk1VCEHt1A3VthxEIOeoNPArziZ","object":"chat.completion.chunk","created":1717985285,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"-"}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk1VCEHt1A3VthxEIOeoNPArziZ","object":"chat.completion.chunk","created":1717985285,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"06"}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk1VCEHt1A3VthxEIOeoNPArziZ","object":"chat.completion.chunk","created":1717985285,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"-"}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk1VCEHt1A3VthxEIOeoNPArziZ","object":"chat.completion.chunk","created":1717985285,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"10"}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk1VCEHt1A3VthxEIOeoNPArziZ","object":"chat.completion.chunk","created":1717985285,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"\"}"}}]},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk1VCEHt1A3VthxEIOeoNPArziZ","object":"chat.completion.chunk","created":1717985285,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{},"logprobs":null,"finish_reason":"tool_calls"}]}
-
-
-        data: [DONE]
-
-
-        '
-    headers:
-      Connection:
-      - keep-alive
-      Content-Type:
-      - text/event-stream; charset=utf-8
-      Date: Sun, 09 Jun 2024 23:39:08 GMT
-      Server: DUMMY
-      Transfer-Encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '{"messages": [{"content": "You are a temperature bot. Today is 2024-06-09.",
-      "role": "system"}, {"content": "What is the temperature today in Recife?", "role":
-      "user"}, {"content": "The current temperature in Recife today is 32 degrees
-      Celsius.", "role": "assistant"}, {"content": "What about tomorrow?", "role":
-      "user"}, {"content": null, "role": "assistant", "tool_calls": [{"type": "function",
-      "id": "call_KSrcMaPkoxmg8dtWoD5E9HIt", "function": {"name": "fetch_forecast_temperature",
-      "arguments": "{\"location\": \"Recife\", \"dt_str\": \"2024-06-10\"}"}}]}, {"content":
-      "35 degrees Celsius", "role": "tool", "tool_call_id": "call_KSrcMaPkoxmg8dtWoD5E9HIt"}],
-      "model": "gpt-4o", "n": 1, "stream": true, "temperature": 1.0, "tools": [{"type":
-      "function", "function": {"name": "fetch_current_temperature", "description":
-      "Fetch the current temperature data for a location", "parameters": {"type":
-      "object", "properties": {"location": {"type": "string"}}, "required": ["location"]}}},
-      {"type": "function", "function": {"name": "fetch_forecast_temperature", "description":
-      "Fetch the forecast temperature data for a location", "parameters": {"type":
-      "object", "properties": {"location": {"type": "string"}, "dt_str": {"description":
-      "Date in the format ''YYYY-MM-DD''", "type": "string"}}, "required": ["location",
-      "dt_str"]}}}]}'
-    headers:
-      accept:
-      - application/json
-      accept-encoding:
-      - gzip, deflate
-      authorization:
-      - DUMMY
-      connection:
-      - keep-alive
-      content-length:
-      - '1326'
-      content-type:
-      - application/json
-      cookie:
-      - DUMMY
-      host:
-      - api.openai.com
-      user-agent:
-      - OpenAI/Python
-    method: POST
-    uri: https://api.openai.com/v1/chat/completions
-  response:
-    body:
-      string: 'data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"role":"assistant","content":""},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"The"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        forecast"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"ed"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        temperature"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        in"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        Recife"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        for"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        tomorrow"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":","},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        June"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        "},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"10"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":","},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        "},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"202"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"4"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":","},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        is"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        expected"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        to"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        be"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        "},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"35"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        degrees"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"
-        Celsius"},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{"content":"."},"logprobs":null,"finish_reason":null}]}
-
-
-        data: {"id":"chatcmpl-9YOk2POCj2Ci9LSilXBPkyzDSuYNL","object":"chat.completion.chunk","created":1717985286,"model":"gpt-4o-2024-05-13","system_fingerprint":"fp_319be4768e","choices":[{"index":0,"delta":{},"logprobs":null,"finish_reason":"stop"}]}
-
-
-        data: [DONE]
-
-
-        '
-    headers:
-      Connection:
-      - keep-alive
-      Content-Type:
-      - text/event-stream; charset=utf-8
-      Date: Sun, 09 Jun 2024 23:39:08 GMT
-      Server: DUMMY
-      Transfer-Encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '{"messages": [{"content": "You are a temperature bot. Today is 2024-06-09.",
-      "role": "system"}, {"content": "What is the temperature today in Recife?", "role":
       "user"}], "model": "gpt-4o", "n": 1, "stream": false, "temperature": 1.0, "tools":
       [{"type": "function", "function": {"name": "fetch_current_temperature", "description":
-      "Fetch the current temperature data for a location", "parameters": {"type":
-      "object", "properties": {"location": {"type": "string"}}, "required": ["location"]}}},
-      {"type": "function", "function": {"name": "fetch_forecast_temperature", "description":
-      "Fetch the forecast temperature data for a location", "parameters": {"type":
-      "object", "properties": {"location": {"type": "string"}, "dt_str": {"description":
-      "Date in the format ''YYYY-MM-DD''", "type": "string"}}, "required": ["location",
-      "dt_str"]}}}]}'
-    headers:
-      accept:
-      - application/json
-      accept-encoding:
-      - gzip, deflate
-      authorization:
-      - DUMMY
-      connection:
-      - keep-alive
-      content-length:
-      - '834'
-      content-type:
-      - application/json
-      host:
-      - api.openai.com
-      user-agent:
-      - OpenAI/Python
-    method: POST
-    uri: https://api.openai.com/v1/chat/completions
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAAA2xSXW/TMBR9z6+w7nODkqxNu7wNOrFqgBAMIZWiyHVvPlbHtuwbxKj63ycnaZtV
-        5MGyzsk55/rYh4AxqHeQMRAVJ9EYGd6lD9Hd+tOXav2I9+ZeL9d/vj+vFtMPBsV7mHiF3j6joJPq
-        ndCNkUi1Vj0tLHJC7xrPkzSaLdJF2hGN3qH0stJQONVhEiXTMJqF8c0grHQt0EHGfgWMMXboVj+i
-        2uFfyFg0OSENOsdLhOz8E2NgtfQIcOdqR1wRTC6k0IpQ+alVK+WIIK1lLriUl+D+O4z2l564lPl+
-        P58vb79Gqx9L8bTe3f7btz8/fl5tR3m99YvpBipaJc79jPgznl2FMQaKN70WSVS5aK1FRTlhY9By
-        ai1emTEG3JZtg4r8QeCwAakF9/YbyDbwDUVd4AaO8EZ2DP63/z3qx2LROi6H4gb8eL4JqUtj9dZd
-        FQtFrWpX5Ra56w447jk4pXU50L65SjBWN4Zy0ntU3jaO494VLi9txKYDSZq4HOHJPBjmBPfiCJu8
-        qFWJ1ti6ewZQmDyZpcmU4w2fQXAMXgEAAP//AwAwzXr/DwMAAA==
-    headers:
-      Connection:
-      - keep-alive
-      Content-Encoding:
-      - gzip
-      Content-Type:
-      - application/json
-      Date: Sun, 09 Jun 2024 23:39:08 GMT
-      Server: DUMMY
-      Transfer-Encoding:
-      - chunked
-      X-Content-Type-Options:
-      - nosniff
-      access-control-expose-headers:
-      - X-Request-ID
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '{"messages": [{"content": "You are a temperature bot. Today is 2024-06-09.",
-      "role": "system"}, {"content": "What is the temperature today in Recife?", "role":
-      "user"}, {"content": null, "role": "assistant", "tool_calls": [{"type": "function",
-      "id": "call_kk77D9P0IUDcTZd9zkuWGMIb", "function": {"name": "fetch_current_temperature",
-      "arguments": "{\"location\": \"Recife\"}"}}]}, {"content": "32 degrees Celsius",
-      "role": "tool", "tool_call_id": "call_kk77D9P0IUDcTZd9zkuWGMIb"}], "model":
-      "gpt-4o", "n": 1, "stream": false, "temperature": 1.0, "tools": [{"type": "function",
-      "function": {"name": "fetch_current_temperature", "description": "Fetch the
-      current temperature data for a location", "parameters": {"type": "object", "properties":
-      {"location": {"type": "string"}}, "required": ["location"]}}}, {"type": "function",
-      "function": {"name": "fetch_forecast_temperature", "description": "Fetch the
-      forecast temperature data for a location", "parameters": {"type": "object",
-      "properties": {"location": {"type": "string"}, "dt_str": {"description": "Date
-      in the format ''YYYY-MM-DD''", "type": "string"}}, "required": ["location",
-      "dt_str"]}}}]}'
-    headers:
-      accept:
-      - application/json
-      accept-encoding:
-      - gzip, deflate
-      authorization:
-      - DUMMY
-      connection:
-      - keep-alive
-      content-length:
-      - '1145'
-      content-type:
-      - application/json
-      cookie:
-      - DUMMY
-      host:
-      - api.openai.com
-      user-agent:
-      - OpenAI/Python
-    method: POST
-    uri: https://api.openai.com/v1/chat/completions
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAAAwAAAP//VJDNTsMwEITveYqVz02Vpk0KvRV6AAEXVAESQpXrbBKDY1vejURV9d1R
-        0vSHiw/zeUazs48AhC7EAoSqJavGm3iZPyR31Rof6d1oJlPVL+btY/m8elqtgxh1Drf9RsUn11i5
-        xhtk7ewRq4CSsUudzNM8yW7ym3kPGleg6WyV53jm4jRJZ3GSxZPpYKydVkhiAZ8RAMC+f7uKtsBf
-        sYBkdFIaJJIVisX5E4AIznSKkESaWFoWowtUzjLavvW6RlBtCGgZGBuPQXIbELSFV1S6RGBXyB1o
-        gmkKBVYBkeAeDemWxtehAcuWZHeTbY0Z9MO5pXGVD25LAz/rpbaa6k1ASc52jYidFz09RABf/Rrt
-        vwOFD67xvGH3g7YLnExvj3nisv81HSA7luZKz9JoaChoR4zNptS2wuCDPo5T+k2a5elM4lRmIjpE
-        fwAAAP//AwDhh+s+JQIAAA==
-    headers:
-      Connection:
-      - keep-alive
-      Content-Encoding:
-      - gzip
-      Content-Type:
-      - application/json
-      Date: Sun, 09 Jun 2024 23:39:08 GMT
-      Server: DUMMY
-      Transfer-Encoding:
-      - chunked
-      X-Content-Type-Options:
-      - nosniff
-      access-control-expose-headers:
-      - X-Request-ID
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '{"messages": [{"content": "You are a temperature bot. Today is 2024-06-09.",
-      "role": "system"}, {"content": "What is the temperature today in Recife?", "role":
-      "user"}, {"content": "The current temperature in Recife today is 32 degrees
-      Celsius.", "role": "assistant"}, {"content": "What about tomorrow?", "role":
-      "user"}], "model": "gpt-4o", "n": 1, "stream": false, "temperature": 1.0, "tools":
-      [{"type": "function", "function": {"name": "fetch_current_temperature", "description":
-      "Fetch the current temperature data for a location", "parameters": {"type":
-      "object", "properties": {"location": {"type": "string"}}, "required": ["location"]}}},
-      {"type": "function", "function": {"name": "fetch_forecast_temperature", "description":
-      "Fetch the forecast temperature data for a location", "parameters": {"type":
-      "object", "properties": {"location": {"type": "string"}, "dt_str": {"description":
-      "Date in the format ''YYYY-MM-DD''", "type": "string"}}, "required": ["location",
-      "dt_str"]}}}]}'
-    headers:
-      accept:
-      - application/json
-      accept-encoding:
-      - gzip, deflate
-      authorization:
-      - DUMMY
-      connection:
-      - keep-alive
-      content-length:
-      - '987'
-      content-type:
-      - application/json
-      host:
-      - api.openai.com
-      user-agent:
-      - OpenAI/Python
-    method: POST
-    uri: https://api.openai.com/v1/chat/completions
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAAAwAAAP//bFLLbtswELzrK4g9W4UkW4qhW1O0yKFB0wBB01aFwFAriS5FsuQKrWH4
-        3ws9bCtGeCCIGc7scpaHgDGQFeQMRMtJdFaF77O76MOzT+7aB70RT38e73eYVJZi/Hb/EVaDwrzs
-        UNBJ9U6YziokafREC4eccHCNb5IsSrfZdjsSnalQDbLGUrgxYRIlmzBKw3g9C1sjBXrI2c+AMcYO
-        4z60qCv8BzmLViekQ+95g5CfLzEGzqgBAe699MQ1wepCCqMJ9dC17pVaEGSMKgVX6lJ4WofF+ZIT
-        V6rsflSf43qffM9Maqvd36fbr18ePj3LRb3Jem/Hhupei3M+C/6M51fFGAPNu0mLJNqyNg4F91QS
-        dhYdp97hlRtjwF3Td6hpeAkcClBG8MG/gLyARxSyxgJWBVRUenIjOs0gC+OogCO8MjwGb51/LaJz
-        WPeeqznTGT+eh6RMY5158VeZQy219G3pkPvx7csRBKdqYx3oX00ZrDOdpZLMb9SDbbxOJ1e4fMIL
-        m9zMJBniaqHKkmDuE/zeE3ZlLXWDzjo5/hCobZmkWbLhuOYpBMfgPwAAAP//AwD589dpKgMAAA==
-    headers:
-      Connection:
-      - keep-alive
-      Content-Encoding:
-      - gzip
-      Content-Type:
-      - application/json
-      Date: Sun, 09 Jun 2024 23:39:08 GMT
-      Server: DUMMY
-      Transfer-Encoding:
-      - chunked
-      X-Content-Type-Options:
-      - nosniff
-      access-control-expose-headers:
-      - X-Request-ID
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '{"messages": [{"content": "You are a temperature bot. Today is 2024-06-09.",
-      "role": "system"}, {"content": "What is the temperature today in Recife?", "role":
-      "user"}, {"content": "The current temperature in Recife today is 32 degrees
-      Celsius.", "role": "assistant"}, {"content": "What about tomorrow?", "role":
-      "user"}, {"content": null, "role": "assistant", "tool_calls": [{"type": "function",
-      "id": "call_mZdL1fy2Y6o5pdjwUBQOPFXi", "function": {"name": "fetch_forecast_temperature",
-      "arguments": "{\"location\": \"Recife\", \"dt_str\": \"2024-06-10\"}"}}]}, {"content":
-      "35 degrees Celsius", "role": "tool", "tool_call_id": "call_mZdL1fy2Y6o5pdjwUBQOPFXi"}],
-      "model": "gpt-4o", "n": 1, "stream": false, "temperature": 1.0, "tools": [{"type":
-      "function", "function": {"name": "fetch_current_temperature", "description":
-      "Fetch the current temperature data for a location", "parameters": {"type":
-      "object", "properties": {"location": {"type": "string"}}, "required": ["location"]}}},
-      {"type": "function", "function": {"name": "fetch_forecast_temperature", "description":
-      "Fetch the forecast temperature data for a location", "parameters": {"type":
-      "object", "properties": {"location": {"type": "string"}, "dt_str": {"description":
-      "Date in the format ''YYYY-MM-DD''", "type": "string"}}, "required": ["location",
-      "dt_str"]}}}]}'
-    headers:
-      accept:
-      - application/json
-      accept-encoding:
-      - gzip, deflate
-      authorization:
-      - DUMMY
-      connection:
-      - keep-alive
-      content-length:
-      - '1327'
-      content-type:
-      - application/json
-      cookie:
-      - DUMMY
-      host:
-      - api.openai.com
-      user-agent:
-      - OpenAI/Python
-    method: POST
-    uri: https://api.openai.com/v1/chat/completions
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAAA1SRS0/DMBCE7/kVK58bFNKmtL1FRQguCCE4IIQq19mkBsdreTc8hPrfUdInFx/m
-        21nNjn8TAGUrtQBlNlpMG1xaTm+za/P8YGf2Hpd3y7J4+dRYdjcPpe/UqHfQ+h2NHFwXhtrgUCz5
-        HTYRtWC/9fIqn2bFbDqbD6ClCl1va4KkE0rzLJ+kWZFejvfGDVmDrBbwmgAA/A5vH9FX+K0WkI0O
-        SovMukG1OA4BqEiuV5RmtizaixqdoCEv6IfUTxuEmiIazYIVCLYBo5YuDjIItRQjfYH18IjG1giW
-        YVxAhU1EZFiiY9vxxfn6iHXHur/Od87t9e0xr6MmRFrznh/12nrLm1VEzeT7bCwU1EC3CcDb0Ev3
-        71QVIrVBVkIf6HloudjtU6efOKMHKCTanenzLNknVPzDgu2qtr7BGKLd1VSHVV5M84nGsS5Usk3+
-        AAAA//8DADVkeHYvAgAA
-    headers:
-      Connection:
-      - keep-alive
-      Content-Encoding:
-      - gzip
-      Content-Type:
-      - application/json
-      Date: Sun, 09 Jun 2024 23:39:08 GMT
-      Server: DUMMY
-      Transfer-Encoding:
-      - chunked
-      X-Content-Type-Options:
-      - nosniff
-      access-control-expose-headers:
-      - X-Request-ID
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '{"messages": [{"content": "You are a temperature bot. Today is 2024-06-09.",
-      "role": "system"}, {"content": "What is the temperature today in Recife?", "role":
-      "user"}], "model": "gpt-4o", "n": 1, "stream": false, "temperature": 1.0, "tools":
-      [{"type": "function", "function": {"name": "fetch_current_temperature", "description":
-      "Fetch the current temperature data for a location", "parameters": {"type":
-      "object", "properties": {"location": {"type": "string"}}, "required": ["location"]}}},
+      "Fetch the current temperature data for a location", "parameters": {"properties":
+      {"location": {"type": "string"}}, "required": ["location"], "type": "object"}}},
       {"type": "function", "function": {"name": "fetch_forecast_temperature", "description":
       "Fetch the forecast temperature data for a location", "parameters": {"type":
       "object", "properties": {"location": {"type": "string"}, "dt_str": {"description":
@@ -728,18 +33,19 @@ interactions:
     method: POST
     uri: https://api.openai.com/v1/chat/completions
   response:
-    content: "{\n  \"id\": \"chatcmpl-ABSmPJz6yUnuKDn01OjKlvgTJrwCx\",\n  \"object\":
-      \"chat.completion\",\n  \"created\": 1727295601,\n  \"model\": \"gpt-4o-2024-05-13\",\n
+    content: "{\n  \"id\": \"chatcmpl-AEgz9DB9DxR3nsIIJ4zsMnWD4haXy\",\n  \"object\":
+      \"chat.completion\",\n  \"created\": 1728065191,\n  \"model\": \"gpt-4o-2024-08-06\",\n
       \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
       \"assistant\",\n        \"content\": null,\n        \"tool_calls\": [\n          {\n
-      \           \"id\": \"call_Nh0wFfZFLfYsn73Lq9KUHDb9\",\n            \"type\":
+      \           \"id\": \"call_mp680g1ciZRb9eaRoWZUpMWG\",\n            \"type\":
       \"function\",\n            \"function\": {\n              \"name\": \"fetch_current_temperature\",\n
       \             \"arguments\": \"{\\\"location\\\":\\\"Recife\\\"}\"\n            }\n
       \         }\n        ],\n        \"refusal\": null\n      },\n      \"logprobs\":
       null,\n      \"finish_reason\": \"tool_calls\"\n    }\n  ],\n  \"usage\": {\n
       \   \"prompt_tokens\": 111,\n    \"completion_tokens\": 16,\n    \"total_tokens\":
-      127,\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\": 0\n
-      \   }\n  },\n  \"system_fingerprint\": \"fp_e375328146\"\n}\n"
+      127,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\": 0\n    },\n
+      \   \"completion_tokens_details\": {\n      \"reasoning_tokens\": 0\n    }\n
+      \ },\n  \"system_fingerprint\": \"fp_e5e4913e83\"\n}\n"
     headers:
       Connection:
       - keep-alive
@@ -761,17 +67,17 @@ interactions:
     body: '{"messages": [{"content": "You are a temperature bot. Today is 2024-06-09.",
       "role": "system"}, {"content": "What is the temperature today in Recife?", "role":
       "user"}, {"content": null, "role": "assistant", "tool_calls": [{"type": "function",
-      "id": "call_Nh0wFfZFLfYsn73Lq9KUHDb9", "function": {"name": "fetch_current_temperature",
+      "id": "call_mp680g1ciZRb9eaRoWZUpMWG", "function": {"name": "fetch_current_temperature",
       "arguments": "{\"location\": \"Recife\"}"}}]}, {"content": "32 degrees Celsius",
-      "role": "tool", "tool_call_id": "call_Nh0wFfZFLfYsn73Lq9KUHDb9"}], "model":
+      "role": "tool", "tool_call_id": "call_mp680g1ciZRb9eaRoWZUpMWG"}], "model":
       "gpt-4o", "n": 1, "stream": false, "temperature": 1.0, "tools": [{"type": "function",
       "function": {"name": "fetch_current_temperature", "description": "Fetch the
-      current temperature data for a location", "parameters": {"type": "object", "properties":
-      {"location": {"type": "string"}}, "required": ["location"]}}}, {"type": "function",
-      "function": {"name": "fetch_forecast_temperature", "description": "Fetch the
-      forecast temperature data for a location", "parameters": {"type": "object",
-      "properties": {"location": {"type": "string"}, "dt_str": {"description": "Date
-      in the format ''YYYY-MM-DD''", "type": "string"}}, "required": ["location",
+      current temperature data for a location", "parameters": {"properties": {"location":
+      {"type": "string"}}, "required": ["location"], "type": "object"}}}, {"type":
+      "function", "function": {"name": "fetch_forecast_temperature", "description":
+      "Fetch the forecast temperature data for a location", "parameters": {"type":
+      "object", "properties": {"location": {"type": "string"}, "dt_str": {"description":
+      "Date in the format ''YYYY-MM-DD''", "type": "string"}}, "required": ["location",
       "dt_str"]}}}]}'
     headers:
       accept:
@@ -797,14 +103,15 @@ interactions:
     method: POST
     uri: https://api.openai.com/v1/chat/completions
   response:
-    content: "{\n  \"id\": \"chatcmpl-ABSmQenFKnMlYo3HgGeVbDUhrugK6\",\n  \"object\":
-      \"chat.completion\",\n  \"created\": 1727295602,\n  \"model\": \"gpt-4o-2024-05-13\",\n
+    content: "{\n  \"id\": \"chatcmpl-AEgzAn98eSbe5BCydWXLETWJ2qcgv\",\n  \"object\":
+      \"chat.completion\",\n  \"created\": 1728065192,\n  \"model\": \"gpt-4o-2024-08-06\",\n
       \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
-      \"assistant\",\n        \"content\": \"The current temperature today in Recife
-      is 32 degrees Celsius.\",\n        \"refusal\": null\n      },\n      \"logprobs\":
+      \"assistant\",\n        \"content\": \"The current temperature in Recife is
+      32 degrees Celsius.\",\n        \"refusal\": null\n      },\n      \"logprobs\":
       null,\n      \"finish_reason\": \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\":
-      139,\n    \"completion_tokens\": 13,\n    \"total_tokens\": 152,\n    \"completion_tokens_details\":
-      {\n      \"reasoning_tokens\": 0\n    }\n  },\n  \"system_fingerprint\": \"fp_52a7f40b0b\"\n}\n"
+      139,\n    \"completion_tokens\": 12,\n    \"total_tokens\": 151,\n    \"prompt_tokens_details\":
+      {\n      \"cached_tokens\": 0\n    },\n    \"completion_tokens_details\": {\n
+      \     \"reasoning_tokens\": 0\n    }\n  },\n  \"system_fingerprint\": \"fp_e5e4913e83\"\n}\n"
     headers:
       Connection:
       - keep-alive
@@ -825,17 +132,20 @@ interactions:
 - request:
     body: '{"messages": [{"content": "You are a temperature bot. Today is 2024-06-09.",
       "role": "system"}, {"content": "What is the temperature today in Recife?", "role":
-      "user"}, {"content": "The current temperature today in Recife is 32 degrees
-      Celsius.", "role": "assistant"}, {"content": "What about tomorrow?", "role":
-      "user"}], "model": "gpt-4o", "n": 1, "stream": false, "temperature": 1.0, "tools":
-      [{"type": "function", "function": {"name": "fetch_current_temperature", "description":
-      "Fetch the current temperature data for a location", "parameters": {"type":
-      "object", "properties": {"location": {"type": "string"}}, "required": ["location"]}}},
-      {"type": "function", "function": {"name": "fetch_forecast_temperature", "description":
-      "Fetch the forecast temperature data for a location", "parameters": {"type":
-      "object", "properties": {"location": {"type": "string"}, "dt_str": {"description":
-      "Date in the format ''YYYY-MM-DD''", "type": "string"}}, "required": ["location",
-      "dt_str"]}}}]}'
+      "user"}, {"content": null, "role": "assistant", "tool_calls": [{"type": "function",
+      "id": "call_mp680g1ciZRb9eaRoWZUpMWG", "function": {"name": "fetch_current_temperature",
+      "arguments": "{\"location\": \"Recife\"}"}}]}, {"content": "32 degrees Celsius",
+      "role": "tool", "tool_call_id": "call_mp680g1ciZRb9eaRoWZUpMWG"}, {"content":
+      "The current temperature in Recife is 32 degrees Celsius.", "role": "assistant"},
+      {"content": "What about tomorrow?", "role": "user"}], "model": "gpt-4o", "n":
+      1, "stream": false, "temperature": 1.0, "tools": [{"type": "function", "function":
+      {"name": "fetch_current_temperature", "description": "Fetch the current temperature
+      data for a location", "parameters": {"properties": {"location": {"type": "string"}},
+      "required": ["location"], "type": "object"}}}, {"type": "function", "function":
+      {"name": "fetch_forecast_temperature", "description": "Fetch the forecast temperature
+      data for a location", "parameters": {"type": "object", "properties": {"location":
+      {"type": "string"}, "dt_str": {"description": "Date in the format ''YYYY-MM-DD''",
+      "type": "string"}}, "required": ["location", "dt_str"]}}}]}'
     headers:
       accept:
       - application/json
@@ -846,7 +156,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '987'
+      - '1292'
       content-type:
       - application/json
       host:
@@ -858,18 +168,19 @@ interactions:
     method: POST
     uri: https://api.openai.com/v1/chat/completions
   response:
-    content: "{\n  \"id\": \"chatcmpl-ABSmRXTcmDPDXZDygDWQVxwnsboZ5\",\n  \"object\":
-      \"chat.completion\",\n  \"created\": 1727295603,\n  \"model\": \"gpt-4o-2024-05-13\",\n
+    content: "{\n  \"id\": \"chatcmpl-AEgzBghCShRXpHt6arswuiOlibksr\",\n  \"object\":
+      \"chat.completion\",\n  \"created\": 1728065193,\n  \"model\": \"gpt-4o-2024-08-06\",\n
       \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
       \"assistant\",\n        \"content\": null,\n        \"tool_calls\": [\n          {\n
-      \           \"id\": \"call_8ZyKSMI0hu5t3lM0ZzlCM2iJ\",\n            \"type\":
+      \           \"id\": \"call_5Y5P4y5m0VFzh5GE0RNeEkyP\",\n            \"type\":
       \"function\",\n            \"function\": {\n              \"name\": \"fetch_forecast_temperature\",\n
       \             \"arguments\": \"{\\\"location\\\":\\\"Recife\\\",\\\"dt_str\\\":\\\"2024-06-10\\\"}\"\n
       \           }\n          }\n        ],\n        \"refusal\": null\n      },\n
       \     \"logprobs\": null,\n      \"finish_reason\": \"tool_calls\"\n    }\n
-      \ ],\n  \"usage\": {\n    \"prompt_tokens\": 135,\n    \"completion_tokens\":
-      27,\n    \"total_tokens\": 162,\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
-      0\n    }\n  },\n  \"system_fingerprint\": \"fp_e375328146\"\n}\n"
+      \ ],\n  \"usage\": {\n    \"prompt_tokens\": 162,\n    \"completion_tokens\":
+      27,\n    \"total_tokens\": 189,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\":
+      0\n    },\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
+      0\n    }\n  },\n  \"system_fingerprint\": \"fp_e5e4913e83\"\n}\n"
     headers:
       Connection:
       - keep-alive
@@ -890,17 +201,21 @@ interactions:
 - request:
     body: '{"messages": [{"content": "You are a temperature bot. Today is 2024-06-09.",
       "role": "system"}, {"content": "What is the temperature today in Recife?", "role":
-      "user"}, {"content": "The current temperature today in Recife is 32 degrees
-      Celsius.", "role": "assistant"}, {"content": "What about tomorrow?", "role":
       "user"}, {"content": null, "role": "assistant", "tool_calls": [{"type": "function",
-      "id": "call_8ZyKSMI0hu5t3lM0ZzlCM2iJ", "function": {"name": "fetch_forecast_temperature",
-      "arguments": "{\"location\": \"Recife\", \"dt_str\": \"2024-06-10\"}"}}]}, {"content":
-      "35 degrees Celsius", "role": "tool", "tool_call_id": "call_8ZyKSMI0hu5t3lM0ZzlCM2iJ"}],
-      "model": "gpt-4o", "n": 1, "stream": false, "temperature": 1.0, "tools": [{"type":
-      "function", "function": {"name": "fetch_current_temperature", "description":
-      "Fetch the current temperature data for a location", "parameters": {"type":
-      "object", "properties": {"location": {"type": "string"}}, "required": ["location"]}}},
-      {"type": "function", "function": {"name": "fetch_forecast_temperature", "description":
+      "id": "call_mp680g1ciZRb9eaRoWZUpMWG", "function": {"name": "fetch_current_temperature",
+      "arguments": "{\"location\": \"Recife\"}"}}]}, {"content": "32 degrees Celsius",
+      "role": "tool", "tool_call_id": "call_mp680g1ciZRb9eaRoWZUpMWG"}, {"content":
+      "The current temperature in Recife is 32 degrees Celsius.", "role": "assistant"},
+      {"content": "What about tomorrow?", "role": "user"}, {"content": null, "role":
+      "assistant", "tool_calls": [{"type": "function", "id": "call_5Y5P4y5m0VFzh5GE0RNeEkyP",
+      "function": {"name": "fetch_forecast_temperature", "arguments": "{\"location\":
+      \"Recife\", \"dt_str\": \"2024-06-10\"}"}}]}, {"content": "35 degrees Celsius",
+      "role": "tool", "tool_call_id": "call_5Y5P4y5m0VFzh5GE0RNeEkyP"}], "model":
+      "gpt-4o", "n": 1, "stream": false, "temperature": 1.0, "tools": [{"type": "function",
+      "function": {"name": "fetch_current_temperature", "description": "Fetch the
+      current temperature data for a location", "parameters": {"properties": {"location":
+      {"type": "string"}}, "required": ["location"], "type": "object"}}}, {"type":
+      "function", "function": {"name": "fetch_forecast_temperature", "description":
       "Fetch the forecast temperature data for a location", "parameters": {"type":
       "object", "properties": {"location": {"type": "string"}, "dt_str": {"description":
       "Date in the format ''YYYY-MM-DD''", "type": "string"}}, "required": ["location",
@@ -915,7 +230,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '1327'
+      - '1632'
       content-type:
       - application/json
       cookie:
@@ -929,15 +244,15 @@ interactions:
     method: POST
     uri: https://api.openai.com/v1/chat/completions
   response:
-    content: "{\n  \"id\": \"chatcmpl-ABSmRcNX92uvRDsLmhvANFe5RUt7W\",\n  \"object\":
-      \"chat.completion\",\n  \"created\": 1727295603,\n  \"model\": \"gpt-4o-2024-05-13\",\n
+    content: "{\n  \"id\": \"chatcmpl-AEgzCNv5MYIGUAglgxEiD0FPbdNAf\",\n  \"object\":
+      \"chat.completion\",\n  \"created\": 1728065194,\n  \"model\": \"gpt-4o-2024-08-06\",\n
       \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
-      \"assistant\",\n        \"content\": \"The forecasted temperature in Recife
-      for tomorrow, June 10th, is 35 degrees Celsius.\",\n        \"refusal\": null\n
-      \     },\n      \"logprobs\": null,\n      \"finish_reason\": \"stop\"\n    }\n
-      \ ],\n  \"usage\": {\n    \"prompt_tokens\": 175,\n    \"completion_tokens\":
-      21,\n    \"total_tokens\": 196,\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
-      0\n    }\n  },\n  \"system_fingerprint\": \"fp_3537616b13\"\n}\n"
+      \"assistant\",\n        \"content\": \"The forecasted temperature for tomorrow
+      in Recife is 35 degrees Celsius.\",\n        \"refusal\": null\n      },\n      \"logprobs\":
+      null,\n      \"finish_reason\": \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\":
+      202,\n    \"completion_tokens\": 15,\n    \"total_tokens\": 217,\n    \"prompt_tokens_details\":
+      {\n      \"cached_tokens\": 0\n    },\n    \"completion_tokens_details\": {\n
+      \     \"reasoning_tokens\": 0\n    }\n  },\n  \"system_fingerprint\": \"fp_e5e4913e83\"\n}\n"
     headers:
       Connection:
       - keep-alive

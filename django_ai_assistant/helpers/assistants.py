@@ -13,7 +13,6 @@ from langchain_core.messages import (
     AIMessage,
     AnyMessage,
     BaseMessage,
-    ChatMessage,
     HumanMessage,
     SystemMessage,
 )
@@ -34,8 +33,7 @@ from langchain_core.runnables import (
 )
 from langchain_core.tools import BaseTool
 from langchain_openai import ChatOpenAI
-from langgraph.graph import END, StateGraph
-from langgraph.graph.message import add_messages
+from langgraph.graph import END, StateGraph, add_messages
 from langgraph.prebuilt import ToolNode
 from pydantic import BaseModel
 
@@ -43,6 +41,7 @@ from django_ai_assistant.decorators import with_cast_id
 from django_ai_assistant.exceptions import (
     AIAssistantMisconfiguredError,
 )
+from django_ai_assistant.helpers.django_messages import save_django_messages
 from django_ai_assistant.langchain.tools import tool as tool_decorator
 
 
@@ -417,37 +416,27 @@ class AIAssistant(abc.ABC):  # noqa: F821
         Returns:
             the compiled graph
         """
-        # DjangoChatMessageHistory must be here because Django may not be loaded yet elsewhere.
-        # DjangoChatMessageHistory was used in the context of langchain, now that we are using
-        # langgraph this can be further simplified by just porting the add_messages logic.
-        from django_ai_assistant.langchain.chat_message_histories import (
-            DjangoChatMessageHistory,
-        )
-
-        message_history = DjangoChatMessageHistory(thread_id) if thread_id else None
+        from django_ai_assistant.models import Thread
 
         llm = self.get_llm()
         tools = self.get_tools()
         llm_with_tools = llm.bind_tools(tools) if tools else llm
+        if thread_id:
+            thread = Thread.objects.get(id=thread_id)
+        else:
+            thread = None
 
         def custom_add_messages(left: list[BaseMessage], right: list[BaseMessage]):
             result = add_messages(left, right)  # type: ignore
-
-            if message_history:
-                messages_to_store = [
-                    m
-                    for m in result
-                    if isinstance(m, HumanMessage | ChatMessage)
-                    or (isinstance(m, AIMessage) and not m.tool_calls)
-                ]
-                message_history.add_messages(messages_to_store)
-
+            if thread:
+                # Save all messages, except the initial system message:
+                thread_messages = [m for m in result if not isinstance(m, SystemMessage)]
+                save_django_messages(cast(list[BaseMessage], thread_messages), thread=thread)
             return result
 
         class AgentState(TypedDict):
             messages: Annotated[list[AnyMessage], custom_add_messages]
-            input: str  # noqa: A003
-            context: str
+            input: str | None  # noqa: A003
             output: Any
 
         def setup(state: AgentState):
@@ -455,8 +444,11 @@ class AIAssistant(abc.ABC):  # noqa: F821
             return {"messages": [SystemMessage(content=system_prompt)]}
 
         def history(state: AgentState):
-            history = message_history.messages if message_history else []
-            return {"messages": [*history, HumanMessage(content=state["input"])]}
+            messages = thread.get_messages(include_extra_messages=True) if thread else []
+            if state["input"]:
+                messages.append(HumanMessage(content=state["input"]))
+
+            return {"messages": messages}
 
         def retriever(state: AgentState):
             if not self.has_rag:
@@ -465,8 +457,9 @@ class AIAssistant(abc.ABC):  # noqa: F821
             retriever = self.get_history_aware_retriever()
             # Remove the initial instructions to prevent having two SystemMessages
             # This is necessary for compatibility with Anthropic
-            messages_without_input = state["messages"][1:-1]
-            docs = retriever.invoke({"input": state["input"], "history": messages_without_input})
+            messages_to_summarize = state["messages"][1:-1]
+            input_message = state["messages"][-1]
+            docs = retriever.invoke({"input": input_message, "history": messages_to_summarize})
 
             document_separator = self.get_document_separator()
             document_prompt = self.get_document_prompt()
@@ -550,7 +543,8 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
         Args:
             *args: Positional arguments to pass to the graph.
-                Make sure to include a `dict` like `{"input": "user message"}`.
+                To add a new message, use a dict like `{"input": "user message"}`.
+                If thread already has a `HumanMessage` in the end, you can invoke without args.
             thread_id (Any | None): The thread ID for the chat message history.
                 If `None`, an in-memory chat message history is used.
             **kwargs: Keyword arguments to pass to the graph.

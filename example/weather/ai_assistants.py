@@ -59,7 +59,7 @@ class WeatherAIAssistant(AIAssistant):
         return response.json()
 
     @method_tool
-    def who_am_i(self) -> str:
+    def get_username(self) -> str:
         """Return the username of the current user"""
         if self._user:
             return self._user.username
