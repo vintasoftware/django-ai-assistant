@@ -13,9 +13,6 @@ class Attraction(BaseModel):
     description: str = Field(
         description="The description of the attraction, provide information in an entertaining way"
     )
-    url: str = Field(
-        description="The URL of the attraction, keep empty if you don't have this information"
-    )
 
 
 class TourGuide(BaseModel):
