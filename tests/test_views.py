@@ -172,6 +172,16 @@ def test_gets_specific_thread(authenticated_client):
     assert response.json()["id"] == thread.id
 
 
+@pytest.mark.django_db(transaction=True)
+def test_gets_specific_thread_that_does_not_exist(authenticated_client):
+    response = authenticated_client.get(
+        reverse("django_ai_assistant:thread_detail_update_delete", kwargs={"thread_id": 1000000})
+    )
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {"detail": "Not Found"}
+
+
 def test_does_not_list_threads_if_unauthorized():
     # TODO: Implement this test once permissions are in place
     pass
