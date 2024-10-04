@@ -1264,7 +1264,7 @@ If you're using React, a good place to do this is in the <code>App.tsx</code> fi
 <strong>Return:</strong> a <code>Promise</code> that resolves to a <code>Thread</code>.</p>
 <h3 id="aiupdatethread"><code>aiUpdateThread</code><a class="headerlink" href="#aiupdatethread" title="Permanent link">&para;</a></h3>
 <p>Update a thread by ID.<br />
-<strong>Param:</strong> <code>{ threadId: string, requestBody: { name: string } }</code><br />
+<strong>Param:</strong> <code>{ threadId: string, requestBody: { name: string, assistant_id: string } }</code><br />
 <strong>Return:</strong> a <code>Promise</code> that resolves to a <code>Thread</code>.</p>
 <h3 id="aideletethread"><code>aiDeleteThread</code><a class="headerlink" href="#aideletethread" title="Permanent link">&para;</a></h3>
 <p>Delete a thread by ID.<br />
@@ -1336,9 +1336,11 @@ If you're using React, a good place to do this is in the <code>App.tsx</code> fi
 <span class="w">        </span><span class="nx">threads</span><span class="p">,</span>
 <span class="w">        </span><span class="nx">fetchThreads</span><span class="p">,</span>
 <span class="w">        </span><span class="nx">createThread</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">updateThread</span><span class="p">,</span>
 <span class="w">        </span><span class="nx">deleteThread</span><span class="p">,</span>
 <span class="w">        </span><span class="nx">loadingFetchThreads</span><span class="p">,</span>
 <span class="w">        </span><span class="nx">loadingCreateThread</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">loadingUpdateThread</span><span class="p">,</span>
 <span class="w">        </span><span class="nx">loadingDeleteThread</span>
 <span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useThreadList</span><span class="p">();</span>
 <span class="w">    </span><span class="c1">// ...</span>

@@ -774,6 +774,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#updating-the-openapi-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      Updating the OpenAPI schema
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#developing-with-the-example-project" class="md-nav__link">
     <span class="md-ellipsis">
       Developing with the example project
@@ -939,6 +948,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#updating-the-openapi-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      Updating the OpenAPI schema
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#developing-with-the-example-project" class="md-nav__link">
     <span class="md-ellipsis">
       Developing with the example project
@@ -1028,6 +1046,11 @@ pnpm<span class="w"> </span>install
 <div class="highlight"><pre><span></span><code>pre-commit<span class="w"> </span>install
 </code></pre></div>
 <p>It's critical to run the pre-commit hooks before pushing your code to follow the project's code style, and avoid linting errors.</p>
+<h3 id="updating-the-openapi-schema">Updating the OpenAPI schema<a class="headerlink" href="#updating-the-openapi-schema" title="Permanent link">&para;</a></h3>
+<p>It's critical to update the OpenAPI schema when you make changes to the <code>django_ai_assistant/api/views.py</code> or related files:</p>
+<div class="highlight"><pre><span></span><code>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>manage.py<span class="w"> </span>generate_openapi_schema<span class="w"> </span>--output<span class="w"> </span>frontend/openapi_schema.json
+sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;cd frontend &amp;&amp; pnpm run generate-client&#39;</span>
+</code></pre></div>
 <h3 id="developing-with-the-example-project">Developing with the example project<a class="headerlink" href="#developing-with-the-example-project" title="Permanent link">&para;</a></h3>
 <p>Run the frontend project in <code>build:watch</code> mode:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>frontend
@@ -1053,6 +1076,10 @@ pnpm<span class="w"> </span>link<span class="w"> </span>../frontend
 <p>Then, you will run the tests in record mode:</p>
 <div class="highlight"><pre><span></span><code>poetry<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>--record-mode<span class="o">=</span>once
 </code></pre></div>
+<p>To run frontend tests:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>frontend
+pnpm<span class="w"> </span>run<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
 <h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h2>
 <p>We use <a href="https://squidfunk.github.io/mkdocs-material/">mkdocs-material</a> to generate the documentation from markdown files.
 Check the files in the <code>docs</code> directory.</p>
@@ -1066,7 +1093,7 @@ Check the files in the <code>docs</code> directory.</p>
 </div>
 <p>To release and publish a new version, follow these steps:</p>
 <ol>
-<li>Update the version in <code>pyproject.toml</code> and <code>frontend/package.json</code>.</li>
+<li>Update the version in <code>pyproject.toml</code>, <code>frontend/package.json</code> and <code>example/package.json</code>.</li>
 <li>Re-install the local version of the Python project: <code>poetry install</code></li>
 <li>In the project root, run <code>poetry run python manage.py generate_openapi_schema --output frontend/openapi_schema.json</code> to update the OpenAPI schema.</li>
 <li>Re-install the local version of the frontend project:</li>
