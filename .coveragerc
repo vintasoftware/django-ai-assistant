@@ -8,3 +8,10 @@ omit =
     */migrations/*
     *static*
     */templates/*
+    management/commands/generate_openapi_schema.py
+    apps.py
+    admin.py
+exclude_lines =
+    pragma: no cover
+    if TYPE_CHECKING:
+    raise NotImplementedError

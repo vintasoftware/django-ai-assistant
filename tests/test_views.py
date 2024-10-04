@@ -9,7 +9,7 @@ from model_bakery import baker
 
 from django_ai_assistant import PACKAGE_NAME, VERSION
 from django_ai_assistant.helpers.assistants import AIAssistant
-from django_ai_assistant.langchain.chat_message_histories import DjangoChatMessageHistory
+from django_ai_assistant.helpers.django_messages import save_django_messages
 from django_ai_assistant.langchain.tools import BaseModel, Field, method_tool
 from django_ai_assistant.models import Message, Thread
 
@@ -172,6 +172,16 @@ def test_gets_specific_thread(authenticated_client):
     assert response.json()["id"] == thread.id
 
 
+@pytest.mark.django_db(transaction=True)
+def test_gets_specific_thread_that_does_not_exist(authenticated_client):
+    response = authenticated_client.get(
+        reverse("django_ai_assistant:thread_detail_update_delete", kwargs={"thread_id": 1000000})
+    )
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {"detail": "Not Found"}
+
+
 def test_does_not_list_threads_if_unauthorized():
     # TODO: Implement this test once permissions are in place
     pass
@@ -286,7 +296,7 @@ def test_cannot_delete_thread_if_unauthorized():
 @pytest.mark.django_db(transaction=True)
 def test_list_thread_messages(authenticated_client):
     thread = baker.make(Thread, created_by=User.objects.first())
-    DjangoChatMessageHistory(thread.id).add_messages([HumanMessage(content="Hello")])
+    save_django_messages([HumanMessage(content="Hello")], thread=thread)
     response = authenticated_client.get(
         reverse("django_ai_assistant:messages_list_create", kwargs={"thread_id": thread.id})
     )
@@ -298,7 +308,7 @@ def test_list_thread_messages(authenticated_client):
 @pytest.mark.django_db(transaction=True)
 def test_does_not_list_thread_messages_if_not_thread_user(authenticated_client):
     thread = baker.make(Thread, created_by=baker.make(User))
-    DjangoChatMessageHistory(thread.id).add_messages([HumanMessage(content="Hello")])
+    save_django_messages([HumanMessage(content="Hello")], thread=thread)
     response = authenticated_client.get(
         reverse("django_ai_assistant:messages_list_create", kwargs={"thread_id": thread.id})
     )
@@ -323,18 +333,15 @@ def test_create_thread_message(authenticated_client):
     )
 
     assert response.status_code == HTTPStatus.CREATED
-    assert Message.objects.count() == 2
+    chat_messages = thread.get_messages(include_extra_messages=False)
+    assert len(chat_messages) == 2
 
-    human_message = Message.objects.filter(message__type="human").first()
-    ai_message = Message.objects.filter(message__type="ai").first()
+    human_message = chat_messages[0]
+    ai_message = chat_messages[1]
 
+    assert human_message.content == "Hello, what is the temperature in SF right now?"
     assert (
-        human_message.message["data"]["content"]
-        == "Hello, what is the temperature in SF right now?"
-    )
-    assert (
-        ai_message.message["data"]["content"]
-        == "The current temperature in San Francisco, CA is 32 degrees Celsius."
+        ai_message.content == "The current temperature in San Francisco, CA is 32 degrees Celsius."
     )
 
 

@@ -3,7 +3,12 @@ from unittest.mock import patch
 
 import pytest
 from langchain_core.documents import Document
-from langchain_core.messages import AIMessage, HumanMessage, messages_to_dict
+from langchain_core.messages import (
+    AIMessage,
+    HumanMessage,
+    ToolMessage,
+    messages_to_dict,
+)
 from langchain_core.retrievers import BaseRetriever
 
 from django_ai_assistant.helpers.assistants import AIAssistant
@@ -76,54 +81,83 @@ def test_AIAssistant_invoke():
     thread = Thread.objects.create(name="Recife Temperature Chat")
 
     assistant = AIAssistant.get_cls("temperature_assistant")()
-    response_0 = assistant.invoke(
+    assistant.invoke(
         {"input": "What is the temperature today in Recife?"},
         thread_id=thread.id,
     )
-    response_1 = assistant.invoke(
+    response = assistant.invoke(
         {"input": "What about tomorrow?"},
         thread_id=thread.id,
     )
-
-    messages = thread.messages.order_by("created_at").values_list("message", flat=True)
-    messages_ids = thread.messages.order_by("created_at").values_list("id", flat=True)
-
-    assert response_0["input"] == "What is the temperature today in Recife?"
-    assert response_0["output"] == "The current temperature today in Recife is 32 degrees Celsius."
-    assert response_1["input"] == "What about tomorrow?"
-    assert (
-        response_1["output"]
-        == "The forecasted temperature in Recife for tomorrow, June 10th, is 35 degrees Celsius."
-    )
-
-    question_message = response_1["messages"][1]
-    assert question_message.content == "What is the temperature today in Recife?"
-    assert question_message.id == str(messages_ids[0])
-    response_message = response_1["messages"][2]
-    assert (
-        response_message.content == "The current temperature today in Recife is 32 degrees Celsius."
-    )
-    assert response_message.id == str(messages_ids[1])
+    response_messages = messages_to_dict(response["messages"])
+    stored_messages = messages_to_dict(thread.get_messages(include_extra_messages=True))
 
     expected_messages = messages_to_dict(
         [
-            HumanMessage(content="What is the temperature today in Recife?", id=messages_ids[0]),
-            AIMessage(
-                content="The current temperature today in Recife is 32 degrees Celsius.",
-                id=messages_ids[1],
+            HumanMessage(
+                content="What is the temperature today in Recife?",
+                id="1",
             ),
-            HumanMessage(content="What about tomorrow?", id=messages_ids[2]),
             AIMessage(
-                content="The forecasted temperature in Recife for tomorrow, June 10th, is 35 degrees Celsius.",
-                id=messages_ids[3],
+                content="",
+                id="2",
+                tool_calls=[
+                    {
+                        "name": "fetch_current_temperature",
+                        "args": {"location": "Recife"},
+                        "id": "call_mp680g1ciZRb9eaRoWZUpMWG",
+                        "type": "tool_call",
+                    }
+                ],
+            ),
+            ToolMessage(
+                content="32 degrees Celsius",
+                name="fetch_current_temperature",
+                id="3",
+                tool_call_id="call_mp680g1ciZRb9eaRoWZUpMWG",
+            ),
+            AIMessage(
+                content="The current temperature in Recife is 32 degrees Celsius.",
+                id="4",
+            ),
+            HumanMessage(
+                content="What about tomorrow?", additional_kwargs={}, response_metadata={}, id="5"
+            ),
+            AIMessage(
+                content="",
+                id="6",
+                tool_calls=[
+                    {
+                        "name": "fetch_forecast_temperature",
+                        "args": {"location": "Recife", "dt_str": "2024-06-10"},
+                        "id": "call_5Y5P4y5m0VFzh5GE0RNeEkyP",
+                        "type": "tool_call",
+                    }
+                ],
+            ),
+            ToolMessage(
+                content="35 degrees Celsius",
+                name="fetch_forecast_temperature",
+                id="7",
+                tool_call_id="call_5Y5P4y5m0VFzh5GE0RNeEkyP",
+            ),
+            AIMessage(
+                content="The forecasted temperature for tomorrow in Recife is 35 degrees Celsius.",
+                id="8",
             ),
         ]
     )
-
-    assert [m["data"]["content"] for m in list(messages)] == [
-        m["data"]["content"] for m in expected_messages
-    ]
-    assert [m["data"]["id"] for m in list(messages)] == [m["data"]["id"] for m in expected_messages]
+    assert response_messages[0]["data"]["type"] == "system"
+    assert (
+        response_messages[0]["data"]["content"] == "You are a temperature bot. Today is 2024-06-09."
+    )
+    for attr in ["id", "content", "type", "tool_calls", "tool_call_id"]:
+        assert [m["data"].get(attr) for m in list(response_messages[1:])] == [
+            m["data"].get(attr) for m in expected_messages
+        ]
+        assert [m["data"].get(attr) for m in list(stored_messages)] == [
+            m["data"].get(attr) for m in expected_messages
+        ]
 
 
 def test_AIAssistant_run_handles_optional_thread_id_param():
@@ -172,14 +206,17 @@ def test_AIAssistant_with_rag_invoke():
 
     assert response_0["input"] == "I'm at Central Park W & 79st, New York, NY 10024, United States."
     assert response_0["output"] == (
-        "You're in a great spot! Just a short walk away is the American Museum of Natural History, "
-        "where you can explore fascinating exhibits on science, culture, and natural history. "
-        "Inside Central Park itself, don't miss out on the scenic Belvedere Castle and the tranquil Shakespeare Garden."
+        "You're right by the American Museum of Natural History, "
+        "a fascinating place with exhibits on everything from dinosaurs to space. "
+        "Enjoy a stroll through Central Park, which offers beautiful landscapes, "
+        "walking paths, and iconic spots like Bow Bridge and Bethesda Terrace."
     )
     assert response_1["input"] == "11 W 53rd St, New York, NY 10019, United States."
     assert response_1["output"] == (
-        "You're right at the Museum of Modern Art (MoMA), a premier spot for contemporary and modern art. "
-        "Just a few blocks away, you can also visit Rockefeller Center with its famous observation deck, Top of the Rock."
+        "You're near the Museum of Modern Art (MoMA), "
+        "home to an impressive collection of modern and contemporary artworks. "
+        "Just a short walk away, you'll find Rockefeller Center, offering shopping, "
+        "dining, and an observation deck with views of the city."
     )
 
     expected_messages = messages_to_dict(
