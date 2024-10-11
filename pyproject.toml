@@ -222,7 +222,7 @@ omit = [
 ]
 
 [tool.pyright]
-pythonVersion = "3.12"
+pythonVersion = "3.13"
 include = ["django_ai_assistant"]
 typeCheckingMode = "basic"
 useLibraryCodeForTypes = true

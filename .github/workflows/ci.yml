@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
       - name: Checkout code
@@ -119,4 +119,4 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           parallel-finished: true
-          carryforward: "django-coverage-3.10,django-coverage-3.11,django-coverage-3.12,node-coverage"
+          carryforward: "django-coverage-3.10,django-coverage-3.11,django-coverage-3.12,django-coverage-3.13,node-coverage"
