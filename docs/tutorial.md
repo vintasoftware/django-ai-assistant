@@ -178,7 +178,7 @@ class IssueManagementAIAssistant(AIAssistant):
 
 ### Using pre-implemented tools
 
-Django AI Assistant works with [any LangChain-compatible tool](https://python.langchain.com/v0.2/docs/integrations/tools/).
+Django AI Assistant works with [any LangChain-compatible tool](https://python.langchain.com/v0.3/docs/integrations/tools/).
 Just override the `get_tools` method in your AI Assistant class to include the tools you want to use.
 
 For example, you can use the `TavilySearch` tool to provide your AI Assistant with the ability to search the web
@@ -219,8 +219,9 @@ class MovieSearchAIAssistant(AIAssistant):
 ```
 
 !!! note
-    As of now, Django AI Assistant is powered by [LangChain](https://python.langchain.com/v0.2/docs/introduction/),
-    but previous knowledge on LangChain is NOT necessary to use this library, at least for the main use cases.
+    As of now, Django AI Assistant is powered by [LangChain](https://python.langchain.com/v0.3/docs/introduction/)
+    and [LangGraph](https://langchain-ai.github.io/langgraph/tutorials/introduction/),
+    but knowledge on these tools is NOT necessary to use this library, at least for the main use cases.
 
 ## Using an AI Assistant
 
@@ -359,7 +360,7 @@ If you want to use traditional Django templates, you can try using HTMX to avoid
 ### Using other AI models
 
 By default the supported models are OpenAI ones,
-but you can use [any chat model from Langchain that supports Tool Calling](https://python.langchain.com/v0.2/docs/integrations/chat/#advanced-features) by overriding `get_llm`:
+but you can use [any chat model from LangChain that supports Tool Calling](https://python.langchain.com/docs/integrations/chat/#featured-providers) by overriding `get_llm`:
 
 ```python title="myapp/ai_assistants.py"
 from django_ai_assistant import AIAssistant
@@ -421,7 +422,7 @@ thereby improving the quality of the response by avoiding generic or off-topic a
 For this to work, your must do the following in your AI Assistant:
 
 1. Add `has_rag = True` as a class attribute;
-2. Override the `get_retriever` method to return a [Langchain Retriever](https://python.langchain.com/v0.2/docs/how_to/#retrievers).
+2. Override the `get_retriever` method to return a [LangChain Retriever](https://python.langchain.com/v0.3/docs/how_to/#retrievers).
 
 For example:
 
@@ -439,7 +440,7 @@ class DocsAssistant(AIAssistant):
     has_rag = True
 
     def get_retriever(self) -> BaseRetriever:
-        return ...  # use a Langchain Retriever here
+        return ...  # use a LangChain Retriever here
 ```
 
 The `rag/ai_assistants.py` file in the [example project](https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme)

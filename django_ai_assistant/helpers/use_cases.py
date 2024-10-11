@@ -129,7 +129,7 @@ def create_message(
     if not can_create_message(thread=thread, user=user, request=request):
         raise AIUserNotAllowedError("User is not allowed to create messages in this thread")
 
-    # TODO: Check if we can separate the message creation from the chain invoke
+    # TODO: Check if we can separate the message creation from the invoke
     assistant = assistant_cls(user=user, request=request)
     assistant_message = assistant.invoke(
         {"input": content},

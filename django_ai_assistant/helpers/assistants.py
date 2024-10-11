@@ -85,7 +85,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
     """Structured output to use for the assistant.\n
     Defaults to `None`.
     When not `None`, the assistant will return a structured output in the provided format.
-    See https://python.langchain.com/v0.2/docs/how_to/structured_output/ for the available formats.
+    See https://python.langchain.com/v0.3/docs/how_to/structured_output/ for the available formats.
     """
     _user: Any | None
     """The current user the assistant is helping. A model instance.\n
@@ -260,7 +260,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         return {}
 
     def get_llm(self) -> BaseChatModel:
-        """Get the Langchain LLM instance for the assistant.
+        """Get the LangChain LLM instance for the assistant.
         By default, this uses the OpenAI implementation.\n
         `get_model`, `get_temperature`, and `get_model_kwargs` are used to create the LLM instance.\n
         Override this method to use a different LLM implementation.
@@ -301,7 +301,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         """Get the list of method tools the assistant can use.
         By default, this is the `_method_tools` attribute, which are all `@method_tool`s.\n
         Override and call super to add additional tools,
-        such as [any langchain_community tools](https://python.langchain.com/v0.2/docs/integrations/tools/).
+        such as [any langchain_community tools](https://python.langchain.com/v0.3/docs/integrations/tools/).
 
         Returns:
             Sequence[BaseTool]: The list of tools the assistant can use.
@@ -310,7 +310,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
     def get_document_separator(self) -> str:
         """Get the RAG document separator to use in the prompt. Only used when `has_rag=True`.\n
-        Defaults to `"\\n\\n"`, which is the Langchain default.\n
+        Defaults to `"\\n\\n"`, which is the LangChain default.\n
         Override this method to use a different separator.
 
         Returns:
@@ -321,7 +321,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
     def get_document_prompt(self) -> PromptTemplate:
         """Get the PromptTemplate template to use when rendering RAG documents in the prompt.
         Only used when `has_rag=True`.\n
-        Defaults to `PromptTemplate.from_template("{page_content}")`, which is the Langchain default.\n
+        Defaults to `PromptTemplate.from_template("{page_content}")`, which is the LangChain default.\n
         Override this method to use a different template.
 
         Returns:
@@ -372,7 +372,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         )
 
     def get_history_aware_retriever(self) -> Runnable[dict, RetrieverOutput]:
-        """Get the history-aware retriever Langchain chain for the assistant.\n
+        """Get the history-aware retriever LangChain chain for the assistant.\n
         This is used when `has_rag=True` to fetch documents based on the chat history.\n
         By default, this is a chain that checks if there is chat history,
         and if so, it uses the chat history to generate a new standalone question
@@ -381,10 +381,10 @@ class AIAssistant(abc.ABC):  # noqa: F821
         Override this method to use a different history-aware retriever chain.
 
         Read more about the history-aware retriever in the
-        [Langchain docs](https://python.langchain.com/v0.2/docs/how_to/qa_chat_history_how_to/).
+        [LangChain docs](https://python.langchain.com/v0.2/docs/how_to/qa_chat_history_how_to/).
 
         Returns:
-            Runnable[dict, RetrieverOutput]: a history-aware retriever Langchain chain.
+            Runnable[dict, RetrieverOutput]: a history-aware retriever LangChain chain.
         """
         llm = self.get_llm()
         retriever = self.get_retriever()
@@ -403,7 +403,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
     @with_cast_id
     def as_graph(self, thread_id: Any | None = None) -> Runnable[dict, dict]:
-        """Create the Langchain graph for the assistant.\n
+        """Create the LangGraph graph for the assistant.\n
         This graph is an agent that supports chat history, tool calling, and RAG (if `has_rag=True`).\n
         `as_graph` uses many other methods to create the graph for the assistant.
         Prefer to override the other methods to customize the graph for the assistant.
@@ -537,7 +537,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
     @with_cast_id
     def invoke(self, *args: Any, thread_id: Any | None, **kwargs: Any) -> dict:
-        """Invoke the assistant Langchain graph with the given arguments and keyword arguments.\n
+        """Invoke the assistant LangChain graph with the given arguments and keyword arguments.\n
         This is the lower-level method to run the assistant.\n
         The graph is created by the `as_graph` method.\n
 

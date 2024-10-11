@@ -54,7 +54,7 @@ class Thread(models.Model):
 
     def get_messages(self, include_extra_messages: bool = False) -> list[BaseMessage]:
         """
-        Get Langchain messages objects from the thread.
+        Get LangChain messages objects from the thread.
 
         Args:
             include_extra_messages (bool): Whether to include non-chat messages (like tool calls).
@@ -91,7 +91,7 @@ class Message(models.Model):
     """Thread to which the message belongs."""
     thread_id: Any
     message = models.JSONField()
-    """Message content. This is a serialized Langchain `BaseMessage` that was serialized
+    """Message content. This is a serialized LangChain `BaseMessage` that was serialized
     with `message_to_dict` and can be deserialized with `messages_from_dict`."""
     created_at = models.DateTimeField(auto_now_add=True)
     """Date and time when the message was created.
