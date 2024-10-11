@@ -2080,7 +2080,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Structured output to use for the assistant.\n</span>
 <span class="sd">    Defaults to `None`.</span>
 <span class="sd">    When not `None`, the assistant will return a structured output in the provided format.</span>
-<span class="sd">    See https://python.langchain.com/v0.2/docs/how_to/structured_output/ for the available formats.</span>
+<span class="sd">    See https://python.langchain.com/v0.3/docs/how_to/structured_output/ for the available formats.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_user</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The current user the assistant is helping. A model instance.\n</span>
@@ -2255,7 +2255,7 @@
         <span class="k">return</span> <span class="p">{}</span>
 
     <span class="k">def</span> <span class="nf">get_llm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseChatModel</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the Langchain LLM instance for the assistant.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the LangChain LLM instance for the assistant.</span>
 <span class="sd">        By default, this uses the OpenAI implementation.\n</span>
 <span class="sd">        `get_model`, `get_temperature`, and `get_model_kwargs` are used to create the LLM instance.\n</span>
 <span class="sd">        Override this method to use a different LLM implementation.</span>
@@ -2296,7 +2296,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the list of method tools the assistant can use.</span>
 <span class="sd">        By default, this is the `_method_tools` attribute, which are all `@method_tool`s.\n</span>
 <span class="sd">        Override and call super to add additional tools,</span>
-<span class="sd">        such as [any langchain_community tools](https://python.langchain.com/v0.2/docs/integrations/tools/).</span>
+<span class="sd">        such as [any langchain_community tools](https://python.langchain.com/v0.3/docs/integrations/tools/).</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Sequence[BaseTool]: The list of tools the assistant can use.</span>
@@ -2305,7 +2305,7 @@
 
     <span class="k">def</span> <span class="nf">get_document_separator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the RAG document separator to use in the prompt. Only used when `has_rag=True`.\n</span>
-<span class="sd">        Defaults to `&quot;\\n\\n&quot;`, which is the Langchain default.\n</span>
+<span class="sd">        Defaults to `&quot;\\n\\n&quot;`, which is the LangChain default.\n</span>
 <span class="sd">        Override this method to use a different separator.</span>
 
 <span class="sd">        Returns:</span>
@@ -2316,7 +2316,7 @@
     <span class="k">def</span> <span class="nf">get_document_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PromptTemplate</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the PromptTemplate template to use when rendering RAG documents in the prompt.</span>
 <span class="sd">        Only used when `has_rag=True`.\n</span>
-<span class="sd">        Defaults to `PromptTemplate.from_template(&quot;{page_content}&quot;)`, which is the Langchain default.\n</span>
+<span class="sd">        Defaults to `PromptTemplate.from_template(&quot;{page_content}&quot;)`, which is the LangChain default.\n</span>
 <span class="sd">        Override this method to use a different template.</span>
 
 <span class="sd">        Returns:</span>
@@ -2367,7 +2367,7 @@
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_history_aware_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Runnable</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">RetrieverOutput</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the history-aware retriever Langchain chain for the assistant.\n</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the history-aware retriever LangChain chain for the assistant.\n</span>
 <span class="sd">        This is used when `has_rag=True` to fetch documents based on the chat history.\n</span>
 <span class="sd">        By default, this is a chain that checks if there is chat history,</span>
 <span class="sd">        and if so, it uses the chat history to generate a new standalone question</span>
@@ -2376,10 +2376,10 @@
 <span class="sd">        Override this method to use a different history-aware retriever chain.</span>
 
 <span class="sd">        Read more about the history-aware retriever in the</span>
-<span class="sd">        [Langchain docs](https://python.langchain.com/v0.2/docs/how_to/qa_chat_history_how_to/).</span>
+<span class="sd">        [LangChain docs](https://python.langchain.com/v0.2/docs/how_to/qa_chat_history_how_to/).</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            Runnable[dict, RetrieverOutput]: a history-aware retriever Langchain chain.</span>
+<span class="sd">            Runnable[dict, RetrieverOutput]: a history-aware retriever LangChain chain.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">llm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_llm</span><span class="p">()</span>
         <span class="n">retriever</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_retriever</span><span class="p">()</span>
@@ -2398,7 +2398,7 @@
 
     <span class="nd">@with_cast_id</span>
     <span class="k">def</span> <span class="nf">as_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Runnable</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the Langchain graph for the assistant.\n</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the LangGraph graph for the assistant.\n</span>
 <span class="sd">        This graph is an agent that supports chat history, tool calling, and RAG (if `has_rag=True`).\n</span>
 <span class="sd">        `as_graph` uses many other methods to create the graph for the assistant.</span>
 <span class="sd">        Prefer to override the other methods to customize the graph for the assistant.</span>
@@ -2532,7 +2532,7 @@
 
     <span class="nd">@with_cast_id</span>
     <span class="k">def</span> <span class="nf">invoke</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Invoke the assistant Langchain graph with the given arguments and keyword arguments.\n</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Invoke the assistant LangChain graph with the given arguments and keyword arguments.\n</span>
 <span class="sd">        This is the lower-level method to run the assistant.\n</span>
 <span class="sd">        The graph is created by the `as_graph` method.\n</span>
 
@@ -2786,7 +2786,7 @@ the retriever to use.</p>
       <p>Structured output to use for the assistant.</p>
 <p>Defaults to <code>None</code>.
 When not <code>None</code>, the assistant will return a structured output in the provided format.
-See https://python.langchain.com/v0.2/docs/how_to/structured_output/ for the available formats.</p>
+See https://python.langchain.com/v0.3/docs/how_to/structured_output/ for the available formats.</p>
     </div>
 
 </div>
@@ -3503,7 +3503,7 @@ By default, this is the <code>temperature</code> attribute, which is <code>1.0</
 
     <div class="doc doc-contents ">
 
-      <p>Get the Langchain LLM instance for the assistant.
+      <p>Get the LangChain LLM instance for the assistant.
 By default, this uses the OpenAI implementation.</p>
 <p><code>get_model</code>, <code>get_temperature</code>, and <code>get_model_kwargs</code> are used to create the LLM instance.</p>
 <p>Override this method to use a different LLM implementation.</p>
@@ -3550,7 +3550,7 @@ By default, this uses the OpenAI implementation.</p>
 <span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_llm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseChatModel</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the Langchain LLM instance for the assistant.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the LangChain LLM instance for the assistant.</span>
 <span class="sd">    By default, this uses the OpenAI implementation.\n</span>
 <span class="sd">    `get_model`, `get_temperature`, and `get_model_kwargs` are used to create the LLM instance.\n</span>
 <span class="sd">    Override this method to use a different LLM implementation.</span>
@@ -3667,7 +3667,7 @@ By default, this uses the OpenAI implementation.</p>
       <p>Get the list of method tools the assistant can use.
 By default, this is the <code>_method_tools</code> attribute, which are all <code>@method_tool</code>s.</p>
 <p>Override and call super to add additional tools,
-such as <a href="https://python.langchain.com/v0.2/docs/integrations/tools/">any langchain_community tools</a>.</p>
+such as <a href="https://python.langchain.com/v0.3/docs/integrations/tools/">any langchain_community tools</a>.</p>
 
 
     <p><span class="doc-section-title">Returns:</span></p>
@@ -3707,7 +3707,7 @@ such as <a href="https://python.langchain.com/v0.2/docs/integrations/tools/">any
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the list of method tools the assistant can use.</span>
 <span class="sd">    By default, this is the `_method_tools` attribute, which are all `@method_tool`s.\n</span>
 <span class="sd">    Override and call super to add additional tools,</span>
-<span class="sd">    such as [any langchain_community tools](https://python.langchain.com/v0.2/docs/integrations/tools/).</span>
+<span class="sd">    such as [any langchain_community tools](https://python.langchain.com/v0.3/docs/integrations/tools/).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Sequence[BaseTool]: The list of tools the assistant can use.</span>
@@ -3731,7 +3731,7 @@ such as <a href="https://python.langchain.com/v0.2/docs/integrations/tools/">any
     <div class="doc doc-contents ">
 
       <p>Get the RAG document separator to use in the prompt. Only used when <code>has_rag=True</code>.</p>
-<p>Defaults to <code>"\n\n"</code>, which is the Langchain default.</p>
+<p>Defaults to <code>"\n\n"</code>, which is the LangChain default.</p>
 <p>Override this method to use a different separator.</p>
 
 
@@ -3769,7 +3769,7 @@ such as <a href="https://python.langchain.com/v0.2/docs/integrations/tools/">any
 <span class="normal">318</span>
 <span class="normal">319</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_document_separator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the RAG document separator to use in the prompt. Only used when `has_rag=True`.\n</span>
-<span class="sd">    Defaults to `&quot;\\n\\n&quot;`, which is the Langchain default.\n</span>
+<span class="sd">    Defaults to `&quot;\\n\\n&quot;`, which is the LangChain default.\n</span>
 <span class="sd">    Override this method to use a different separator.</span>
 
 <span class="sd">    Returns:</span>
@@ -3795,7 +3795,7 @@ such as <a href="https://python.langchain.com/v0.2/docs/integrations/tools/">any
 
       <p>Get the PromptTemplate template to use when rendering RAG documents in the prompt.
 Only used when <code>has_rag=True</code>.</p>
-<p>Defaults to <code>PromptTemplate.from_template("{page_content}")</code>, which is the Langchain default.</p>
+<p>Defaults to <code>PromptTemplate.from_template("{page_content}")</code>, which is the LangChain default.</p>
 <p>Override this method to use a different template.</p>
 
 
@@ -3835,7 +3835,7 @@ Only used when <code>has_rag=True</code>.</p>
 <span class="normal">330</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_document_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PromptTemplate</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the PromptTemplate template to use when rendering RAG documents in the prompt.</span>
 <span class="sd">    Only used when `has_rag=True`.\n</span>
-<span class="sd">    Defaults to `PromptTemplate.from_template(&quot;{page_content}&quot;)`, which is the Langchain default.\n</span>
+<span class="sd">    Defaults to `PromptTemplate.from_template(&quot;{page_content}&quot;)`, which is the LangChain default.\n</span>
 <span class="sd">    Override this method to use a different template.</span>
 
 <span class="sd">    Returns:</span>
@@ -4034,7 +4034,7 @@ reformulate the latest user question without the chat history.</p>
 
     <div class="doc doc-contents ">
 
-      <p>Get the history-aware retriever Langchain chain for the assistant.</p>
+      <p>Get the history-aware retriever LangChain chain for the assistant.</p>
 <p>This is used when <code>has_rag=True</code> to fetch documents based on the chat history.</p>
 <p>By default, this is a chain that checks if there is chat history,
 and if so, it uses the chat history to generate a new standalone question
@@ -4042,7 +4042,7 @@ to query the retriever for relevant documents.</p>
 <p>When there is no chat history, it just passes the input to the retriever.</p>
 <p>Override this method to use a different history-aware retriever chain.</p>
 <p>Read more about the history-aware retriever in the
-<a href="https://python.langchain.com/v0.2/docs/how_to/qa_chat_history_how_to/">Langchain docs</a>.</p>
+<a href="https://python.langchain.com/v0.2/docs/how_to/qa_chat_history_how_to/">LangChain docs</a>.</p>
 
 
     <p><span class="doc-section-title">Returns:</span></p>
@@ -4060,7 +4060,7 @@ to query the retriever for relevant documents.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Runnable[dict, RetrieverOutput]: a history-aware retriever Langchain chain.</p>
+                <p>Runnable[dict, RetrieverOutput]: a history-aware retriever LangChain chain.</p>
               </div>
             </td>
           </tr>
@@ -4098,7 +4098,7 @@ to query the retriever for relevant documents.</p>
 <span class="normal">400</span>
 <span class="normal">401</span>
 <span class="normal">402</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_history_aware_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Runnable</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">RetrieverOutput</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the history-aware retriever Langchain chain for the assistant.\n</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the history-aware retriever LangChain chain for the assistant.\n</span>
 <span class="sd">    This is used when `has_rag=True` to fetch documents based on the chat history.\n</span>
 <span class="sd">    By default, this is a chain that checks if there is chat history,</span>
 <span class="sd">    and if so, it uses the chat history to generate a new standalone question</span>
@@ -4107,10 +4107,10 @@ to query the retriever for relevant documents.</p>
 <span class="sd">    Override this method to use a different history-aware retriever chain.</span>
 
 <span class="sd">    Read more about the history-aware retriever in the</span>
-<span class="sd">    [Langchain docs](https://python.langchain.com/v0.2/docs/how_to/qa_chat_history_how_to/).</span>
+<span class="sd">    [LangChain docs](https://python.langchain.com/v0.2/docs/how_to/qa_chat_history_how_to/).</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        Runnable[dict, RetrieverOutput]: a history-aware retriever Langchain chain.</span>
+<span class="sd">        Runnable[dict, RetrieverOutput]: a history-aware retriever LangChain chain.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">llm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_llm</span><span class="p">()</span>
     <span class="n">retriever</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_retriever</span><span class="p">()</span>
@@ -4143,7 +4143,7 @@ to query the retriever for relevant documents.</p>
 
     <div class="doc doc-contents ">
 
-      <p>Create the Langchain graph for the assistant.</p>
+      <p>Create the LangGraph graph for the assistant.</p>
 <p>This graph is an agent that supports chat history, tool calling, and RAG (if <code>has_rag=True</code>).</p>
 <p><code>as_graph</code> uses many other methods to create the graph for the assistant.
 Prefer to override the other methods to customize the graph for the assistant.
@@ -4338,7 +4338,7 @@ If <code>None</code>, an in-memory chat message history is used.</p>
 <span class="normal">535</span>
 <span class="normal">536</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@with_cast_id</span>
 <span class="k">def</span> <span class="nf">as_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Runnable</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create the Langchain graph for the assistant.\n</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create the LangGraph graph for the assistant.\n</span>
 <span class="sd">    This graph is an agent that supports chat history, tool calling, and RAG (if `has_rag=True`).\n</span>
 <span class="sd">    `as_graph` uses many other methods to create the graph for the assistant.</span>
 <span class="sd">    Prefer to override the other methods to customize the graph for the assistant.</span>
@@ -4486,7 +4486,7 @@ If <code>None</code>, an in-memory chat message history is used.</p>
 
     <div class="doc doc-contents ">
 
-      <p>Invoke the assistant Langchain graph with the given arguments and keyword arguments.</p>
+      <p>Invoke the assistant LangChain graph with the given arguments and keyword arguments.</p>
 <p>This is the lower-level method to run the assistant.</p>
 <p>The graph is created by the <code>as_graph</code> method.</p>
 
@@ -4599,7 +4599,7 @@ structured like <code>{"output": "assistant response", "history": ...}</code>.</
 <span class="normal">558</span>
 <span class="normal">559</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@with_cast_id</span>
 <span class="k">def</span> <span class="nf">invoke</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Invoke the assistant Langchain graph with the given arguments and keyword arguments.\n</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Invoke the assistant LangChain graph with the given arguments and keyword arguments.\n</span>
 <span class="sd">    This is the lower-level method to run the assistant.\n</span>
 <span class="sd">    The graph is created by the `as_graph` method.\n</span>
 

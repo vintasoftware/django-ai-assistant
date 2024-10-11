@@ -1568,7 +1568,7 @@ Raises:
     <span class="k">if</span> <span class="ow">not</span> <span class="n">can_create_message</span><span class="p">(</span><span class="n">thread</span><span class="o">=</span><span class="n">thread</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">request</span><span class="o">=</span><span class="n">request</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">AIUserNotAllowedError</span><span class="p">(</span><span class="s2">&quot;User is not allowed to create messages in this thread&quot;</span><span class="p">)</span>
 
-    <span class="c1"># TODO: Check if we can separate the message creation from the chain invoke</span>
+    <span class="c1"># TODO: Check if we can separate the message creation from the invoke</span>
     <span class="n">assistant</span> <span class="o">=</span> <span class="n">assistant_cls</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">request</span><span class="o">=</span><span class="n">request</span><span class="p">)</span>
     <span class="n">assistant_message</span> <span class="o">=</span> <span class="n">assistant</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span>
         <span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">content</span><span class="p">},</span>

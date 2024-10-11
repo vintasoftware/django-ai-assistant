@@ -1361,7 +1361,7 @@ You can return a <code>json.dumps(api_output)</code> from a tool method and the 
 Code the tools as if they were Django views.</p>
 </div>
 <h3 id="using-pre-implemented-tools">Using pre-implemented tools<a class="headerlink" href="#using-pre-implemented-tools" title="Permanent link">&para;</a></h3>
-<p>Django AI Assistant works with <a href="https://python.langchain.com/v0.2/docs/integrations/tools/">any LangChain-compatible tool</a>.
+<p>Django AI Assistant works with <a href="https://python.langchain.com/v0.3/docs/integrations/tools/">any LangChain-compatible tool</a>.
 Just override the <code>get_tools</code> method in your AI Assistant class to include the tools you want to use.</p>
 <p>For example, you can use the <code>TavilySearch</code> tool to provide your AI Assistant with the ability to search the web
 for information about upcoming movies.</p>
@@ -1394,8 +1394,9 @@ for information about upcoming movies.</p>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>As of now, Django AI Assistant is powered by <a href="https://python.langchain.com/v0.2/docs/introduction/">LangChain</a>,
-but previous knowledge on LangChain is NOT necessary to use this library, at least for the main use cases.</p>
+<p>As of now, Django AI Assistant is powered by <a href="https://python.langchain.com/v0.3/docs/introduction/">LangChain</a>
+and <a href="https://langchain-ai.github.io/langgraph/tutorials/introduction/">LangGraph</a>,
+but knowledge on these tools is NOT necessary to use this library, at least for the main use cases.</p>
 </div>
 <h2 id="using-an-ai-assistant">Using an AI Assistant<a class="headerlink" href="#using-an-ai-assistant" title="Permanent link">&para;</a></h2>
 <h3 id="manually-calling-an-ai-assistant">Manually calling an AI Assistant<a class="headerlink" href="#manually-calling-an-ai-assistant" title="Permanent link">&para;</a></h3>
@@ -1491,7 +1492,7 @@ Users can manage both their own threads and the messages on them. Therefore, the
 <h2 id="advanced-usage">Advanced usage<a class="headerlink" href="#advanced-usage" title="Permanent link">&para;</a></h2>
 <h3 id="using-other-ai-models">Using other AI models<a class="headerlink" href="#using-other-ai-models" title="Permanent link">&para;</a></h3>
 <p>By default the supported models are OpenAI ones,
-but you can use <a href="https://python.langchain.com/v0.2/docs/integrations/chat/#advanced-features">any chat model from Langchain that supports Tool Calling</a> by overriding <code>get_llm</code>:</p>
+but you can use <a href="https://python.langchain.com/docs/integrations/chat/#featured-providers">any chat model from LangChain that supports Tool Calling</a> by overriding <code>get_llm</code>:</p>
 <div class="highlight"><span class="filename">myapp/ai_assistants.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">django_ai_assistant</span> <span class="kn">import</span> <span class="n">AIAssistant</span>
 <span class="kn">from</span> <span class="nn">langchain_anthropic</span> <span class="kn">import</span> <span class="n">ChatAnthropic</span>
 
@@ -1543,7 +1544,7 @@ thereby improving the quality of the response by avoiding generic or off-topic a
 <p>For this to work, your must do the following in your AI Assistant:</p>
 <ol>
 <li>Add <code>has_rag = True</code> as a class attribute;</li>
-<li>Override the <code>get_retriever</code> method to return a <a href="https://python.langchain.com/v0.2/docs/how_to/#retrievers">Langchain Retriever</a>.</li>
+<li>Override the <code>get_retriever</code> method to return a <a href="https://python.langchain.com/v0.3/docs/how_to/#retrievers">LangChain Retriever</a>.</li>
 </ol>
 <p>For example:</p>
 <div class="highlight"><span class="filename">myapp/ai_assistants.py</span><pre><span></span><code><span class="kn">from</span> <span class="nn">django_ai_assistant</span> <span class="kn">import</span> <span class="n">AIAssistant</span>
@@ -1559,7 +1560,7 @@ thereby improving the quality of the response by avoiding generic or off-topic a
 <span class="hll">    <span class="n">has_rag</span> <span class="o">=</span> <span class="kc">True</span>
 </span>
     <span class="k">def</span> <span class="nf">get_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseRetriever</span><span class="p">:</span>
-        <span class="k">return</span> <span class="o">...</span>  <span class="c1"># use a Langchain Retriever here</span>
+        <span class="k">return</span> <span class="o">...</span>  <span class="c1"># use a LangChain Retriever here</span>
 </code></pre></div>
 <p>The <code>rag/ai_assistants.py</code> file in the <a href="https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme">example project</a>
 shows an example of a RAG-powered AI Assistant that's able to answer questions about Django using the Django Documentation as context.</p>

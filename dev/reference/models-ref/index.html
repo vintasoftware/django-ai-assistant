@@ -1238,7 +1238,7 @@ Also called conversation or session.</p>
 
     <span class="k">def</span> <span class="nf">get_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_extra_messages</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">BaseMessage</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get Langchain messages objects from the thread.</span>
+<span class="sd">        Get LangChain messages objects from the thread.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            include_extra_messages (bool): Whether to include non-chat messages (like tool calls).</span>
@@ -1453,7 +1453,7 @@ Automatically set when the thread is updated.</p>
 
     <div class="doc doc-contents ">
 
-      <p>Get Langchain messages objects from the thread.</p>
+      <p>Get LangChain messages objects from the thread.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1537,7 +1537,7 @@ Automatically set when the thread is updated.</p>
 <span class="normal">80</span>
 <span class="normal">81</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_extra_messages</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">BaseMessage</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get Langchain messages objects from the thread.</span>
+<span class="sd">    Get LangChain messages objects from the thread.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        include_extra_messages (bool): Whether to include non-chat messages (like tool calls).</span>
@@ -1637,7 +1637,7 @@ A message can be sent by a user or the AI assistant.</p>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Thread to which the message belongs.&quot;&quot;&quot;</span>
     <span class="n">thread_id</span><span class="p">:</span> <span class="n">Any</span>
     <span class="n">message</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">()</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Message content. This is a serialized Langchain `BaseMessage` that was serialized</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Message content. This is a serialized LangChain `BaseMessage` that was serialized</span>
 <span class="sd">    with `message_to_dict` and can be deserialized with `messages_from_dict`.&quot;&quot;&quot;</span>
     <span class="n">created_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Date and time when the message was created.</span>
@@ -1709,7 +1709,7 @@ A message can be sent by a user or the AI assistant.</p>
 
     <div class="doc doc-contents ">
 
-      <p>Message content. This is a serialized Langchain <code>BaseMessage</code> that was serialized
+      <p>Message content. This is a serialized LangChain <code>BaseMessage</code> that was serialized
 with <code>message_to_dict</code> and can be deserialized with <code>messages_from_dict</code>.</p>
     </div>
 
