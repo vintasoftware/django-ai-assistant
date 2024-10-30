@@ -15,7 +15,7 @@ SECRET_KEY = "django-insecure-3(fj*=+t(_645f4-)h&e=%jgmx_@bf=h5x3gq&983+@*ke)u%^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1"]
 
 
 # Application definition
@@ -34,7 +34,9 @@ INSTALLED_APPS = [
     "movies",
     "rag",
     "issue_tracker",
-    "tour_guide",
+    
+
+
 ]
 
 MIDDLEWARE = [
@@ -75,13 +77,6 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
-        "OPTIONS": {
-            # Necessary to avoid "OperationalError: database is locked" errors
-            # on parallel tool calling:
-            "init_command": "PRAGMA journal_mode=WAL;",
-            "transaction_mode": "IMMEDIATE",
-            "timeout": 20,
-        },
     }
 }
 
@@ -124,6 +119,8 @@ STATIC_URL = "static/"
 
 STATICFILES_DIRS = (BASE_DIR / "assets",)
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -147,7 +144,7 @@ LOGGING = {
     "loggers": {
         "django_ai_assistant": {"handlers": ["console"], "level": "DEBUG", "propagate": False},
         # Log OpenAI API requests:
-        "openai": {"handlers": ["console"], "level": "DEBUG", "propagate": False},
+        #$"openai": {"handlers": ["console"], "level": "DEBUG", "propagate": False},
     },
 }
 
@@ -180,7 +177,4 @@ AI_ASSISTANT_CAN_RUN_ASSISTANT = "django_ai_assistant.permissions.allow_all"
 # Example specific settings:
 
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")  # get for free at https://www.weatherapi.com/
-BRAVE_SEARCH_API_KEY = os.getenv(
-    "BRAVE_SEARCH_API_KEY"
-)  # get for free at https://brave.com/search/api/
 DJANGO_DOCS_BRANCH = "stable/5.0.x"
