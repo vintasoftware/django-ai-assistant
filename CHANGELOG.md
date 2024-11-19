@@ -7,6 +7,11 @@ frontend TypeScript client, `django-ai-assistant-client`.
     The backend and the frontend are versioned together, that is, they have the same version number.
     When you update the backend, you should also update the frontend to the same version.
 
+## 0.1.1 <small>November 19, 2024</small> {id="0.1.1"}
+
+- Fix an `AttributeError` raised in RAG AIAssistants when the `retriever` supports the `invoke` call
+only with the query string as `input`.
+
 ## 0.1.0 <small>October 11, 2024</small> {id="0.1.0"}
 
 - Refactor the code to use LangGraph instead of LangChain LCEL
