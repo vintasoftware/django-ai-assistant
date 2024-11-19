@@ -32,18 +32,20 @@ interactions:
     method: POST
     uri: https://api.openai.com/v1/chat/completions
   response:
-    content: "{\n  \"id\": \"chatcmpl-AEgzDhivTNpFojxM1BuqTCzQRnzye\",\n  \"object\":
-      \"chat.completion\",\n  \"created\": 1728065195,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+    content: "{\n  \"id\": \"chatcmpl-AVJ9q7AF8QkzAVEYupnQ2tna2f3eD\",\n  \"object\":
+      \"chat.completion\",\n  \"created\": 1732025174,\n  \"model\": \"gpt-4o-2024-08-06\",\n
       \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
-      \"assistant\",\n        \"content\": \"You're right by the American Museum of
-      Natural History, a fascinating place with exhibits on everything from dinosaurs
-      to space. Enjoy a stroll through Central Park, which offers beautiful landscapes,
-      walking paths, and iconic spots like Bow Bridge and Bethesda Terrace.\",\n        \"refusal\":
-      null\n      },\n      \"logprobs\": null,\n      \"finish_reason\": \"stop\"\n
-      \   }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 124,\n    \"completion_tokens\":
-      47,\n    \"total_tokens\": 171,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\":
-      0\n    },\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
-      0\n    }\n  },\n  \"system_fingerprint\": \"fp_2f406b9113\"\n}\n"
+      \"assistant\",\n        \"content\": \"You are right by the American Museum
+      of Natural History, where you can explore fascinating exhibits on dinosaurs,
+      space, and human cultures. In addition, Central Park offers scenic walking paths,
+      boating on the lake, and the iconic Bethesda Terrace. Enjoy your visit!\",\n
+      \       \"refusal\": null\n      },\n      \"logprobs\": null,\n      \"finish_reason\":
+      \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 124,\n    \"completion_tokens\":
+      51,\n    \"total_tokens\": 175,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\":
+      0,\n      \"audio_tokens\": 0\n    },\n    \"completion_tokens_details\": {\n
+      \     \"reasoning_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\":
+      0,\n      \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"system_fingerprint\":
+      \"fp_45cf54deae\"\n}\n"
     headers:
       Connection:
       - keep-alive
@@ -67,13 +69,12 @@ interactions:
       which can be understood without the chat history. Do NOT answer the question,
       just reformulate it if needed and otherwise return it as is.", "role": "system"},
       {"content": "I''m at Central Park W & 79st, New York, NY 10024, United States.",
-      "role": "user"}, {"content": "You''re right by the American Museum of Natural
-      History, a fascinating place with exhibits on everything from dinosaurs to space.
-      Enjoy a stroll through Central Park, which offers beautiful landscapes, walking
-      paths, and iconic spots like Bow Bridge and Bethesda Terrace.", "role": "assistant"},
-      {"content": "content=''11 W 53rd St, New York, NY 10019, United States.'' additional_kwargs={}
-      response_metadata={} id=''11''", "role": "user"}], "model": "gpt-4o", "n": 1,
-      "stream": false, "temperature": 1.0}'
+      "role": "user"}, {"content": "You are right by the American Museum of Natural
+      History, where you can explore fascinating exhibits on dinosaurs, space, and
+      human cultures. In addition, Central Park offers scenic walking paths, boating
+      on the lake, and the iconic Bethesda Terrace. Enjoy your visit!", "role": "assistant"},
+      {"content": "11 W 53rd St, New York, NY 10019, United States.", "role": "user"}],
+      "model": "gpt-4o", "n": 1, "stream": false, "temperature": 1.0}'
     headers:
       accept:
       - application/json
@@ -84,7 +85,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '930'
+      - '867'
       content-type:
       - application/json
       host:
@@ -96,16 +97,18 @@ interactions:
     method: POST
     uri: https://api.openai.com/v1/chat/completions
   response:
-    content: "{\n  \"id\": \"chatcmpl-AEgzFbJHJ9XNvxQPetmr4PZNphaYq\",\n  \"object\":
-      \"chat.completion\",\n  \"created\": 1728065197,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+    content: "{\n  \"id\": \"chatcmpl-AVJ9sgunfHk3xWTpzuIALwmYJ1f48\",\n  \"object\":
+      \"chat.completion\",\n  \"created\": 1732025176,\n  \"model\": \"gpt-4o-2024-08-06\",\n
       \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
-      \"assistant\",\n        \"content\": \"I see you're mentioning a new location.
-      Are you planning to visit the Museum of Modern Art at this address?\",\n        \"refusal\":
-      null\n      },\n      \"logprobs\": null,\n      \"finish_reason\": \"stop\"\n
-      \   }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 167,\n    \"completion_tokens\":
-      22,\n    \"total_tokens\": 189,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\":
-      0\n    },\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
-      0\n    }\n  },\n  \"system_fingerprint\": \"fp_e5e4913e83\"\n}\n"
+      \"assistant\",\n        \"content\": \"The address you mentioned is for the
+      Museum of Modern Art (MoMA). What are you specifically looking for or interested
+      in at this location?\",\n        \"refusal\": null\n      },\n      \"logprobs\":
+      null,\n      \"finish_reason\": \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\":
+      159,\n    \"completion_tokens\": 28,\n    \"total_tokens\": 187,\n    \"prompt_tokens_details\":
+      {\n      \"cached_tokens\": 0,\n      \"audio_tokens\": 0\n    },\n    \"completion_tokens_details\":
+      {\n      \"reasoning_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\":
+      0,\n      \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"system_fingerprint\":
+      \"fp_467dc6e35f\"\n}\n"
     headers:
       Connection:
       - keep-alive
@@ -132,10 +135,10 @@ interactions:
       maximum and keep your suggestions concise.\n\n---START OF CONTEXT---\nCentral
       Park\n\nAmerican Museum of Natural History---END OF CONTEXT---\n\n", "role":
       "system"}, {"content": "I''m at Central Park W & 79st, New York, NY 10024, United
-      States.", "role": "user"}, {"content": "You''re right by the American Museum
-      of Natural History, a fascinating place with exhibits on everything from dinosaurs
-      to space. Enjoy a stroll through Central Park, which offers beautiful landscapes,
-      walking paths, and iconic spots like Bow Bridge and Bethesda Terrace.", "role":
+      States.", "role": "user"}, {"content": "You are right by the American Museum
+      of Natural History, where you can explore fascinating exhibits on dinosaurs,
+      space, and human cultures. In addition, Central Park offers scenic walking paths,
+      boating on the lake, and the iconic Bethesda Terrace. Enjoy your visit!", "role":
       "assistant"}, {"content": "11 W 53rd St, New York, NY 10019, United States.",
       "role": "user"}], "model": "gpt-4o", "n": 1, "stream": false, "temperature":
       1.0}'
@@ -149,7 +152,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '1105'
+      - '1102'
       content-type:
       - application/json
       host:
@@ -161,18 +164,20 @@ interactions:
     method: POST
     uri: https://api.openai.com/v1/chat/completions
   response:
-    content: "{\n  \"id\": \"chatcmpl-AEgzGbPWcNf9UC78PouyK4Jdo0KoM\",\n  \"object\":
-      \"chat.completion\",\n  \"created\": 1728065198,\n  \"model\": \"gpt-4o-2024-08-06\",\n
+    content: "{\n  \"id\": \"chatcmpl-AVJ9sOdtOnJMts2zKtyoOJVjK9VlC\",\n  \"object\":
+      \"chat.completion\",\n  \"created\": 1732025176,\n  \"model\": \"gpt-4o-2024-08-06\",\n
       \ \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\":
-      \"assistant\",\n        \"content\": \"You're near the Museum of Modern Art
-      (MoMA), home to an impressive collection of modern and contemporary artworks.
-      Just a short walk away, you'll find Rockefeller Center, offering shopping, dining,
-      and an observation deck with views of the city.\",\n        \"refusal\": null\n
-      \     },\n      \"logprobs\": null,\n      \"finish_reason\": \"stop\"\n    }\n
-      \ ],\n  \"usage\": {\n    \"prompt_tokens\": 197,\n    \"completion_tokens\":
-      48,\n    \"total_tokens\": 245,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\":
-      0\n    },\n    \"completion_tokens_details\": {\n      \"reasoning_tokens\":
-      0\n    }\n  },\n  \"system_fingerprint\": \"fp_2f406b9113\"\n}\n"
+      \"assistant\",\n        \"content\": \"You're at the Museum of Modern Art, which
+      features an impressive collection of contemporary and modern artworks, including
+      pieces by Van Gogh and Warhol. Nearby, you can also visit the iconic Rockefeller
+      Center. Enjoy the artistic and cultural experiences!\",\n        \"refusal\":
+      null\n      },\n      \"logprobs\": null,\n      \"finish_reason\": \"stop\"\n
+      \   }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 201,\n    \"completion_tokens\":
+      46,\n    \"total_tokens\": 247,\n    \"prompt_tokens_details\": {\n      \"cached_tokens\":
+      0,\n      \"audio_tokens\": 0\n    },\n    \"completion_tokens_details\": {\n
+      \     \"reasoning_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"accepted_prediction_tokens\":
+      0,\n      \"rejected_prediction_tokens\": 0\n    }\n  },\n  \"system_fingerprint\":
+      \"fp_45cf54deae\"\n}\n"
     headers:
       Connection:
       - keep-alive
