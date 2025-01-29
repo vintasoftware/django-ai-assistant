@@ -50,6 +50,7 @@ def vcr_config():
             ("x-stainless-package-version", None),
             ("x-stainless-runtime", None),
             ("x-stainless-runtime-version", None),
+            ("x-api-key", None),
         ],
         "before_record_response": clear_response,
         # Request must has the same body as the recorded request:

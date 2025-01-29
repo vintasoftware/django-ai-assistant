@@ -459,7 +459,9 @@ class AIAssistant(abc.ABC):  # noqa: F821
             # This is necessary for compatibility with Anthropic
             messages_to_summarize = state["messages"][1:-1]
             input_message = state["messages"][-1]
-            docs = retriever.invoke({"input": input_message, "history": messages_to_summarize})
+            docs = retriever.invoke(
+                {"input": input_message.content, "history": messages_to_summarize}
+            )
 
             document_separator = self.get_document_separator()
             document_prompt = self.get_document_prompt()
