@@ -63,6 +63,13 @@ Run the Django server:
 python manage.py runserver
 ```
 
+[Optional] To use the RAG example, run:
+
+```bash
+# in example directory
+python manage.py fetch_django_docs
+```
+
 Access the Django admin at `http://localhost:8000/admin/` and log in with the superuser account.
 
 ## Usage
