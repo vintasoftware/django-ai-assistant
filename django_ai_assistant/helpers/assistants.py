@@ -71,8 +71,12 @@ class AIAssistant(abc.ABC):  # noqa: F821
     Should be a valid model name from OpenAI, because the default `get_llm` method uses OpenAI.\n
     `get_llm` can be overridden to use a different LLM implementation.
     """
-    temperature: float = 1.0
-    """Temperature to use for the assistant LLM model.\nDefaults to `1.0`."""
+    temperature: float | None = 1.0
+    """Temperature to use for the assistant LLM model.\n
+    Defaults to `1.0`.\n
+    When `None`, the temperature parameter is omitted when constructing the BaseChatModel
+    in the `get_llm` method.
+    """
     tool_max_concurrency: int = 1
     """Maximum number of tools to run concurrently / in parallel.\nDefaults to `1` (no concurrency)."""
     has_rag: bool = False
@@ -238,14 +242,16 @@ class AIAssistant(abc.ABC):  # noqa: F821
         """
         return self.model
 
-    def get_temperature(self) -> float:
+    def get_temperature(self) -> float | None:
         """Get the temperature to use for the assistant LLM model.
         By default, this is the `temperature` attribute, which is `1.0` by default.\n
         Used by the `get_llm` method to create the LLM instance.\n
-        Override the `temperature` attribute or this method to use a different temperature.
+        Override the `temperature` attribute or this method to use a different temperature.\n
+        Returning `None` is a valid option, particularly for models that do not support
+        temperature control, allowing the parameter to be omitted in the `get_llm` method.\n
 
-        Returns:
-            float: The temperature to use for the assistant LLM model.
+            Returns:
+                float | None: The temperature to use for the assistant LLM model.
         """
         return self.temperature
 
@@ -271,11 +277,18 @@ class AIAssistant(abc.ABC):  # noqa: F821
         model = self.get_model()
         temperature = self.get_temperature()
         model_kwargs = self.get_model_kwargs()
-        return ChatOpenAI(
-            model=model,
-            temperature=temperature,
-            model_kwargs=model_kwargs,
-        )
+
+        if temperature is not None:
+            return ChatOpenAI(
+                model=model,
+                temperature=temperature,
+                model_kwargs=model_kwargs,
+            )
+        else:
+            return ChatOpenAI(
+                model=model,
+                model_kwargs=model_kwargs,
+            )
 
     def get_structured_output_llm(self) -> Runnable:
         """Get the LLM model to use for the structured output.

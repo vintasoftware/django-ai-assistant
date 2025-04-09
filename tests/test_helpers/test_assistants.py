@@ -121,7 +121,10 @@ def test_AIAssistant_invoke():
                 id="4",
             ),
             HumanMessage(
-                content="What about tomorrow?", additional_kwargs={}, response_metadata={}, id="5"
+                content="What about tomorrow?",
+                additional_kwargs={},
+                response_metadata={},
+                id="5",
             ),
             AIMessage(
                 content="",
@@ -271,6 +274,95 @@ def test_AIAssistant_tool_order_same_as_declaration():
         "tool_b",
         "tool_a",
     ]
+
+
+@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+def test_AIAssistant_get_llm_default_temperature(mock_chat_openai):
+    class DefaultTempAssistant(AIAssistant):
+        id = "default_temp_assistant"  # noqa: A003
+        name = "Default Temp Assistant"
+        instructions = "Instructions"
+        model = "gpt-test"
+
+    assistant = DefaultTempAssistant()
+    assistant.get_llm()
+
+    mock_chat_openai.assert_called_once_with(
+        model="gpt-test",
+        temperature=assistant.temperature,
+        model_kwargs={},
+    )
+    AIAssistant.clear_cls_registry()
+
+
+@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+def test_AIAssistant_get_llm_custom_temperature(mock_chat_openai):
+    custom_temperature = 0.5
+
+    class CustomTempAssistant(AIAssistant):
+        id = "custom_temp_assistant"  # noqa: A003
+        name = "Custom Temp Assistant"
+        instructions = "Instructions"
+        model = "gpt-test"
+        temperature = custom_temperature
+
+    assistant = CustomTempAssistant()
+    assistant.get_llm()
+
+    mock_chat_openai.assert_called_once_with(
+        model="gpt-test",
+        temperature=custom_temperature,
+        model_kwargs={},
+    )
+    AIAssistant.clear_cls_registry()
+
+
+@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+def test_AIAssistant_get_llm_override_get_temperature(mock_chat_openai):
+    custom_temperature = 0.5
+
+    class OverrideGetTempAssistant(AIAssistant):
+        id = "override_temp_assistant"  # noqa: A003
+        name = "Override Temp Assistant"
+        instructions = "Instructions"
+        model = "gpt-test"
+
+        def get_temperature(self) -> float | None:
+            return custom_temperature
+
+    assistant = OverrideGetTempAssistant()
+    assistant.get_llm()
+
+    mock_chat_openai.assert_called_once_with(
+        model="gpt-test",
+        temperature=custom_temperature,
+        model_kwargs={},
+    )
+    AIAssistant.clear_cls_registry()
+
+
+@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+def test_AIAssistant_get_llm_none_temperature(mock_chat_openai):
+    class NoneTempAssistant(AIAssistant):
+        id = "none_temp_assistant"  # noqa: A003
+        name = "None Temp Assistant"
+        instructions = "Instructions"
+        model = "gpt-test"
+
+        def get_temperature(self) -> float | None:
+            return None
+
+    assistant = NoneTempAssistant()
+    assistant.get_llm()
+
+    mock_chat_openai.assert_called_once_with(
+        model="gpt-test",
+        model_kwargs={},
+    )
+    _, call_kwargs = mock_chat_openai.call_args
+    assert "temperature" not in call_kwargs
+
+    AIAssistant.clear_cls_registry()  # Clean up registry
 
 
 @pytest.mark.vcr
