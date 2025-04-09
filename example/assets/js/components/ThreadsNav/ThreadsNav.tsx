@@ -27,6 +27,7 @@ export function ThreadsNav({
 }) {
   const ThreadNavLink = ({ thread }: { thread: Thread }) => {
     const { hovered, ref } = useHover();
+    const threadId = thread.id?.toString();
 
     return (
       <div ref={ref} key={thread.id}>
@@ -37,7 +38,7 @@ export function ThreadsNav({
             event.preventDefault();
           }}
           label={thread.name}
-          active={selectedThreadId === thread.id}
+          active={selectedThreadId === threadId}
           variant="filled"
           rightSection={
             hovered ? (
@@ -47,7 +48,8 @@ export function ThreadsNav({
                   color="red"
                   size="sm"
                   onClick={async () => {
-                    await deleteThread({ threadId: thread.id });
+                    if (!threadId) return;
+                    await deleteThread({ threadId });
                     window.location.reload();
                   }}
                   aria-label="Delete thread"
