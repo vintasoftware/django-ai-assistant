@@ -250,8 +250,8 @@ class AIAssistant(abc.ABC):  # noqa: F821
         Returning `None` is a valid option, particularly for models that do not support
         temperature control, allowing the parameter to be omitted in the `get_llm` method.\n
 
-            Returns:
-                float | None: The temperature to use for the assistant LLM model.
+        Returns:
+            float | None: The temperature to use for the assistant LLM model.
         """
         return self.temperature
 
