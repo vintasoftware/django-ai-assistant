@@ -36,7 +36,7 @@ Install the Python dependencies:
 poetry install
 ```
 
-If you encounter an error regarding the Python version required for the project, you can use pyenv to install the appropriate version based on [.python-version](.python-version):
+If you encounter an error regarding the Python version required for the project, you can use pyenv to install the appropriate version based on [.python-version](https://github.com/vintasoftware/django-ai-assistant/blob/main/.python-version):
 
 ```bash
 pyenv install
@@ -134,7 +134,7 @@ poetry run mkdocs serve
 ## Release
 
 !!! info
-    The backend and the frontend are versioned together, that is, they should have the same version number.
+The backend and the frontend are versioned together, that is, they should have the same version number.
 
 To release and publish a new version, follow these steps:
 
