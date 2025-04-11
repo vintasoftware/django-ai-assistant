@@ -9,8 +9,7 @@ frontend TypeScript client, `django-ai-assistant-client`.
 
 ## 0.1.2 <small>April 11, 2025</small> {id="0.1.2"}
 
-- Allow better handling of models that do not support the `temperature` parameter in the
-  `AIAssistant` class.
+- Improve support for models that do not accept the `temperature` parameter in the `AIAssistant` class.
 
 ## 0.1.1 <small>November 19, 2024</small> {id="0.1.1"}
 
