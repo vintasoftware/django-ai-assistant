@@ -121,7 +121,10 @@ def test_AIAssistant_invoke():
                 id="4",
             ),
             HumanMessage(
-                content="What about tomorrow?", additional_kwargs={}, response_metadata={}, id="5"
+                content="What about tomorrow?",
+                additional_kwargs={},
+                response_metadata={},
+                id="5",
             ),
             AIMessage(
                 content="",
@@ -271,6 +274,120 @@ def test_AIAssistant_tool_order_same_as_declaration():
         "tool_b",
         "tool_a",
     ]
+
+
+@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+def test_AIAssistant_get_llm_default_temperature(mock_chat_openai):
+    class DefaultTempAssistant(AIAssistant):
+        id = "default_temp_assistant"  # noqa: A003
+        name = "Default Temp Assistant"
+        instructions = "Instructions"
+        model = "gpt-test"
+
+    assistant = DefaultTempAssistant()
+    assistant.get_llm()
+
+    mock_chat_openai.assert_called_once_with(
+        model="gpt-test",
+        temperature=1.0,
+        model_kwargs={},
+    )
+
+    AIAssistant.clear_cls_registry()
+
+
+@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+def test_AIAssistant_get_llm_custom_float_temperature(mock_chat_openai):
+    custom_temperature = 0.5
+
+    class CustomFloatTempAssistant(AIAssistant):
+        id = "custom_float_temp_assistant"  # noqa: A003
+        name = "Custom Float Temp Assistant"
+        instructions = "Instructions"
+        model = "gpt-test"
+        temperature = custom_temperature
+
+    assistant = CustomFloatTempAssistant()
+    assistant.get_llm()
+
+    mock_chat_openai.assert_called_once_with(
+        model="gpt-test",
+        temperature=custom_temperature,
+        model_kwargs={},
+    )
+
+    AIAssistant.clear_cls_registry()
+
+
+@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+def test_AIAssistant_get_llm_override_get_temperature_with_float(mock_chat_openai):
+    custom_temperature = 0.5
+
+    class OverrideGetFloatTempAssistant(AIAssistant):
+        id = "override_get_float_temp_assistant"  # noqa: A003
+        name = "Override Get Float Temp Assistant"
+        instructions = "Instructions"
+        model = "gpt-test"
+
+        def get_temperature(self) -> float | None:
+            return custom_temperature
+
+    assistant = OverrideGetFloatTempAssistant()
+    assistant.get_llm()
+
+    mock_chat_openai.assert_called_once_with(
+        model="gpt-test",
+        temperature=custom_temperature,
+        model_kwargs={},
+    )
+
+    AIAssistant.clear_cls_registry()
+
+
+@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+def test_AIAssistant_get_llm_custom_none_temperature(mock_chat_openai):
+    class CustomNoneTempAssistant(AIAssistant):
+        id = "custom_none_temp_assistant"  # noqa: A003
+        name = "Custom None Temp Assistant"
+        instructions = "Instructions"
+        model = "gpt-test"
+        temperature = None
+
+    assistant = CustomNoneTempAssistant()
+    assistant.get_llm()
+
+    mock_chat_openai.assert_called_once_with(
+        model="gpt-test",
+        model_kwargs={},
+    )
+    _, call_kwargs = mock_chat_openai.call_args
+    assert "temperature" not in call_kwargs
+
+    AIAssistant.clear_cls_registry()
+
+
+@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+def test_AIAssistant_get_llm_override_get_temperature_with_none(mock_chat_openai):
+    class OverrideGetNoneTempAssistant(AIAssistant):
+        id = "override_get_none_temp_assistant"  # noqa: A003
+        name = "Override Get None Temp Assistant"
+        instructions = "Instructions"
+        model = "gpt-test"
+
+        def get_temperature(self) -> float | None:
+            return None
+
+    assistant = OverrideGetNoneTempAssistant()
+    assistant.get_llm()
+
+    mock_chat_openai.assert_called_once_with(
+        model="gpt-test",
+        model_kwargs={},
+    )
+    _, call_kwargs = mock_chat_openai.call_args
+    assert "temperature" not in call_kwargs
+
+    AIAssistant.clear_cls_registry()
 
 
 @pytest.mark.vcr
