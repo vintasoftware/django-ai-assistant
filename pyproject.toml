@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-ai-assistant"
-version = "0.1.1"
+version = "0.1.2"
 description = "Django app to integrate with OpenAI Assistants API"
 authors = ["Vinta Software <contact@vinta.com.br>"]
 license = "MIT"
