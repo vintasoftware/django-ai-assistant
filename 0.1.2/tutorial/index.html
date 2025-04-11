@@ -1,0 +1,1781 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Implement powerful AI assistants using Django">
+      
+      
+      
+        <link rel="canonical" href="https://vintasoftware.github.io/django-ai-assistant/0.1.2/tutorial/">
+      
+      
+        <link rel="prev" href="../get-started/">
+      
+      
+        <link rel="next" href="../frontend/">
+      
+      
+      <link rel="icon" href="../images/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.11">
+    
+    
+      
+        <title>Tutorial - django-ai-assistant</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.4af4bdda.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#tutorial" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="django-ai-assistant" class="md-header__button md-logo" aria-label="django-ai-assistant" data-md-component="logo">
+      
+  <img src="../images/logo-white-transparent-bg.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            django-ai-assistant
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Tutorial
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/vintasoftware/django-ai-assistant/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    vintasoftware/django-ai-assistant
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../get-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Get Started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tutorial
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../frontend/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Frontend
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../reference/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../changelog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../contributing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Contributing
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../support/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Support
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="django-ai-assistant" class="md-nav__button md-logo" aria-label="django-ai-assistant" data-md-component="logo">
+      
+  <img src="../images/logo-white-transparent-bg.svg" alt="logo">
+
+    </a>
+    django-ai-assistant
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/vintasoftware/django-ai-assistant/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    vintasoftware/django-ai-assistant
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../get-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Get Started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Tutorial
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tutorial
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prerequisites
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-api-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setting up API keys
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-ai-assistants-can-do" class="md-nav__link">
+    <span class="md-ellipsis">
+      What AI Assistants can do
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defining-an-ai-assistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defining an AI Assistant
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Defining an AI Assistant">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#registering" class="md-nav__link">
+    <span class="md-ellipsis">
+      Registering
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defining-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defining tools
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tool-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tool parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-django-logic-in-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using Django logic in tools
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-pre-implemented-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using pre-implemented tools
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-an-ai-assistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using an AI Assistant
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using an AI Assistant">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#manually-calling-an-ai-assistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      Manually calling an AI Assistant
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#threads-of-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      Threads of Messages
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-built-in-api-views" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using built-in API views
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using built-in API views">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuring-the-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring the API
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring permissions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frontend-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Frontend integration
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced usage
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-other-ai-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using other AI models
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#composing-ai-assistants" class="md-nav__link">
+    <span class="md-ellipsis">
+      Composing AI Assistants
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retrieval-augmented-generation-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      Retrieval Augmented Generation (RAG)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#support-for-other-types-of-primary-key-pk" class="md-nav__link">
+    <span class="md-ellipsis">
+      Support for other types of Primary Key (PK)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#further-configuration-of-ai-assistants" class="md-nav__link">
+    <span class="md-ellipsis">
+      Further configuration of AI Assistants
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../frontend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Frontend
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/use-cases-ref/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    helpers.use_cases
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/assistants-ref/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    helpers.assistants
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/models-ref/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Contributing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../support/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Support
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prerequisites
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-api-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setting up API keys
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-ai-assistants-can-do" class="md-nav__link">
+    <span class="md-ellipsis">
+      What AI Assistants can do
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defining-an-ai-assistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defining an AI Assistant
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Defining an AI Assistant">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#registering" class="md-nav__link">
+    <span class="md-ellipsis">
+      Registering
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defining-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defining tools
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tool-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tool parameters
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-django-logic-in-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using Django logic in tools
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-pre-implemented-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using pre-implemented tools
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-an-ai-assistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using an AI Assistant
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using an AI Assistant">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#manually-calling-an-ai-assistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      Manually calling an AI Assistant
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#threads-of-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      Threads of Messages
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-built-in-api-views" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using built-in API views
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using built-in API views">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuring-the-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring the API
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuring-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring permissions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frontend-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Frontend integration
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced usage
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-other-ai-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using other AI models
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#composing-ai-assistants" class="md-nav__link">
+    <span class="md-ellipsis">
+      Composing AI Assistants
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retrieval-augmented-generation-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      Retrieval Augmented Generation (RAG)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#support-for-other-types-of-primary-key-pk" class="md-nav__link">
+    <span class="md-ellipsis">
+      Support for other types of Primary Key (PK)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#further-configuration-of-ai-assistants" class="md-nav__link">
+    <span class="md-ellipsis">
+      Further configuration of AI Assistants
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="tutorial">Tutorial<a class="headerlink" href="#tutorial" title="Permanent link">&para;</a></h1>
+<p>In this tutorial, you will learn how to use Django AI Assistant to supercharge your Django project with LLM capabilities.</p>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
+<p>Make sure you properly configured Django AI Assistant as described in the <a href="../get-started/">Get Started</a> guide.</p>
+<h2 id="setting-up-api-keys">Setting up API keys<a class="headerlink" href="#setting-up-api-keys" title="Permanent link">&para;</a></h2>
+<p>The tutorial below uses OpenAI's gpt-4o model, so make sure you have <code>OPENAI_API_KEY</code> set as an environment variable for your Django project.
+You can also use other models, keep reading to learn more. Just make sure their keys are properly set.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>An easy way to set environment variables is to use a <code>.env</code> file in your project's root directory and use <code>python-dotenv</code> to load them.
+Our <a href="https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme">example project</a> uses this approach.</p>
+</div>
+<h2 id="what-ai-assistants-can-do">What AI Assistants can do<a class="headerlink" href="#what-ai-assistants-can-do" title="Permanent link">&para;</a></h2>
+<p>AI Assistants are LLMs that can answer to user queries as ChatGPT does, i.e. inputting and outputting strings.
+But when integrated with Django, they can also do anything a Django view can, such as accessing the database,
+checking permissions, sending emails, downloading and uploading media files, etc.
+This is possible by defining "tools" the AI can use. These tools are methods in an AI Assistant class on the Django side.</p>
+<h2 id="defining-an-ai-assistant">Defining an AI Assistant<a class="headerlink" href="#defining-an-ai-assistant" title="Permanent link">&para;</a></h2>
+<h3 id="registering">Registering<a class="headerlink" href="#registering" title="Permanent link">&para;</a></h3>
+<p>To create an AI Assistant, you need to:</p>
+<ol>
+<li>Create an <code>ai_assistants.py</code> file;</li>
+<li>Define a class that inherits from <code>AIAssistant</code>;</li>
+<li>Provide an <code>id</code>, a <code>name</code>, some <code>instructions</code> for the LLM (a system prompt), and a <code>model</code> name:</li>
+</ol>
+<div class="highlight"><span class="filename">myapp/ai_assistants.py</span><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django_ai_assistant</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIAssistant</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">WeatherAIAssistant</span><span class="p">(</span><span class="n">AIAssistant</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="s2">&quot;weather_assistant&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Weather Assistant&quot;</span>
+    <span class="n">instructions</span> <span class="o">=</span> <span class="s2">&quot;You are a weather bot.&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="s2">&quot;gpt-4o&quot;</span>
+</code></pre></div>
+<h3 id="defining-tools">Defining tools<a class="headerlink" href="#defining-tools" title="Permanent link">&para;</a></h3>
+<p>Useful tools give abilities the LLM doesn't have out-of-the-box,
+such as getting the current date and finding the current weather by calling an API.</p>
+<p>Use the <code>@method_tool</code> decorator to define a tool method in the AI Assistant:</p>
+<div class="highlight"><span class="filename">myapp/ai_assistants.py</span><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">timezone</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django_ai_assistant</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIAssistant</span><span class="p">,</span> <span class="n">method_tool</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">WeatherAIAssistant</span><span class="p">(</span><span class="n">AIAssistant</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="s2">&quot;weather_assistant&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Weather Assistant&quot;</span>
+    <span class="n">instructions</span> <span class="o">=</span> <span class="s2">&quot;You are a weather bot.&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="s2">&quot;gpt-4o&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_instructions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instructions</span><span class="si">}</span><span class="s2"> Today is </span><span class="si">{</span><span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span><span class="si">}</span><span class="s2">.&quot;</span>
+
+<span class="hll">    <span class="nd">@method_tool</span>
+</span><span class="hll">    <span class="k">def</span><span class="w"> </span><span class="nf">get_weather</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span class="hll"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Fetch the current weather data for a location&quot;&quot;&quot;</span>
+</span><span class="hll">        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
+</span><span class="hll">            <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="n">location</span><span class="p">,</span>
+</span><span class="hll">            <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="s2">&quot;25°C&quot;</span><span class="p">,</span>
+</span><span class="hll">            <span class="s2">&quot;weather&quot;</span><span class="p">:</span> <span class="s2">&quot;sunny&quot;</span>
+</span><span class="hll">        <span class="p">})</span>  <span class="c1"># imagine some weather API here, this is just a placeholder</span>
+</span></code></pre></div>
+<p>The <code>get_weather</code> method is a tool that the AI Assistant can use to get the current weather for a location, when the user asks for it.
+The tool method must be fully type-hinted (all parameters and return value), and it must include a descriptive docstring.
+This is necessary for the LLM model to understand the tool's purpose.</p>
+<p>A conversation with this Weather Assistant looks like this:</p>
+<div class="highlight"><pre><span></span><code>User: What&#39;s the weather in New York City?
+AI: The weather in NYC is sunny with a temperature of 25°C.
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>State of the art models such as gpt-4o can process JSON well.
+You can return a <code>json.dumps(api_output)</code> from a tool method and the model will be able to process it before responding the user.</p>
+</div>
+<h3 id="tool-parameters">Tool parameters<a class="headerlink" href="#tool-parameters" title="Permanent link">&para;</a></h3>
+<p>It's possible to define more complex parameters for tools. As long as they're JSON serializable, the underlying LLM model should be able to call tools with the right arguments.</p>
+<p>In the <code>MovieRecommendationAIAssistant</code> from the <a href="https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme">example project</a>, we have a <code>reorder_backlog</code> tool method that receives a list of IMDb URLs that represent the user's movie backlog order. Note the <code>Sequence[str]</code> parameter:</p>
+<div class="highlight"><span class="filename">example/movies/ai_assistants.py</span><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django_ai_assistant</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIAssistant</span><span class="p">,</span> <span class="n">method_tool</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MovieRecommendationAIAssistant</span><span class="p">(</span><span class="n">AIAssistant</span><span class="p">):</span>
+    <span class="o">...</span>
+
+    <span class="nd">@method_tool</span>
+<span class="hll">    <span class="k">def</span><span class="w"> </span><span class="nf">reorder_backlog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imdb_url_list</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Reorder movies in user&#39;s backlog.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+</code></pre></div>
+<p>In <code>WeatherAIAssistant</code>, another assistant from the example project, we have a <code>fetch_forecast_weather</code> method tool with a <code>args_schema</code> parameter that defines a JSON schema for the tool arguments:</p>
+<div class="highlight"><span class="filename">example/weather/ai_assistants.py</span><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django_ai_assistant</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIAssistant</span><span class="p">,</span> <span class="n">method_tool</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">WeatherAIAssistant</span><span class="p">(</span><span class="n">AIAssistant</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="hll">    <span class="k">class</span><span class="w"> </span><span class="nc">FetchForecastWeatherInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span class="hll">        <span class="n">location</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Location to fetch the forecast weather for&quot;</span><span class="p">)</span>
+</span><span class="hll">        <span class="n">forecast_date</span><span class="p">:</span> <span class="n">date</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Date in the format &#39;YYYY-MM-DD&#39;&quot;</span><span class="p">)</span>
+</span>
+<span class="hll">    <span class="nd">@method_tool</span><span class="p">(</span><span class="n">args_schema</span><span class="o">=</span><span class="n">FetchForecastWeatherInput</span><span class="p">)</span>
+</span>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_forecast_weather</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">forecast_date</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fetch the forecast weather data for a location&quot;&quot;&quot;</span>
+        <span class="c1"># forecast_date is a `date` object here</span>
+        <span class="o">...</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It's important to provide a <code>description</code> for each field from <code>args_schema</code>. This improves the LLM's understanding of the tool's arguments.</p>
+</div>
+<h3 id="using-django-logic-in-tools">Using Django logic in tools<a class="headerlink" href="#using-django-logic-in-tools" title="Permanent link">&para;</a></h3>
+<p>You have access to the current request user in tools:</p>
+<div class="highlight"><span class="filename">myapp/ai_assistants.py</span><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django_ai_assistant</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIAssistant</span><span class="p">,</span> <span class="n">method_tool</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PersonalAIAssistant</span><span class="p">(</span><span class="n">AIAssistant</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="s2">&quot;personal_assistant&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Personal Assistant&quot;</span>
+    <span class="n">instructions</span> <span class="o">=</span> <span class="s2">&quot;You are a personal assistant.&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="s2">&quot;gpt-4o&quot;</span>
+
+    <span class="nd">@method_tool</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_current_user_username</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the username of the current user&quot;&quot;&quot;</span>
+<span class="hll">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user</span><span class="o">.</span><span class="n">username</span>
+</span></code></pre></div>
+<p>You can also add any Django logic to tools, such as querying the database:</p>
+<div class="highlight"><span class="filename">myapp/ai_assistants.py</span><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django_ai_assistant</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIAssistant</span><span class="p">,</span> <span class="n">method_tool</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">IssueManagementAIAssistant</span><span class="p">(</span><span class="n">AIAssistant</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="s2">&quot;issue_mgmt_assistant&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Issue Management Assistant&quot;</span>
+    <span class="n">instructions</span> <span class="o">=</span> <span class="s2">&quot;You are an issue management bot.&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="s2">&quot;gpt-4o&quot;</span>
+
+    <span class="nd">@method_tool</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_current_user_assigned_issues</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the issues assigned to the current user&quot;&quot;&quot;</span>
+<span class="hll">        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
+</span><span class="hll">            <span class="s2">&quot;issues&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">Issue</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">assignee</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_user</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+</span><span class="hll">        <span class="p">})</span>
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Make sure you only return to the LLM what the user can see, considering permissions and privacy.
+Code the tools as if they were Django views.</p>
+</div>
+<h3 id="using-pre-implemented-tools">Using pre-implemented tools<a class="headerlink" href="#using-pre-implemented-tools" title="Permanent link">&para;</a></h3>
+<p>Django AI Assistant works with <a href="https://python.langchain.com/v0.3/docs/integrations/tools/">any LangChain-compatible tool</a>.
+Just override the <code>get_tools</code> method in your AI Assistant class to include the tools you want to use.</p>
+<p>For example, you can use the <code>TavilySearch</code> tool to provide your AI Assistant with the ability to search the web
+for information about upcoming movies.</p>
+<p>First install dependencies:</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>langchain-community<span class="w"> </span>tavily-python
+</code></pre></div>
+<p>Then, set the <code>TAVILY_API_KEY</code> environment variable. You'll need to sign up at <a href="https://tavily.com/">Tavily</a>.</p>
+<p>Finally, add the tool to your AI Assistant class by overriding the <code>get_tools</code> method:</p>
+<div class="highlight"><span class="filename">myapp/ai_assistants.py</span><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django_ai_assistant</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIAssistant</span>
+<span class="hll"><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.tools.tavily_search</span><span class="w"> </span><span class="kn">import</span> <span class="n">TavilySearchResults</span>
+</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MovieSearchAIAssistant</span><span class="p">(</span><span class="n">AIAssistant</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="s2">&quot;movie_search_assistant&quot;</span>  <span class="c1"># noqa: A003</span>
+    <span class="n">instructions</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;You&#39;re a helpful movie search assistant. &quot;</span>
+        <span class="s2">&quot;Help the user find more information about movies. &quot;</span>
+        <span class="s2">&quot;Use the provided tools to search the web for upcoming movies. &quot;</span>
+    <span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Movie Search Assistant&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="s2">&quot;gpt-4o&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_instructions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">instructions</span><span class="si">}</span><span class="s2"> Today is </span><span class="si">{</span><span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span><span class="si">}</span><span class="s2">.&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tools</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span>
+<span class="hll">            <span class="n">TavilySearchResults</span><span class="p">(),</span>
+</span>            <span class="o">*</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_tools</span><span class="p">(),</span>
+        <span class="p">]</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As of now, Django AI Assistant is powered by <a href="https://python.langchain.com/v0.3/docs/introduction/">LangChain</a>
+and <a href="https://langchain-ai.github.io/langgraph/tutorials/introduction/">LangGraph</a>,
+but knowledge on these tools is NOT necessary to use this library, at least for the main use cases.</p>
+</div>
+<h2 id="using-an-ai-assistant">Using an AI Assistant<a class="headerlink" href="#using-an-ai-assistant" title="Permanent link">&para;</a></h2>
+<h3 id="manually-calling-an-ai-assistant">Manually calling an AI Assistant<a class="headerlink" href="#manually-calling-an-ai-assistant" title="Permanent link">&para;</a></h3>
+<p>You can manually call an AI Assistant from anywhere in your Django application:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">myapp.ai_assistants</span><span class="w"> </span><span class="kn">import</span> <span class="n">WeatherAIAssistant</span>
+
+<span class="n">assistant</span> <span class="o">=</span> <span class="n">WeatherAIAssistant</span><span class="p">()</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">assistant</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;What&#39;s the weather in New York City?&quot;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;The weather in NYC is sunny with a temperature of 25°C.&quot;</span>
+</code></pre></div>
+<p>The constructor of <code>AIAssistant</code> receives <code>user</code>, <code>request</code>, <code>view</code> as optional parameters,
+which can be used in the tools with <code>self._user</code>, <code>self._request</code>, <code>self._view</code>.
+Also, any extra parameters passed in constructor are stored at <code>self._init_kwargs</code>.</p>
+<h3 id="threads-of-messages">Threads of Messages<a class="headerlink" href="#threads-of-messages" title="Permanent link">&para;</a></h3>
+<p>The django-ai-assistant app provides two models <code>Thread</code> and <code>Message</code> to store and retrieve conversations with AI Assistants.
+LLMs are stateless by design, meaning they don't hold any context between calls. All they know is the current input.
+But by using the <code>AIAssistant</code> class, the conversation state is stored in the database as multiple <code>Message</code> of a <code>Thread</code>,
+and automatically retrieved then passed to the LLM when calling the AI Assistant.</p>
+<p>To create a <code>Thread</code>, you can use a helper from the <code>django_ai_assistant.use_cases</code> module. For example:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django_ai_assistant.use_cases</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_thread</span><span class="p">,</span> <span class="n">get_thread_messages</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">myapp.ai_assistants</span><span class="w"> </span><span class="kn">import</span> <span class="n">WeatherAIAssistant</span>
+
+<span class="hll"><span class="n">thread</span> <span class="o">=</span> <span class="n">create_thread</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Weather Chat&quot;</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
+</span><span class="n">assistant</span> <span class="o">=</span> <span class="n">WeatherAIAssistant</span><span class="p">()</span>
+<span class="n">assistant</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;What&#39;s the weather in New York City?&quot;</span><span class="p">,</span> <span class="n">thread_id</span><span class="o">=</span><span class="n">thread</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+<span class="hll"><span class="n">messages</span> <span class="o">=</span> <span class="n">get_thread_messages</span><span class="p">(</span><span class="n">thread</span><span class="o">=</span><span class="n">thread</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>  <span class="c1"># returns both user and AI messages</span>
+</span></code></pre></div>
+<p>More CRUD helpers are available at <code>django_ai_assistant.use_cases</code> module. Check the <a href="../reference/use-cases-ref/">Reference</a> for more information.</p>
+<h3 id="using-built-in-api-views">Using built-in API views<a class="headerlink" href="#using-built-in-api-views" title="Permanent link">&para;</a></h3>
+<p>You can use the built-in API views to interact with AI Assistants via HTTP requests from any frontend,
+such as a React application or a mobile app. Add the following to your Django project's <code>urls.py</code>:</p>
+<div class="highlight"><span class="filename">myproject/urls.py</span><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">include</span><span class="p">,</span> <span class="n">path</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s2">&quot;ai-assistant/&quot;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s2">&quot;django_ai_assistant.urls&quot;</span><span class="p">)),</span>
+    <span class="o">...</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>The built-in API supports retrieval of Assistants info, as well as CRUD for Threads and Messages.
+It has a OpenAPI schema that you can explore at <code>http://localhost:8000/ai-assistant/docs</code>, when running your project locally.</p>
+<h4 id="configuring-the-api">Configuring the API<a class="headerlink" href="#configuring-the-api" title="Permanent link">&para;</a></h4>
+<p>The built-in API is implemented using <a href="https://django-ninja.dev/reference/api/">Django Ninja</a>. By default, it is initialized with the following setting:</p>
+<div class="highlight"><span class="filename">myproject/settings.py</span><pre><span></span><code><span class="n">AI_ASSISTANT_INIT_API_FN</span> <span class="o">=</span> <span class="s2">&quot;django_ai_assistant.api.views.init_api&quot;</span>
+</code></pre></div>
+<p>You can override this setting in your Django project's <code>settings.py</code> to customize the API, such as using a different authentication method or modifying other configurations.</p>
+<p>The method signature for <code>AI_ASSISTANT_INIT_API_FN</code> is as follows:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ninja</span><span class="w"> </span><span class="kn">import</span> <span class="n">NinjaAPI</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">init_api</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">NinjaAPI</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</code></pre></div>
+<p>By providing your own implementation of <code>init_api</code>, you can tailor the API setup to better fit your project's requirements.</p>
+<h3 id="configuring-permissions">Configuring permissions<a class="headerlink" href="#configuring-permissions" title="Permanent link">&para;</a></h3>
+<p>The API uses the helpers from the <code>django_ai_assistant.use_cases</code> module, which have permission checks
+to ensure the user can use a certain AI Assistant or do CRUD on Threads and Messages.</p>
+<p>By default, any authenticated user can use any AI Assistant, and create a thread.
+Users can manage both their own threads and the messages on them. Therefore, the default permissions are:</p>
+<div class="highlight"><span class="filename">myproject/settings.py</span><pre><span></span><code><span class="n">AI_ASSISTANT_CAN_CREATE_THREAD_FN</span> <span class="o">=</span> <span class="s2">&quot;django_ai_assistant.permissions.allow_all&quot;</span>
+<span class="n">AI_ASSISTANT_CAN_VIEW_THREAD_FN</span> <span class="o">=</span> <span class="s2">&quot;django_ai_assistant.permissions.owns_thread&quot;</span>
+<span class="n">AI_ASSISTANT_CAN_UPDATE_THREAD_FN</span> <span class="o">=</span> <span class="s2">&quot;django_ai_assistant.permissions.owns_thread&quot;</span>
+<span class="n">AI_ASSISTANT_CAN_DELETE_THREAD_FN</span> <span class="o">=</span> <span class="s2">&quot;django_ai_assistant.permissions.owns_thread&quot;</span>
+<span class="n">AI_ASSISTANT_CAN_CREATE_MESSAGE_FN</span> <span class="o">=</span> <span class="s2">&quot;django_ai_assistant.permissions.owns_thread&quot;</span>
+<span class="n">AI_ASSISTANT_CAN_UPDATE_MESSAGE_FN</span> <span class="o">=</span> <span class="s2">&quot;django_ai_assistant.permissions.owns_thread&quot;</span>
+<span class="n">AI_ASSISTANT_CAN_DELETE_MESSAGE_FN</span> <span class="o">=</span> <span class="s2">&quot;django_ai_assistant.permissions.owns_thread&quot;</span>
+<span class="n">AI_ASSISTANT_CAN_RUN_ASSISTANT</span> <span class="o">=</span> <span class="s2">&quot;django_ai_assistant.permissions.allow_all&quot;</span>
+</code></pre></div>
+<p>You can override these settings in your Django project's <code>settings.py</code> to customize the permissions.</p>
+<p>Thread permission signatures look like this:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django_ai_assistant.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Thread</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.http</span><span class="w"> </span><span class="kn">import</span> <span class="n">HttpRequest</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">check_custom_thread_permission</span><span class="p">(</span>
+        <span class="n">thread</span><span class="p">:</span> <span class="n">Thread</span><span class="p">,</span>
+        <span class="n">user</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">request</span><span class="p">:</span> <span class="n">HttpRequest</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="o">...</span>
+</code></pre></div>
+<p>While Message permission signatures look like this:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django_ai_assistant.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Thread</span><span class="p">,</span> <span class="n">Message</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.http</span><span class="w"> </span><span class="kn">import</span> <span class="n">HttpRequest</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">check_custom_message_permission</span><span class="p">(</span>
+        <span class="n">message</span><span class="p">:</span> <span class="n">Message</span><span class="p">,</span>
+        <span class="n">thread</span><span class="p">:</span> <span class="n">Thread</span><span class="p">,</span>
+        <span class="n">user</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">request</span><span class="p">:</span> <span class="n">HttpRequest</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="o">...</span>
+</code></pre></div>
+<h2 id="frontend-integration">Frontend integration<a class="headerlink" href="#frontend-integration" title="Permanent link">&para;</a></h2>
+<p>You can integrate Django AI Assistant with frontend frameworks like React or Vue.js. Please check the <a href="../frontend/">frontend documentation</a>.</p>
+<p>If you want to use traditional Django templates, you can try using HTMX to avoid page refreshes. Check the <a href="https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme">example project</a>, it includes a HTMX application.</p>
+<h2 id="advanced-usage">Advanced usage<a class="headerlink" href="#advanced-usage" title="Permanent link">&para;</a></h2>
+<h3 id="using-other-ai-models">Using other AI models<a class="headerlink" href="#using-other-ai-models" title="Permanent link">&para;</a></h3>
+<p>By default the supported models are OpenAI ones,
+but you can use <a href="https://python.langchain.com/docs/integrations/chat/#featured-providers">any chat model from LangChain that supports Tool Calling</a> by overriding <code>get_llm</code>:</p>
+<div class="highlight"><span class="filename">myapp/ai_assistants.py</span><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django_ai_assistant</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIAssistant</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_anthropic</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatAnthropic</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">WeatherAIAssistant</span><span class="p">(</span><span class="n">AIAssistant</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="s2">&quot;weather_assistant&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Weather Assistant&quot;</span>
+    <span class="n">instructions</span> <span class="o">=</span> <span class="s2">&quot;You are a weather bot.&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="s2">&quot;claude-3-opus-20240229&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_llm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_model</span><span class="p">()</span>
+        <span class="n">temperature</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_temperature</span><span class="p">()</span>
+        <span class="n">model_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_model_kwargs</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ChatAnthropic</span><span class="p">(</span>
+            <span class="n">model_name</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span><span class="p">,</span>
+            <span class="n">model_kwargs</span><span class="o">=</span><span class="n">model_kwargs</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">max_retries</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+</code></pre></div>
+<h3 id="composing-ai-assistants">Composing AI Assistants<a class="headerlink" href="#composing-ai-assistants" title="Permanent link">&para;</a></h3>
+<p>One AI Assistant can call another AI Assistant as a tool. This is useful for composing complex AI Assistants.
+Use the <code>as_tool</code> method for that:</p>
+<div class="highlight"><span class="filename">myapp/ai_assistants.py</span><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SimpleAssistant</span><span class="p">(</span><span class="n">AIAssistant</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AnotherSimpleAssistant</span><span class="p">(</span><span class="n">AIAssistant</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ComplexAssistant</span><span class="p">(</span><span class="n">AIAssistant</span><span class="p">):</span>
+    <span class="o">...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tools</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">BaseTool</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span>
+<span class="hll">            <span class="n">SimpleAssistant</span><span class="p">()</span><span class="o">.</span><span class="n">as_tool</span><span class="p">(</span>
+</span>                <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Tool to &lt;...add a meaningful description here...&gt;&quot;</span><span class="p">),</span>
+<span class="hll">            <span class="n">AnotherSimpleAssistant</span><span class="p">()</span><span class="o">.</span><span class="n">as_tool</span><span class="p">(</span>
+</span>                <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Tool to &lt;...add a meaningful description here...&gt;&quot;</span><span class="p">),</span>
+            <span class="o">*</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_tools</span><span class="p">(),</span>
+        <span class="p">]</span>
+</code></pre></div>
+<p>The <code>movies/ai_assistants.py</code> file in the <a href="https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme">example project</a>
+shows an example of a composed AI Assistant that's able to recommend movies and manage the user's movie backlog.</p>
+<h3 id="retrieval-augmented-generation-rag">Retrieval Augmented Generation (RAG)<a class="headerlink" href="#retrieval-augmented-generation-rag" title="Permanent link">&para;</a></h3>
+<p>You can use RAG in your AI Assistants. RAG means using a retriever to fetch chunks of textual data from a pre-existing DB to give
+context to the LLM. This means the LLM will have access to a context your retriever logic provides when generating the response,
+thereby improving the quality of the response by avoiding generic or off-topic answers.</p>
+<p>For this to work, your must do the following in your AI Assistant:</p>
+<ol>
+<li>Add <code>has_rag = True</code> as a class attribute;</li>
+<li>Override the <code>get_retriever</code> method to return a <a href="https://python.langchain.com/v0.3/docs/how_to/#retrievers">LangChain Retriever</a>.</li>
+</ol>
+<p>For example:</p>
+<div class="highlight"><span class="filename">myapp/ai_assistants.py</span><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django_ai_assistant</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIAssistant</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DocsAssistant</span><span class="p">(</span><span class="n">AIAssistant</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="s2">&quot;docs_assistant&quot;</span>  <span class="c1"># noqa: A003</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Docs Assistant&quot;</span>
+    <span class="n">instructions</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;You are an assistant for answering questions related to the provided context. &quot;</span>
+        <span class="s2">&quot;Use the following pieces of retrieved context to answer the user&#39;s question. &quot;</span>
+    <span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="s2">&quot;gpt-4o&quot;</span>
+<span class="hll">    <span class="n">has_rag</span> <span class="o">=</span> <span class="kc">True</span>
+</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseRetriever</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">...</span>  <span class="c1"># use a LangChain Retriever here</span>
+</code></pre></div>
+<p>The <code>rag/ai_assistants.py</code> file in the <a href="https://github.com/vintasoftware/django-ai-assistant/tree/main/example#readme">example project</a>
+shows an example of a RAG-powered AI Assistant that's able to answer questions about Django using the Django Documentation as context.</p>
+<h3 id="support-for-other-types-of-primary-key-pk">Support for other types of Primary Key (PK)<a class="headerlink" href="#support-for-other-types-of-primary-key-pk" title="Permanent link">&para;</a></h3>
+<p>You can have Django AI Assistant models use other types of primary key, such as strings, UUIDs, etc.
+This is useful if you're concerned about leaking IDs that exponse thread count, message count, etc. to the frontend.
+When using UUIDs, it will prevent users from figuring out if a thread or message exist or not (due to HTTP 404 vs 403).</p>
+<p>Here are the files you have to change if you need the ids to be UUID:</p>
+<div class="highlight"><span class="filename">myapp/fields.py</span><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.db.backends.base.operations</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseDatabaseOperations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.db.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoField</span><span class="p">,</span> <span class="n">UUIDField</span>
+
+<span class="n">BaseDatabaseOperations</span><span class="o">.</span><span class="n">integer_field_ranges</span><span class="p">[</span><span class="s1">&#39;UUIDField&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">UUIDAutoField</span><span class="p">(</span><span class="n">UUIDField</span><span class="p">,</span> <span class="n">AutoField</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;editable&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><span class="filename">myapp/apps.py</span><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">django_ai_assistant.apps</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIAssistantConfig</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AIAssistantConfigOverride</span><span class="p">(</span><span class="n">AIAssistantConfig</span><span class="p">):</span>
+    <span class="n">default_auto_field</span> <span class="o">=</span> <span class="s2">&quot;django_ai_assistant.api.fields.UUIDAutoField&quot;</span>
+</code></pre></div>
+<div class="highlight"><span class="filename">myproject/settings.py</span><pre><span></span><code><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># &quot;django_ai_assistant&quot;, remove this line and add the one below</span>
+    <span class="s2">&quot;example.apps.AIAssistantConfigOverride&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>Make sure to run migrations after those changes:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>manage.py<span class="w"> </span>makemigrations
+python<span class="w"> </span>manage.py<span class="w"> </span>migrate
+</code></pre></div>
+<p>For more information, check <a href="https://docs.djangoproject.com/en/5.0/ref/applications/#for-application-users">Django docs on overriding AppConfig</a>.</p>
+<h3 id="further-configuration-of-ai-assistants">Further configuration of AI Assistants<a class="headerlink" href="#further-configuration-of-ai-assistants" title="Permanent link">&para;</a></h3>
+<p>You can further configure the <code>AIAssistant</code> subclasses by overriding its public methods. Check the <a href="../reference/assistants-ref/">Reference</a> for more information.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../get-started/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Get Started">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Get Started
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../frontend/" class="md-footer__link md-footer__link--next" aria-label="Next: Frontend">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Frontend
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      From <a href="https://www.vintasoftware.com">Vinta Software</a> to the community with 💙
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/vintasoftware/django-ai-assistant/" target="_blank" rel="noopener" title="Django AI Assistant GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://x.com/vintasoftware" target="_blank" rel="noopener" title="Vinta Software X" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8l164.9-188.5L26.8 48h145.6l100.5 132.9zm-24.8 373.8h39.1L151.1 88h-42z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://linkedin.com/company/vintasoftware" target="_blank" rel="noopener" title="Vinta Software LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5m282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+    
+  </body>
+</html>
