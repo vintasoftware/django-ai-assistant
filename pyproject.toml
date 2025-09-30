@@ -62,7 +62,6 @@ pytest-django = "^4.8.0"
 ipython = "^8.24.0"
 pytest-asyncio = "^0.23.7"
 pytest-recording = "^0.13.1"
-coveralls = { version = "^4.0.1", python = "<3.13" }
 mkdocs = "^1.6.0"
 mkdocs-material = "^9.5.27"
 pymdown-extensions = "^10.8.1"
@@ -211,7 +210,7 @@ lines-after-imports = 2
 
 [tool.coverage.run]
 branch = true
-source = ["backend"]
+source = ["django_ai_assistant"]
 omit = [
     "**/venv/*",
     "**/env/*",
@@ -221,6 +220,9 @@ omit = [
     "**/settings/*",
     "**/tests/*",
 ]
+
+[tool.coverage.xml]
+output = "coverage.xml"
 
 [tool.pyright]
 pythonVersion = "3.13"
