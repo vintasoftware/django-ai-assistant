@@ -120,7 +120,9 @@ export function Chat({ assistantId }: { assistantId: string }) {
   const [activeThread, setActiveThread] = useState<Thread | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
 
-  const { fetchThreads, threads, createThread, deleteThread } = useThreadList({ assistantId });
+  const { fetchThreads, threads, createThread, deleteThread } = useThreadList({
+    assistantId,
+  });
   const {
     fetchMessages,
     messages,
@@ -129,7 +131,7 @@ export function Chat({ assistantId }: { assistantId: string }) {
     loadingCreateMessage,
     deleteMessage,
     loadingDeleteMessage,
-  } = useMessageList({ threadId: activeThread?.id });
+  } = useMessageList({ threadId: activeThread?.id?.toString() ?? null });
 
   const { fetchAssistant, assistant } = useAssistant({ assistantId });
 
@@ -160,8 +162,8 @@ export function Chat({ assistantId }: { assistantId: string }) {
       try {
         await fetchAssistant();
         await fetchThreads();
-      } catch (error: ApiError) {
-        if (error.status === 401) {
+      } catch (error) {
+        if (error instanceof ApiError && error.status === 401) {
           setShowLoginNotification(true);
         }
       }

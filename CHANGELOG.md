@@ -7,6 +7,10 @@ frontend TypeScript client, `django-ai-assistant-client`.
     The backend and the frontend are versioned together, that is, they have the same version number.
     When you update the backend, you should also update the frontend to the same version.
 
+## 0.1.2 <small>April 11, 2025</small> {id="0.1.2"}
+
+- Improve support for models that do not accept the `temperature` parameter in the `AIAssistant` class.
+
 ## 0.1.1 <small>November 19, 2024</small> {id="0.1.1"}
 
 - Fix an `AttributeError` raised in RAG AIAssistants when the `retriever` supports the `invoke` call
