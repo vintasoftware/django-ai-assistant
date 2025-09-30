@@ -325,7 +325,7 @@ export const request = <T>(config: OpenAPIConfig, options: ApiRequestOptions<T>,
 
 				let transformedBody = responseBody;
 				if (options.responseTransformer && isSuccess(response.status)) {
-					transformedBody = await options.responseTransformer(responseBody)
+					transformedBody = options.responseTransformer(responseBody)
 				}
 
 				const result: ApiResult = {
