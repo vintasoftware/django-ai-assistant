@@ -47,7 +47,7 @@
     "test": "jest",
     "test:cov": "jest --coverage",
     "test:watch": "jest --watch",
-    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls",
+    "coverage": "jest --coverage",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "tsc": "tsc",
     "generate-client": "openapi-ts"

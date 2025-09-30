@@ -1,5 +1,5 @@
 [![CI](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/vintasoftware/django-ai-assistant/actions/workflows/ci.yml)
-[![Coverage Status](https://coveralls.io/repos/github/vintasoftware/django-ai-assistant/badge.svg?branch=main)](https://coveralls.io/github/vintasoftware/django-ai-assistant?branch=main)
+[![codecov](https://codecov.io/gh/vintasoftware/django-ai-assistant/branch/main/graph/badge.svg)](https://codecov.io/gh/vintasoftware/django-ai-assistant)
 
 # django-ai-assistant-client
 
