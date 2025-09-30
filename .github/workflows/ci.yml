@@ -37,21 +37,20 @@ jobs:
         env:
           OPENAI_API_KEY: "sk-fake-test-key-123"
 
-      - name: Coveralls Parallel
+      - name: Generate coverage report
         run: |
-          poetry run coveralls
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COVERALLS_SERVICE_NAME: "github-actions"
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          COVERALLS_FLAG_NAME: django-coverage-${{ matrix.python-version }}
-          COVERALLS_PARALLEL: true
+          poetry run coverage xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@af09b5e394c93991b95a5e7646aeb90c1917f78f  # v5.5.1
+        with:
+          files: ./coverage.xml
+          flags: backend-python-${{ matrix.python-version }}
+          name: backend-python-${{ matrix.python-version }}
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   build-frontend:
     name: Frontend CI
-    # Wait for Django to finish before starting due to Coveralls parallel
-    # Source: https://docs.coveralls.io/parallel-builds
-    needs: build-django
 
     runs-on: ubuntu-latest
 
@@ -83,40 +82,14 @@ jobs:
       - name: Run tests
         working-directory: ./frontend
         run: |
-          pnpm run coveralls
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COVERALLS_SERVICE_NAME: "github-actions"
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          COVERALLS_FLAG_NAME: node-coverage
-          COVERALLS_PARALLEL: true
+          pnpm run coverage
 
-      - name: Coveralls Parallel
-        uses: coverallsapp/github-action@v2
+      - name: Upload frontend coverage to Codecov
+        uses: codecov/codecov-action@af09b5e394c93991b95a5e7646aeb90c1917f78f  # v5.5.1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          parallel: true
-          flag-name: node-coverage
-          allow-empty: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COVERALLS_SERVICE_NAME: "github-actions"
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          COVERALLS_FLAG_NAME: node-coverage
-          COVERALLS_PARALLEL: true
+          files: ./frontend/coverage/lcov.info
+          flags: frontend
+          name: frontend-coverage
+          token: ${{ secrets.CODECOV_TOKEN }}
 
-  coveralls:
-    name: Coveralls
 
-    # Wait for Django and Frontend to finish before starting due to Coveralls parallel
-    needs: [build-django, build-frontend]
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Coveralls Finished
-        uses: coverallsapp/github-action@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          parallel-finished: true
-          carryforward: "django-coverage-3.10,django-coverage-3.11,django-coverage-3.12,django-coverage-3.13,node-coverage"
