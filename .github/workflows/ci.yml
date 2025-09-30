@@ -42,7 +42,7 @@ jobs:
           poetry run coverage xml
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@af09b5e394c93991b95a5e7646aeb90c1917f78f  # v5.5.1
         with:
           files: ./coverage.xml
           flags: backend-python-${{ matrix.python-version }}
@@ -85,7 +85,7 @@ jobs:
           pnpm run coverage
 
       - name: Upload frontend coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@af09b5e394c93991b95a5e7646aeb90c1917f78f  # v5.5.1
         with:
           files: ./frontend/coverage/lcov.info
           flags: frontend
