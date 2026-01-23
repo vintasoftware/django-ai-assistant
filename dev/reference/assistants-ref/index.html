@@ -1532,7 +1532,12 @@
 
               <details class="quote">
                 <summary>Source code in <code>django_ai_assistant/helpers/assistants.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 48</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
 <span class="normal"> 49</span>
 <span class="normal"> 50</span>
 <span class="normal"> 51</span>
@@ -2170,6 +2175,11 @@
 <span class="sd">    Automatically populated by when a subclass is declared.\n</span>
 <span class="sd">    Use `get_cls_registry` and `get_cls` to access the registry.&quot;&quot;&quot;</span>
 
+    <span class="n">DEFAULT_DOCUMENT_PROMPT</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">PromptTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="n">PromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span>
+        <span class="s2">&quot;</span><span class="si">{page_content}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">DEFAULT_DOCUMENT_SEPARATOR</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">request</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the AIAssistant instance.\n</span>
 <span class="sd">        Optionally set the current user, request, and view for the assistant.\n</span>
@@ -2383,7 +2393,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            str: a separator for documents in the prompt.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">DEFAULT_DOCUMENT_SEPARATOR</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_DOCUMENT_SEPARATOR</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_document_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PromptTemplate</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the PromptTemplate template to use when rendering RAG documents in the prompt.</span>
@@ -2394,7 +2404,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            PromptTemplate: a prompt template for RAG documents.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">DEFAULT_DOCUMENT_PROMPT</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_DOCUMENT_PROMPT</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseRetriever</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the RAG retriever to use for fetching documents.\n</span>
@@ -2584,7 +2594,7 @@
         <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;history&quot;</span><span class="p">,</span> <span class="n">history</span><span class="p">)</span>
         <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;retriever&quot;</span><span class="p">,</span> <span class="n">retriever</span><span class="p">)</span>
         <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;agent&quot;</span><span class="p">,</span> <span class="n">agent</span><span class="p">)</span>
-        <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;tools&quot;</span><span class="p">,</span> <span class="n">ToolNode</span><span class="p">(</span><span class="n">tools</span><span class="p">))</span>
+        <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;tools&quot;</span><span class="p">,</span> <span class="n">ToolNode</span><span class="p">(</span><span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">))</span>
         <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;respond&quot;</span><span class="p">,</span> <span class="n">record_response</span><span class="p">)</span>
 
         <span class="n">workflow</span><span class="o">.</span><span class="n">set_entry_point</span><span class="p">(</span><span class="s2">&quot;setup&quot;</span><span class="p">)</span>
@@ -3871,7 +3881,7 @@ such as <a href="https://python.langchain.com/v0.3/docs/integrations/tools/">any
 <span class="sd">    Returns:</span>
 <span class="sd">        str: a separator for documents in the prompt.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">DEFAULT_DOCUMENT_SEPARATOR</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_DOCUMENT_SEPARATOR</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3937,7 +3947,7 @@ Only used when <code>has_rag=True</code>.</p>
 <span class="sd">    Returns:</span>
 <span class="sd">        PromptTemplate: a prompt template for RAG documents.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">DEFAULT_DOCUMENT_PROMPT</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_DOCUMENT_PROMPT</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -4550,7 +4560,7 @@ If <code>None</code>, an in-memory chat message history is used.</p>
     <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;history&quot;</span><span class="p">,</span> <span class="n">history</span><span class="p">)</span>
     <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;retriever&quot;</span><span class="p">,</span> <span class="n">retriever</span><span class="p">)</span>
     <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;agent&quot;</span><span class="p">,</span> <span class="n">agent</span><span class="p">)</span>
-    <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;tools&quot;</span><span class="p">,</span> <span class="n">ToolNode</span><span class="p">(</span><span class="n">tools</span><span class="p">))</span>
+    <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;tools&quot;</span><span class="p">,</span> <span class="n">ToolNode</span><span class="p">(</span><span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">))</span>
     <span class="n">workflow</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;respond&quot;</span><span class="p">,</span> <span class="n">record_response</span><span class="p">)</span>
 
     <span class="n">workflow</span><span class="o">.</span><span class="n">set_entry_point</span><span class="p">(</span><span class="s2">&quot;setup&quot;</span><span class="p">)</span>
