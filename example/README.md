@@ -19,7 +19,7 @@ Install the example project Python dependencies:
 
 ```bash
 cd ..  # back to project root directory
-poetry install --all-extras
+poetry install
 ```
 
 Create a `.env` file at the example directory:
