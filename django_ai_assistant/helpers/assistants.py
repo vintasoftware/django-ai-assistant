@@ -1,6 +1,7 @@
 import abc
 import inspect
 import re
+from enum import Enum
 from typing import Annotated, Any, ClassVar, Dict, Sequence, Type, TypedDict, cast
 
 from langchain_core.language_models import BaseChatModel
@@ -39,7 +40,7 @@ from django_ai_assistant.helpers.django_messages import save_django_messages
 from django_ai_assistant.langchain.tools import tool as tool_decorator
 
 
-class ProvidersEnum:
+class ProvidersEnum(Enum):
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
 
@@ -121,7 +122,13 @@ class AIAssistant(abc.ABC):  # noqa: F821
     DEFAULT_DOCUMENT_SEPARATOR: ClassVar[str] = "\n\n"
 
     def __init__(
-        self, *, user=None, request=None, view=None, provider=ProvidersEnum.OPENAI, **kwargs: Any
+        self,
+        *,
+        user=None,
+        request=None,
+        view=None,
+        provider=ProvidersEnum.OPENAI.value,
+        **kwargs: Any,
     ):
         """Initialize the AIAssistant instance.\n
         Optionally set the current user, request, and view for the assistant.\n
@@ -287,18 +294,30 @@ class AIAssistant(abc.ABC):  # noqa: F821
         model_kwargs = self.get_model_kwargs()
 
         llm_class = None
-        if self._provider == ProvidersEnum.OPENAI:
+        valid_providers_list = [provider.value for provider in ProvidersEnum]
+        if self._provider in valid_providers_list:
             try:
-                from langchain_openai import ChatOpenAI
+                if self._provider == ProvidersEnum.OPENAI.value:
+                    from langchain_openai import ChatOpenAI
+
+                    llm_class = ChatOpenAI
+                elif self._provider == ProvidersEnum.ANTHROPIC.value:
+                    from langchain_anthropic import ChatAnthropic
+
+                    llm_class = ChatAnthropic
+                else:
+                    raise ImportError
             except ImportError as err:
                 raise ImportError(
-                    "'langchain_openai' is required to use this provider. "
-                    "Install it with: pip install django-ai-assistant[openai]"
+                    f"'langchain_{self._provider}' is required to use this provider. "
+                    f"Install it with: pip install django-ai-assistant[{self._provider}]"
                 ) from err
-            llm_class = ChatOpenAI
         else:
-            # TODO: raise exception due to incorrect provider
-            raise
+            raise AIAssistantMisconfiguredError(
+                f"Invalid provider={self._provider}, please use one "
+                "of the supported providers: "
+                f"{valid_providers_list}"
+            )
 
         if temperature is not None:
             return llm_class(
@@ -324,7 +343,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         llm = self.get_llm()
 
         method = "json_mode"
-        if self._provider == ProvidersEnum.OPENAI:
+        if self._provider == ProvidersEnum.OPENAI.value:
             # When using ChatOpenAI, it's better to use json_schema method
             # because it enables strict mode.
             # https://platform.openai.com/docs/guides/structured-outputs

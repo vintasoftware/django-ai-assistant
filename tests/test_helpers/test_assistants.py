@@ -270,7 +270,7 @@ def test_AIAssistant_tool_order_same_as_declaration():
     ]
 
 
-@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+@patch("langchain_openai.ChatOpenAI")
 def test_AIAssistant_get_llm_default_temperature(mock_chat_openai):
     class DefaultTempAssistant(AIAssistant):
         id = "default_temp_assistant"  # noqa: A003
@@ -290,7 +290,7 @@ def test_AIAssistant_get_llm_default_temperature(mock_chat_openai):
     AIAssistant.clear_cls_registry()
 
 
-@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+@patch("langchain_openai.ChatOpenAI")
 def test_AIAssistant_get_llm_custom_float_temperature(mock_chat_openai):
     custom_temperature = 0.5
 
@@ -313,7 +313,7 @@ def test_AIAssistant_get_llm_custom_float_temperature(mock_chat_openai):
     AIAssistant.clear_cls_registry()
 
 
-@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+@patch("langchain_openai.ChatOpenAI")
 def test_AIAssistant_get_llm_override_get_temperature_with_float(mock_chat_openai):
     custom_temperature = 0.5
 
@@ -338,7 +338,7 @@ def test_AIAssistant_get_llm_override_get_temperature_with_float(mock_chat_opena
     AIAssistant.clear_cls_registry()
 
 
-@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+@patch("langchain_openai.ChatOpenAI")
 def test_AIAssistant_get_llm_custom_none_temperature(mock_chat_openai):
     class CustomNoneTempAssistant(AIAssistant):
         id = "custom_none_temp_assistant"  # noqa: A003
@@ -360,7 +360,7 @@ def test_AIAssistant_get_llm_custom_none_temperature(mock_chat_openai):
     AIAssistant.clear_cls_registry()
 
 
-@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+@patch("langchain_openai.ChatOpenAI")
 def test_AIAssistant_get_llm_override_get_temperature_with_none(mock_chat_openai):
     class OverrideGetNoneTempAssistant(AIAssistant):
         id = "override_get_none_temp_assistant"  # noqa: A003

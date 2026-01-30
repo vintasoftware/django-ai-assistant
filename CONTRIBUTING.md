@@ -33,7 +33,7 @@ poetry shell
 Install the Python dependencies:
 
 ```bash
-poetry install
+poetry install --all-extras
 ```
 
 If you encounter an error regarding the Python version required for the project, you can use pyenv to install the appropriate version based on [.python-version](https://github.com/vintasoftware/django-ai-assistant/blob/main/.python-version):
