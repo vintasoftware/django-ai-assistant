@@ -27,7 +27,6 @@ from langchain_core.runnables import (
     RunnableBranch,
 )
 from langchain_core.tools import BaseTool, StructuredTool
-from langchain_openai import ChatOpenAI
 from langgraph.graph import END, StateGraph, add_messages
 from langgraph.prebuilt import ToolNode
 from pydantic import BaseModel
@@ -38,6 +37,11 @@ from django_ai_assistant.exceptions import (
 )
 from django_ai_assistant.helpers.django_messages import save_django_messages
 from django_ai_assistant.langchain.tools import tool as tool_decorator
+
+
+class ProvidersEnum:
+    OPENAI = "openai"
+    ANTHROPIC = "anthropic"
 
 
 class AIAssistant(abc.ABC):  # noqa: F821
@@ -116,7 +120,9 @@ class AIAssistant(abc.ABC):  # noqa: F821
     )
     DEFAULT_DOCUMENT_SEPARATOR: ClassVar[str] = "\n\n"
 
-    def __init__(self, *, user=None, request=None, view=None, **kwargs: Any):
+    def __init__(
+        self, *, user=None, request=None, view=None, provider=ProvidersEnum.OPENAI, **kwargs: Any
+    ):
         """Initialize the AIAssistant instance.\n
         Optionally set the current user, request, and view for the assistant.\n
         Those can be used in any `@method_tool` to customize behavior.\n
@@ -128,12 +134,14 @@ class AIAssistant(abc.ABC):  # noqa: F821
                 A request instance. Defaults to `None`. Stored in `self._request`.
             view (Any | None): The current Django view the assistant was initialized with.
                 A view instance. Defaults to `None`. Stored in `self._view`.
+            provider (str): TODO: add description
             **kwargs: Extra keyword arguments passed to the constructor. Stored in `self._init_kwargs`.
         """
 
         self._user = user
         self._request = request
         self._view = view
+        self._provider = provider
         self._init_kwargs = kwargs
 
         self._set_method_tools()
@@ -278,14 +286,28 @@ class AIAssistant(abc.ABC):  # noqa: F821
         temperature = self.get_temperature()
         model_kwargs = self.get_model_kwargs()
 
+        llm_class = None
+        if self._provider == ProvidersEnum.OPENAI:
+            try:
+                from langchain_openai import ChatOpenAI
+            except ImportError as err:
+                raise ImportError(
+                    "'langchain_openai' is required to use this provider. "
+                    "Install it with: pip install django-ai-assistant[openai]"
+                ) from err
+            llm_class = ChatOpenAI
+        else:
+            # TODO: raise exception due to incorrect provider
+            raise
+
         if temperature is not None:
-            return ChatOpenAI(
+            return llm_class(
                 model=model,
                 temperature=temperature,
                 model_kwargs=model_kwargs,
             )
         else:
-            return ChatOpenAI(
+            return llm_class(
                 model=model,
                 model_kwargs=model_kwargs,
             )
@@ -302,7 +324,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         llm = self.get_llm()
 
         method = "json_mode"
-        if isinstance(llm, ChatOpenAI):
+        if self._provider == ProvidersEnum.OPENAI:
             # When using ChatOpenAI, it's better to use json_schema method
             # because it enables strict mode.
             # https://platform.openai.com/docs/guides/structured-outputs
