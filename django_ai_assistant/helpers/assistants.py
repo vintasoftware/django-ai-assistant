@@ -1,7 +1,7 @@
 import abc
+import importlib
 import inspect
 import re
-from enum import Enum
 from typing import Annotated, Any, ClassVar, Dict, Sequence, Type, TypedDict, cast
 
 from langchain_core.language_models import BaseChatModel
@@ -40,9 +40,10 @@ from django_ai_assistant.helpers.django_messages import save_django_messages
 from django_ai_assistant.langchain.tools import tool as tool_decorator
 
 
-class ProvidersEnum(Enum):
-    OPENAI = "openai"
-    ANTHROPIC = "anthropic"
+PROVIDER_LLM_LOOKUP = {
+    "openai": "ChatOpenAI",
+    "anthropic": "ChatAnthropic",
+}
 
 
 class AIAssistant(abc.ABC):  # noqa: F821
@@ -127,7 +128,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         user=None,
         request=None,
         view=None,
-        provider=ProvidersEnum.OPENAI.value,
+        provider="openai",
         **kwargs: Any,
     ):
         """Initialize the AIAssistant instance.\n
@@ -141,7 +142,9 @@ class AIAssistant(abc.ABC):  # noqa: F821
                 A request instance. Defaults to `None`. Stored in `self._request`.
             view (Any | None): The current Django view the assistant was initialized with.
                 A view instance. Defaults to `None`. Stored in `self._view`.
-            provider (str): TODO: add description
+            provider (str): The provider that will be used for building the LLM instance.
+                Requires the corresponding `langchain_[provider]` package to be installed.
+                Defaults to `openai`. Stored in `self._provider`.
             **kwargs: Extra keyword arguments passed to the constructor. Stored in `self._init_kwargs`.
         """
 
@@ -280,6 +283,29 @@ class AIAssistant(abc.ABC):  # noqa: F821
         """
         return {}
 
+    def _import_llm_class(self):
+        valid_providers_list = PROVIDER_LLM_LOOKUP.keys()
+        if self._provider not in valid_providers_list:
+            raise AIAssistantMisconfiguredError(
+                f"Invalid provider={self._provider}, please use one "
+                f"of the supported providers: {valid_providers_list}"
+            )
+
+        # Performs a deferred import of the LLM class that corresponds to
+        # the self._provider value and returns it.
+        try:
+            langchain_module = importlib.import_module(f"langchain_{self._provider}")
+        except ImportError as err:
+            raise ImportError(
+                f"'langchain_{self._provider}' is required to use this provider. "
+                f"Install it with: pip install django-ai-assistant[{self._provider}]"
+            ) from err
+
+        return getattr(
+            langchain_module,
+            PROVIDER_LLM_LOOKUP[self._provider],
+        )
+
     def get_llm(self) -> BaseChatModel:
         """Get the LangChain LLM instance for the assistant.
         By default, this uses the OpenAI implementation.\n
@@ -293,31 +319,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         temperature = self.get_temperature()
         model_kwargs = self.get_model_kwargs()
 
-        llm_class = None
-        valid_providers_list = [provider.value for provider in ProvidersEnum]
-        if self._provider in valid_providers_list:
-            try:
-                if self._provider == ProvidersEnum.OPENAI.value:
-                    from langchain_openai import ChatOpenAI
-
-                    llm_class = ChatOpenAI
-                elif self._provider == ProvidersEnum.ANTHROPIC.value:
-                    from langchain_anthropic import ChatAnthropic
-
-                    llm_class = ChatAnthropic
-                else:
-                    raise ImportError
-            except ImportError as err:
-                raise ImportError(
-                    f"'langchain_{self._provider}' is required to use this provider. "
-                    f"Install it with: pip install django-ai-assistant[{self._provider}]"
-                ) from err
-        else:
-            raise AIAssistantMisconfiguredError(
-                f"Invalid provider={self._provider}, please use one "
-                "of the supported providers: "
-                f"{valid_providers_list}"
-            )
+        llm_class = self._import_llm_class()
 
         if temperature is not None:
             return llm_class(
@@ -343,7 +345,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         llm = self.get_llm()
 
         method = "json_mode"
-        if self._provider == ProvidersEnum.OPENAI.value:
+        if self._provider == "openai":
             # When using ChatOpenAI, it's better to use json_schema method
             # because it enables strict mode.
             # https://platform.openai.com/docs/guides/structured-outputs
