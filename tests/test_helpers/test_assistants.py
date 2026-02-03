@@ -437,7 +437,10 @@ def test_AIAssistant_get_llm_uninstalled_provider(monkeypatch):
         assistants,
         "PROVIDER_LLM_LOOKUP",
         {
-            "uninstalled": "UninstalledChat",
+            "uninstalled": {
+                "langchain_module": "test_module",
+                "llm_class": "UninstalledChat",
+            },
         },
     )
 

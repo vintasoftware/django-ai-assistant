@@ -41,8 +41,18 @@ from django_ai_assistant.langchain.tools import tool as tool_decorator
 
 
 PROVIDER_LLM_LOOKUP = {
-    "openai": "ChatOpenAI",
-    "anthropic": "ChatAnthropic",
+    "openai": {
+        "langchain_module": "langchain_openai",
+        "llm_class": "ChatOpenAI",
+    },
+    "anthropic": {
+        "langchain_module": "langchain_anthropic",
+        "llm_class": "ChatAnthropic",
+    },
+    "google": {
+        "langchain_module": "langchain_google_genai",
+        "llm_class": "ChatGoogleGenerativeAI",
+    },
 }
 
 
@@ -143,7 +153,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
             view (Any | None): The current Django view the assistant was initialized with.
                 A view instance. Defaults to `None`. Stored in `self._view`.
             provider (str): The provider that will be used for building the LLM instance.
-                Requires the corresponding `langchain_[provider]` package to be installed.
+                Requires the corresponding langchain module to be installed (see `PROVIDER_LLM_LOOKUP`).
                 Defaults to `openai`. Stored in `self._provider`.
             **kwargs: Extra keyword arguments passed to the constructor. Stored in `self._init_kwargs`.
         """
@@ -284,8 +294,9 @@ class AIAssistant(abc.ABC):  # noqa: F821
         return {}
 
     def _import_llm_class(self):
-        valid_providers_list = PROVIDER_LLM_LOOKUP.keys()
-        if self._provider not in valid_providers_list:
+        provider = PROVIDER_LLM_LOOKUP.get(self._provider)
+        if not provider:
+            valid_providers_list = PROVIDER_LLM_LOOKUP.keys()
             raise AIAssistantMisconfiguredError(
                 f"Invalid provider={self._provider}, please use one "
                 f"of the supported providers: {valid_providers_list}"
@@ -294,17 +305,15 @@ class AIAssistant(abc.ABC):  # noqa: F821
         # Performs a deferred import of the LLM class that corresponds to
         # the self._provider value and returns it.
         try:
-            langchain_module = importlib.import_module(f"langchain_{self._provider}")
+            langchain_module_str = provider["langchain_module"]
+            langchain_module = importlib.import_module(f"{langchain_module_str}")
         except ImportError as err:
             raise ImportError(
-                f"'langchain_{self._provider}' is required to use this provider. "
+                f"'{langchain_module_str}' is required to use this provider. "
                 f"Install it with: pip install django-ai-assistant[{self._provider}]"
             ) from err
 
-        return getattr(
-            langchain_module,
-            PROVIDER_LLM_LOOKUP[self._provider],
-        )
+        return getattr(langchain_module, provider["llm_class"])
 
     def get_llm(self) -> BaseChatModel:
         """Get the LangChain LLM instance for the assistant.
