@@ -387,6 +387,26 @@ def test_AIAssistant_get_llm_override_get_temperature_with_none(mock_chat_openai
     AIAssistant.clear_cls_registry()
 
 
+@patch("langchain_openai.ChatOpenAI")
+def test_AIAssistant_get_llm_openai_provider(mock_chat_openai):
+    class OpenaiAIAssistant(AIAssistant):
+        id = "override_anthropic_assistant"  # noqa: A003
+        name = "Override OpenAI Assistant"
+        instructions = "Instructions"
+        model = "gpt-test"
+
+    assistant = OpenaiAIAssistant(provider="openai")
+    assistant.get_llm()
+
+    mock_chat_openai.assert_called_once_with(
+        model="gpt-test",
+        temperature=1.0,
+        model_kwargs={},
+    )
+
+    AIAssistant.clear_cls_registry()
+
+
 @patch("langchain_anthropic.ChatAnthropic")
 def test_AIAssistant_get_llm_anthropic_provider(mock_chat_anthropic):
     class AnthropicAIAssistant(AIAssistant):
@@ -399,6 +419,26 @@ def test_AIAssistant_get_llm_anthropic_provider(mock_chat_anthropic):
     assistant.get_llm()
 
     mock_chat_anthropic.assert_called_once_with(
+        model="gpt-test",
+        temperature=1.0,
+        model_kwargs={},
+    )
+
+    AIAssistant.clear_cls_registry()
+
+
+@patch("langchain_google_genai.ChatGoogleGenerativeAI")
+def test_AIAssistant_get_llm_google_provider(mock_chat_google):
+    class GoogleAIAssistant(AIAssistant):
+        id = "override_google_assistant"  # noqa: A003
+        name = "Override Google Assistant"
+        instructions = "Instructions"
+        model = "gpt-test"
+
+    assistant = GoogleAIAssistant(provider="google")
+    assistant.get_llm()
+
+    mock_chat_google.assert_called_once_with(
         model="gpt-test",
         temperature=1.0,
         model_kwargs={},
