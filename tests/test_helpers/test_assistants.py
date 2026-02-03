@@ -11,6 +11,9 @@ from langchain_core.messages import (
 )
 from langchain_core.retrievers import BaseRetriever
 
+from django_ai_assistant.exceptions import (
+    AIAssistantMisconfiguredError,
+)
 from django_ai_assistant.helpers.assistants import AIAssistant
 from django_ai_assistant.langchain.tools import BaseModel, Field, method_tool
 from django_ai_assistant.models import Thread
@@ -270,7 +273,7 @@ def test_AIAssistant_tool_order_same_as_declaration():
     ]
 
 
-@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+@patch("langchain_openai.ChatOpenAI")
 def test_AIAssistant_get_llm_default_temperature(mock_chat_openai):
     class DefaultTempAssistant(AIAssistant):
         id = "default_temp_assistant"  # noqa: A003
@@ -290,7 +293,7 @@ def test_AIAssistant_get_llm_default_temperature(mock_chat_openai):
     AIAssistant.clear_cls_registry()
 
 
-@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+@patch("langchain_openai.ChatOpenAI")
 def test_AIAssistant_get_llm_custom_float_temperature(mock_chat_openai):
     custom_temperature = 0.5
 
@@ -313,7 +316,7 @@ def test_AIAssistant_get_llm_custom_float_temperature(mock_chat_openai):
     AIAssistant.clear_cls_registry()
 
 
-@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+@patch("langchain_openai.ChatOpenAI")
 def test_AIAssistant_get_llm_override_get_temperature_with_float(mock_chat_openai):
     custom_temperature = 0.5
 
@@ -338,7 +341,7 @@ def test_AIAssistant_get_llm_override_get_temperature_with_float(mock_chat_opena
     AIAssistant.clear_cls_registry()
 
 
-@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+@patch("langchain_openai.ChatOpenAI")
 def test_AIAssistant_get_llm_custom_none_temperature(mock_chat_openai):
     class CustomNoneTempAssistant(AIAssistant):
         id = "custom_none_temp_assistant"  # noqa: A003
@@ -360,7 +363,7 @@ def test_AIAssistant_get_llm_custom_none_temperature(mock_chat_openai):
     AIAssistant.clear_cls_registry()
 
 
-@patch("django_ai_assistant.helpers.assistants.ChatOpenAI")
+@patch("langchain_openai.ChatOpenAI")
 def test_AIAssistant_get_llm_override_get_temperature_with_none(mock_chat_openai):
     class OverrideGetNoneTempAssistant(AIAssistant):
         id = "override_get_none_temp_assistant"  # noqa: A003
@@ -382,6 +385,107 @@ def test_AIAssistant_get_llm_override_get_temperature_with_none(mock_chat_openai
     assert "temperature" not in call_kwargs
 
     AIAssistant.clear_cls_registry()
+
+
+@patch("langchain_openai.ChatOpenAI")
+def test_AIAssistant_get_llm_openai_provider(mock_chat_openai):
+    class OpenaiAIAssistant(AIAssistant):
+        id = "override_anthropic_assistant"  # noqa: A003
+        name = "Override OpenAI Assistant"
+        instructions = "Instructions"
+        model = "gpt-test"
+
+    assistant = OpenaiAIAssistant(provider="openai")
+    assistant.get_llm()
+
+    mock_chat_openai.assert_called_once_with(
+        model="gpt-test",
+        temperature=1.0,
+        model_kwargs={},
+    )
+
+    AIAssistant.clear_cls_registry()
+
+
+@patch("langchain_anthropic.ChatAnthropic")
+def test_AIAssistant_get_llm_anthropic_provider(mock_chat_anthropic):
+    class AnthropicAIAssistant(AIAssistant):
+        id = "override_anthropic_assistant"  # noqa: A003
+        name = "Override Anthropic Assistant"
+        instructions = "Instructions"
+        model = "gpt-test"
+
+    assistant = AnthropicAIAssistant(provider="anthropic")
+    assistant.get_llm()
+
+    mock_chat_anthropic.assert_called_once_with(
+        model="gpt-test",
+        temperature=1.0,
+        model_kwargs={},
+    )
+
+    AIAssistant.clear_cls_registry()
+
+
+@patch("langchain_google_genai.ChatGoogleGenerativeAI")
+def test_AIAssistant_get_llm_google_provider(mock_chat_google):
+    class GoogleAIAssistant(AIAssistant):
+        id = "override_google_assistant"  # noqa: A003
+        name = "Override Google Assistant"
+        instructions = "Instructions"
+        model = "gpt-test"
+
+    assistant = GoogleAIAssistant(provider="google")
+    assistant.get_llm()
+
+    mock_chat_google.assert_called_once_with(
+        model="gpt-test",
+        temperature=1.0,
+        model_kwargs={},
+    )
+
+    AIAssistant.clear_cls_registry()
+
+
+def test_AIAssistant_get_llm_invalid_provider():
+    class InvalidAIAssistant(AIAssistant):
+        id = "override_invalid_assistant"  # noqa: A003
+        name = "Override Invalid Assistant"
+        instructions = "Instructions"
+        model = "gpt-test"
+
+    assistant = InvalidAIAssistant(provider="invalid")
+    with pytest.raises(AIAssistantMisconfiguredError):
+        assistant.get_llm()
+
+
+def test_AIAssistant_get_llm_uninstalled_provider(monkeypatch):
+    class UninstalledAIAssistant(AIAssistant):
+        id = "override_uninstalled_assistant"  # noqa: A003
+        name = "Override Uninstalled Assistant"
+        instructions = "Instructions"
+        model = "gpt-test"
+
+    assistant = UninstalledAIAssistant(provider="uninstalled")
+
+    # Simulates a scenario where the user tries to use a valid provider
+    # that isn't installed with lib (i.e.: user tries to access the
+    # openai provider, but langchain_openai isn't installed)
+    from django_ai_assistant.helpers import assistants
+
+    monkeypatch.setattr(
+        assistants,
+        "PROVIDER_LLM_LOOKUP",
+        {
+            "uninstalled": {
+                "langchain_module": "test_module",
+                "llm_class": "UninstalledChat",
+            },
+        },
+    )
+
+    with pytest.raises(ImportError):
+        assistant.get_llm()
 
 
 @pytest.mark.vcr

@@ -1,4 +1,5 @@
 import abc
+import importlib
 import inspect
 import re
 from typing import Annotated, Any, ClassVar, Dict, Sequence, Type, TypedDict, cast
@@ -27,7 +28,6 @@ from langchain_core.runnables import (
     RunnableBranch,
 )
 from langchain_core.tools import BaseTool, StructuredTool
-from langchain_openai import ChatOpenAI
 from langgraph.graph import END, StateGraph, add_messages
 from langgraph.prebuilt import ToolNode
 from pydantic import BaseModel
@@ -38,6 +38,22 @@ from django_ai_assistant.exceptions import (
 )
 from django_ai_assistant.helpers.django_messages import save_django_messages
 from django_ai_assistant.langchain.tools import tool as tool_decorator
+
+
+PROVIDER_LLM_LOOKUP = {
+    "openai": {
+        "langchain_module": "langchain_openai",
+        "llm_class": "ChatOpenAI",
+    },
+    "anthropic": {
+        "langchain_module": "langchain_anthropic",
+        "llm_class": "ChatAnthropic",
+    },
+    "google": {
+        "langchain_module": "langchain_google_genai",
+        "llm_class": "ChatGoogleGenerativeAI",
+    },
+}
 
 
 class AIAssistant(abc.ABC):  # noqa: F821
@@ -116,7 +132,15 @@ class AIAssistant(abc.ABC):  # noqa: F821
     )
     DEFAULT_DOCUMENT_SEPARATOR: ClassVar[str] = "\n\n"
 
-    def __init__(self, *, user=None, request=None, view=None, **kwargs: Any):
+    def __init__(
+        self,
+        *,
+        user=None,
+        request=None,
+        view=None,
+        provider="openai",
+        **kwargs: Any,
+    ):
         """Initialize the AIAssistant instance.\n
         Optionally set the current user, request, and view for the assistant.\n
         Those can be used in any `@method_tool` to customize behavior.\n
@@ -128,12 +152,16 @@ class AIAssistant(abc.ABC):  # noqa: F821
                 A request instance. Defaults to `None`. Stored in `self._request`.
             view (Any | None): The current Django view the assistant was initialized with.
                 A view instance. Defaults to `None`. Stored in `self._view`.
+            provider (str): The provider that will be used for building the LLM instance.
+                Requires the corresponding langchain module to be installed (see `PROVIDER_LLM_LOOKUP`).
+                Defaults to `openai`. Stored in `self._provider`.
             **kwargs: Extra keyword arguments passed to the constructor. Stored in `self._init_kwargs`.
         """
 
         self._user = user
         self._request = request
         self._view = view
+        self._provider = provider
         self._init_kwargs = kwargs
 
         self._set_method_tools()
@@ -265,6 +293,28 @@ class AIAssistant(abc.ABC):  # noqa: F821
         """
         return {}
 
+    def _import_llm_class(self):
+        provider = PROVIDER_LLM_LOOKUP.get(self._provider)
+        if not provider:
+            valid_providers_list = PROVIDER_LLM_LOOKUP.keys()
+            raise AIAssistantMisconfiguredError(
+                f"Invalid provider={self._provider}, please use one "
+                f"of the supported providers: {valid_providers_list}"
+            )
+
+        # Performs a deferred import of the LLM class that corresponds to
+        # the self._provider value and returns it.
+        try:
+            langchain_module_str = provider["langchain_module"]
+            langchain_module = importlib.import_module(f"{langchain_module_str}")
+        except ImportError as err:
+            raise ImportError(
+                f"'{langchain_module_str}' is required to use this provider. "
+                f"Install it with: pip install django-ai-assistant[{self._provider}]"
+            ) from err
+
+        return getattr(langchain_module, provider["llm_class"])
+
     def get_llm(self) -> BaseChatModel:
         """Get the LangChain LLM instance for the assistant.
         By default, this uses the OpenAI implementation.\n
@@ -278,14 +328,16 @@ class AIAssistant(abc.ABC):  # noqa: F821
         temperature = self.get_temperature()
         model_kwargs = self.get_model_kwargs()
 
+        llm_class = self._import_llm_class()
+
         if temperature is not None:
-            return ChatOpenAI(
+            return llm_class(
                 model=model,
                 temperature=temperature,
                 model_kwargs=model_kwargs,
             )
         else:
-            return ChatOpenAI(
+            return llm_class(
                 model=model,
                 model_kwargs=model_kwargs,
             )
@@ -302,7 +354,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         llm = self.get_llm()
 
         method = "json_mode"
-        if isinstance(llm, ChatOpenAI):
+        if self._provider == "openai":
             # When using ChatOpenAI, it's better to use json_schema method
             # because it enables strict mode.
             # https://platform.openai.com/docs/guides/structured-outputs
