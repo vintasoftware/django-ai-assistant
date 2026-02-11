@@ -1,7 +1,20 @@
 import abc
 import inspect
 import re
-from typing import Annotated, Any, ClassVar, Dict, Sequence, Type, TypedDict, cast
+from typing import (
+    Annotated,
+    Any,
+    AsyncIterable,
+    AsyncIterator,
+    ClassVar,
+    Dict,
+    Literal,
+    Sequence,
+    Type,
+    TypedDict,
+    cast,
+    overload,
+)
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import (
@@ -415,16 +428,20 @@ class AIAssistant(abc.ABC):  # noqa: F821
         )
 
     @with_cast_id
-    def as_graph(self, thread_id: Any | None = None) -> Runnable[dict, dict]:
+    def as_graph(
+        self, thread_id: Any | None = None, thread: Any | None = None
+    ) -> Runnable[dict, dict]:
         """Create the LangGraph graph for the assistant.\n
         This graph is an agent that supports chat history, tool calling, and RAG (if `has_rag=True`).\n
         `as_graph` uses many other methods to create the graph for the assistant.
         Prefer to override the other methods to customize the graph for the assistant.
         Only override this method if you need to customize the graph at a lower level.
 
+        If both arguments are `None`, an in-memory chat message history is used.
+
         Args:
             thread_id (Any | None): The thread ID for the chat message history.
-                If `None`, an in-memory chat message history is used.
+            thread (Any | None): The thread object for the chat message history.
 
         Returns:
             the compiled graph
@@ -434,10 +451,8 @@ class AIAssistant(abc.ABC):  # noqa: F821
         llm = self.get_llm()
         tools = self.get_tools()
         llm_with_tools = llm.bind_tools(tools) if tools else llm
-        if thread_id:
+        if thread is None and thread_id is not None:
             thread = Thread.objects.get(id=thread_id)
-        else:
-            thread = None
 
         def custom_add_messages(left: list[BaseMessage], right: list[BaseMessage]):
             result = add_messages(left, right)  # type: ignore
@@ -550,28 +565,62 @@ class AIAssistant(abc.ABC):  # noqa: F821
 
         return workflow.compile()
 
+    @overload
+    def invoke(
+        self,
+        *args: Any,
+        thread_id: Any | None,
+        thread: Any | None = None,
+        mode: Literal["invoke"] = "invoke",
+        **kwargs: Any,
+    ) -> dict:
+        ...  # pragma: no cover
+
+    @overload
+    def invoke(
+        self,
+        *args: Any,
+        thread_id: Any | None,
+        thread: Any | None = None,
+        mode: Literal["astream"],
+        **kwargs: Any,
+    ) -> AsyncIterator[dict]:
+        ...  # pragma: no cover
+
     @with_cast_id
-    def invoke(self, *args: Any, thread_id: Any | None, **kwargs: Any) -> dict:
+    def invoke(
+        self,
+        *args: Any,
+        thread_id: Any | None = None,
+        thread: Any | None = None,
+        mode: Literal["invoke", "astream"] = "invoke",
+        **kwargs: Any,
+    ) -> dict | AsyncIterator[dict]:
         """Invoke the assistant LangChain graph with the given arguments and keyword arguments.\n
         This is the lower-level method to run the assistant.\n
         The graph is created by the `as_graph` method.\n
+
+        If thread_id and thread are `None`, an in-memory chat message history is used.
 
         Args:
             *args: Positional arguments to pass to the graph.
                 To add a new message, use a dict like `{"input": "user message"}`.
                 If thread already has a `HumanMessage` in the end, you can invoke without args.
             thread_id (Any | None): The thread ID for the chat message history.
-                If `None`, an in-memory chat message history is used.
+            thread (Any | None): The thread object for the chat message history.
+            mode (invoke | astream): call named graph method
             **kwargs: Keyword arguments to pass to the graph.
 
         Returns:
             dict: The output of the assistant graph,
                 structured like `{"output": "assistant response", "history": ...}`.
         """
-        graph = self.as_graph(thread_id)
+        graph = self.as_graph(thread_id=thread_id, thread=thread)
         config = kwargs.pop("config", {})
         config["max_concurrency"] = config.pop("max_concurrency", self.tool_max_concurrency)
-        return graph.invoke(*args, config=config, **kwargs)
+        if mode not in ("invoke", "astream"):
+            raise NotImplementedError(f"mode={mode!r}")
+        return getattr(graph, mode)(*args, config=config, **kwargs)
 
     @with_cast_id
     def run(self, message: str, thread_id: Any | None = None, **kwargs: Any) -> Any:
@@ -594,6 +643,34 @@ class AIAssistant(abc.ABC):  # noqa: F821
             thread_id=thread_id,
             **kwargs,
         )["output"]
+
+    @with_cast_id
+    async def astream(
+        self, message: str, thread: Any | None = None, **kwargs: Any
+    ) -> AsyncIterable[Any]:
+        """Async-stream the assistant with the given message and thread.\n
+        This is the higher-level method to run the assistant.\n
+
+        Args:
+            message (str): The user message to pass to the assistant.
+            thread (Any | None): The thread object for the chat message history.
+                If `None`, an in-memory chat message history is used.
+            **kwargs: Additional keyword arguments to pass to the graph.
+
+        Yields:
+            Any: The assistant response to the user message.
+        """
+        async for output, metadata in self.invoke(
+            {
+                "input": message,
+            },
+            thread=thread,
+            mode="astream",
+            stream_mode="messages",
+            **kwargs,
+        ):
+            if metadata.get("langgraph_node") == "agent" and (content := output.content):
+                yield content
 
     def _run_as_tool(self, message: str, **kwargs: Any) -> Any:
         return self.run(message, thread_id=None, **kwargs)
