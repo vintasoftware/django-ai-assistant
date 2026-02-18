@@ -454,16 +454,8 @@ class AIAssistant(abc.ABC):  # noqa: F821
         if thread is None and thread_id is not None:
             thread = Thread.objects.get(id=thread_id)
 
-        def custom_add_messages(left: list[BaseMessage], right: list[BaseMessage]):
-            result = add_messages(left, right)  # type: ignore
-            if thread:
-                # Save all messages, except the initial system message:
-                thread_messages = [m for m in result if not isinstance(m, SystemMessage)]
-                save_django_messages(cast(list[BaseMessage], thread_messages), thread=thread)
-            return result
-
         class AgentState(TypedDict):
-            messages: Annotated[list[AnyMessage], custom_add_messages]
+            messages: Annotated[list[AnyMessage], add_messages]
             input: str | None  # noqa: A003
             output: Any
 
@@ -537,6 +529,10 @@ class AIAssistant(abc.ABC):  # noqa: F821
             else:
                 response = state["messages"][-1].content
 
+            if thread:
+                # Save all messages, except the initial system message:
+                thread_messages = [m for m in state["messages"] if not isinstance(m, SystemMessage)]
+                save_django_messages(cast(list[BaseMessage], thread_messages), thread=thread)
             return {"output": response}
 
         workflow = StateGraph(AgentState)
