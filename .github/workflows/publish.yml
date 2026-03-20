@@ -68,9 +68,15 @@ jobs:
         run: |
           npm run build
 
+      - name: Preflight npm auth and package checks
+        working-directory: ./frontend
+        run: |
+          npm whoami
+          npm view django-ai-assistant-client name version || echo "Package not found yet in npm registry (first publish path)."
+
       - name: Publish package distributions to npm
         working-directory: ./frontend
         run: |
-          npm publish
+          npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
