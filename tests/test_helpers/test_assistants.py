@@ -508,6 +508,32 @@ def test_AIAssistant_get_llm_uninstalled_provider(monkeypatch):
         assistant.get_llm()
 
 
+def test_AIAssistant_get_llm_invalid_llm_class_for_provider(monkeypatch):
+    class InvalidClassAIAssistant(AIAssistant):
+        id = "override_invalid_class_assistant"  # noqa: A003
+        name = "Override Invalid Class Assistant"
+        instructions = "Instructions"
+        model = "gpt-test"
+
+    assistant = InvalidClassAIAssistant(provider="openai")
+
+    from django_ai_assistant.helpers import assistants
+
+    monkeypatch.setattr(
+        assistants,
+        "PROVIDER_LLM_LOOKUP",
+        {
+            "openai": {
+                "langchain_module": "math",
+                "llm_class": "NotExistingClass",
+            },
+        },
+    )
+
+    with pytest.raises(ImportError):
+        assistant.get_llm()
+
+
 @pytest.mark.vcr
 def test_AIAssistant_pydantic_structured_output():
     from pydantic import BaseModel

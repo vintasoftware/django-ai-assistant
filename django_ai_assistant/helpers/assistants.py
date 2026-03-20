@@ -53,7 +53,15 @@ from django_ai_assistant.helpers.django_messages import save_django_messages
 from django_ai_assistant.langchain.tools import tool as tool_decorator
 
 
-PROVIDER_LLM_LOOKUP = {
+ProviderName = Literal["openai", "anthropic", "google"]
+
+
+class ProviderConfig(TypedDict):
+    langchain_module: str
+    llm_class: str
+
+
+PROVIDER_LLM_LOOKUP: dict[ProviderName, ProviderConfig] = {
     "openai": {
         "langchain_module": "langchain_openai",
         "llm_class": "ChatOpenAI",
@@ -134,6 +142,8 @@ class AIAssistant(abc.ABC):  # noqa: F821
     Can be used in any `@method_tool` to customize behavior."""
     _method_tools: Sequence[BaseTool]
     """List of `@method_tool` tools the assistant can use. Automatically set by the constructor."""
+    _provider: ProviderName
+    """The provider key used to resolve and import the chat model class."""
 
     _registry: ClassVar[dict[str, type["AIAssistant"]]] = {}
     """Registry of all AIAssistant subclasses by their id.\n
@@ -151,7 +161,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
         user=None,
         request=None,
         view=None,
-        provider="openai",
+        provider: ProviderName = "openai",
         **kwargs: Any,
     ):
         """Initialize the AIAssistant instance.\n
@@ -165,7 +175,7 @@ class AIAssistant(abc.ABC):  # noqa: F821
                 A request instance. Defaults to `None`. Stored in `self._request`.
             view (Any | None): The current Django view the assistant was initialized with.
                 A view instance. Defaults to `None`. Stored in `self._view`.
-            provider (str): The provider that will be used for building the LLM instance.
+            provider (ProviderName): The provider used to build the LLM instance.
                 Requires the corresponding langchain module to be installed (see `PROVIDER_LLM_LOOKUP`).
                 Defaults to `openai`. Stored in `self._provider`.
             **kwargs: Extra keyword arguments passed to the constructor. Stored in `self._init_kwargs`.
@@ -326,7 +336,13 @@ class AIAssistant(abc.ABC):  # noqa: F821
                 f"Install it with: pip install django-ai-assistant[{self._provider}]"
             ) from err
 
-        return getattr(langchain_module, provider["llm_class"])
+        llm_class_str = provider["llm_class"]
+        try:
+            return getattr(langchain_module, llm_class_str)
+        except AttributeError as err:
+            raise ImportError(
+                f"'{llm_class_str}' is not a valid LLM class for provider '{self._provider}'."
+            ) from err
 
     def get_llm(self) -> BaseChatModel:
         """Get the LangChain LLM instance for the assistant.
