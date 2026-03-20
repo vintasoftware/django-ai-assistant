@@ -7,6 +7,11 @@ frontend TypeScript client, `django-ai-assistant-client`.
 The backend and the frontend are versioned together, that is, they have the same version number.
 When you update the backend, you should also update the frontend to the same version.
 
+## 0.3.0 <small>March 13, 2026</small> {id="0.3.0"}
+
+- Added compatibility with single-module Django apps
+- Enabled langgraph astream usage
+
 ## 0.2.1 <small>January 26, 2026</small> {id="0.2.1"}
 
 - Migrated coverage reporting to Codecov

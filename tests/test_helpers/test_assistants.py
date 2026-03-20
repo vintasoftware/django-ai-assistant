@@ -1,3 +1,4 @@
+import sys
 from typing import List, TypedDict
 from unittest.mock import patch
 
@@ -164,6 +165,25 @@ def test_AIAssistant_invoke():
         assert [m["data"].get(attr) for m in list(stored_messages)] == [
             m["data"].get(attr) for m in expected_messages
         ]
+
+
+@pytest.mark.skipif(sys.version_info < (3, 11), reason="Not supported on Python 3.10")
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+@pytest.mark.vcr
+async def test_AIAssistant_astream():
+    thread = await Thread.objects.acreate(name="Recife Temperature Chat")
+    assistant = AIAssistant.get_cls("temperature_assistant")()
+    response = "".join(
+        [
+            stream_response
+            async for stream_response in assistant.astream(
+                "What is the temperature today in Recife?",
+                thread=thread,
+            )
+        ]
+    )
+    assert response == "The current temperature in Recife is 32 degrees Celsius."
 
 
 def test_AIAssistant_run_handles_optional_thread_id_param():
