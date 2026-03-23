@@ -12,11 +12,16 @@ search:
 
 ## How to install
 
-Install Django AI Assistant package:
+Install Django AI Assistant package, specifying which provider you wish to install (in the example below it'll install the required dependencies for using OpenAI utils):
 
 ```bash
-pip install django-ai-assistant
+pip install django-ai-assistant[openai]
 ```
+
+The options for provider are:
+- `openai`
+- `anthropic`
+- `google`
 
 Add Django AI Assistant to your Django project's `INSTALLED_APPS`:
 
