@@ -862,9 +862,13 @@
 <li>Django: <a href="https://pypi.org/project/django-ai-assistant" target="_blank"><img src="https://img.shields.io/pypi/frameworkversions/django/django-ai-assistant.svg" alt="Supported Django versions"></a></li>
 </ul>
 <h2 id="how-to-install">How to install<a class="headerlink" href="#how-to-install" title="Permanent link">&para;</a></h2>
-<p>Install Django AI Assistant package:</p>
-<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>django-ai-assistant
+<p>Install Django AI Assistant package, specifying which provider you wish to install (in the example below it'll install the required dependencies for using OpenAI utils):</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>django-ai-assistant<span class="o">[</span>openai<span class="o">]</span>
 </code></pre></div>
+<p>The options for provider are:
+- <code>openai</code>
+- <code>anthropic</code>
+- <code>google</code></p>
 <p>Add Django AI Assistant to your Django project's <code>INSTALLED_APPS</code>:</p>
 <div class="highlight"><span class="filename">myproject/settings.py</span><pre><span></span><code><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
     <span class="o">...</span>
