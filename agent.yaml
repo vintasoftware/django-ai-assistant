@@ -1,0 +1,33 @@
+spec_version: "0.1.0"
+name: django-ai-assistant
+version: 0.4.0
+description: >
+  A Django library for integrating LLM-powered AI assistants into web applications.
+  Enables developers to define assistants with custom tools (via Python decorators),
+  thread-based conversation management, and RAG (Retrieval-Augmented Generation)
+  via LangChain. Supports OpenAI, Anthropic, and Google Gemini providers out of
+  the box, with a REST API (django-ninja) and permission hooks for multi-user
+  deployments.
+license: MIT
+model:
+  preferred: openai:gpt-4o
+  alternatives:
+    - anthropic:claude-sonnet-4-5
+    - google:gemini-2.0-flash
+runtime:
+  max_turns: 50
+skills:
+  - name: tool-calling
+    description: Define agent tools as Python methods using the @ai_assistant_tool decorator; LangChain handles invocation and result passing.
+  - name: rag
+    description: Retrieve relevant context from Django querysets or vector stores and inject it into assistant prompts via get_instructions().
+  - name: thread-management
+    description: Persist multi-turn conversations as Thread + Message Django models, with per-user ownership and access control.
+  - name: rest-api
+    description: Expose assistants through auto-generated CRUD REST endpoints powered by django-ninja.
+  - name: permission-hooks
+    description: Gate thread creation, viewing, updating, and deletion through configurable permission functions.
+compliance:
+  risk_tier: standard
+  supervision:
+    human_in_the_loop: none
