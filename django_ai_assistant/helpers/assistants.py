@@ -53,6 +53,22 @@ from django_ai_assistant.helpers.django_messages import save_django_messages
 from django_ai_assistant.langchain.tools import tool as tool_decorator
 
 
+def remove_schema_field(schema_cls: type[Any], field_name: str) -> None:
+    """Remove a field from a Pydantic schema class.
+
+    Handles both Pydantic v2 (model_fields) and Pydantic v1 (__fields__).
+    """
+    if hasattr(schema_cls, "model_fields"):  # Pydantic v2
+        schema_cls.model_fields.pop(field_name, None)
+        return
+
+    if hasattr(schema_cls, "__fields__"):  # Pydantic v1
+        schema_cls.__fields__.pop(field_name, None)
+        return
+
+    raise TypeError(f"Unsupported schema class: {schema_cls!r}")
+
+
 ProviderName = Literal["openai", "anthropic", "google"]
 
 
@@ -242,11 +258,10 @@ class AIAssistant(abc.ABC):  # noqa: F821
         # Remove self from each tool args_schema:
         for tool in tools:
             if tool.args_schema:
-                if isinstance(tool.args_schema.__fields_set__, set):
-                    tool.args_schema.__fields_set__.remove("self")
-                tool.args_schema.__fields__.pop("self", None)
+                remove_schema_field(tool.args_schema, "self")
 
         self._method_tools = tools
+        
 
     @classmethod
     def get_cls_registry(cls) -> dict[str, type["AIAssistant"]]:

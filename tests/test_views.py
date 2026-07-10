@@ -398,3 +398,13 @@ def test_delete_thread_message(authenticated_client):
 
     assert response.status_code == HTTPStatus.NO_CONTENT
     assert not Message.objects.filter(id=message.id).exists()
+
+
+@pytest.mark.django_db(transaction=True)
+def test_list_thread_messages_returns_404_for_invalid_uuid(authenticated_client, monkeypatch):
+    monkeypatch.setattr(Thread._meta.pk, "get_internal_type", lambda: "UUIDField")
+    response = authenticated_client.get(
+        reverse("django_ai_assistant:messages_list_create", kwargs={"thread_id": "not-a-uuid"})
+    )
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {"message": "Invalid UUID format"}

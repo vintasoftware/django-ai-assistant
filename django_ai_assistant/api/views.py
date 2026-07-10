@@ -17,11 +17,12 @@ from django_ai_assistant.api.schemas import (
     ThreadMessageIn,
 )
 from django_ai_assistant.conf import app_settings
-from django_ai_assistant.decorators import with_cast_id
+from django_ai_assistant.decorators import (with_cast_id, InvalidObjectIdError)
 from django_ai_assistant.exceptions import AIAssistantNotDefinedError, AIUserNotAllowedError
 from django_ai_assistant.helpers import use_cases
 from django_ai_assistant.models import Message as MessageModel
 from django_ai_assistant.models import Thread as ThreadModel
+
 
 
 class API(NinjaAPI):
@@ -136,7 +137,7 @@ def list_thread_messages(request, thread_id: Any):
 )
 @with_cast_id
 def create_thread_message(request, thread_id: Any, payload: ThreadMessageIn):
-    thread = ThreadModel.objects.get(id=thread_id)
+    thread = get_object_or_404(ThreadModel, id=thread_id)
 
     use_cases.create_message(
         assistant_id=payload.assistant_id,
@@ -160,3 +161,12 @@ def delete_thread_message(request, thread_id: Any, message_id: Any):
         request=request,
     )
     return 204, None
+
+
+@api.exception_handler(InvalidObjectIdError)
+def invalid_object_id_handler(request, exc):
+    return api.create_response(
+        request,
+        {"message": str(exc)},
+        status=404,
+    )
